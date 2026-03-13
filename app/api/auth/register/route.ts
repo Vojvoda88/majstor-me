@@ -70,9 +70,11 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ success: true, data: user });
   } catch (error) {
+    console.error("Register error:", error);
     logError("Register error", error);
+    const msg = error instanceof Error ? error.message : "Greška pri registraciji";
     return NextResponse.json(
-      { success: false, error: "Greška pri registraciji" },
+      { success: false, error: process.env.NODE_ENV === "development" ? msg : "Greška pri registraciji" },
       { status: 500 }
     );
   }

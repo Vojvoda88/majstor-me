@@ -16,7 +16,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Select } from "@/components/ui/select";
 import Link from "next/link";
 
 const registerSchema = z.object({
@@ -37,15 +36,11 @@ export function RegisterForm() {
   const {
     register,
     handleSubmit,
-    setValue,
-    watch,
     formState: { errors, isSubmitting },
   } = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
     defaultValues: { role: "USER" },
   });
-
-  const role = watch("role");
 
   async function onSubmit(data: RegisterFormData) {
     setError("");
