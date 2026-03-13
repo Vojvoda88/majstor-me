@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { hash } from "bcryptjs";
+
+export const dynamic = "force-dynamic";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
 import { logError } from "@/lib/logger";
