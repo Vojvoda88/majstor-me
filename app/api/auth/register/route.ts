@@ -17,7 +17,6 @@ const registerSchema = z.object({
 
 export async function POST(request: Request) {
   try {
-    const { prisma } = await import("@/lib/db");
     const body = await request.json();
     const parsed = registerSchema.safeParse(body);
 
@@ -30,6 +29,8 @@ export async function POST(request: Request) {
 
     const { name, email, password, phone, city, role } = parsed.data;
 
+    const { prisma } = await import("@/lib/db");
+
     const existing = await prisma.user.findUnique({ where: { email } });
     if (existing) {
       return NextResponse.json(
@@ -38,43 +39,56 @@ export async function POST(request: Request) {
       );
     }
 
-    const passwordHash = await hash(password, 12);
+    const passwordHash = await hash(password, 10);
 
-    const user = await prisma.user.create({
-      data: {
-        name,
-        email,
-        passwordHash,
-        phone: phone || null,
-        city: city || null,
-        role,
-      },
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        role: true,
-        createdAt: true,
-      },
-    });
-
-    if (role === "HANDYMAN") {
-      await prisma.handymanProfile.create({
+    const user = await prisma.$transaction(async (tx) => {
+      const u = await tx.user.create({
         data: {
-          userId: user.id,
-          categories: [],
-          cities: ["Nikšić"],
+          name,
+          email,
+          passwordHash,
+          phone: phone || null,
+          city: city || null,
+          role,
+        },
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          role: true,
+          createdAt: true,
         },
       });
-    }
+
+      if (role === "HANDYMAN") {
+        await tx.handymanProfile.create({
+          data: {
+            userId: u.id,
+            categories: [],
+            cities: ["Nikšić"],
+          },
+        });
+      }
+
+      return u;
+    });
 
     return NextResponse.json({ success: true, data: user });
   } catch (error) {
     console.error("Register error:", error);
     logError("Register error", error);
-    const msg = error instanceof Error ? error.message : "Greška pri registraciji";
+
+    const err = error as { code?: string; meta?: { target?: string[] } };
+    let userMessage = "Greška pri registraciji. Pokušajte ponovo.";
+
+    if (err?.code === "P2002" && err?.meta?.target?.includes("email")) {
+      userMessage = "Korisnik sa ovim email-om već postoji";
+    } else if (process.env.NODE_ENV === "development" && error instanceof Error) {
+      userMessage = error.message;
+    }
+
     return NextResponse.json(
-      { success: false, error: process.env.NODE_ENV === "development" ? msg : "Greška pri registraciji" },
+      { success: false, error: userMessage },
       { status: 500 }
     );
   }

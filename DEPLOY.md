@@ -24,6 +24,8 @@ DATABASE_URL="postgresql://postgres.[REF]:[PASSWORD]@[HOST].pooler.supabase.com:
 DIRECT_DATABASE_URL="postgresql://postgres.[REF]:[PASSWORD]@[HOST].pooler.supabase.com:5432/postgres"
 ```
 
+**Za Vercel:** App automatski dodaje `connection_limit=1` u connection string radi stabilnosti na serverless.
+
 `[REF]` je referenca projekta (npr. `abcdefghijkl`). Lozinku možete resetovati u **Database** → **Reset database password** ako treba.
 
 ---
