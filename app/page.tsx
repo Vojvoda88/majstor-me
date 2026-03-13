@@ -26,10 +26,31 @@ export default function HomePage() {
       <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8">
         <HomeHeader />
 
-        {/* Integrated premium hero - balanced scale */}
-        <section className="relative overflow-hidden rounded-[32px] border border-white/70 bg-gradient-to-br from-white via-slate-50 to-slate-100 shadow-[0_16px_60px_rgba(15,23,42,0.1)]">
-          <div className="grid min-h-[480px] items-stretch lg:min-h-[540px] lg:grid-cols-[1.05fr_1fr]">
-            <div className="relative z-10 px-6 py-8 sm:px-10 sm:py-10 lg:px-14 lg:py-12">
+        {/* Integrated premium hero - one seamless block, image as background layer */}
+        <section className="relative overflow-hidden rounded-[32px] border border-white/70 shadow-[0_16px_60px_rgba(15,23,42,0.1)]">
+          {/* Full-bleed background image - handyman on right, extends under entire hero */}
+          <div className="absolute inset-0">
+            <Image
+              src={HERO_IMAGE}
+              alt="Majstor radi posao u kući"
+              fill
+              className="object-cover object-[65%_center] lg:object-[70%_center]"
+              priority
+              sizes="(max-width: 1024px) 100vw, 1440px"
+            />
+            {/* Single soft gradient overlay - seamless blend, no vertical cut */}
+            <div
+              className="absolute inset-0 bg-gradient-to-r from-white/65 via-white/8 to-transparent"
+              aria-hidden
+            />
+            <div
+              className="absolute inset-0 bg-gradient-to-t from-slate-900/5 via-transparent to-transparent"
+              aria-hidden
+            />
+          </div>
+
+          <div className="relative z-10 grid min-h-[480px] items-stretch lg:min-h-[540px] lg:grid-cols-[1.05fr_1fr]">
+            <div className="px-6 py-8 sm:px-10 sm:py-10 lg:px-14 lg:py-12">
               <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-3.5 py-1.5 text-xs font-semibold text-blue-700">
                 <ShieldCheck className="h-3.5 w-3.5" />
                 Provjereni majstori širom Crne Gore
@@ -72,19 +93,8 @@ export default function HomePage() {
               </div>
             </div>
 
-            <div className="relative min-h-[280px] lg:min-h-full">
-              <div className="absolute inset-0 bg-gradient-to-r from-slate-50/90 via-white/30 to-transparent lg:hidden" />
-              <div className="absolute inset-y-0 left-0 z-10 hidden w-36 bg-gradient-to-r from-slate-50/90 via-slate-50/40 to-transparent lg:block" />
-              <Image
-                src={HERO_IMAGE}
-                alt="Majstor radi posao u kući"
-                fill
-                className="object-cover object-center"
-                priority
-                sizes="(max-width: 1024px) 100vw, 50vw"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-900/10 via-transparent to-transparent" />
-            </div>
+            {/* Spacer for layout - image is now full-bleed background above */}
+            <div className="relative min-h-[280px] lg:min-h-full" aria-hidden />
           </div>
         </section>
 
