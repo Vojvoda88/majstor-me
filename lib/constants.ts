@@ -5,7 +5,7 @@ export const CITIES = [
   "Kolašin", "Žabljak", "Plav", "Andrijevica", "Šavnik", "Plužine", "Gusinje", "Tuzi",
 ] as const;
 
-// MVP categories - Crna Gora
+// Categories - Crna Gora (extended for homepage display + form validation)
 export const REQUEST_CATEGORIES = [
   "Vodoinstalater",
   "Električar",
@@ -14,6 +14,31 @@ export const REQUEST_CATEGORIES = [
   "Montaža namještaja",
   "Čišćenje",
   "Selidbe",
+  "Keramičar",
+  "Moler / gipsar",
+  "Stolar",
+  "Bravar",
+  "Parketar",
+  "Fasade / izolacija",
+  "Građevinski radovi",
+  "Servis bojlera",
+  "Servis veš mašina",
+  "Servis frižidera",
+  "Servis šporeta / rerne",
+  "Servis elektronike",
+  "Servis računara / laptopa",
+  "TV / antene / internet instalacije",
+  "Ugradnja kuhinja",
+  "Dubinsko čišćenje",
+  "Dvorište / bašta",
+  "Sitne kućne popravke",
+  "Alarm / video nadzor",
+  "Roletne / tende",
+  "Gipsani radovi",
+  "Sanacija vlage",
+  "Odvoz šuta / otpada",
+  "Brave / hitna otvaranja",
+  "Solarni sistemi / paneli",
 ] as const;
 
 // Urgency levels
