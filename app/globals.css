@@ -63,4 +63,11 @@
   .select-premium {
     @apply flex h-12 w-full rounded-xl border border-[#E2E8F0] bg-white px-4 py-3 text-[15px] transition-colors placeholder:text-[#94A3B8] focus:border-[#2563EB] focus:outline-none focus:ring-2 focus:ring-[#2563EB]/20;
   }
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
 }

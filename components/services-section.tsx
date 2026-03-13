@@ -23,14 +23,14 @@ export function ServicesSection() {
         <p className="text-center text-[#64748B] mb-8">
           Brzi pristup najtraženijim vrstama poslova
         </p>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="flex gap-4 overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 sm:overflow-visible sm:grid sm:grid-cols-2 lg:grid-cols-4 sm:pb-0 scrollbar-hide">
           {REQUEST_CATEGORIES.map((cat) => {
             const Icon = CATEGORY_ICONS[cat] ?? Package;
             return (
               <Link
                 key={cat}
                 href={`/request/create?category=${encodeURIComponent(cat)}`}
-                className="group flex items-center gap-4 rounded-2xl border border-[#E2E8F0] bg-white p-5 shadow-card transition-all hover:border-[#2563EB]/30 hover:shadow-card-hover"
+                className="group flex items-center gap-4 rounded-2xl border border-[#E2E8F0] bg-white p-5 shadow-card transition-all hover:border-[#2563EB]/30 hover:shadow-card-hover flex-shrink-0 w-[280px] sm:w-auto"
               >
                 <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#2563EB]/10 text-[#2563EB]">
                   <Icon className="h-6 w-6" />

@@ -14,23 +14,12 @@ export default function HomePage() {
     <main className="min-h-screen bg-[#F8FAFC]">
       <Navbar />
       <HeroSection />
-      <div className="hidden lg:block">
-        <HowItWorksSection />
-      </div>
+      <HowItWorksSection />
       <ServicesSection />
       <FeaturedHandymenSection />
-      <div className="lg:hidden">
-        <HowItWorksSection />
-      </div>
-      <div className="hidden lg:block">
-        <CategoriesSection />
-      </div>
-      <div className="hidden lg:block">
-        <CitiesSection />
-      </div>
-      <div className="hidden lg:block">
-        <TrustSection />
-      </div>
+      <CategoriesSection />
+      <CitiesSection />
+      <TrustSection />
       <CtaSection />
       <Footer />
     </main>
