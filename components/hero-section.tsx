@@ -4,12 +4,12 @@ import { Button } from "@/components/ui/button";
 import { CheckCircle2, Star, MapPin } from "lucide-react";
 import { HeroSearch } from "./hero-search";
 
+// Majstor/električar radi posao - dizajn
 const HERO_IMAGE =
-  "https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=800&q=80";
+  "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=900&q=85";
 
-// Worker in front of house style - good for mobile
 const HERO_IMAGE_MOBILE =
-  "https://images.unsplash.com/photo-1504148455328-c376907d081c?w=600&q=80";
+  "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80";
 
 export function HeroSection() {
   return (
@@ -86,7 +86,8 @@ export function HeroSection() {
                 <Link href="/request/create">
                   <Button
                     size="lg"
-                    className="h-12 px-6 text-base bg-white text-[#1E293B] hover:bg-slate-100"
+                    variant="outline"
+                    className="h-12 px-6 text-base bg-white text-[#1E293B] border-2 border-[#475569] hover:bg-slate-50 hover:border-[#334155]"
                   >
                     Objavi zahtjev
                   </Button>
@@ -94,8 +95,7 @@ export function HeroSection() {
                 <Link href="/register">
                   <Button
                     size="lg"
-                    variant="outline"
-                    className="h-12 border-2 border-white/50 bg-white/5 px-6 text-base text-white hover:bg-white/10"
+                    className="h-12 px-6 text-base bg-[#334155] text-white border-2 border-white hover:bg-[#1E293B]"
                   >
                     Registruj se besplatno
                   </Button>
@@ -116,17 +116,17 @@ export function HeroSection() {
                 </div>
               </div>
             </div>
-            <div className="relative w-full max-w-md xl:max-w-lg flex-shrink-0">
-              <div className="relative aspect-[4/3] rounded-2xl overflow-hidden">
+            <div className="relative w-full max-w-lg xl:max-w-xl flex-shrink-0">
+              <div className="relative aspect-[4/3] rounded-xl overflow-hidden shadow-2xl">
                 <Image
                   src={HERO_IMAGE}
                   alt="Majstor radi posao"
                   fill
-                  className="object-cover object-right"
+                  className="object-cover object-center"
                   priority
-                  sizes="(max-width: 1024px) 0vw, 500px"
+                  sizes="(max-width: 1024px) 0vw, 560px"
                 />
-                <div className="absolute inset-0 bg-gradient-to-r from-[#1E293B]/80 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-r from-[#1E293B]/60 via-transparent to-transparent" />
               </div>
             </div>
           </div>

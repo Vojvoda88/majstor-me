@@ -31,7 +31,7 @@ export function Navbar() {
           <Link href="/" className="flex items-center gap-2">
             <span
               className={`text-xl font-bold transition-colors ${
-                scrolled ? "text-[#2563EB]" : "lg:text-white text-[#2563EB]"
+                scrolled ? "text-[#2563EB]" : "lg:text-white text-[#0F172A]"
               }`}
             >
               Majstor
@@ -85,7 +85,7 @@ export function Navbar() {
                 </Link>
                 <Link
                   href="/register"
-                  className="px-5 py-2.5 bg-[#2563EB] text-white rounded-full font-medium hover:bg-[#1d4ed8] transition-colors"
+                  className="px-5 py-2.5 bg-[#2563EB] text-white rounded-lg font-medium hover:bg-[#1d4ed8] transition-colors"
                 >
                   Registracija
                 </Link>

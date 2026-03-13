@@ -8,7 +8,7 @@ const steps = [
 
 export function HowItWorksSection() {
   return (
-    <section id="kako-radi" className="py-12 lg:py-16 bg-white">
+    <section id="kako-radi" className="py-12 lg:py-16 bg-white border-t border-[#E2E8F0]">
       <div className="max-w-7xl mx-auto px-4">
         <h2 className="text-2xl lg:text-3xl font-bold text-center text-[#0F172A] mb-10">
           Kako funkcioniše?
