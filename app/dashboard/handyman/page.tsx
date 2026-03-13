@@ -98,6 +98,11 @@ export default async function HandymanDashboardPage({
             Pregledajte otvorene zahtjeve i pošaljite ponude
           </p>
         </div>
+        <Link href="/dashboard/handyman/profile">
+          <Button variant="outline" size="sm">
+            Ažuriraj profil
+          </Button>
+        </Link>
       </div>
 
       <div className="mt-6 grid gap-4 sm:grid-cols-3">

@@ -1,13 +1,37 @@
-import type { Metadata } from "next";
-import { Plus_Jakarta_Sans } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import { Inter, Playfair_Display } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import { Providers } from "./providers";
 
-const font = Plus_Jakarta_Sans({ subsets: ["latin", "latin-ext"], variable: "--font-sans" });
+const inter = Inter({
+  subsets: ["latin", "latin-ext"],
+  variable: "--font-inter",
+  display: "swap",
+});
+
+const playfair = Playfair_Display({
+  subsets: ["latin"],
+  variable: "--font-playfair",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
-  title: "Majstor.me | Povezujemo korisnike i majstore - Crna Gora",
-  description: "Marketplace za majstore i zanatlije u Crnoj Gori. Nađi pouzdanog majstora ili objavi zahtjev.",
+  title: "Majstor.me | Pronađite majstora u Crnoj Gori",
+  description: "Platforma za pronalaženje provjerenih majstora i servisera u Crnoj Gori.",
+  keywords: "majstor, Crna Gora, Podgorica, vodoinstalater, električar, klima servis",
+  openGraph: {
+    title: "Majstor.me | Pronađite majstora u Crnoj Gori",
+    description: "Platforma za pronalaženje provjerenih majstora i servisera u Crnoj Gori.",
+    type: "website",
+    locale: "sr_ME",
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#2563EB",
+  width: "device-width",
+  initialScale: 1,
 };
 
 export default function RootLayout({
@@ -16,9 +40,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="sr">
-      <body className={font.className}>
+    <html lang="sr" className={`${inter.variable} ${playfair.variable}`}>
+      <body className="font-sans antialiased bg-background text-foreground">
         <Providers>{children}</Providers>
+        <Analytics />
       </body>
     </html>
   );

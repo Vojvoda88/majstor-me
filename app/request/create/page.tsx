@@ -12,9 +12,18 @@ export const metadata: Metadata = {
 
 export const dynamic = "force-dynamic";
 
-export default async function CreateRequestPage() {
+export default async function CreateRequestPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ category?: string; city?: string }>;
+}) {
   const session = await auth();
-  if (!session) redirect("/login?callbackUrl=/request/create");
+  const params = await searchParams;
+  const q = new URLSearchParams();
+  if (params.category) q.set("category", params.category);
+  if (params.city) q.set("city", params.city);
+  const callbackPath = `/request/create${q.toString() ? `?${q}` : ""}`;
+  if (!session) redirect(`/login?callbackUrl=${encodeURIComponent(callbackPath)}`);
   if (session.user.role !== "USER") redirect("/");
 
   return (

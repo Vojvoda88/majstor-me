@@ -1,7 +1,8 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
+import { useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useMutation } from "@tanstack/react-query";
@@ -30,18 +31,33 @@ type CreateRequestFormData = z.infer<typeof createRequestSchema>;
 
 export function CreateRequestForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const urlCategory = searchParams.get("category") ?? "";
+  const urlCity = searchParams.get("city") ?? "";
 
   const {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm<CreateRequestFormData>({
     resolver: zodResolver(createRequestSchema),
     defaultValues: {
-      city: "Podgorica",
+      city: urlCity || "Podgorica",
       urgency: "NIJE_HITNO",
+      category: urlCategory,
     },
   });
+
+  useEffect(() => {
+    if (urlCategory || urlCity) {
+      reset({
+        city: urlCity || "Podgorica",
+        urgency: "NIJE_HITNO",
+        category: urlCategory,
+      });
+    }
+  }, [urlCategory, urlCity, reset]);
 
   const mutation = useMutation({
     mutationFn: async (data: CreateRequestFormData) => {

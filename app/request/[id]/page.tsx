@@ -9,7 +9,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { OfferCard } from "@/components/lists/offer-card";
 import { RequestDetailClient } from "./request-detail-client";
 import { SendOfferForm } from "@/components/forms/send-offer-form";
-import { SiteHeaderSimple } from "@/components/layout/site-header-simple";
+import { CancelRequestButton } from "@/components/request/cancel-request-button";
+import { SiteHeader } from "@/components/layout/site-header";
 import { MapPin, Calendar, User } from "lucide-react";
 
 const URGENCY_LABELS: Record<string, string> = {
@@ -70,7 +71,7 @@ export default async function RequestDetailPage({
 
   return (
     <div className="min-h-screen bg-[#F8FAFC]">
-      <SiteHeaderSimple />
+      <SiteHeader />
       <div className="container mx-auto max-w-3xl px-4 py-8">
         <Link
           href={session?.user?.role === "USER" ? "/dashboard/user" : session?.user?.role === "HANDYMAN" ? "/dashboard/handyman" : "/"}
@@ -130,6 +131,11 @@ export default async function RequestDetailPage({
             <div>
               <h3 className="text-sm font-medium text-[#475569]">Adresa</h3>
               <p className="mt-1 text-[#64748B]">{req.address}</p>
+            </div>
+          )}
+          {isOwner && (req.status === "OPEN" || req.status === "IN_PROGRESS") && (
+            <div className="pt-2 border-t border-[#E2E8F0]">
+              <CancelRequestButton requestId={req.id} />
             </div>
           )}
         </CardContent>

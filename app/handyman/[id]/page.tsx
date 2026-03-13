@@ -1,9 +1,10 @@
 import { notFound } from "next/navigation";
+import { auth } from "@/lib/auth";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { SiteHeaderSimple } from "@/components/layout/site-header-simple";
+import { SiteHeader } from "@/components/layout/site-header";
 import { CheckCircle2, Star, MapPin, Wrench, MessageSquare } from "lucide-react";
 
 export const dynamic = "force-dynamic";
@@ -27,13 +28,19 @@ export default async function HandymanProfilePage({
 
   const profile = user.handymanProfile;
   const isVerified = profile.verifiedStatus === "VERIFIED";
+  const session = await auth();
+  const backHref = session?.user?.role === "USER" ? "/dashboard/user" : session?.user?.role === "HANDYMAN" ? "/dashboard/handyman" : "/";
+
+  const createParams = new URLSearchParams();
+  if (profile.cities.length > 0) createParams.set("city", profile.cities[0]);
+  if (profile.categories.length > 0) createParams.set("category", profile.categories[0]);
 
   return (
     <div className="min-h-screen bg-[#F8FAFC]">
-      <SiteHeaderSimple />
+      <SiteHeader />
       <div className="container mx-auto max-w-2xl px-4 py-8">
         <Link
-          href="/"
+          href={backHref}
           className="mb-6 inline-flex text-sm font-medium text-[#64748B] hover:text-[#0F172A]"
         >
           ← Nazad
@@ -94,14 +101,24 @@ export default async function HandymanProfilePage({
                 <p className="mt-1 text-[#64748B]">{profile.bio}</p>
               </div>
             )}
-            <div className="flex flex-wrap gap-3">
-              <Link href={`/request/create?handyman=${user.id}`}>
-                <Button size="lg" className="gap-2">
-                  <MessageSquare className="h-5 w-5" />
-                  Pošalji zahtjev
-                </Button>
-              </Link>
-            </div>
+            {session?.user?.role === "USER" && (
+              <div className="flex flex-wrap gap-3">
+                <Link href={`/request/create?${createParams}`}>
+                  <Button size="lg" className="gap-2">
+                    <MessageSquare className="h-5 w-5" />
+                    Objavi zahtjev (grad i kategorija će biti unaprijed popunjeni)
+                  </Button>
+                </Link>
+              </div>
+            )}
+            {!session && (
+              <p className="text-sm text-[#64748B]">
+                <Link href={`/login?callbackUrl=/handyman/${user.id}`} className="font-medium text-[#2563EB] hover:underline">
+                  Prijavite se
+                </Link>{" "}
+                kao korisnik da pošaljete zahtjev ovom majstoru.
+              </p>
+            )}
           </CardContent>
         </Card>
       </div>
