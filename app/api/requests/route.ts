@@ -3,7 +3,6 @@ import { z } from "zod";
 
 export const dynamic = "force-dynamic";
 import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/db";
 import { REQUEST_CATEGORIES, MAX_REQUESTS_PER_DAY, DEFAULT_PAGE_SIZE } from "@/lib/constants";
 import { logError } from "@/lib/logger";
 import { zodErrorToString } from "@/lib/api-response";
@@ -20,6 +19,7 @@ const createRequestSchema = z.object({
 
 export async function GET(request: Request) {
   try {
+    const { prisma } = await import("@/lib/db");
     const { searchParams } = new URL(request.url);
     const category = searchParams.get("category");
     const city = searchParams.get("city");
@@ -61,6 +61,7 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
+    const { prisma } = await import("@/lib/db");
     const session = await auth();
     if (!session?.user?.id) {
       return NextResponse.json(

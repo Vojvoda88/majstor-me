@@ -3,7 +3,6 @@ import { z } from "zod";
 
 export const dynamic = "force-dynamic";
 import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/db";
 import { REQUEST_CATEGORIES } from "@/lib/constants";
 import { logError } from "@/lib/logger";
 import { zodErrorToString } from "@/lib/api-response";
@@ -16,6 +15,7 @@ const updateProfileSchema = z.object({
 
 export async function GET() {
   try {
+    const { prisma } = await import("@/lib/db");
     const session = await auth();
     if (!session?.user?.id) {
       return NextResponse.json(
@@ -48,6 +48,7 @@ export async function GET() {
 
 export async function PATCH(request: Request) {
   try {
+    const { prisma } = await import("@/lib/db");
     const session = await auth();
     if (!session?.user?.id) {
       return NextResponse.json(

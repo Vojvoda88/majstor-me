@@ -3,7 +3,6 @@ import { z } from "zod";
 
 export const dynamic = "force-dynamic";
 import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/db";
 import { sendJobCompletedEmail } from "@/lib/email";
 import { logError } from "@/lib/logger";
 import { zodErrorToString } from "@/lib/api-response";
@@ -17,6 +16,7 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { prisma } = await import("@/lib/db");
     const { id } = await params;
     const req = await prisma.request.findUnique({
       where: { id },
@@ -68,6 +68,7 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { prisma } = await import("@/lib/db");
     const session = await auth();
     if (!session?.user?.id) {
       return NextResponse.json(

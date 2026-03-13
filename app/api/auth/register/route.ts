@@ -1,11 +1,10 @@
 import { NextResponse } from "next/server";
 import { hash } from "bcryptjs";
-
-export const dynamic = "force-dynamic";
 import { z } from "zod";
-import { prisma } from "@/lib/db";
 import { logError } from "@/lib/logger";
 import { zodErrorToString } from "@/lib/api-response";
+
+export const dynamic = "force-dynamic";
 
 const registerSchema = z.object({
   name: z.string().min(2, "Ime mora imati najmanje 2 karaktera"),
@@ -18,6 +17,7 @@ const registerSchema = z.object({
 
 export async function POST(request: Request) {
   try {
+    const { prisma } = await import("@/lib/db");
     const body = await request.json();
     const parsed = registerSchema.safeParse(body);
 

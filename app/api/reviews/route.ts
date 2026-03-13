@@ -3,7 +3,6 @@ import { z } from "zod";
 
 export const dynamic = "force-dynamic";
 import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/db";
 import { sendNewReviewEmail } from "@/lib/email";
 import { logError } from "@/lib/logger";
 import { zodErrorToString } from "@/lib/api-response";
@@ -16,6 +15,7 @@ const createReviewSchema = z.object({
 
 export async function POST(request: Request) {
   try {
+    const { prisma } = await import("@/lib/db");
     const session = await auth();
     if (!session?.user?.id) {
       return NextResponse.json(

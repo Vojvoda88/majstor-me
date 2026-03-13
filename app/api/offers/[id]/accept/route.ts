@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/db";
 import { sendOfferAcceptedEmail } from "@/lib/email";
 import { logError } from "@/lib/logger";
 
@@ -11,6 +10,7 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { prisma } = await import("@/lib/db");
     const session = await auth();
     if (!session?.user?.id) {
       return NextResponse.json(

@@ -1,5 +1,4 @@
 import { Resend } from "resend";
-import { prisma } from "@/lib/db";
 
 function getResend() {
   const key = process.env.RESEND_API_KEY;
@@ -10,6 +9,7 @@ function getResend() {
 const from = process.env.EMAIL_FROM ?? "Majstor.me <onboarding@resend.dev>";
 
 async function getUserEmail(userId: string): Promise<string | null> {
+  const { prisma } = await import("@/lib/db");
   const user = await prisma.user.findUnique({
     where: { id: userId },
     select: { email: true },
