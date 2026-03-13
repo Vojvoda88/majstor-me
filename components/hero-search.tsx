@@ -10,7 +10,7 @@ export function HeroSearch() {
   return (
     <div
       onClick={() => router.push("/request/create")}
-      className="flex items-center gap-2 rounded-xl border border-[#E2E8F0] bg-white p-3 shadow-sm cursor-pointer hover:border-[#2563EB]/40 transition-colors"
+      className="flex items-center gap-2 rounded-xl border border-[#E2E8F0] bg-white p-3 shadow-md cursor-pointer hover:border-[#2563EB]/40 hover:shadow-lg transition-all"
     >
       <Search className="h-5 w-5 text-[#94A3B8] flex-shrink-0" />
       <span className="flex-1 text-[#94A3B8] text-sm">Šta vam treba?</span>

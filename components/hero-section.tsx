@@ -4,134 +4,86 @@ import { Button } from "@/components/ui/button";
 import { CheckCircle2, Star, MapPin } from "lucide-react";
 import { HeroSearch } from "./hero-search";
 
-// Majstor/električar radi posao - dizajn
 const HERO_IMAGE =
-  "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=900&q=85";
-
-const HERO_IMAGE_MOBILE =
-  "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80";
+  "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=1200&q=85";
 
 export function HeroSection() {
   return (
-    <>
-      {/* Mobile hero - light theme with image */}
-      <section className="relative overflow-hidden lg:hidden pt-24 pb-12 bg-gradient-to-b from-[#F8FAFC] to-white">
-        <div className="absolute inset-0">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-24 pb-8 lg:pb-12">
+      {/* Single integrated hero container */}
+      <section className="relative overflow-hidden rounded-3xl shadow-xl min-h-[480px] lg:min-h-[520px]">
+        {/* Soft premium background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-white to-blue-50/30" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_70%_50%,rgba(59,130,246,0.08),transparent)]" />
+
+        {/* Right visual layer - image embedded, extends inward, blends */}
+        <div className="absolute right-0 top-0 bottom-0 w-full lg:w-[58%] min-h-[320px] lg:min-h-0">
           <Image
-            src={HERO_IMAGE_MOBILE}
-            alt="Majstor"
+            src={HERO_IMAGE}
+            alt="Majstor radi posao"
             fill
-            className="object-cover object-right opacity-30"
+            className="object-cover object-right-bottom lg:object-right"
             priority
-            sizes="100vw"
+            sizes="(max-width: 1024px) 100vw, 58vw"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-white via-white/95 to-transparent" />
+          {/* Soft fade - image blends into background, no hard edge */}
+          <div className="absolute inset-0 bg-gradient-to-r from-white via-white/70 to-transparent lg:from-white lg:via-white/80 lg:to-transparent" />
         </div>
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="max-w-xl">
-            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#0F172A] font-display">
-              Pronađite majstora u blizini za nekoliko minuta
+
+        {/* Left content layer - z-10, sits in front */}
+        <div className="relative z-10 flex flex-col justify-center min-h-[480px] lg:min-h-[520px] py-12 lg:py-16">
+          <div className="max-w-xl px-6 lg:px-12 xl:px-16">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold tracking-tight text-[#0F172A] font-display">
+              Vaš majstor za svaki posao u Crnoj Gori
             </h1>
-            <p className="mt-3 text-base text-[#64748B]">
-              Platforma #1 za provjerene majstore i brze ponude u Crnoj Gori.
+            <p className="mt-4 text-base sm:text-lg text-[#64748B]">
+              Pronađite provjerene majstore brzo i jednostavno.
             </p>
-            <Link href="/request/create" className="mt-6 block">
-              <Button size="lg" className="h-12 w-full sm:w-auto px-8 text-base">
-                Objavi zahtjev
-              </Button>
-            </Link>
-            <div className="mt-6">
+
+            {/* CTA buttons */}
+            <div className="mt-6 flex flex-wrap gap-3">
+              <Link href="/request/create">
+                <Button
+                  size="lg"
+                  className="h-12 px-6 text-base bg-[#2563EB] text-white hover:bg-[#1d4ed8]"
+                >
+                  Objavi zahtjev
+                </Button>
+              </Link>
+              <Link href="/register">
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="h-12 px-6 text-base border-2 border-[#334155] text-[#0F172A] hover:bg-slate-100"
+                >
+                  Registruj se besplatno
+                </Button>
+              </Link>
+            </div>
+
+            {/* Search bar - integrated into hero */}
+            <div className="mt-6 max-w-md">
               <HeroSearch />
             </div>
-            <div className="mt-6 flex flex-wrap gap-4">
+
+            {/* Trust row - directly below search */}
+            <div className="mt-6 flex flex-wrap gap-4 sm:gap-6">
               <div className="flex items-center gap-2 text-[#475569]">
-                <CheckCircle2 className="h-5 w-5 text-[#2563EB]" />
+                <CheckCircle2 className="h-5 w-5 text-[#2563EB] shrink-0" />
                 <span className="text-sm font-medium">Verifikovani majstori</span>
               </div>
               <div className="flex items-center gap-2 text-[#475569]">
-                <Star className="h-5 w-5 text-[#2563EB]" />
-                <span className="text-sm font-medium">4.8 od korisnika</span>
+                <Star className="h-5 w-5 text-[#2563EB] shrink-0" />
+                <span className="text-sm font-medium">4.3 (stotine 5/5)</span>
               </div>
               <div className="flex items-center gap-2 text-[#475569]">
-                <MapPin className="h-5 w-5 text-[#2563EB]" />
+                <MapPin className="h-5 w-5 text-[#2563EB] shrink-0" />
                 <span className="text-sm font-medium">Lokalno za Crnu Goru</span>
               </div>
             </div>
           </div>
-          {/* Mobile hero image - visible on right/bottom */}
-          <div className="mt-8 relative aspect-[16/10] rounded-2xl overflow-hidden border border-[#E2E8F0] shadow-lg">
-            <Image
-              src={HERO_IMAGE_MOBILE}
-              alt="Majstor radi posao"
-              fill
-              className="object-cover object-center"
-              sizes="(max-width: 768px) 100vw, 600px"
-            />
-          </div>
         </div>
       </section>
-
-      {/* Desktop hero - dark gradient with image */}
-      <section className="hidden lg:block relative overflow-hidden bg-gradient-to-br from-[#1E293B] via-[#334155] to-[#1E293B] pt-32 pb-28">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8">
-            <div className="mx-auto max-w-2xl text-center lg:text-left lg:mx-0">
-              <h1 className="text-3xl font-bold tracking-tight text-white sm:text-4xl xl:text-5xl font-display">
-                Vaš majstor za svaki posao u Crnoj Gori
-              </h1>
-              <p className="mt-4 text-lg text-slate-300 sm:text-xl">
-                Pronađite provjerene majstore brzo i jednostavno.
-              </p>
-              <div className="mt-8 flex flex-wrap gap-4 justify-center lg:justify-start">
-                <Link href="/request/create">
-                  <Button
-                    size="lg"
-                    variant="outline"
-                    className="h-12 px-6 text-base bg-white text-[#1E293B] border-2 border-[#475569] hover:bg-slate-50 hover:border-[#334155]"
-                  >
-                    Objavi zahtjev
-                  </Button>
-                </Link>
-                <Link href="/register">
-                  <Button
-                    size="lg"
-                    className="h-12 px-6 text-base bg-[#334155] text-white border-2 border-white hover:bg-[#1E293B]"
-                  >
-                    Registruj se besplatno
-                  </Button>
-                </Link>
-              </div>
-              <div className="mt-10 flex flex-wrap gap-6 justify-center lg:justify-start">
-                <div className="flex items-center gap-2 text-white/90">
-                  <CheckCircle2 className="h-5 w-5 text-[#60A5FA]" />
-                  <span className="text-sm font-medium">Verifikovani majstori</span>
-                </div>
-                <div className="flex items-center gap-2 text-white/90">
-                  <Star className="h-5 w-5 text-[#60A5FA]" />
-                  <span className="text-sm font-medium">4.3 (stotine 5/5)</span>
-                </div>
-                <div className="flex items-center gap-2 text-white/90">
-                  <MapPin className="h-5 w-5 text-[#60A5FA]" />
-                  <span className="text-sm font-medium">Lokalno za Crnu Goru</span>
-                </div>
-              </div>
-            </div>
-            <div className="relative w-full max-w-lg xl:max-w-xl flex-shrink-0">
-              <div className="relative aspect-[4/3] rounded-xl overflow-hidden shadow-2xl">
-                <Image
-                  src={HERO_IMAGE}
-                  alt="Majstor radi posao"
-                  fill
-                  className="object-cover object-center"
-                  priority
-                  sizes="(max-width: 1024px) 0vw, 560px"
-                />
-                <div className="absolute inset-0 bg-gradient-to-r from-[#1E293B]/60 via-transparent to-transparent" />
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-    </>
+    </div>
   );
 }

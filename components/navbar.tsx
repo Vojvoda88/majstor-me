@@ -16,28 +16,22 @@ export function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const textClass = scrolled ? "text-[#475569] hover:text-[#0F172A]" : "lg:text-white/90 lg:hover:text-white text-[#475569] hover:text-[#0F172A]";
+  const textClass = scrolled ? "text-[#475569] hover:text-[#0F172A]" : "text-[#475569] hover:text-[#0F172A]";
 
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         scrolled
           ? "bg-white/95 backdrop-blur-sm border-b border-[#E2E8F0] shadow-sm"
-          : "lg:bg-transparent bg-white border-b border-[#E2E8F0] lg:border-transparent"
+          : "bg-white/80 backdrop-blur-sm border-b border-[#E2E8F0]/50"
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="flex items-center justify-between h-16">
           <Link href="/" className="flex items-center gap-2">
-            <span
-              className={`text-xl font-bold transition-colors ${
-                scrolled ? "text-[#2563EB]" : "lg:text-white text-[#0F172A]"
-              }`}
-            >
-              Majstor
-              <span className={scrolled ? "text-[#0F172A]" : "lg:text-white text-[#0F172A]"}>
-                .me
-              </span>
+            <span className="text-xl font-bold">
+              <span className="text-[#2563EB]">Majstor</span>
+              <span className="text-[#0F172A]">.me</span>
             </span>
           </Link>
 
