@@ -1,14 +1,16 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Star, CheckCircle2, MapPin, Calendar, MessageSquare } from "lucide-react";
 
 const PRICE_LABELS: Record<string, string> = {
   PO_DOGOVORU: "Po dogovoru",
   OKVIRNA: "Okvirna cijena",
-  IZLAZAK_NA_TEREN: "Izlazak na teren",
+  IZLAZAK_NA_TEREN: "Potreban izlazak na teren",
   FIKSNA: "Fiksna cijena",
 };
 
@@ -25,6 +27,7 @@ export function OfferCard({
     proposedDate: Date | null;
     status: string;
     handyman: {
+      id: string;
       name: string;
       city: string | null;
       handymanProfile: {
@@ -39,6 +42,9 @@ export function OfferCard({
   requestStatus: string;
 }) {
   const router = useRouter();
+  const profile = offer.handyman.handymanProfile;
+  const isVerified = profile?.verifiedStatus === "VERIFIED";
+
   const acceptMutation = useMutation({
     mutationFn: async () => {
       const res = await fetch(`/api/offers/${offer.id}/accept`, { method: "POST" });
@@ -50,43 +56,90 @@ export function OfferCard({
   });
 
   return (
-    <div className="rounded-2xl border border-[#E2E8F0] bg-white p-6 shadow-card">
-      <div className="flex items-start justify-between">
-        <div>
-          <p className="font-medium">{offer.handyman.name}</p>
-          {offer.handyman.handymanProfile && (
-            <p className="text-sm text-muted-foreground">
-              ★ {offer.handyman.handymanProfile.ratingAvg.toFixed(1)} ({offer.handyman.handymanProfile.reviewCount} recenzija)
-            </p>
-          )}
-          <p className="mt-1 text-sm">
-            {PRICE_LABELS[offer.priceType]}
-            {offer.priceType === "FIKSNA" && offer.priceValue != null && (
-              <> • {offer.priceValue} €</>
+    <div
+      className={`rounded-2xl border p-6 shadow-card transition-shadow ${
+        offer.status === "ACCEPTED"
+          ? "border-[#16A34A]/30 bg-[#F0FDF4]/50"
+          : "border-[#E2E8F0] bg-white hover:shadow-card-hover"
+      }`}
+    >
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div className="min-w-0 flex-1 space-y-3">
+          <div className="flex flex-wrap items-center gap-2">
+            <Link
+              href={`/handyman/${offer.handyman.id}`}
+              className="font-semibold text-[#0F172A] hover:text-[#2563EB]"
+            >
+              {offer.handyman.name}
+            </Link>
+            {isVerified && (
+              <Badge variant="success" className="gap-1">
+                <CheckCircle2 className="h-3.5 w-3.5" />
+                Verifikovan
+              </Badge>
             )}
-          </p>
+            {offer.status === "ACCEPTED" && (
+              <Badge variant="success">Prihvaćeno</Badge>
+            )}
+          </div>
+          {profile && (
+            <div className="flex flex-wrap items-center gap-3 text-sm text-[#64748B]">
+              <span className="flex items-center gap-1">
+                <Star className="h-4 w-4 fill-[#F59E0B] text-[#F59E0B]" />
+                {profile.ratingAvg.toFixed(1)}
+              </span>
+              <span>{profile.reviewCount} recenzija</span>
+              {offer.handyman.city && (
+                <span className="flex items-center gap-1">
+                  <MapPin className="h-4 w-4" />
+                  {offer.handyman.city}
+                </span>
+              )}
+            </div>
+          )}
+          <div className="rounded-xl bg-[#F8FAFC] px-4 py-3">
+            <p className="font-medium text-[#0F172A]">
+              {PRICE_LABELS[offer.priceType]}
+              {offer.priceType === "FIKSNA" && offer.priceValue != null && (
+                <span className="text-[#2563EB]"> • {offer.priceValue} €</span>
+              )}
+            </p>
+            {offer.proposedDate && (
+              <p className="mt-1 flex items-center gap-1 text-sm text-[#64748B]">
+                <Calendar className="h-4 w-4" />
+                Predloženi datum: {new Date(offer.proposedDate).toLocaleDateString("sr")}
+              </p>
+            )}
+          </div>
           {offer.message && (
-            <p className="mt-2 text-sm text-muted-foreground">{offer.message}</p>
+            <div className="flex gap-2 text-sm text-[#64748B]">
+              <MessageSquare className="h-4 w-4 shrink-0" />
+              <p>{offer.message}</p>
+            </div>
           )}
         </div>
         {isOwner && requestStatus === "OPEN" && offer.status === "PENDING" && (
-          <div className="flex flex-col items-end gap-1">
+          <div className="flex shrink-0 flex-col items-stretch sm:items-end gap-1">
             {acceptMutation.error && (
-              <p className="text-xs text-destructive">{acceptMutation.error.message}</p>
+              <p className="text-xs text-[#DC2626]">{acceptMutation.error.message}</p>
             )}
             <Button
-              size="sm"
+              size="lg"
               onClick={() => acceptMutation.mutate()}
               disabled={acceptMutation.isPending}
+              className="w-full sm:w-auto"
             >
-              {acceptMutation.isPending ? "..." : "Prihvati ponudu"}
+              {acceptMutation.isPending ? "Prihvatanje..." : "Prihvati ponudu"}
             </Button>
+            <Link
+              href={`/handyman/${offer.handyman.id}`}
+              className="text-center text-sm text-[#2563EB] hover:underline sm:text-right"
+            >
+              Pogledaj profil
+            </Link>
           </div>
         )}
       </div>
-      {offer.status === "ACCEPTED" && (
-        <Badge variant="success" className="mt-2">Prihvaćeno</Badge>
-      )}
     </div>
   );
 }

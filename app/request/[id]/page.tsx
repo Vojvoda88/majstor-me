@@ -9,6 +9,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { OfferCard } from "@/components/lists/offer-card";
 import { RequestDetailClient } from "./request-detail-client";
 import { SendOfferForm } from "@/components/forms/send-offer-form";
+import { SiteHeaderSimple } from "@/components/layout/site-header-simple";
+import { MapPin, Calendar, User } from "lucide-react";
 
 const URGENCY_LABELS: Record<string, string> = {
   HITNO_DANAS: "Hitno danas",
@@ -68,40 +70,73 @@ export default async function RequestDetailPage({
 
   return (
     <div className="min-h-screen bg-[#F8FAFC]">
-      <header className="border-b border-[#E2E8F0] bg-white">
-        <div className="container mx-auto flex h-16 max-w-3xl items-center px-4">
-          <Link href="/" className="text-sm font-medium text-[#64748B] hover:text-[#0F172A]">← Nazad</Link>
-        </div>
-      </header>
+      <SiteHeaderSimple />
       <div className="container mx-auto max-w-3xl px-4 py-8">
-      <Card className="border-[#E2E8F0] shadow-card">
+        <Link
+          href={session?.user?.role === "USER" ? "/dashboard/user" : session?.user?.role === "HANDYMAN" ? "/dashboard/handyman" : "/"}
+          className="mb-6 inline-flex text-sm font-medium text-[#64748B] hover:text-[#0F172A]"
+        >
+          ← Nazad
+        </Link>
+
+      <Card className="rounded-2xl border-[#E2E8F0] shadow-card">
         <CardHeader>
-          <div className="flex items-start justify-between">
-            <div>
-              <CardTitle className="text-xl">{req.category}</CardTitle>
-              <div className="mt-2 flex flex-wrap gap-2">
-                <Badge variant="secondary">{STATUS_LABELS[req.status]}</Badge>
-                <Badge variant="outline">{URGENCY_LABELS[req.urgency]}</Badge>
-                <Badge variant="outline">{req.city}</Badge>
-              </div>
-            </div>
+          <CardTitle className="text-xl font-bold text-[#0F172A] sm:text-2xl">
+            {req.category}
+          </CardTitle>
+          <div className="mt-3 flex flex-wrap items-center gap-2">
+            <Badge
+              variant={
+                req.status === "COMPLETED"
+                  ? "success"
+                  : req.status === "CANCELLED"
+                    ? "secondary"
+                    : "default"
+              }
+            >
+              {STATUS_LABELS[req.status]}
+            </Badge>
+            <Badge
+              variant={
+                req.urgency === "HITNO_DANAS"
+                  ? "destructive"
+                  : req.urgency === "U_NAREDNA_2_DANA"
+                    ? "warning"
+                    : "outline"
+              }
+            >
+              {URGENCY_LABELS[req.urgency]}
+            </Badge>
+            <span className="flex items-center gap-1 text-sm text-[#64748B]">
+              <MapPin className="h-4 w-4" />
+              {req.city}
+            </span>
+            <span className="flex items-center gap-1 text-sm text-[#64748B]">
+              <Calendar className="h-4 w-4" />
+              {new Date(req.createdAt).toLocaleDateString("sr")}
+            </span>
+            <span className="flex items-center gap-1 text-sm text-[#64748B]">
+              <User className="h-4 w-4" />
+              {req.user.name}
+            </span>
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
-          <p className="text-muted-foreground">{req.description}</p>
+          <div>
+            <h3 className="text-sm font-medium text-[#475569]">Opis</h3>
+            <p className="mt-1 text-[#64748B]">{req.description}</p>
+          </div>
           {req.address && (
-            <p className="text-sm">
-              <span className="font-medium">Adresa:</span> {req.address}
-            </p>
+            <div>
+              <h3 className="text-sm font-medium text-[#475569]">Adresa</h3>
+              <p className="mt-1 text-[#64748B]">{req.address}</p>
+            </div>
           )}
-          <p className="text-sm text-muted-foreground">
-            Objavio: {req.user.name} • {new Date(req.createdAt).toLocaleDateString("sr")}
-          </p>
         </CardContent>
       </Card>
 
       {isOwner && req.status === "IN_PROGRESS" && acceptedOffer && (
-        <Card className="mt-6 border-[#E2E8F0]">
+        <Card className="mt-6 rounded-2xl border-[#E2E8F0] shadow-card">
           <CardHeader>
             <CardTitle>Prihvaćena ponuda</CardTitle>
             <CardDescription>Posao je u toku. Kada majstor završi, označite ga kao završen.</CardDescription>
@@ -117,7 +152,7 @@ export default async function RequestDetailPage({
       )}
 
       {isOwner && req.status === "COMPLETED" && !req.review && acceptedOffer && (
-        <Card className="mt-6 border-[#E2E8F0]">
+        <Card className="mt-6 rounded-2xl border-[#E2E8F0] shadow-card">
           <CardHeader>
             <CardTitle>Ostavite recenziju</CardTitle>
             <CardDescription>Ocijenite majstora {acceptedOffer.handyman.name}</CardDescription>
@@ -134,7 +169,7 @@ export default async function RequestDetailPage({
       )}
 
       {req.review && (
-        <Card className="mt-6 border-[#E2E8F0]">
+        <Card className="mt-6 rounded-2xl border-[#E2E8F0] shadow-card">
           <CardHeader>
             <CardTitle>Vaša recenzija</CardTitle>
           </CardHeader>
@@ -155,9 +190,10 @@ export default async function RequestDetailPage({
       )}
 
       {(isOwner || session?.user?.role === "HANDYMAN") && req.offers.length > 0 && (
-        <Card className="mt-6 border-[#E2E8F0]">
+        <Card className="mt-6 rounded-2xl border-[#E2E8F0] shadow-card">
           <CardHeader>
-            <CardTitle>Ponude ({req.offers.length})</CardTitle>
+            <CardTitle className="text-xl">Ponude ({req.offers.length})</CardTitle>
+            <CardDescription>Uporedite ponude i izaberite najboljeg majstora</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">

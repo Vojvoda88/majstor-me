@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { LoginForm } from "@/components/forms/login-form";
 import { Button } from "@/components/ui/button";
+import { SiteHeaderSimple } from "@/components/layout/site-header-simple";
 
 export const metadata: Metadata = {
   title: "Prijava | Majstor.me",
@@ -18,13 +19,7 @@ export default async function LoginPage() {
 
   return (
     <div className="min-h-screen bg-[#F8FAFC]">
-      <header className="border-b border-[#E2E8F0] bg-white">
-        <div className="container mx-auto flex h-16 max-w-6xl items-center px-4">
-          <Link href="/" className="text-xl font-bold text-[#0F172A]">
-            Majstor.me
-          </Link>
-        </div>
-      </header>
+      <SiteHeaderSimple />
       <div className="flex min-h-[calc(100vh-4rem)] flex-col items-center justify-center px-4 py-12">
         <div className="w-full max-w-md">
           <div className="mb-8 text-center">
@@ -36,6 +31,9 @@ export default async function LoginPage() {
             <Link href="/">
               <Button variant="ghost" size="sm">← Nazad na početnu</Button>
             </Link>
+          </p>
+          <p className="mt-4 text-center text-xs text-[#94A3B8]">
+            Sigurna prijava • Vaši podaci su zaštićeni
           </p>
         </div>
       </div>

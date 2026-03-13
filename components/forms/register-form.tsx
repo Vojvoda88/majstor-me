@@ -17,6 +17,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import Link from "next/link";
+import { cn } from "@/lib/utils";
+import { User, Wrench } from "lucide-react";
 
 const registerSchema = z.object({
   name: z.string().min(2, "Ime mora imati najmanje 2 karaktera"),
@@ -36,6 +38,7 @@ export function RegisterForm() {
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors, isSubmitting },
   } = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
@@ -82,21 +85,43 @@ export function RegisterForm() {
     router.refresh();
   }
 
+  const role = watch("role") ?? "USER";
+
   return (
-    <Card className="w-full border-[#E2E8F0] shadow-soft">
+    <Card className="w-full rounded-2xl border-[#E2E8F0] shadow-card">
       <CardContent className="pt-8">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
           {error ? <div className="form-error">{error}</div> : null}
           <div className="space-y-3">
-            <Label htmlFor="role">Tip naloga</Label>
-            <select
-              id="role"
-              className="select-premium"
-              {...register("role")}
-            >
-              <option value="USER">Korisnik (tražim majstora)</option>
-              <option value="HANDYMAN">Majstor (nudim usluge)</option>
-            </select>
+            <Label>Tip naloga</Label>
+            <div className="grid grid-cols-2 gap-3">
+              <label
+                className={cn(
+                  "flex cursor-pointer flex-col items-center gap-2 rounded-xl border-2 p-4 transition-all",
+                  role === "USER"
+                    ? "border-[#2563EB] bg-[#2563EB]/5"
+                    : "border-[#E2E8F0] bg-white hover:border-[#94A3B8]"
+                )}
+              >
+                <input type="radio" value="USER" className="sr-only" {...register("role")} />
+                <User className={cn("h-8 w-8", role === "USER" ? "text-[#2563EB]" : "text-[#94A3B8]")} />
+                <span className="font-medium text-[#0F172A]">Korisnik</span>
+                <span className="text-xs text-[#64748B]">Tražim majstora</span>
+              </label>
+              <label
+                className={cn(
+                  "flex cursor-pointer flex-col items-center gap-2 rounded-xl border-2 p-4 transition-all",
+                  role === "HANDYMAN"
+                    ? "border-[#2563EB] bg-[#2563EB]/5"
+                    : "border-[#E2E8F0] bg-white hover:border-[#94A3B8]"
+                )}
+              >
+                <input type="radio" value="HANDYMAN" className="sr-only" {...register("role")} />
+                <Wrench className={cn("h-8 w-8", role === "HANDYMAN" ? "text-[#2563EB]" : "text-[#94A3B8]")} />
+                <span className="font-medium text-[#0F172A]">Majstor</span>
+                <span className="text-xs text-[#64748B]">Nudim usluge</span>
+              </label>
+            </div>
           </div>
           <div className="space-y-3">
             <Label htmlFor="name">Ime i prezime</Label>

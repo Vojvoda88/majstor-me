@@ -1,98 +1,121 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { REQUEST_CATEGORIES } from "@/lib/constants";
+import { SiteHeader } from "@/components/layout/site-header";
+import { SmartSearch } from "@/components/home/smart-search";
+import { CategoryCards } from "@/components/home/category-cards";
+import { TrustSection } from "@/components/home/trust-section";
+import { FeaturedMajstori } from "@/components/home/featured-majstori";
+import { CheckCircle2, Star, MapPin, FileText, Mail, UserCheck } from "lucide-react";
 
-const HOW_IT_WORKS = [
-  { step: 1, title: "Objavite zahtjev", description: "Opisite problem ili potrebu — kategorija, opis, grad, hitnost." },
-  { step: 2, title: "Dobijte ponude", description: "Majstori iz cijele Crne Gore vam šalju ponude. Poredite cijene i ocjene." },
-  { step: 3, title: "Izaberite majstora", description: "Prihvatite ponudu koja vam najviše odgovara. Dogovorite termin." },
-];
-
-const TRUST_ITEMS = [
-  { label: "Lokalno za Crnu Goru", desc: "Majstori iz svih gradova Crne Gore" },
-  { label: "Verifikovani profili", desc: "Admin tim provjerava sve majstore" },
-  { label: "Ocjene i recenzije", desc: "Od strane zadovoljnih korisnika" },
-  { label: "Brže do majstora", desc: "Ponude stižu odmah na email" },
-];
+const FEATURED_CITIES = ["Podgorica", "Nikšić", "Budva", "Bar", "Kotor", "Herceg Novi", "Tivat"];
 
 export default function HomePage() {
   return (
     <div className="min-h-screen bg-[#F8FAFC]">
-      <header className="sticky top-0 z-50 border-b border-[#E2E8F0] bg-white/95 backdrop-blur">
-        <div className="container mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
-          <Link href="/" className="text-xl font-bold text-[#0F172A]">Majstor.me</Link>
-          <nav className="flex items-center gap-2">
-            <Link href="/login"><Button variant="ghost" size="sm">Prijava</Button></Link>
-            <Link href="/register"><Button size="sm">Registracija</Button></Link>
-          </nav>
-        </div>
-      </header>
+      <SiteHeader />
 
-      <main className="container mx-auto max-w-6xl px-4 py-16 sm:py-24">
-        <section className="mx-auto max-w-3xl text-center">
-          <h1 className="text-4xl font-bold tracking-tight text-[#0F172A] sm:text-5xl lg:text-6xl">
-            Povezujemo korisnike i majstore
-          </h1>
-          <p className="mt-6 text-lg leading-relaxed text-[#64748B] sm:text-xl">
-            Nađi pouzdanog majstora u cijeloj Crnoj Gori ili objavi svoj zahtjev.
-            Vodoinstalater, električar, klima servis i više.
-          </p>
-          <div className="mt-10 flex flex-wrap justify-center gap-4">
-            <Link href="/register">
-              <Button size="lg">Registruj se besplatno</Button>
-            </Link>
-            <Link href="/request/create">
-              <Button size="lg" variant="outline">
-                Objavi zahtjev
-              </Button>
-            </Link>
+      <main className="container mx-auto max-w-6xl px-4 py-8 sm:py-12">
+        {/* Hero */}
+        <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#1E293B] via-[#334155] to-[#1E293B]">
+          <div className="relative px-6 py-16 sm:px-12 sm:py-24 lg:px-16 lg:py-28">
+            <div className="mx-auto max-w-2xl">
+              <h1 className="text-3xl font-bold tracking-tight text-white sm:text-4xl lg:text-5xl">
+                Vaš majstor za svaki posao u Crnoj Gori
+              </h1>
+              <p className="mt-4 text-lg text-slate-300 sm:text-xl">
+                Pronađite provjerene majstore brzo i jednostavno.
+              </p>
+              <div className="mt-8 flex flex-wrap gap-4">
+                <Link href="/request/create">
+                  <Button size="lg" className="h-12 px-6 text-base">Objavi zahtjev</Button>
+                </Link>
+                <Link href="/register">
+                  <Button size="lg" variant="outline" className="h-12 border-2 border-white/50 bg-white/5 px-6 text-base text-white hover:bg-white/10">
+                    Registruj se besplatno
+                  </Button>
+                </Link>
+              </div>
+              <div className="mt-10 flex flex-wrap gap-6">
+                <div className="flex items-center gap-2 text-white/90"><CheckCircle2 className="h-5 w-5 text-[#60A5FA]" /><span className="text-sm font-medium">Verifikovani majstori</span></div>
+                <div className="flex items-center gap-2 text-white/90"><Star className="h-5 w-5 text-[#60A5FA]" /><span className="text-sm font-medium">Ocjene korisnika</span></div>
+                <div className="flex items-center gap-2 text-white/90"><MapPin className="h-5 w-5 text-[#60A5FA]" /><span className="text-sm font-medium">Lokalno za Crnu Goru</span></div>
+              </div>
+            </div>
           </div>
         </section>
 
-        <section className="mt-24">
-          <h2 className="text-center text-2xl font-semibold text-[#0F172A] sm:text-3xl">Kategorije usluga</h2>
-          <p className="mt-3 text-center text-[#64748B]">Brzi pristup najtraženijim vrstama poslova</p>
-          <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {REQUEST_CATEGORIES.map((cat) => (
-              <Link
-                key={cat}
-                href="/register"
-                className="group rounded-2xl border border-[#E2E8F0] bg-white p-6 shadow-card transition-all hover:border-[#2563EB]/30 hover:shadow-card-hover"
-              >
-                <span className="font-medium text-[#1E293B] group-hover:text-[#2563EB]">{cat}</span>
-                <span className="ml-2 inline-block opacity-0 transition-opacity group-hover:opacity-100">→</span>
+        {/* Smart Search */}
+        <div className="mt-8">
+          <SmartSearch />
+        </div>
+
+        {/* Kategorije */}
+        <section className="mt-16 sm:mt-20">
+          <h2 className="text-2xl font-semibold text-[#0F172A] sm:text-3xl">Popularne kategorije</h2>
+          <p className="mt-2 text-[#64748B]">Brzi pristup najtraženijim vrstama poslova</p>
+          <div className="mt-8">
+            <CategoryCards />
+          </div>
+        </section>
+
+        {/* Kako radi */}
+        <section className="mt-16 sm:mt-20">
+          <h2 className="text-2xl font-semibold text-[#0F172A] sm:text-3xl">Kako funkcioniše?</h2>
+          <p className="mt-2 text-[#64748B]">3 jednostavna koraka do majstora</p>
+          <div className="mt-8 grid gap-8 sm:grid-cols-3">
+            <div className="rounded-2xl border border-[#E2E8F0] bg-white p-8 shadow-card">
+              <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-xl bg-[#2563EB]/10 text-[#2563EB]"><FileText className="h-7 w-7" /></div>
+              <h3 className="text-lg font-semibold text-[#0F172A]">Objavite zahtjev</h3>
+              <p className="mt-2 text-[#64748B]">Opišite svoj problem i pošaljite zahtjev.</p>
+            </div>
+            <div className="rounded-2xl border border-[#E2E8F0] bg-white p-8 shadow-card">
+              <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-xl bg-[#2563EB]/10 text-[#2563EB]"><Mail className="h-7 w-7" /></div>
+              <h3 className="text-lg font-semibold text-[#0F172A]">Dobijte ponude</h3>
+              <p className="mt-2 text-[#64748B]">Primite ponude odmah od majstora.</p>
+            </div>
+            <div className="rounded-2xl border border-[#E2E8F0] bg-white p-8 shadow-card">
+              <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-xl bg-[#2563EB]/10 text-[#2563EB]"><UserCheck className="h-7 w-7" /></div>
+              <h3 className="text-lg font-semibold text-[#0F172A]">Izaberite majstora</h3>
+              <p className="mt-2 text-[#64748B]">Odaberite i angažujte najboljeg.</p>
+            </div>
+          </div>
+        </section>
+
+        {/* Gradovi */}
+        <section className="mt-16 sm:mt-20">
+          <h2 className="text-2xl font-semibold text-[#0F172A] sm:text-3xl">Gradovi u Crnoj Gori</h2>
+          <p className="mt-2 text-[#64748B]">Platforma pokriva cijelu zemlju</p>
+          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {FEATURED_CITIES.map((city) => (
+              <Link key={city} href="/register" className="group flex items-center gap-4 rounded-2xl border border-[#E2E8F0] bg-white p-5 shadow-card transition-all hover:border-[#2563EB]/30 hover:shadow-card-hover">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#F1F5F9] text-[#64748B] group-hover:bg-[#2563EB]/10 group-hover:text-[#2563EB]">
+                  <MapPin className="h-6 w-6" />
+                </div>
+                <span className="font-medium text-[#1E293B] group-hover:text-[#2563EB]">{city}</span>
+                <span className="ml-auto text-[#94A3B8] opacity-0 group-hover:opacity-100">→</span>
               </Link>
             ))}
           </div>
         </section>
 
-        <section className="mt-24">
-          <h2 className="text-center text-2xl font-semibold text-[#0F172A] sm:text-3xl">Kako radi</h2>
-          <p className="mt-3 text-center text-[#64748B]">3 jednostavna koraka do majstora</p>
-          <div className="mt-10 grid gap-6 sm:grid-cols-3">
-            {HOW_IT_WORKS.map((item) => (
-              <div key={item.step} className="rounded-2xl border border-[#E2E8F0] bg-white p-8 shadow-card">
-                <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-[#2563EB] text-lg font-bold text-white">{item.step}</div>
-                <h3 className="text-lg font-semibold text-[#0F172A]">{item.title}</h3>
-                <p className="mt-2 text-[#64748B]">{item.description}</p>
-              </div>
-            ))}
+        {/* Trust */}
+        <section className="mt-16 sm:mt-20">
+          <h2 className="text-2xl font-semibold text-[#0F172A] sm:text-3xl">Zašto odabrati Majstor.me?</h2>
+          <div className="mt-8">
+            <TrustSection />
           </div>
         </section>
 
-        <section className="mt-24 rounded-2xl border border-[#E2E8F0] bg-white px-8 py-14 shadow-card">
-          <h2 className="text-center text-xl font-semibold text-[#0F172A]">Zašto Majstor.me</h2>
-          <div className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-            {TRUST_ITEMS.map((item) => (
-              <div key={item.label} className="text-center">
-                <p className="font-medium text-[#1E293B]">{item.label}</p>
-                <p className="mt-1 text-sm text-[#64748B]">{item.desc}</p>
-              </div>
-            ))}
+        {/* Featured majstori */}
+        <section className="mt-16 sm:mt-20">
+          <h2 className="text-2xl font-semibold text-[#0F172A] sm:text-3xl">Najbolje ocijenjeni majstori</h2>
+          <div className="mt-8">
+            <FeaturedMajstori />
           </div>
         </section>
 
-        <section className="mt-24 rounded-2xl bg-[#1E293B] px-8 py-16 text-center">
+        {/* Final CTA */}
+        <section className="mt-16 sm:mt-20 rounded-2xl bg-[#1E293B] px-8 py-16 text-center">
           <h2 className="text-2xl font-semibold text-white">Spremni za prvi zahtjev?</h2>
           <p className="mt-2 text-[#94A3B8]">Registrujte se besplatno i počnite odmah</p>
           <div className="mt-8 flex justify-center gap-4 flex-wrap">

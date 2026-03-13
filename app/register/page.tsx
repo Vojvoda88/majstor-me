@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { RegisterForm } from "@/components/forms/register-form";
 import { Button } from "@/components/ui/button";
+import { SiteHeaderSimple } from "@/components/layout/site-header-simple";
 
 export const metadata: Metadata = {
   title: "Registracija | Majstor.me",
@@ -18,17 +19,11 @@ export default async function RegisterPage() {
 
   return (
     <div className="min-h-screen bg-[#F8FAFC]">
-      <header className="border-b border-[#E2E8F0] bg-white">
-        <div className="container mx-auto flex h-16 max-w-6xl items-center px-4">
-          <Link href="/" className="text-xl font-bold text-[#0F172A]">
-            Majstor.me
-          </Link>
-        </div>
-      </header>
+      <SiteHeaderSimple />
       <div className="flex min-h-[calc(100vh-4rem)] flex-col items-center justify-center px-4 py-12">
         <div className="w-full max-w-md">
           <div className="mb-8 text-center">
-            <h1 className="text-2xl font-bold text-[#0F172A]">Kreirajte nalog</h1>
+            <h1 className="text-2xl font-bold text-[#0F172A] sm:text-3xl">Kreirajte nalog</h1>
             <p className="mt-2 text-[#64748B]">Korisnik ili majstor — izaberite kako želite da koristite platformu</p>
           </div>
           <RegisterForm />
@@ -36,6 +31,9 @@ export default async function RegisterPage() {
             <Link href="/">
               <Button variant="ghost" size="sm">← Nazad na početnu</Button>
             </Link>
+          </p>
+          <p className="mt-4 text-center text-xs text-[#94A3B8]">
+            Besplatna registracija • Bez skrivenih troškova
           </p>
         </div>
       </div>

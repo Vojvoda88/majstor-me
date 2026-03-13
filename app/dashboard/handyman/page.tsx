@@ -43,17 +43,17 @@ export default async function HandymanDashboardPage({
 
   if (!profile) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <Card>
+      <div className="container mx-auto max-w-4xl px-4 py-8">
+        <Card className="rounded-2xl border-[#E2E8F0] shadow-card">
           <CardHeader>
-            <CardTitle>Profil majstora</CardTitle>
+            <CardTitle className="text-xl">Profil majstora</CardTitle>
             <CardDescription>
-              Morate ažurirati profil sa kategorijama prije nego što možete pregledati zahtjeve.
+              Izaberite kategorije i gradove u kojima nudite usluge prije nego što možete pregledati zahtjeve.
             </CardDescription>
           </CardHeader>
           <CardContent>
             <Link href="/dashboard/handyman/profile">
-              <Button variant="default">Ažuriraj profil</Button>
+              <Button size="lg">Ažuriraj profil</Button>
             </Link>
           </CardContent>
         </Card>
@@ -69,7 +69,7 @@ export default async function HandymanDashboardPage({
     }
     if (city) where.city = city;
 
-  const [requests, total] = await Promise.all([
+  const [requests, total, myOffersCount, acceptedCount] = await Promise.all([
     prisma.request.findMany({
       where,
       include: {
@@ -81,14 +81,39 @@ export default async function HandymanDashboardPage({
       take: limit,
     }),
     prisma.request.count({ where }),
+    prisma.offer.count({ where: { handymanId: session.user.id } }),
+    prisma.offer.count({
+      where: { handymanId: session.user.id, status: "ACCEPTED" },
+    }),
   ]);
 
   return (
     <div className="container mx-auto max-w-4xl px-4 py-8">
-      <h1 className="page-title">Dashboard majstora</h1>
-      <p className="page-description">
-        Pregledajte otvorene zahtjeve i pošaljite ponude
-      </p>
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight text-[#0F172A] sm:text-3xl">
+            Dashboard majstora
+          </h1>
+          <p className="mt-2 text-base text-[#64748B]">
+            Pregledajte otvorene zahtjeve i pošaljite ponude
+          </p>
+        </div>
+      </div>
+
+      <div className="mt-6 grid gap-4 sm:grid-cols-3">
+        <div className="rounded-2xl border border-[#E2E8F0] bg-white p-5 shadow-card">
+          <p className="text-sm font-medium text-[#64748B]">Otvoreni zahtjevi</p>
+          <p className="mt-1 text-2xl font-bold text-[#0F172A]">{total}</p>
+        </div>
+        <div className="rounded-2xl border border-[#E2E8F0] bg-white p-5 shadow-card">
+          <p className="text-sm font-medium text-[#64748B]">Moje poslate ponude</p>
+          <p className="mt-1 text-2xl font-bold text-[#0F172A]">{myOffersCount}</p>
+        </div>
+        <div className="rounded-2xl border border-[#E2E8F0] bg-white p-5 shadow-card">
+          <p className="text-sm font-medium text-[#64748B]">Prihvaćeni poslovi</p>
+          <p className="mt-1 text-2xl font-bold text-[#16A34A]">{acceptedCount}</p>
+        </div>
+      </div>
 
       <HandymanRequestList
         requests={requests}

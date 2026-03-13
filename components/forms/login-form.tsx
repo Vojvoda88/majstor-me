@@ -51,7 +51,7 @@ export function LoginForm() {
   }
 
   return (
-    <Card className="w-full border-[#E2E8F0] shadow-soft">
+    <Card className="w-full rounded-2xl border-[#E2E8F0] shadow-card">
       <CardContent className="pt-8">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
           {error && <div className="form-error">{error}</div>}

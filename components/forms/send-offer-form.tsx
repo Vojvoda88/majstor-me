@@ -66,7 +66,7 @@ export function SendOfferForm({ requestId }: { requestId: string }) {
   });
 
   return (
-    <Card className="border-[#E2E8F0] shadow-card">
+    <Card className="rounded-2xl border-[#E2E8F0] shadow-card">
       <CardHeader>
         <CardTitle>Pošalji ponudu</CardTitle>
         <CardDescription>

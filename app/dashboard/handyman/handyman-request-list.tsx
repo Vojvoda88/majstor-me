@@ -3,9 +3,11 @@
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { REQUEST_CATEGORIES, CITIES } from "@/lib/constants";
+import { MapPin, MessageSquare, Calendar, User } from "lucide-react";
 
 const URGENCY_LABELS: Record<string, string> = {
   HITNO_DANAS: "Hitno danas",
@@ -55,8 +57,8 @@ export function HandymanRequestList({
   const totalPages = Math.ceil(total / limit);
 
   return (
-    <div className="mt-6 space-y-4">
-      <div className="flex flex-wrap items-center gap-4">
+    <div className="mt-8 space-y-4">
+      <div className="flex flex-wrap items-center gap-3 rounded-xl border border-[#E2E8F0] bg-white p-4 shadow-soft">
         <span className="text-sm font-medium text-[#64748B]">Filter:</span>
         <select
           className="h-11 rounded-xl border border-[#E2E8F0] bg-white px-4 text-sm focus:border-[#2563EB] focus:outline-none focus:ring-2 focus:ring-[#2563EB]/20"
@@ -90,38 +92,55 @@ export function HandymanRequestList({
           description="Nema zahtjeva za izabrane filtere. Pokušajte promijeniti kategoriju ili grad."
         />
       ) : (
-        <div className="space-y-3">
+        <div className="space-y-4">
           {requests.map((req) => (
-            <Card key={req.id}>
-              <CardHeader className="pb-2">
-                <div className="flex items-start justify-between">
-                  <div>
+            <Card key={req.id} className="overflow-hidden transition-shadow hover:shadow-card-hover">
+              <CardHeader className="pb-3">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                  <div className="min-w-0 flex-1">
                     <Link href={`/request/${req.id}`}>
-                      <CardTitle className="text-lg hover:underline">{req.category}</CardTitle>
+                      <CardTitle className="text-lg font-semibold text-[#0F172A] hover:text-[#2563EB] sm:text-xl">
+                        {req.category}
+                      </CardTitle>
                     </Link>
-                    <div className="mt-2 flex flex-wrap gap-2">
+                    <p className="mt-2 line-clamp-2 text-sm text-[#64748B]">
+                      {req.description}
+                    </p>
+                    <div className="mt-3 flex flex-wrap items-center gap-2">
                       <Badge
-                        variant={req.urgency === "HITNO_DANAS" ? "destructive" : req.urgency === "U_NAREDNA_2_DANA" ? "warning" : "outline"}
+                        variant={
+                          req.urgency === "HITNO_DANAS"
+                            ? "destructive"
+                            : req.urgency === "U_NAREDNA_2_DANA"
+                              ? "warning"
+                              : "outline"
+                        }
                       >
                         {URGENCY_LABELS[req.urgency]}
                       </Badge>
-                      <Badge variant="secondary">{req.city}</Badge>
-                      <Badge variant="outline">{req.offers.length} ponuda</Badge>
+                      <span className="flex items-center gap-1 text-sm text-[#64748B]">
+                        <MapPin className="h-4 w-4" />
+                        {req.city}
+                      </span>
+                      <span className="flex items-center gap-1 text-sm text-[#64748B]">
+                        <MessageSquare className="h-4 w-4" />
+                        {req.offers.length} ponuda
+                      </span>
+                      <span className="flex items-center gap-1 text-sm text-[#94A3B8]">
+                        <Calendar className="h-4 w-4" />
+                        {new Date(req.createdAt).toLocaleDateString("sr")}
+                      </span>
+                      <span className="flex items-center gap-1 text-sm text-[#94A3B8]">
+                        <User className="h-4 w-4" />
+                        {req.user.name}
+                      </span>
                     </div>
                   </div>
-                  <Link href={`/request/${req.id}`}>
-                    <span className="text-sm font-medium text-[#2563EB] hover:underline">Pogledaj →</span>
+                  <Link href={`/request/${req.id}`} className="shrink-0">
+                    <Button size="lg">Pošalji ponudu</Button>
                   </Link>
                 </div>
               </CardHeader>
-              <CardContent>
-                <p className="line-clamp-2 text-sm text-[#64748B]">
-                  {req.description}
-                </p>
-                <p className="mt-2 text-xs text-[#94A3B8]">
-                  {req.user.name} • {new Date(req.createdAt).toLocaleDateString("sr")}
-                </p>
-              </CardContent>
             </Card>
           ))}
         </div>
