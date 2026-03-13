@@ -1,9 +1,8 @@
 import { notFound } from "next/navigation";
 import { auth } from "@/lib/auth";
+import Link from "next/link";
 
 export const dynamic = "force-dynamic";
-import Link from "next/link";
-import { prisma } from "@/lib/db";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -32,6 +31,7 @@ export default async function RequestDetailPage({
   const { id } = await params;
   const session = await auth();
 
+  const { prisma } = await import("@/lib/db");
   const req = await prisma.request.findUnique({
     where: { id },
     include: {

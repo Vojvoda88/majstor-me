@@ -1,6 +1,5 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import { prisma } from "@/lib/db";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -20,6 +19,7 @@ export default async function UserDashboardPage() {
   if (!session) redirect("/login");
   if (session.user.role !== "USER") redirect("/");
 
+  const { prisma } = await import("@/lib/db");
   const requests = await prisma.request.findMany({
     where: { userId: session.user.id },
     include: {

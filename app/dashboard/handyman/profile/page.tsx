@@ -1,7 +1,6 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { HandymanProfileForm } from "./handyman-profile-form";
-import { prisma } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
 
@@ -10,6 +9,7 @@ export default async function HandymanProfilePage() {
   if (!session) redirect("/login");
   if (session.user.role !== "HANDYMAN") redirect("/");
 
+  const { prisma } = await import("@/lib/db");
   const profile = await prisma.handymanProfile.findUnique({
     where: { userId: session.user.id },
   });

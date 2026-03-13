@@ -1,4 +1,3 @@
-import { prisma } from "@/lib/db";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -7,6 +6,7 @@ import { VerifyHandymanButton } from "./verify-button";
 export const dynamic = "force-dynamic";
 
 export default async function AdminHandymenPage() {
+  const { prisma } = await import("@/lib/db");
   const handymen = await prisma.handymanProfile.findMany({
     include: {
       user: { select: { name: true, email: true, phone: true, city: true } },

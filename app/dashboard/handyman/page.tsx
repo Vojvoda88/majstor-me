@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import { prisma } from "@/lib/db";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -37,6 +36,7 @@ export default async function HandymanDashboardPage({
   const limit = 20;
   const skip = (page - 1) * limit;
 
+  const { prisma } = await import("@/lib/db");
   const profile = await prisma.handymanProfile.findUnique({
     where: { userId: session.user.id },
   });

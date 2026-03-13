@@ -1,4 +1,3 @@
-import { prisma } from "@/lib/db";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -21,6 +20,7 @@ export default async function AdminRequestsPage({
   const params = await searchParams;
   const status = params.status;
 
+  const { prisma } = await import("@/lib/db");
   const where = status ? { status: status as "OPEN" | "IN_PROGRESS" | "COMPLETED" | "CANCELLED" } : {};
 
   const requests = await prisma.request.findMany({
