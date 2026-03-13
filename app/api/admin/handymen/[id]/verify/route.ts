@@ -4,6 +4,8 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { logError } from "@/lib/logger";
 
+export const dynamic = "force-dynamic";
+
 const verifySchema = z.object({
   status: z.enum(["VERIFIED", "REJECTED"]),
 });

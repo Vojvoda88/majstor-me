@@ -4,6 +4,8 @@ import { prisma } from "@/lib/db";
 import { sendOfferAcceptedEmail } from "@/lib/email";
 import { logError } from "@/lib/logger";
 
+export const dynamic = "force-dynamic";
+
 export async function POST(
   _request: Request,
   { params }: { params: Promise<{ id: string }> }
