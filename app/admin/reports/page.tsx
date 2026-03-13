@@ -11,6 +11,8 @@ const REPORT_STATUS: Record<string, string> = {
   DISMISSED: "Odbijeno",
 };
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminReportsPage() {
   const reports = await prisma.report.findMany({
     include: {

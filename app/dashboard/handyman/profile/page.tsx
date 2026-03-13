@@ -3,6 +3,8 @@ import { redirect } from "next/navigation";
 import { HandymanProfileForm } from "./handyman-profile-form";
 import { prisma } from "@/lib/db";
 
+export const dynamic = "force-dynamic";
+
 export default async function HandymanProfilePage() {
   const session = await auth();
   if (!session) redirect("/login");

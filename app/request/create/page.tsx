@@ -9,6 +9,8 @@ export const metadata: Metadata = {
   description: "Objavite zahtjev za majstora - vodoinstalater, električar, klima servis i više",
 };
 
+export const dynamic = "force-dynamic";
+
 export default async function CreateRequestPage() {
   const session = await auth();
   if (!session) redirect("/login?callbackUrl=/request/create");

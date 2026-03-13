@@ -19,6 +19,8 @@ export const metadata: Metadata = {
   description: "Pregled otvorenih zahtjeva i slanje ponuda",
 };
 
+export const dynamic = "force-dynamic";
+
 export default async function HandymanDashboardPage({
   searchParams,
 }: {

@@ -11,6 +11,8 @@ const STATUS_LABELS: Record<string, string> = {
   CANCELLED: "Otkazan",
 };
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminRequestsPage({
   searchParams,
 }: {
