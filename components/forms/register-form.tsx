@@ -95,13 +95,14 @@ export function RegisterForm() {
           {error ? <div className="form-error">{error}</div> : null}
           <div className="space-y-2">
             <Label htmlFor="role">Tip naloga</Label>
-            <Select
-              value={role}
-              onChange={(e) => setValue("role", e.target.value as "USER" | "HANDYMAN")}
+            <select
+              id="role"
+              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              {...register("role")}
             >
               <option value="USER">Korisnik (tražim majstora)</option>
               <option value="HANDYMAN">Majstor (nudim usluge)</option>
-            </Select>
+            </select>
           </div>
           <div className="space-y-2">
             <Label htmlFor="name">Ime i prezime</Label>
