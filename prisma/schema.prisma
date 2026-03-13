@@ -1,0 +1,195 @@
+// Majstor.me - Marketplace for Handymen - Montenegro
+// Database: PostgreSQL (Supabase)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_DATABASE_URL")
+}
+
+// ============ ENUMS ============
+
+enum UserRole {
+  USER
+  HANDYMAN
+  ADMIN
+}
+
+enum RequestStatus {
+  OPEN
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum OfferStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  WITHDRAWN
+}
+
+enum UrgencyLevel {
+  HITNO_DANAS
+  U_NAREDNA_2_DANA
+  NIJE_HITNO
+}
+
+enum PriceType {
+  PO_DOGOVORU
+  OKVIRNA
+  IZLAZAK_NA_TEREN
+  FIKSNA
+}
+
+enum VerifiedStatus {
+  PENDING
+  VERIFIED
+  REJECTED
+}
+
+enum ReportStatus {
+  PENDING
+  REVIEWED
+  RESOLVED
+  DISMISSED
+}
+
+// ============ MODELS ============
+
+model User {
+  id            String   @id @default(cuid())
+  role          UserRole @default(USER)
+  name          String
+  email         String   @unique
+  phone         String?
+  passwordHash  String   @map("password_hash")
+  city          String?
+  emailVerified DateTime? @map("email_verified")
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  // Relations
+  handymanProfile HandymanProfile?
+  requests        Request[]       @relation("RequestCreator")
+  offers          Offer[]
+  reviewsGiven    Review[]        @relation("Reviewer")
+  reviewsReceived Review[]        @relation("Reviewee")
+  reportsMade     Report[]        @relation("ReportReporter")
+  reportsAgainst  Report[]        @relation("ReportReported")
+  adminActions    AdminAction[]
+
+  @@map("users")
+}
+
+model HandymanProfile {
+  id               String         @id @default(cuid())
+  userId           String         @unique @map("user_id")
+  bio              String?
+  categories       String[]       // MVP: array of category names
+  cities           String[]       // Cities where handyman works
+  verifiedStatus   VerifiedStatus @default(PENDING) @map("verified_status")
+  ratingAvg        Float          @default(0) @map("rating_avg")
+  reviewCount      Int            @default(0) @map("review_count")
+  subscriptionPlan String         @default("FREE") @map("subscription_plan")
+  createdAt        DateTime       @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("handyman_profiles")
+}
+
+model Request {
+  id          String        @id @default(cuid())
+  userId      String        @map("user_id")
+  category    String
+  subcategory String?
+  description String
+  city        String
+  address     String?
+  urgency     UrgencyLevel  @default(NIJE_HITNO)
+  status      RequestStatus @default(OPEN)
+  photos      String[]      @default([]) // URLs from storage
+  createdAt   DateTime      @default(now()) @map("created_at")
+
+  user   User     @relation("RequestCreator", fields: [userId], references: [id], onDelete: Cascade)
+  offers Offer[]
+  review Review?
+  report Report[]
+
+  @@index([status])
+  @@index([city])
+  @@index([category])
+  @@index([createdAt])
+  @@map("requests")
+}
+
+model Offer {
+  id           String      @id @default(cuid())
+  requestId    String      @map("request_id")
+  handymanId   String      @map("handyman_id") // References User (handyman)
+  priceType    PriceType   @map("price_type")
+  priceValue   Float?      @map("price_value") // Optional for PO_DOGOVORU
+  message      String?
+  proposedDate DateTime?   @map("proposed_date")
+  status       OfferStatus @default(PENDING)
+  createdAt    DateTime    @default(now()) @map("created_at")
+
+  request  Request @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  handyman User    @relation(fields: [handymanId], references: [id], onDelete: Cascade)
+
+  @@index([requestId])
+  @@index([handymanId])
+  @@index([status])
+  @@map("offers")
+}
+
+model Review {
+  id         String   @id @default(cuid())
+  requestId  String   @unique @map("request_id")
+  reviewerId String   @map("reviewer_id")   // User who leaves review (request creator)
+  revieweeId String   @map("reviewee_id")   // Handyman being reviewed
+  rating     Int      // 1-5
+  comment    String?
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  request  Request @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  reviewer User    @relation("Reviewer", fields: [reviewerId], references: [id], onDelete: Cascade)
+  reviewee User    @relation("Reviewee", fields: [revieweeId], references: [id], onDelete: Cascade)
+
+  @@map("reviews")
+}
+
+model Report {
+  id             String       @id @default(cuid())
+  reporterId     String       @map("reporter_id")
+  reportedUserId String       @map("reported_user_id")
+  requestId      String?      @map("request_id")
+  type           String
+  description    String?
+  status         ReportStatus @default(PENDING)
+  createdAt      DateTime     @default(now()) @map("created_at")
+
+  reporter     User     @relation("ReportReporter", fields: [reporterId], references: [id], onDelete: Cascade)
+  reportedUser User     @relation("ReportReported", fields: [reportedUserId], references: [id], onDelete: Cascade)
+  request      Request? @relation(fields: [requestId], references: [id], onDelete: SetNull)
+
+  @@map("reports")
+}
+
+model AdminAction {
+  id         String   @id @default(cuid())
+  adminId    String   @map("admin_id")
+  targetType String   @map("target_type") // "user" | "handyman" | "request" | "report"
+  targetId   String   @map("target_id")
+  action     String
+  reason     String?
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  admin User @relation(fields: [adminId], references: [id], onDelete: Cascade)
+
+  @@map("admin_actions")
+}
