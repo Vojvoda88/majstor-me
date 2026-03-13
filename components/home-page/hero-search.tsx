@@ -9,7 +9,7 @@ export function HeroSearch() {
   return (
     <div
       onClick={() => router.push("/request/create")}
-      className="mt-8 max-w-2xl cursor-pointer rounded-[28px] border border-white/80 bg-white/90 p-3 shadow-[0_12px_40px_rgba(15,23,42,0.12)] backdrop-blur"
+      className="mt-5 max-w-2xl cursor-pointer rounded-2xl border border-white/80 bg-white/90 p-3 shadow-[0_8px_30px_rgba(15,23,42,0.08)] backdrop-blur"
     >
       <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
         <div className="flex h-14 flex-1 items-center rounded-2xl bg-slate-50 px-4">

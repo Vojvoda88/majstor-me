@@ -11,12 +11,12 @@ const featuredHandymen = [
 
 export function FeaturedHandymenSection() {
   return (
-    <section className="py-12 lg:py-16">
+    <section className="py-8 lg:py-10">
       <div className="mb-6 flex items-center gap-2">
         <p className="text-xs font-bold uppercase tracking-[0.18em] text-blue-600">Izdvojeni profili</p>
         <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-800">Preporučeno</span>
       </div>
-      <h2 className="mb-8 text-2xl font-black tracking-tight text-slate-950 sm:text-3xl">Istaknuti majstori</h2>
+      <h2 className="mb-6 text-xl font-black tracking-tight text-slate-950 sm:text-2xl">Istaknuti majstori</h2>
 
       <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide md:grid md:grid-cols-2 md:overflow-visible lg:grid-cols-4">
         {featuredHandymen.map((person) => (
@@ -25,7 +25,7 @@ export function FeaturedHandymenSection() {
             href="/register"
             className="group flex min-w-[260px] flex-shrink-0 overflow-hidden rounded-2xl border border-white/80 bg-white shadow-[0_8px_30px_rgba(15,23,42,0.06)] transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_12px_40px_rgba(15,23,42,0.1)] md:min-w-0"
           >
-            <div className="relative h-36 overflow-hidden">
+            <div className="relative h-40 overflow-hidden">
               <Image src={person.image} alt={person.name} fill className="object-cover transition duration-500 group-hover:scale-105" sizes="280px" />
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950/40 to-transparent" />
               <div className="absolute left-3 top-3 flex items-center gap-2">

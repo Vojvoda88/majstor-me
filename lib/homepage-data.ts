@@ -1,9 +1,9 @@
 // Homepage display data - categories, cities, featured
 // Uses Unsplash (free commercial use)
 
+// Electrician/handyman working indoors - warm, professional
 export const HERO_IMAGE =
-  "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1200&q=85";
-// Fallback: handyman/worker with tools - reliable Unsplash ID
+  "https://images.unsplash.com/photo-1741388222137-c0d3007ec173?w=1200&q=90";
 
 export const CATEGORY_IMAGES: Record<string, string> = {
   "Vodoinstalater": "https://images.unsplash.com/photo-1607472586893-edb57bdc0e39?w=400&q=80",

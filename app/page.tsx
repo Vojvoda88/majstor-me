@@ -26,26 +26,26 @@ export default function HomePage() {
       <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8">
         <HomeHeader />
 
-        {/* Integrated premium hero */}
-        <section className="relative overflow-hidden rounded-[36px] border border-white/70 bg-gradient-to-br from-white via-slate-50 to-slate-100 shadow-[0_20px_80px_rgba(15,23,42,0.12)]">
-          <div className="grid min-h-[600px] items-stretch lg:min-h-[680px] lg:grid-cols-[1.05fr_1fr]">
-            <div className="relative z-10 px-6 py-10 sm:px-10 sm:py-14 lg:px-16 lg:py-16">
-              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-4 py-2 text-sm font-semibold text-blue-700">
-                <ShieldCheck className="h-4 w-4" />
+        {/* Integrated premium hero - balanced scale */}
+        <section className="relative overflow-hidden rounded-[32px] border border-white/70 bg-gradient-to-br from-white via-slate-50 to-slate-100 shadow-[0_16px_60px_rgba(15,23,42,0.1)]">
+          <div className="grid min-h-[480px] items-stretch lg:min-h-[540px] lg:grid-cols-[1.05fr_1fr]">
+            <div className="relative z-10 px-6 py-8 sm:px-10 sm:py-10 lg:px-14 lg:py-12">
+              <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-3.5 py-1.5 text-xs font-semibold text-blue-700">
+                <ShieldCheck className="h-3.5 w-3.5" />
                 Provjereni majstori širom Crne Gore
               </div>
 
-              <h1 className="max-w-xl text-4xl font-black leading-[0.95] tracking-tight text-slate-950 sm:text-5xl lg:text-6xl xl:text-7xl">
+              <h1 className="max-w-xl text-3xl font-black leading-[1.05] tracking-tight text-slate-950 sm:text-4xl lg:text-5xl">
                 Pronađite
                 <span className="block text-slate-900">majstora u blizini</span>
                 <span className="block text-blue-600">za nekoliko minuta</span>
               </h1>
 
-              <p className="mt-5 max-w-xl text-base leading-8 text-slate-600 sm:text-lg">
+              <p className="mt-4 max-w-xl text-base leading-7 text-slate-600">
                 Platforma za provjerene majstore, brze ponude i jednostavno pronalaženje usluga za dom u cijeloj Crnoj Gori.
               </p>
 
-              <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+              <div className="mt-5 flex flex-col gap-3 sm:flex-row">
                 <Link href="/request/create" className="inline-flex h-12 items-center justify-center rounded-2xl bg-blue-600 px-6 text-base font-semibold text-white shadow-xl shadow-blue-600/25 transition hover:bg-blue-700">
                   Objavi zahtjev
                 </Link>
@@ -56,7 +56,7 @@ export default function HomePage() {
 
               <HeroSearch />
 
-              <div className="mt-6 flex flex-wrap gap-x-6 gap-y-3 text-sm sm:text-base">
+              <div className="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-sm">
                 <div className="flex items-center gap-2 font-medium text-slate-700">
                   <ShieldCheck className="h-5 w-5 text-blue-600" />
                   Verifikovani majstori
@@ -72,18 +72,18 @@ export default function HomePage() {
               </div>
             </div>
 
-            <div className="relative min-h-[320px] lg:min-h-full">
-              <div className="absolute inset-0 bg-gradient-to-r from-slate-100 via-white/20 to-transparent lg:hidden" />
-              <div className="absolute inset-y-0 left-0 z-10 hidden w-32 bg-gradient-to-r from-slate-50/95 via-slate-50/50 to-transparent lg:block" />
+            <div className="relative min-h-[280px] lg:min-h-full">
+              <div className="absolute inset-0 bg-gradient-to-r from-slate-50/90 via-white/30 to-transparent lg:hidden" />
+              <div className="absolute inset-y-0 left-0 z-10 hidden w-36 bg-gradient-to-r from-slate-50/90 via-slate-50/40 to-transparent lg:block" />
               <Image
                 src={HERO_IMAGE}
                 alt="Majstor radi posao u kući"
                 fill
-                className="object-cover object-right"
+                className="object-cover object-center"
                 priority
                 sizes="(max-width: 1024px) 100vw, 50vw"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/15 via-transparent to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-900/10 via-transparent to-transparent" />
             </div>
           </div>
         </section>
@@ -95,10 +95,10 @@ export default function HomePage() {
         <CategoriesSection />
 
         {/* Kako funkcioniše */}
-        <section id="kako-radi" className="py-12 lg:py-16">
-          <div className="mb-8 text-center">
-            <p className="mb-2 text-xs font-bold uppercase tracking-[0.18em] text-blue-600">Jednostavno i brzo</p>
-            <h2 className="text-2xl font-black tracking-tight text-slate-950 sm:text-3xl">Kako funkcioniše?</h2>
+        <section id="kako-radi" className="py-10 lg:py-12">
+          <div className="mb-6 text-center">
+            <p className="mb-1.5 text-xs font-bold uppercase tracking-[0.18em] text-blue-600">Jednostavno i brzo</p>
+            <h2 className="text-xl font-black tracking-tight text-slate-950 sm:text-2xl">Kako funkcioniše?</h2>
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -121,12 +121,12 @@ export default function HomePage() {
         <CitiesSection />
 
         {/* CTA */}
-        <section className="pb-20">
-          <div className="overflow-hidden rounded-[32px] border border-white/80 bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 px-6 py-10 text-white shadow-[0_24px_80px_rgba(15,23,42,0.22)] sm:px-10 lg:px-16 lg:py-14">
+        <section className="pb-16">
+          <div className="overflow-hidden rounded-[28px] border border-white/80 bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 px-6 py-10 text-white shadow-[0_16px_50px_rgba(15,23,42,0.18)] sm:px-10 lg:px-14 lg:py-12">
             <div className="grid gap-8 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
               <div>
                 <p className="mb-2 text-xs font-bold uppercase tracking-[0.18em] text-blue-300">Spremni da krenete?</p>
-                <h2 className="max-w-2xl text-3xl font-black leading-tight sm:text-4xl lg:text-5xl">Objavi zahtjev i pronađi pravog majstora bez gubljenja vremena</h2>
+                <h2 className="max-w-2xl text-2xl font-black leading-tight sm:text-3xl lg:text-4xl">Objavi zahtjev i pronađi pravog majstora bez gubljenja vremena</h2>
                 <p className="mt-4 max-w-2xl text-base leading-8 text-slate-300 sm:text-lg">Brže do ponuda, više povjerenja i bolji pregled majstora na jednom mjestu.</p>
               </div>
               <div className="flex flex-col gap-4 sm:flex-row lg:flex-col xl:flex-row">

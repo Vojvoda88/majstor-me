@@ -14,20 +14,20 @@ export function CitiesSection() {
   const hasMore = HOMEPAGE_CITIES.length > INITIAL_COUNT;
 
   return (
-    <section id="gradovi" className="py-12 lg:py-16">
-      <div className="mb-8">
-        <p className="mb-2 text-xs font-bold uppercase tracking-[0.18em] text-blue-600">Cijela Crna Gora</p>
-        <h2 className="text-2xl font-black tracking-tight text-slate-950 sm:text-3xl">Gradovi u kojima rastemo</h2>
+    <section id="gradovi" className="py-10 lg:py-12">
+      <div className="mb-6">
+        <p className="mb-1.5 text-xs font-bold uppercase tracking-[0.18em] text-blue-600">Cijela Crna Gora</p>
+        <h2 className="text-xl font-black tracking-tight text-slate-950 sm:text-2xl">Gradovi u kojima rastemo</h2>
       </div>
 
-      <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
         {shown.map((city) => (
           <Link
             key={city.name}
             href={`/request/create?city=${encodeURIComponent(city.name)}`}
             className="group relative overflow-hidden rounded-2xl shadow-[0_8px_30px_rgba(15,23,42,0.06)] transition duration-300 hover:shadow-[0_12px_40px_rgba(15,23,42,0.1)]"
           >
-            <div className="relative aspect-[4/3] overflow-hidden">
+            <div className="relative aspect-[4/3] overflow-hidden rounded-2xl">
               <Image
                 src={city.image}
                 alt={city.name}
