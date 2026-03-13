@@ -4,8 +4,9 @@ import { Button } from "@/components/ui/button";
 import { CheckCircle2, Star, MapPin } from "lucide-react";
 import { HeroSearch } from "./hero-search";
 
+// Electrician/handyman working indoors - ladder, wiring, home interior
 const HERO_IMAGE =
-  "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=1200&q=85";
+  "https://images.unsplash.com/photo-1741388222137-c0d3007ec173?w=1200&q=90";
 
 export function HeroSection() {
   return (
@@ -13,21 +14,20 @@ export function HeroSection() {
       {/* Single integrated hero container */}
       <section className="relative overflow-hidden rounded-3xl shadow-xl min-h-[480px] lg:min-h-[520px]">
         {/* Soft premium background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-white to-blue-50/30" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_70%_50%,rgba(59,130,246,0.08),transparent)]" />
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-white to-slate-100" />
 
-        {/* Right visual layer - image embedded, extends inward, blends */}
+        {/* Right visual layer - handyman image, extends inward, blends */}
         <div className="absolute right-0 top-0 bottom-0 w-full lg:w-[58%] min-h-[320px] lg:min-h-0">
           <Image
             src={HERO_IMAGE}
-            alt="Majstor radi posao"
+            alt="Majstor radi posao u kući"
             fill
             className="object-cover object-right-bottom lg:object-right"
             priority
             sizes="(max-width: 1024px) 100vw, 58vw"
           />
-          {/* Soft fade - image blends into background, no hard edge */}
-          <div className="absolute inset-0 bg-gradient-to-r from-white via-white/70 to-transparent lg:from-white lg:via-white/80 lg:to-transparent" />
+          {/* Subtle blend: light gradient left (text area) + dark gradient right (image stays visible, reduced brightness) */}
+          <div className="absolute inset-0 bg-gradient-to-r from-white/50 via-transparent to-black/25" />
         </div>
 
         {/* Left content layer - z-10, sits in front */}
