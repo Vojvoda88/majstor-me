@@ -1,4 +1,11 @@
-// MVP categories - Nikšić, Montenegro
+// Montenegro - svi gradovi
+export const CITIES = [
+  "Podgorica", "Nikšić", "Budva", "Bar", "Herceg Novi", "Cetinje", "Kotor", "Tivat",
+  "Ulcinj", "Bijelo Polje", "Berane", "Pljevlja", "Rožaje", "Danilovgrad", "Mojkovac",
+  "Kolašin", "Žabljak", "Plav", "Andrijevica", "Šavnik", "Plužine", "Gusinje", "Tuzi",
+] as const;
+
+// MVP categories - Crna Gora
 export const REQUEST_CATEGORIES = [
   "Vodoinstalater",
   "Električar",

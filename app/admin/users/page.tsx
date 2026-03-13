@@ -18,7 +18,7 @@ export default async function AdminUsersPage() {
       {users.length === 0 ? (
         <EmptyState className="mt-6" title="Nema korisnika" />
       ) : (
-      <Card className="mt-6">
+      <Card className="mt-8 border-[#E2E8F0]">
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <table className="w-full text-sm">

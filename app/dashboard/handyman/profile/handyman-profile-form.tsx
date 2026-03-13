@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { REQUEST_CATEGORIES } from "@/lib/constants";
+import { REQUEST_CATEGORIES, CITIES } from "@/lib/constants";
 
 const profileSchema = z.object({
   bio: z.string().optional(),
@@ -19,7 +19,7 @@ const profileSchema = z.object({
 
 type ProfileFormData = z.infer<typeof profileSchema>;
 
-const CITIES = ["Nikšić", "Podgorica", "Budva", "Bar", "Kotor", "Herceg Novi", "Tivat"];
+const CITIES_LIST = [...CITIES];
 
 export function HandymanProfileForm({
   profile,
@@ -38,7 +38,7 @@ export function HandymanProfileForm({
     defaultValues: {
       bio: profile?.bio ?? "",
       categories: profile?.categories ?? [],
-      cities: profile?.cities ?? ["Nikšić"],
+      cities: profile?.cities ?? [],
     },
   });
 
@@ -116,7 +116,7 @@ export function HandymanProfileForm({
             <Label>Gradovi *</Label>
             <p className="text-sm text-muted-foreground">U kojim gradovima radite</p>
             <div className="mt-2 flex flex-wrap gap-2">
-              {CITIES.map((city) => (
+              {CITIES_LIST.map((city) => (
                 <label key={city} className="flex items-center gap-2">
                   <input
                     type="checkbox"

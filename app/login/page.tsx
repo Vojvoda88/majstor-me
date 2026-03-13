@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
+import Link from "next/link";
 import { LoginForm } from "@/components/forms/login-form";
+import { Button } from "@/components/ui/button";
 
 export const metadata: Metadata = {
   title: "Prijava | Majstor.me",
@@ -15,8 +17,28 @@ export default async function LoginPage() {
   if (session) redirect("/");
 
   return (
-    <div className="flex min-h-[80vh] items-center justify-center px-4">
-      <LoginForm />
+    <div className="min-h-screen bg-[#F8FAFC]">
+      <header className="border-b border-[#E2E8F0] bg-white">
+        <div className="container mx-auto flex h-16 max-w-6xl items-center px-4">
+          <Link href="/" className="text-xl font-bold text-[#0F172A]">
+            Majstor.me
+          </Link>
+        </div>
+      </header>
+      <div className="flex min-h-[calc(100vh-4rem)] flex-col items-center justify-center px-4 py-12">
+        <div className="w-full max-w-md">
+          <div className="mb-8 text-center">
+            <h1 className="text-2xl font-bold text-[#0F172A]">Dobrodošli natrag</h1>
+            <p className="mt-2 text-[#64748B]">Prijavite se na svoj nalog da nastavite</p>
+          </div>
+          <LoginForm />
+          <p className="mt-6 text-center">
+            <Link href="/">
+              <Button variant="ghost" size="sm">← Nazad na početnu</Button>
+            </Link>
+          </p>
+        </div>
+      </div>
     </div>
   );
 }

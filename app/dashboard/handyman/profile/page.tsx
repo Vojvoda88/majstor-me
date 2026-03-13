@@ -16,8 +16,8 @@ export default async function HandymanProfilePage() {
 
   return (
     <div className="container mx-auto max-w-lg px-4 py-8">
-      <h1 className="text-2xl font-bold">Profil majstora</h1>
-      <p className="mt-1 text-muted-foreground">
+      <h1 className="page-title">Profil majstora</h1>
+      <p className="page-description">
         Izaberite kategorije i gradove u kojima nudite usluge
       </p>
       <HandymanProfileForm profile={profile} />

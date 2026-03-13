@@ -17,11 +17,15 @@ export default async function CreateRequestPage() {
   if (session.user.role !== "USER") redirect("/");
 
   return (
-    <div className="container mx-auto max-w-2xl px-4 py-8">
-      <Link href="/" className="mb-4 inline-block text-sm text-muted-foreground hover:text-foreground">
-        ← Nazad
-      </Link>
+    <div className="min-h-screen bg-[#F8FAFC]">
+      <header className="border-b border-[#E2E8F0] bg-white">
+        <div className="container mx-auto flex h-16 max-w-2xl items-center px-4">
+          <Link href="/" className="text-sm font-medium text-[#64748B] hover:text-[#0F172A]">← Nazad</Link>
+        </div>
+      </header>
+      <div className="container mx-auto max-w-2xl px-4 py-8">
       <CreateRequestForm />
+      </div>
     </div>
   );
 }

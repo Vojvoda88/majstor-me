@@ -16,7 +16,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { REQUEST_CATEGORIES, URGENCY_OPTIONS } from "@/lib/constants";
+import { REQUEST_CATEGORIES, URGENCY_OPTIONS, CITIES } from "@/lib/constants";
 
 const createRequestSchema = z.object({
   category: z.string().min(1, "Odaberite kategoriju"),
@@ -38,7 +38,7 @@ export function CreateRequestForm() {
   } = useForm<CreateRequestFormData>({
     resolver: zodResolver(createRequestSchema),
     defaultValues: {
-      city: "Nikšić",
+      city: "Podgorica",
       urgency: "NIJE_HITNO",
     },
   });
@@ -61,7 +61,7 @@ export function CreateRequestForm() {
   });
 
   return (
-    <Card className="w-full max-w-lg">
+    <Card className="w-full border-[#E2E8F0] shadow-soft">
       <CardHeader>
         <CardTitle>Novi zahtjev</CardTitle>
         <CardDescription>
@@ -71,14 +71,14 @@ export function CreateRequestForm() {
       <CardContent>
         <form
           onSubmit={handleSubmit((data) => mutation.mutate(data))}
-          className="space-y-4"
+          className="space-y-5"
         >
           {mutation.error && <div className="form-error">{mutation.error.message}</div>}
-          <div className="space-y-2">
+          <div className="space-y-3">
             <Label htmlFor="category">Kategorija</Label>
             <select
               id="category"
-              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              className="select-premium"
               {...register("category")}
             >
               <option value="">Odaberite...</option>
@@ -92,7 +92,7 @@ export function CreateRequestForm() {
               <p className="text-sm text-destructive">{errors.category.message}</p>
             )}
           </div>
-          <div className="space-y-2">
+          <div className="space-y-3">
             <Label htmlFor="description">Opis</Label>
             <Textarea
               id="description"
@@ -104,18 +104,23 @@ export function CreateRequestForm() {
               <p className="text-sm text-destructive">{errors.description.message}</p>
             )}
           </div>
-          <div className="space-y-2">
+          <div className="space-y-3">
             <Label htmlFor="city">Grad</Label>
-            <Input
+            <select
               id="city"
-              placeholder="Nikšić"
+              className="select-premium"
               {...register("city")}
-            />
+            >
+              <option value="">Odaberite grad...</option>
+              {CITIES.map((c) => (
+                <option key={c} value={c}>{c}</option>
+              ))}
+            </select>
             {errors.city && (
               <p className="text-sm text-destructive">{errors.city.message}</p>
             )}
           </div>
-          <div className="space-y-2">
+          <div className="space-y-3">
             <Label htmlFor="address">Adresa (opciono)</Label>
             <Input
               id="address"
@@ -137,7 +142,7 @@ export function CreateRequestForm() {
               ))}
             </select>
           </div>
-          <Button type="submit" className="w-full" disabled={mutation.isPending}>
+          <Button type="submit" className="mt-2 w-full" size="lg" disabled={mutation.isPending}>
             {mutation.isPending ? "Objavljivanje..." : "Objavi zahtjev"}
           </Button>
         </form>

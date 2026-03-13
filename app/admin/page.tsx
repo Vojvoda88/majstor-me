@@ -36,17 +36,17 @@ export default async function AdminDashboardPage() {
     <div>
       <h1 className="page-title">Admin Dashboard</h1>
       <p className="page-description">Pregled platforme</p>
-      <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+      <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
         {stats.map((stat) => (
           <Link key={stat.label} href={stat.href}>
-            <Card className="hover:bg-muted/50 transition-colors">
+            <Card className="transition-all hover:shadow-card-hover">
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">
+                <CardTitle className="text-sm font-medium text-[#64748B]">
                   {stat.label}
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-2xl font-bold">{stat.value}</p>
+                <p className="text-2xl font-bold text-[#0F172A]">{stat.value}</p>
               </CardContent>
             </Card>
           </Link>

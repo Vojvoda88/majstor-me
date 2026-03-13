@@ -53,7 +53,7 @@ export default async function AdminRequestsPage({
       {requests.length === 0 ? (
         <EmptyState className="mt-6" title="Nema zahtjeva" description="Za izabrani filter nema rezultata." />
       ) : (
-      <Card className="mt-6">
+      <Card className="mt-8 border-[#E2E8F0]">
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <table className="w-full text-sm">

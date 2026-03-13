@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
-import { REQUEST_CATEGORIES } from "@/lib/constants";
+import { REQUEST_CATEGORIES, CITIES } from "@/lib/constants";
 
 const URGENCY_LABELS: Record<string, string> = {
   HITNO_DANAS: "Hitno danas",
@@ -57,9 +57,9 @@ export function HandymanRequestList({
   return (
     <div className="mt-6 space-y-4">
       <div className="flex flex-wrap items-center gap-4">
-        <span className="text-sm font-medium text-muted-foreground">Sortiraj: Najnovije</span>
+        <span className="text-sm font-medium text-[#64748B]">Filter:</span>
         <select
-          className="rounded-md border px-3 py-2 text-sm"
+          className="h-11 rounded-xl border border-[#E2E8F0] bg-white px-4 text-sm focus:border-[#2563EB] focus:outline-none focus:ring-2 focus:ring-[#2563EB]/20"
           value={currentCategory}
           onChange={(e) => router.push(buildUrl(e.target.value, currentCity, 1))}
         >
@@ -73,17 +73,14 @@ export function HandymanRequestList({
               ))}
         </select>
         <select
-          className="rounded-md border px-3 py-2 text-sm"
+          className="h-11 rounded-xl border border-[#E2E8F0] bg-white px-4 text-sm focus:border-[#2563EB] focus:outline-none focus:ring-2 focus:ring-[#2563EB]/20"
           value={currentCity}
           onChange={(e) => router.push(buildUrl(currentCategory, e.target.value, 1))}
         >
           <option value="">Svi gradovi</option>
-          {profileCities.map((c) => (
+          {(profileCities.length > 0 ? profileCities : [...CITIES]).map((c) => (
             <option key={c} value={c}>{c}</option>
           ))}
-          {profileCities.length === 0 && (
-            <option value="Nikšić">Nikšić</option>
-          )}
         </select>
       </div>
 
@@ -113,15 +110,15 @@ export function HandymanRequestList({
                     </div>
                   </div>
                   <Link href={`/request/${req.id}`}>
-                    <span className="text-sm font-medium text-primary hover:underline">Pogledaj →</span>
+                    <span className="text-sm font-medium text-[#2563EB] hover:underline">Pogledaj →</span>
                   </Link>
                 </div>
               </CardHeader>
               <CardContent>
-                <p className="line-clamp-2 text-sm text-muted-foreground">
+                <p className="line-clamp-2 text-sm text-[#64748B]">
                   {req.description}
                 </p>
-                <p className="mt-2 text-xs text-muted-foreground">
+                <p className="mt-2 text-xs text-[#94A3B8]">
                   {req.user.name} • {new Date(req.createdAt).toLocaleDateString("sr")}
                 </p>
               </CardContent>
@@ -134,16 +131,16 @@ export function HandymanRequestList({
         <div className="flex items-center justify-center gap-2 pt-4">
           <Link
             href={buildUrl(currentCategory, currentCity, page - 1)}
-            className={`rounded px-3 py-1 text-sm ${page <= 1 ? "pointer-events-none text-muted-foreground" : "hover:bg-muted"}`}
+            className={`rounded-lg px-4 py-2 text-sm ${page <= 1 ? "pointer-events-none text-[#94A3B8]" : "text-[#475569] hover:bg-[#F1F5F9]"}`}
           >
             ← Prethodna
           </Link>
-          <span className="text-sm text-muted-foreground">
+          <span className="text-sm text-[#64748B]">
             Strana {page} / {totalPages}
           </span>
           <Link
             href={buildUrl(currentCategory, currentCity, page + 1)}
-            className={`rounded px-3 py-1 text-sm ${page >= totalPages ? "pointer-events-none text-muted-foreground" : "hover:bg-muted"}`}
+            className={`rounded-lg px-4 py-2 text-sm ${page >= totalPages ? "pointer-events-none text-[#94A3B8]" : "text-[#475569] hover:bg-[#F1F5F9]"}`}
           >
             Sljedeća →
           </Link>

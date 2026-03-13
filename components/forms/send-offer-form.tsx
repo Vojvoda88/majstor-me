@@ -66,7 +66,7 @@ export function SendOfferForm({ requestId }: { requestId: string }) {
   });
 
   return (
-    <Card>
+    <Card className="border-[#E2E8F0] shadow-card">
       <CardHeader>
         <CardTitle>Pošalji ponudu</CardTitle>
         <CardDescription>
@@ -74,12 +74,12 @@ export function SendOfferForm({ requestId }: { requestId: string }) {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit((data) => mutation.mutate(data))} className="space-y-4">
+        <form onSubmit={handleSubmit((data) => mutation.mutate(data))} className="space-y-5">
           {mutation.error && <div className="form-error">{mutation.error.message}</div>}
           <div>
             <Label>Tip cijene</Label>
             <select
-              className="mt-2 flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+              className="select-premium mt-2"
               {...register("priceType")}
             >
               {PRICE_TYPES.map((pt) => (
@@ -122,7 +122,7 @@ export function SendOfferForm({ requestId }: { requestId: string }) {
               {...register("proposedDate")}
             />
           </div>
-          <Button type="submit" disabled={mutation.isPending}>
+          <Button type="submit" size="lg" disabled={mutation.isPending}>
             {mutation.isPending ? "Slanje..." : "Pošalji ponudu"}
           </Button>
         </form>

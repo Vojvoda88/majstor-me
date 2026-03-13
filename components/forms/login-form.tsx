@@ -9,13 +9,7 @@ import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import Link from "next/link";
 
 const loginSchema = z.object({
@@ -57,17 +51,11 @@ export function LoginForm() {
   }
 
   return (
-    <Card className="w-full max-w-md">
-      <CardHeader>
-        <CardTitle>Prijava</CardTitle>
-        <CardDescription>
-          Ulogujte se na svoj Majstor.me nalog
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+    <Card className="w-full border-[#E2E8F0] shadow-soft">
+      <CardContent className="pt-8">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
           {error && <div className="form-error">{error}</div>}
-          <div className="space-y-2">
+          <div className="space-y-3">
             <Label htmlFor="email">Email</Label>
             <Input
               id="email"
@@ -79,7 +67,7 @@ export function LoginForm() {
               <p className="text-sm text-destructive">{errors.email.message}</p>
             )}
           </div>
-          <div className="space-y-2">
+          <div className="space-y-3">
             <Label htmlFor="password">Lozinka</Label>
             <Input
               id="password"
@@ -90,12 +78,12 @@ export function LoginForm() {
               <p className="text-sm text-destructive">{errors.password.message}</p>
             )}
           </div>
-          <Button type="submit" className="w-full" disabled={isSubmitting}>
+          <Button type="submit" className="mt-2 w-full" size="lg" disabled={isSubmitting}>
             {isSubmitting ? "Prijava..." : "Prijavi se"}
           </Button>
-          <p className="text-center text-sm text-muted-foreground">
+          <p className="mt-4 text-center text-sm text-[#64748B]">
             Nemate nalog?{" "}
-            <Link href="/register" className="text-primary underline-offset-4 hover:underline">
+            <Link href="/register" className="font-medium text-[#2563EB] underline-offset-4 hover:underline">
               Registrujte se
             </Link>
           </p>

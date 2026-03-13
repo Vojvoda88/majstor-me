@@ -84,7 +84,7 @@ export default async function HandymanDashboardPage({
   ]);
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto max-w-4xl px-4 py-8">
       <h1 className="page-title">Dashboard majstora</h1>
       <p className="page-description">
         Pregledajte otvorene zahtjeve i pošaljite ponude

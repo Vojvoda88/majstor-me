@@ -21,7 +21,7 @@ export default async function AdminHandymenPage() {
       {handymen.length === 0 ? (
         <EmptyState className="mt-6" title="Nema majstora" />
       ) : (
-      <Card className="mt-6">
+      <Card className="mt-8 border-[#E2E8F0]">
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <table className="w-full text-sm">

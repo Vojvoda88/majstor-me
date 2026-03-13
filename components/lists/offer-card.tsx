@@ -50,7 +50,7 @@ export function OfferCard({
   });
 
   return (
-    <div className="rounded-lg border p-4">
+    <div className="rounded-2xl border border-[#E2E8F0] bg-white p-6 shadow-card">
       <div className="flex items-start justify-between">
         <div>
           <p className="font-medium">{offer.handyman.name}</p>

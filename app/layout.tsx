@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
 
-const inter = Inter({ subsets: ["latin", "latin-ext"] });
+const font = Plus_Jakarta_Sans({ subsets: ["latin", "latin-ext"], variable: "--font-sans" });
 
 export const metadata: Metadata = {
-  title: "Majstor.me | Povezujemo korisnike i majstore - Nikšić, Crna Gora",
+  title: "Majstor.me | Povezujemo korisnike i majstore - Crna Gora",
   description: "Marketplace za majstore i zanatlije u Crnoj Gori. Nađi pouzdanog majstora ili objavi zahtjev.",
 };
 
@@ -17,7 +17,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="sr">
-      <body className={inter.className}>
+      <body className={font.className}>
         <Providers>{children}</Providers>
       </body>
     </html>

@@ -83,35 +83,29 @@ export function RegisterForm() {
   }
 
   return (
-    <Card className="w-full max-w-md">
-      <CardHeader>
-        <CardTitle>Registracija</CardTitle>
-        <CardDescription>
-          Kreirajte Majstor.me nalog kao korisnik ili majstor
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+    <Card className="w-full border-[#E2E8F0] shadow-soft">
+      <CardContent className="pt-8">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
           {error ? <div className="form-error">{error}</div> : null}
-          <div className="space-y-2">
+          <div className="space-y-3">
             <Label htmlFor="role">Tip naloga</Label>
             <select
               id="role"
-              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              className="select-premium"
               {...register("role")}
             >
               <option value="USER">Korisnik (tražim majstora)</option>
               <option value="HANDYMAN">Majstor (nudim usluge)</option>
             </select>
           </div>
-          <div className="space-y-2">
+          <div className="space-y-3">
             <Label htmlFor="name">Ime i prezime</Label>
             <Input id="name" placeholder="Marko Marković" {...register("name")} />
             {errors.name && (
               <p className="text-sm text-destructive">{errors.name.message}</p>
             )}
           </div>
-          <div className="space-y-2">
+          <div className="space-y-3">
             <Label htmlFor="email">Email</Label>
             <Input
               id="email"
@@ -123,7 +117,7 @@ export function RegisterForm() {
               <p className="text-sm text-destructive">{errors.email.message}</p>
             )}
           </div>
-          <div className="space-y-2">
+          <div className="space-y-3">
             <Label htmlFor="password">Lozinka</Label>
             <Input
               id="password"
@@ -139,16 +133,16 @@ export function RegisterForm() {
             <Label htmlFor="phone">Telefon (opciono)</Label>
             <Input id="phone" placeholder="+382 xx xxx xxx" {...register("phone")} />
           </div>
-          <div className="space-y-2">
+          <div className="space-y-3">
             <Label htmlFor="city">Grad (opciono)</Label>
-            <Input id="city" placeholder="Nikšić" {...register("city")} />
+            <Input id="city" placeholder="npr. Podgorica, Nikšić..." {...register("city")} />
           </div>
-          <Button type="submit" className="w-full" disabled={isSubmitting}>
+          <Button type="submit" className="mt-2 w-full" size="lg" disabled={isSubmitting}>
             {isSubmitting ? "Registracija..." : "Registruj se"}
           </Button>
-          <p className="text-center text-sm text-muted-foreground">
+          <p className="mt-4 text-center text-sm text-[#64748B]">
             Već imate nalog?{" "}
-            <Link href="/login" className="text-primary underline-offset-4 hover:underline">
+            <Link href="/login" className="font-medium text-[#2563EB] underline-offset-4 hover:underline">
               Prijavite se
             </Link>
           </p>

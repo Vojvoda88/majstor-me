@@ -32,14 +32,14 @@ export default async function UserDashboardPage() {
   });
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="flex items-center justify-between">
+    <div className="container mx-auto max-w-4xl px-4 py-8">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="page-title">Moji zahtjevi</h1>
           <p className="page-description">Pregled vaših objavljenih zahtjeva</p>
         </div>
         <Link href="/request/create">
-          <span className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90">
+          <span className="inline-flex h-11 items-center justify-center rounded-xl bg-[#2563EB] px-5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-[#1D4ED8]">
             Novi zahtjev
           </span>
         </Link>
@@ -52,7 +52,7 @@ export default async function UserDashboardPage() {
           description="Objavite zahtjev da biste dobili ponude od majstora"
           action={
             <Link href="/request/create">
-              <span className="inline-flex items-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90">
+              <span className="inline-flex h-11 items-center justify-center rounded-xl bg-[#2563EB] px-5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-[#1D4ED8]">
                 Objavite prvi zahtjev
               </span>
             </Link>
@@ -78,10 +78,10 @@ export default async function UserDashboardPage() {
                 </div>
               </CardHeader>
               <CardContent>
-                <p className="line-clamp-2 text-sm text-muted-foreground">
+                <p className="line-clamp-2 text-sm text-[#64748B]">
                   {req.description}
                 </p>
-                <p className="mt-2 text-xs text-muted-foreground">
+                <p className="mt-2 text-xs text-[#94A3B8]">
                   {new Date(req.createdAt).toLocaleDateString("sr")}
                 </p>
               </CardContent>

@@ -65,7 +65,7 @@ export async function POST(request: Request) {
           data: {
             userId: u.id,
             categories: [],
-            cities: ["Nikšić"],
+            cities: [],
           },
         });
       }

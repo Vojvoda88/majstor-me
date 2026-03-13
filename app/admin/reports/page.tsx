@@ -30,12 +30,12 @@ export default async function AdminReportsPage() {
       {reports.length === 0 ? (
         <EmptyState className="mt-6" title="Nema prijava" />
       ) : (
-      <Card className="mt-6">
+      <Card className="mt-8 border-[#E2E8F0]">
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b bg-muted/30">
+                <tr className="border-b border-[#E2E8F0] bg-[#F8FAFC]">
                   <th className="px-4 py-3 text-left font-medium">Prijavio</th>
                   <th className="px-4 py-3 text-left font-medium">Prijavljen</th>
                   <th className="px-4 py-3 text-left font-medium">Tip</th>
