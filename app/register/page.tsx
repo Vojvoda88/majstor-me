@@ -8,6 +8,8 @@ export const metadata: Metadata = {
   description: "Registrujte se kao korisnik ili majstor na Majstor.me",
 };
 
+export const dynamic = "force-dynamic";
+
 export default async function RegisterPage() {
   const session = await auth();
   if (session) redirect("/");
