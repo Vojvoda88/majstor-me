@@ -1,10 +1,8 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/db";
-import { logError } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
 
 const verifySchema = z.object({
   status: z.enum(["VERIFIED", "REJECTED"]),
@@ -15,6 +13,9 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { auth } = await import("@/lib/auth");
+    const { prisma } = await import("@/lib/db");
+
     const session = await auth();
     if (!session?.user?.id || session.user.role !== "ADMIN") {
       return NextResponse.json(
@@ -51,7 +52,9 @@ export async function POST(
 
     return NextResponse.json({ success: true, data: profile });
   } catch (error) {
-    logError("Verify handyman error", error);
+    if (process.env.NODE_ENV === "development") {
+      console.error("Verify handyman error", error);
+    }
     return NextResponse.json(
       { success: false, error: "Greška" },
       { status: 500 }
