@@ -3,10 +3,7 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, Star, MapPin } from "lucide-react";
 import { HeroSearch } from "./hero-search";
-
-// Electrician/handyman working indoors - ladder, wiring, home interior
-const HERO_IMAGE =
-  "https://images.unsplash.com/photo-1741388222137-c0d3007ec173?w=1200&q=90";
+import { HERO_IMAGE } from "@/lib/homepage-data";
 
 export function HeroSection() {
   return (
