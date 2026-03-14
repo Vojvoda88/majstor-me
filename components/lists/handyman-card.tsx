@@ -3,7 +3,7 @@
 import { memo } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Star, Wrench, MapPin } from "lucide-react";
+import { Star, Wrench, MapPin, CheckCircle2 } from "lucide-react";
 
 export type HandymanCardData = {
   id: string;
@@ -13,6 +13,7 @@ export type HandymanCardData = {
   ratingAvg: number;
   reviewCount: number;
   avatarUrl?: string | null;
+  verifiedStatus?: string;
 };
 
 type HandymanCardProps = HandymanCardData & {
@@ -27,8 +28,10 @@ function HandymanCardComponent({
   ratingAvg,
   reviewCount,
   avatarUrl,
+  verifiedStatus,
   variant = "full",
 }: HandymanCardProps) {
+  const isVerified = verifiedStatus === "VERIFIED";
   const initials = name
     ?.split(" ")
     .map((n) => n[0])
@@ -44,13 +47,20 @@ function HandymanCardComponent({
       >
         <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full bg-blue-100">
           {avatarUrl ? (
-            <Image src={avatarUrl} alt={name ?? "Majstor"} width={56} height={56} className="object-cover" />
+            <Image src={avatarUrl} alt={name ?? "Majstor"} width={56} height={56} className="object-cover" loading="lazy" sizes="56px" />
           ) : (
             <span className="text-lg font-bold text-blue-600">{initials}</span>
           )}
         </div>
         <div className="min-w-0 flex-1">
-          <h3 className="font-bold text-slate-900">{name || "Majstor"}</h3>
+          <div className="flex flex-wrap items-center gap-2">
+            <h3 className="font-bold text-slate-900">{name || "Majstor"}</h3>
+            {isVerified && (
+              <span className="inline-flex items-center gap-0.5 text-emerald-600" title="Verifikovan majstor">
+                <CheckCircle2 className="h-3.5 w-3.5" />
+              </span>
+            )}
+          </div>
           <p className="flex items-center gap-1 text-sm text-slate-500">
             <MapPin className="h-4 w-4" />
             {city || "Crna Gora"}
@@ -73,14 +83,21 @@ function HandymanCardComponent({
       <div className="flex h-24 items-center justify-center bg-slate-50">
         <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-full bg-blue-100">
           {avatarUrl ? (
-            <Image src={avatarUrl} alt={name ?? "Majstor"} width={64} height={64} className="object-cover" />
+            <Image src={avatarUrl} alt={name ?? "Majstor"} width={64} height={64} className="object-cover" loading="lazy" sizes="64px" />
           ) : (
             <Wrench className="h-8 w-8 text-blue-600" />
           )}
         </div>
       </div>
       <div className="flex flex-1 flex-col p-4">
-        <h3 className="font-bold text-slate-900">{name || "Majstor"}</h3>
+        <div className="flex flex-wrap items-center gap-2">
+          <h3 className="font-bold text-slate-900">{name || "Majstor"}</h3>
+          {isVerified && (
+            <span className="inline-flex items-center gap-0.5 text-emerald-600" title="Verifikovan majstor">
+              <CheckCircle2 className="h-3.5 w-3.5" />
+            </span>
+          )}
+        </div>
         <p className="mt-0.5 text-sm text-slate-500">
           {categories[0] || "Majstor"} • {city || "Crna Gora"}
         </p>

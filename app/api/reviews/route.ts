@@ -3,7 +3,9 @@ import { z } from "zod";
 
 export const dynamic = "force-dynamic";
 import { auth } from "@/lib/auth";
+import { isRateLimited, getRetryAfterSeconds } from "@/lib/rate-limit";
 import { sendNewReviewEmail } from "@/lib/email";
+import { createNotification } from "@/lib/notifications";
 import { logError } from "@/lib/logger";
 import { zodErrorToString } from "@/lib/api-response";
 
@@ -24,6 +26,13 @@ export async function POST(request: Request) {
       );
     }
 
+    if (isRateLimited(`review:${session.user.id}`, 10, 60 * 60 * 1000)) {
+      return NextResponse.json(
+        { success: false, error: "Previše recenzija. Pokušajte ponovo kasnije." },
+        { status: 429, headers: { "Retry-After": String(getRetryAfterSeconds(`review:${session.user.id}`)) } }
+      );
+    }
+
     const body = await request.json();
     const parsed = createReviewSchema.safeParse(body);
     if (!parsed.success) {
@@ -34,6 +43,7 @@ export async function POST(request: Request) {
     }
 
     const { requestId, rating, comment } = parsed.data;
+    const commentTrimmed = typeof comment === "string" ? comment.trim() || undefined : undefined;
 
     const req = await prisma.request.findUnique({
       where: { id: requestId },
@@ -88,7 +98,7 @@ export async function POST(request: Request) {
           reviewerId: session.user!.id,
           revieweeId,
           rating,
-          comment: comment ?? undefined,
+          comment: commentTrimmed,
         },
       });
 
@@ -109,6 +119,10 @@ export async function POST(request: Request) {
     });
 
     sendNewReviewEmail(revieweeId, rating, req.category);
+    createNotification(revieweeId, "NEW_REVIEW", "Nova recenzija", {
+      body: `Dobili ste recenziju ${rating}/5 za ${req.category}`,
+      link: "/dashboard/handyman",
+    });
 
     return NextResponse.json({ success: true, data: review });
   } catch (error) {

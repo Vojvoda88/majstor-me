@@ -15,6 +15,9 @@ import {
   ImageIcon,
   MapPinned,
   MessageCircle,
+  Clock,
+  Euro,
+  Award,
 } from "lucide-react";
 import { cityToSlug } from "@/lib/slugs";
 import { getSiteUrl } from "@/lib/site-url";
@@ -66,8 +69,24 @@ export default async function HandymanProfilePage({
   if (!user?.handymanProfile) notFound();
 
   const profile = user.handymanProfile;
-  const avatarUrl = (profile as { avatarUrl?: string | null }).avatarUrl;
+  const profileExt = profile as {
+    avatarUrl?: string | null;
+    galleryImages?: string[];
+    yearsOfExperience?: number | null;
+    startingPrice?: number | null;
+    completedJobsCount?: number;
+    averageResponseMinutes?: number | null;
+    availabilityStatus?: string | null;
+    isPromoted?: boolean;
+  };
+  const avatarUrl = profileExt.avatarUrl;
+  const galleryImages = profileExt.galleryImages ?? [];
   const isVerified = profile.verifiedStatus === "VERIFIED";
+  const AVAILABILITY_LABELS: Record<string, string> = {
+    AVAILABLE: "Dostupan",
+    BUSY: "Zauzet",
+    EMERGENCY_ONLY: "Samo hitne intervencije",
+  };
   const session = await auth();
   const backHref =
     session?.user?.role === "USER"
@@ -139,7 +158,45 @@ export default async function HandymanProfilePage({
                     {profile.categories.join(", ")}
                   </p>
                 )}
+                {profileExt.isPromoted && (
+                  <Badge variant="outline" className="mt-2 border-amber-400 text-amber-700">
+                    <Award className="mr-1 h-3.5 w-3.5" />
+                    Premium
+                  </Badge>
+                )}
               </div>
+            </div>
+            {/* Stats row */}
+            <div className="mt-4 flex flex-wrap gap-4 border-t border-slate-100 pt-4">
+              {profileExt.yearsOfExperience != null && (
+                <span className="flex items-center gap-1.5 text-sm text-[#64748B]">
+                  <Award className="h-4 w-4 text-blue-500" />
+                  {profileExt.yearsOfExperience} god. iskustva
+                </span>
+              )}
+              {profileExt.startingPrice != null && (
+                <span className="flex items-center gap-1.5 text-sm text-[#64748B]">
+                  <Euro className="h-4 w-4 text-green-600" />
+                  Od {profileExt.startingPrice}€
+                </span>
+              )}
+              {(profileExt.completedJobsCount ?? profile.reviewCount) > 0 && (
+                <span className="flex items-center gap-1.5 text-sm text-[#64748B]">
+                  <Briefcase className="h-4 w-4 text-slate-500" />
+                  {(profileExt.completedJobsCount ?? profile.reviewCount)} završenih poslova
+                </span>
+              )}
+              {profileExt.averageResponseMinutes != null && (
+                <span className="flex items-center gap-1.5 text-sm text-[#64748B]">
+                  <Clock className="h-4 w-4 text-slate-500" />
+                  Odgovor u ~{profileExt.averageResponseMinutes} min
+                </span>
+              )}
+              {profileExt.availabilityStatus && (
+                <Badge variant="outline" className="text-xs">
+                  {AVAILABILITY_LABELS[profileExt.availabilityStatus] ?? profileExt.availabilityStatus}
+                </Badge>
+              )}
             </div>
           </CardHeader>
           <CardContent className="space-y-6 pt-6">
@@ -158,15 +215,35 @@ export default async function HandymanProfilePage({
               )}
             </section>
 
-            {/* Galerija radova - placeholder */}
+            {/* Galerija radova */}
             <section>
               <h3 className="flex items-center gap-2 font-semibold text-[#0F172A]">
                 <ImageIcon className="h-5 w-5 text-blue-600" />
                 Galerija radova
               </h3>
-              <p className="mt-2 text-sm italic text-[#94A3B8]">
-                Galerija uskoro.
-              </p>
+              {galleryImages.length > 0 ? (
+                <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3">
+                  {galleryImages.map((url, idx) => (
+                    <a
+                      key={idx}
+                      href={url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="relative aspect-square overflow-hidden rounded-xl border bg-slate-100"
+                    >
+                      <img
+                        src={url}
+                        alt={`Rad ${idx + 1}`}
+                        className="h-full w-full object-cover"
+                      />
+                    </a>
+                  ))}
+                </div>
+              ) : (
+                <p className="mt-2 text-sm italic text-[#94A3B8]">
+                  Nema slika u galeriji.
+                </p>
+              )}
             </section>
 
             {/* Gradovi pokrivenosti */}
@@ -202,31 +279,40 @@ export default async function HandymanProfilePage({
                 </p>
               ) : (
                 <div className="mt-3 space-y-3">
-                  {user.reviewsReceived.map((r) => (
-                    <div
-                      key={r.id}
-                      className="rounded-xl border border-slate-100 bg-slate-50/50 p-4"
-                    >
-                      <div className="flex items-center gap-2">
-                        <div className="flex gap-0.5">
-                          {Array.from({ length: r.rating }).map((_, i) => (
-                            <Star
-                              key={i}
-                              className="h-4 w-4 fill-amber-400 text-amber-400"
-                            />
-                          ))}
+                  {user.reviewsReceived.map((r) => {
+                    const parts = r.reviewer.name?.trim().split(/\s+/) ?? [];
+                    const initials = parts.map((p) => p[0]).join("").toUpperCase().slice(0, 2) || "?";
+                    return (
+                      <div
+                        key={r.id}
+                        className="rounded-xl border border-slate-100 bg-slate-50/50 p-4"
+                      >
+                        <div className="flex items-center justify-between gap-2">
+                          <div className="flex items-center gap-2">
+                            <div className="flex gap-0.5">
+                              {Array.from({ length: r.rating }).map((_, i) => (
+                                <Star
+                                  key={i}
+                                  className="h-4 w-4 fill-amber-400 text-amber-400"
+                                />
+                              ))}
+                            </div>
+                            <span className="text-sm font-medium text-[#64748B]">
+                              {initials}.
+                            </span>
+                          </div>
+                          <span className="text-xs text-[#94A3B8]">
+                            {new Date(r.createdAt).toLocaleDateString("sr")}
+                          </span>
                         </div>
-                        <span className="text-sm font-medium text-[#64748B]">
-                          {r.reviewer.name}
-                        </span>
+                        {r.comment && (
+                          <p className="mt-2 text-sm text-[#475569]">
+                            {r.comment}
+                          </p>
+                        )}
                       </div>
-                      {r.comment && (
-                        <p className="mt-2 text-sm text-[#475569]">
-                          {r.comment}
-                        </p>
-                      )}
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
             </section>

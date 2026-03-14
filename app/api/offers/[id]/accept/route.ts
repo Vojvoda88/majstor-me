@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { sendOfferAcceptedEmail } from "@/lib/email";
+import { createNotification } from "@/lib/notifications";
 import { logError } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
@@ -81,6 +82,10 @@ export async function POST(
       offer.request.category,
       requestOwner?.name ?? "Korisnik"
     );
+    createNotification(offer.handymanId, "OFFER_ACCEPTED", "Ponuda prihvaćena", {
+      body: `${requestOwner?.name ?? "Korisnik"} je prihvatio vašu ponudu za ${offer.request.category}`,
+      link: `/request/${offer.requestId}`,
+    });
 
     const updated = await prisma.offer.findUnique({
       where: { id: offerId },

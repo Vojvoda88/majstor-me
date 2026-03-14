@@ -2,11 +2,9 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { HomeHeader } from "@/components/home-page/home-header";
-import { Wrench, ChevronLeft, ChevronRight } from "lucide-react";
+import { Wrench, ChevronLeft, ChevronRight, MapPin } from "lucide-react";
 import { HandymanCard } from "@/components/lists/handyman-card";
-import { POPULAR_CATEGORIES } from "@/lib/categories";
 import { DEFAULT_PAGE_SIZE } from "@/lib/constants";
 
 type Handyman = {
@@ -18,26 +16,35 @@ type Handyman = {
   reviewCount: number;
 };
 
-export function GradPageContent({
+export function SeoLandingContent({
+  displayName,
+  internalCategory,
   cityName,
-  slug,
-  cityImage,
+  citySlug,
 }: {
+  displayName: string;
+  internalCategory: string;
   cityName: string;
-  slug: string;
-  cityImage?: string;
+  citySlug: string;
 }) {
   const [handymen, setHandymen] = useState<Handyman[]>([]);
+  const [sortBy, setSortBy] = useState<"rating" | "reviews">("rating");
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    setPage(1);
+  }, [internalCategory, cityName, sortBy]);
+
+  useEffect(() => {
     async function fetchHandymen() {
       setLoading(true);
       const params = new URLSearchParams();
+      params.set("category", internalCategory);
       params.set("city", cityName);
+      params.set("sort", sortBy);
       params.set("page", String(page));
       params.set("limit", String(DEFAULT_PAGE_SIZE));
       const res = await fetch(`/api/handymen?${params}`);
@@ -49,7 +56,7 @@ export function GradPageContent({
       setLoading(false);
     }
     fetchHandymen();
-  }, [cityName, page]);
+  }, [internalCategory, cityName, sortBy, page]);
 
   return (
     <main className="min-h-screen bg-slate-100 text-slate-900">
@@ -62,46 +69,41 @@ export function GradPageContent({
               Početna
             </Link>
             <span className="mx-2">/</span>
-            <span className="font-medium text-slate-900">{cityName}</span>
+            <Link href={`/grad/${citySlug}`} className="hover:text-slate-700">
+              {cityName}
+            </Link>
+            <span className="mx-2">/</span>
+            <span className="font-medium text-slate-900">{displayName}</span>
           </nav>
 
-          {cityImage && (
-            <div className="relative mb-6 h-48 overflow-hidden rounded-2xl">
-              <Image
-                src={cityImage}
-                alt={cityName}
-                fill
-                className="object-cover"
-                sizes="1440px"
-                priority
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 to-transparent" />
-              <h1 className="absolute bottom-4 left-4 text-3xl font-black text-white">
-                Majstori u {cityName}
-              </h1>
-            </div>
-          )}
+          <h1 className="mb-4 text-2xl font-black tracking-tight text-slate-950 sm:text-3xl">
+            {displayName} {cityName}
+          </h1>
+          <p className="mb-6 text-slate-600">
+            Pronađite provjerene {displayName.toLowerCase()}e u {cityName}. Brze ponude, lako usporedite majstore.
+          </p>
 
-          {!cityImage && (
-            <h1 className="mb-6 text-2xl font-black tracking-tight text-slate-950 sm:text-3xl">
-              Majstori u {cityName}
-            </h1>
-          )}
-
-          <h2 className="mb-4 text-lg font-bold text-slate-900">
-            Majstori u ovom gradu
-          </h2>
+          <div className="mb-6 flex flex-wrap gap-4">
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as "rating" | "reviews")}
+              className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700"
+            >
+              <option value="rating">Sortiraj po ocjeni</option>
+              <option value="reviews">Sortiraj po broju recenzija</option>
+            </select>
+          </div>
 
           {loading ? (
             <p className="py-12 text-center text-slate-500">Učitavanje...</p>
           ) : handymen.length === 0 ? (
-            <div className="mb-12 rounded-2xl border border-white bg-white p-12 text-center shadow-sm">
+            <div className="rounded-2xl border border-white bg-white p-12 text-center shadow-sm">
               <Wrench className="mx-auto mb-4 h-12 w-12 text-slate-300" />
               <p className="text-slate-600">
-                Trenutno nema majstora registrovanih za {cityName}.
+                Trenutno nema {displayName.toLowerCase()}a u {cityName}.
               </p>
               <Link
-                href="/request/create"
+                href={`/request/create?category=${encodeURIComponent(internalCategory)}&city=${encodeURIComponent(cityName)}`}
                 className="mt-4 inline-block font-medium text-blue-600 hover:underline"
               >
                 Objavi zahtjev
@@ -109,16 +111,17 @@ export function GradPageContent({
             </div>
           ) : (
             <>
-              <div className="mb-4 text-sm text-slate-500">
-                {total} majstor(a)
+              <div className="mb-4 flex items-center gap-2 text-sm text-slate-500">
+                <MapPin className="h-4 w-4" />
+                {total} majstor(a) u {cityName}
               </div>
-              <div className="mb-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {handymen.map((h) => (
                   <HandymanCard key={h.id} {...h} variant="compact" />
                 ))}
               </div>
               {totalPages > 1 && (
-                <div className="mb-12 flex items-center justify-center gap-2">
+                <div className="mt-6 flex items-center justify-center gap-2">
                   <button
                     type="button"
                     onClick={() => setPage((p) => Math.max(1, p - 1))}
@@ -143,21 +146,32 @@ export function GradPageContent({
             </>
           )}
 
-          <h2 className="mb-4 text-lg font-bold text-slate-900">
-            Kategorije dostupne u {cityName}
-          </h2>
-
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
-            {POPULAR_CATEGORIES.map((cat) => (
-              <Link
-                key={cat.slug}
-                href={`/${cat.slug}-${slug}`}
-                className="rounded-xl border border-white bg-white px-4 py-3 text-center font-medium text-slate-700 shadow-sm transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700"
-              >
-                {cat.displayName}
-              </Link>
-            ))}
-          </div>
+          {/* FAQ sekcija za SEO */}
+          <section className="mt-12 rounded-2xl border border-white bg-white p-6 shadow-sm">
+            <h2 className="mb-4 text-lg font-bold text-slate-900">
+              Često postavljana pitanja
+            </h2>
+            <div className="space-y-4 text-sm text-slate-600">
+              <div>
+                <h3 className="font-semibold text-slate-800">Kako pronaći {displayName.toLowerCase()}a u {cityName}?</h3>
+                <p>
+                  Pregledajte listu majstora iznad, uporedite ocjene i recenzije, te pošaljite zahtjev onome koji vam najviše odgovara. Odmah ćete dobiti ponude.
+                </p>
+              </div>
+              <div>
+                <h3 className="font-semibold text-slate-800">Koliko košta {displayName.toLowerCase()} u {cityName}?</h3>
+                <p>
+                  Cijene variraju ovisno o obimu posla. Pošaljite zahtjev i dobićete konkretne ponude od majstora iz {cityName} i okolice.
+                </p>
+              </div>
+              <div>
+                <h3 className="font-semibold text-slate-800">Da li su majstori provjereni?</h3>
+                <p>
+                  Majstori na Majstor.me imaju recenzije od stvarnih korisnika. Verifikovani majstori imaju dodatnu provjeru.
+                </p>
+              </div>
+            </div>
+          </section>
         </div>
       </div>
     </main>

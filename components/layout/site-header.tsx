@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { MobileNav } from "./mobile-nav";
+import { NotificationsDropdown } from "./notifications-dropdown";
 
 export function SiteHeader() {
   const { data: session, status } = useSession();
@@ -29,6 +30,7 @@ export function SiteHeader() {
                   <Button variant="ghost" size="sm">Dashboard</Button>
                 </Link>
               )}
+              <NotificationsDropdown />
               <Button
                 variant="outline"
                 size="sm"

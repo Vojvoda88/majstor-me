@@ -17,7 +17,7 @@ export function slugify(text: string): string {
 }
 
 // Re-export iz centralnog categories modula
-import { CATEGORY_CONFIG, CATEGORY_SLUGS } from "./categories";
+import { CATEGORY_CONFIG, CATEGORY_SLUGS, getCategoryBySlug } from "./categories";
 export { CATEGORY_SLUGS, CATEGORY_CONFIG };
 
 // Gradovi - slug -> display name
@@ -56,4 +56,60 @@ export function cityToSlug(name: string): string {
     ([_, n]) => n.toLowerCase() === name.toLowerCase()
   );
   return entry ? entry[0] : slugify(name);
+}
+
+const CITY_SLUG_LIST = Object.keys(CITY_SLUGS);
+const CATEGORY_SLUG_LIST = Object.keys(CATEGORY_SLUGS);
+
+/**
+ * Parsira SEO slug formata "categorySlug-citySlug" npr. vodoinstalater-niksic, klima-servis-budva
+ * Vraća { categorySlug, citySlug, categoryDisplayName, cityDisplayName, internalCategory } ili null
+ */
+export function parseCategoryCitySlug(combinedSlug: string): {
+  categorySlug: string;
+  citySlug: string;
+  categoryDisplayName: string;
+  cityDisplayName: string;
+  internalCategory: string;
+} | null {
+  const parts = combinedSlug.split("-");
+  if (parts.length < 2) return null;
+
+  // Grad može biti 1-3 dijela (niksic, herceg-novi, bijelo-polje)
+  for (let cityParts = 1; cityParts <= Math.min(3, parts.length); cityParts++) {
+    const citySlug = parts.slice(-cityParts).join("-");
+    const categorySlug = parts.slice(0, -cityParts).join("-");
+    if (!categorySlug) continue;
+    const cityName = CITY_SLUGS[citySlug];
+    const config = getCategoryBySlug(categorySlug);
+    if (cityName && config) {
+      return {
+        categorySlug,
+        citySlug,
+        categoryDisplayName: config.displayName,
+        cityDisplayName: cityName,
+        internalCategory: config.internalCategory,
+      };
+    }
+  }
+  return null;
+}
+
+/** Generiše sve validne category-city SEO slugove za sitemap */
+export function getAllCategoryCitySlugs(): { slug: string; categoryDisplayName: string; cityDisplayName: string }[] {
+  const result: { slug: string; categoryDisplayName: string; cityDisplayName: string }[] = [];
+  for (const catSlug of CATEGORY_SLUG_LIST) {
+    const catName = CATEGORY_SLUGS[catSlug];
+    if (!catName) continue;
+    for (const citySlug of CITY_SLUG_LIST) {
+      const cityName = CITY_SLUGS[citySlug];
+      if (!cityName) continue;
+      result.push({
+        slug: `${catSlug}-${citySlug}`,
+        categoryDisplayName: catName,
+        cityDisplayName: cityName,
+      });
+    }
+  }
+  return result;
 }

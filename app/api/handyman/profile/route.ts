@@ -3,15 +3,24 @@ import { z } from "zod";
 
 export const dynamic = "force-dynamic";
 import { auth } from "@/lib/auth";
-import { REQUEST_CATEGORIES } from "@/lib/constants";
+import { REQUEST_CATEGORIES, MAX_GALLERY_IMAGES } from "@/lib/constants";
 import { logError } from "@/lib/logger";
 import { zodErrorToString } from "@/lib/api-response";
 
 const updateProfileSchema = z.object({
+  phone: z.string().max(20).optional().nullable(),
   bio: z.string().optional(),
   avatarUrl: z.string().url().optional().nullable(),
   categories: z.array(z.enum(REQUEST_CATEGORIES as unknown as [string, ...string[]])),
   cities: z.array(z.string()),
+  galleryImages: z.array(z.string().url()).max(MAX_GALLERY_IMAGES).optional(),
+  yearsOfExperience: z.number().int().min(0).max(50).optional().nullable(),
+  startingPrice: z.number().min(0).optional().nullable(),
+  completedJobsCount: z.number().int().min(0).optional(),
+  averageResponseMinutes: z.number().int().min(0).max(1440).optional().nullable(),
+  serviceAreasDescription: z.string().max(500).optional().nullable(),
+  travelRadiusKm: z.number().int().min(0).max(200).optional().nullable(),
+  availabilityStatus: z.enum(["AVAILABLE", "BUSY", "EMERGENCY_ONLY"]).optional().nullable(),
 });
 
 export async function GET() {
@@ -74,7 +83,29 @@ export async function PATCH(request: Request) {
       );
     }
 
-    const { avatarUrl, categories, cities, bio } = parsed.data;
+    const {
+      phone,
+      avatarUrl,
+      categories,
+      cities,
+      bio,
+      galleryImages,
+      yearsOfExperience,
+      startingPrice,
+      completedJobsCount,
+      averageResponseMinutes,
+      serviceAreasDescription,
+      travelRadiusKm,
+      availabilityStatus,
+    } = parsed.data;
+
+    if (phone !== undefined) {
+      await prisma.user.update({
+        where: { id: session.user.id },
+        data: { phone: phone || null },
+      });
+    }
+
     const profile = await prisma.handymanProfile.upsert({
       where: { userId: session.user.id },
       create: {
@@ -82,12 +113,21 @@ export async function PATCH(request: Request) {
         bio,
         categories: categories as string[],
         cities,
+        galleryImages: galleryImages ?? [],
       },
       update: {
         bio,
-        ...(avatarUrl !== undefined && { avatarUrl }),
         categories: categories as string[],
         cities,
+        ...(avatarUrl !== undefined && { avatarUrl }),
+        ...(galleryImages !== undefined && { galleryImages }),
+        ...(yearsOfExperience !== undefined && { yearsOfExperience }),
+        ...(startingPrice !== undefined && { startingPrice }),
+        ...(completedJobsCount !== undefined && { completedJobsCount }),
+        ...(averageResponseMinutes !== undefined && { averageResponseMinutes }),
+        ...(serviceAreasDescription !== undefined && { serviceAreasDescription }),
+        ...(travelRadiusKm !== undefined && { travelRadiusKm }),
+        ...(availabilityStatus !== undefined && { availabilityStatus }),
       },
     });
 

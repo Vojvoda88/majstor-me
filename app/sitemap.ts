@@ -27,6 +27,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }));
 
+  const seoLandingPages: MetadataRoute.Sitemap = POPULAR_CATEGORIES.flatMap((cat) =>
+    HOMEPAGE_CITIES.map((city) => ({
+      url: `${base}/${cat.slug}-${city.slug}`,
+      lastModified: new Date(),
+      changeFrequency: "weekly" as const,
+      priority: 0.75,
+    }))
+  );
+
   let handymanPages: MetadataRoute.Sitemap = [];
   try {
     const { prisma } = await import("@/lib/db");
@@ -45,5 +54,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Skip handyman pages if DB unavailable at build
   }
 
-  return [...staticPages, ...categoryPages, ...cityPages, ...handymanPages];
+  return [...staticPages, ...categoryPages, ...cityPages, ...seoLandingPages, ...handymanPages];
 }

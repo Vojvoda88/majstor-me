@@ -10,6 +10,7 @@ import { OfferCard } from "@/components/lists/offer-card";
 import { RequestDetailClient } from "./request-detail-client";
 import { SendOfferForm } from "@/components/forms/send-offer-form";
 import { CancelRequestButton } from "@/components/request/cancel-request-button";
+import { RequestChatPanel } from "@/components/chat/request-chat-panel";
 import { SiteHeader } from "@/components/layout/site-header";
 import { MapPin, Calendar, User } from "lucide-react";
 
@@ -66,6 +67,21 @@ export default async function RequestDetailPage({
 
   if (!req) notFound();
 
+  let handymenNotified = 0;
+  try {
+    handymenNotified = await prisma.handymanProfile.count({
+      where: {
+        categories: { has: req.category },
+        OR: [
+          { cities: { has: req.city } },
+          { user: { city: req.city } },
+        ],
+      },
+    });
+  } catch {
+    // ignore
+  }
+
   const isOwner = session?.user?.id === req.userId;
   const acceptedOffer = req.offers.find((o) => o.status === "ACCEPTED");
 
@@ -94,6 +110,7 @@ export default async function RequestDetailPage({
                     ? "secondary"
                     : "default"
               }
+              className={req.status === "IN_PROGRESS" ? "bg-blue-100 text-blue-800 border-blue-200" : undefined}
             >
               {STATUS_LABELS[req.status]}
             </Badge>
@@ -123,6 +140,11 @@ export default async function RequestDetailPage({
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
+          {isOwner && req.status === "OPEN" && handymenNotified > 0 && (
+            <p className="rounded-lg bg-emerald-50 px-3 py-2 text-sm text-emerald-800">
+              Obavijestili smo {handymenNotified} majstora u vašoj oblasti koji mogu poslati ponude.
+            </p>
+          )}
           <div>
             <h3 className="text-sm font-medium text-[#475569]">Opis</h3>
             <p className="mt-1 text-[#64748B]">{req.description}</p>
@@ -147,12 +169,24 @@ export default async function RequestDetailPage({
             <CardTitle>Prihvaćena ponuda</CardTitle>
             <CardDescription>Posao je u toku. Kada majstor završi, označite ga kao završen.</CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="space-y-4">
             <RequestDetailClient
               requestId={req.id}
               acceptedOffer={acceptedOffer}
               sessionUserId={session!.user!.id}
             />
+            <RequestChatPanel requestId={req.id} />
+          </CardContent>
+        </Card>
+      )}
+
+      {session?.user?.role === "HANDYMAN" && req.status === "IN_PROGRESS" && acceptedOffer?.handymanId === session.user.id && (
+        <Card className="mt-6 rounded-2xl border-[#E2E8F0] shadow-card">
+          <CardHeader>
+            <CardTitle>Razgovor sa korisnikom</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <RequestChatPanel requestId={req.id} />
           </CardContent>
         </Card>
       )}

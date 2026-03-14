@@ -3,7 +3,9 @@ import { z } from "zod";
 
 export const dynamic = "force-dynamic";
 import { auth } from "@/lib/auth";
+import { isRateLimited, getRetryAfterSeconds } from "@/lib/rate-limit";
 import { sendNewOfferEmail } from "@/lib/email";
+import { createNotification } from "@/lib/notifications";
 import { logError } from "@/lib/logger";
 import { zodErrorToString } from "@/lib/api-response";
 
@@ -35,6 +37,13 @@ export async function POST(request: Request) {
       return NextResponse.json(
         { success: false, error: "Samo majstori mogu slati ponude" },
         { status: 403 }
+      );
+    }
+
+    if (isRateLimited(`offer:${session.user.id}`, 30, 60 * 60 * 1000)) {
+      return NextResponse.json(
+        { success: false, error: "Previše ponuda. Pokušajte ponovo kasnije." },
+        { status: 429, headers: { "Retry-After": String(getRetryAfterSeconds(`offer:${session.user.id}`)) } }
       );
     }
 
@@ -114,6 +123,10 @@ export async function POST(request: Request) {
     });
 
     sendNewOfferEmail(req.userId, req.category, handyman?.name ?? "Majstor");
+    createNotification(req.userId, "NEW_OFFER", `Nova ponuda: ${req.category}`, {
+      body: `${handyman?.name ?? "Majstor"} vam je poslao ponudu`,
+      link: `/request/${requestId}`,
+    });
 
     return NextResponse.json({ success: true, data: offer });
   } catch (error) {

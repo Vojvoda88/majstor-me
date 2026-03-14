@@ -3,8 +3,15 @@ import { hash } from "bcryptjs";
 import { z } from "zod";
 import { logError } from "@/lib/logger";
 import { zodErrorToString } from "@/lib/api-response";
+import { isRateLimited, getRetryAfterSeconds } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
+
+function getClientIp(request: Request): string {
+  const forwarded = request.headers.get("x-forwarded-for");
+  if (forwarded) return forwarded.split(",")[0]?.trim() || "unknown";
+  return request.headers.get("x-real-ip") || "unknown";
+}
 
 const registerSchema = z.object({
   name: z.string().min(2, "Ime mora imati najmanje 2 karaktera"),
@@ -17,6 +24,14 @@ const registerSchema = z.object({
 
 export async function POST(request: Request) {
   try {
+    const ip = getClientIp(request);
+    if (isRateLimited(`register:${ip}`, 5, 60 * 60 * 1000)) {
+      return NextResponse.json(
+        { success: false, error: "Previše pokušaja registracije. Pokušajte ponovo kasnije." },
+        { status: 429, headers: { "Retry-After": String(getRetryAfterSeconds(`register:${ip}`)) } }
+      );
+    }
+
     const body = await request.json();
     const parsed = registerSchema.safeParse(body);
 

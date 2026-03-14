@@ -11,7 +11,7 @@ import { Label } from "@/components/ui/label";
 
 const reviewSchema = z.object({
   rating: z.number().min(1).max(5),
-  comment: z.string().optional(),
+  comment: z.string().max(1000).optional(),
 });
 
 type ReviewFormData = z.infer<typeof reviewSchema>;
@@ -117,7 +117,7 @@ function ReviewForm({ requestId, handymanName }: { requestId: string; handymanNa
       </div>
       <div>
         <Label>Komentar (opciono)</Label>
-        <Textarea {...register("comment")} className="mt-2" rows={3} />
+        <Textarea {...register("comment")} className="mt-2" rows={3} maxLength={1000} placeholder="Opcionalno (max 1000 znakova)" />
       </div>
       <Button type="submit" disabled={mutation.isPending}>
         {mutation.isPending ? "Šaljem..." : "Ostavite recenziju"}

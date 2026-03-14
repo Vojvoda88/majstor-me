@@ -81,22 +81,40 @@ model User {
   reportsMade     Report[]        @relation("ReportReporter")
   reportsAgainst  Report[]        @relation("ReportReported")
   adminActions    AdminAction[]
+  messagesSent    Message[]
+  notifications   Notification[]
 
   @@map("users")
 }
 
+enum AvailabilityStatus {
+  AVAILABLE
+  BUSY
+  EMERGENCY_ONLY
+}
+
 model HandymanProfile {
-  id               String         @id @default(cuid())
-  userId           String         @unique @map("user_id")
-  bio              String?
-  avatarUrl        String?        @map("avatar_url") // URL from storage; fallback to initials when null
-  categories       String[]       // MVP: array of category names
-  cities           String[]       // Cities where handyman works
-  verifiedStatus   VerifiedStatus @default(PENDING) @map("verified_status")
-  ratingAvg        Float          @default(0) @map("rating_avg")
-  reviewCount      Int            @default(0) @map("review_count")
-  subscriptionPlan String         @default("FREE") @map("subscription_plan")
-  createdAt        DateTime       @default(now()) @map("created_at")
+  id                    String             @id @default(cuid())
+  userId                String             @unique @map("user_id")
+  bio                   String?
+  avatarUrl             String?            @map("avatar_url")
+  galleryImages         String[]           @default([]) @map("gallery_images")
+  categories            String[]           // array of category names
+  cities                String[]           // Cities where handyman works
+  yearsOfExperience     Int?               @map("years_of_experience")
+  startingPrice         Float?             @map("starting_price")
+  completedJobsCount    Int                @default(0) @map("completed_jobs_count")
+  averageResponseMinutes Int?              @map("average_response_minutes")
+  serviceAreasDescription String?          @map("service_areas_description")
+  travelRadiusKm        Int?               @map("travel_radius_km")
+  availabilityStatus    AvailabilityStatus? @default(AVAILABLE) @map("availability_status")
+  verifiedStatus        VerifiedStatus     @default(PENDING) @map("verified_status")
+  ratingAvg             Float              @default(0) @map("rating_avg")
+  reviewCount           Int                @default(0) @map("review_count")
+  subscriptionPlan      String             @default("FREE") @map("subscription_plan")
+  isPromoted            Boolean            @default(false) @map("is_promoted")
+  promotedUntil         DateTime?          @map("promoted_until")
+  createdAt             DateTime           @default(now()) @map("created_at")
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -116,10 +134,11 @@ model Request {
   photos      String[]      @default([]) // URLs from storage
   createdAt   DateTime      @default(now()) @map("created_at")
 
-  user   User     @relation("RequestCreator", fields: [userId], references: [id], onDelete: Cascade)
-  offers Offer[]
-  review Review?
-  report Report[]
+  user          User          @relation("RequestCreator", fields: [userId], references: [id], onDelete: Cascade)
+  offers        Offer[]
+  review        Review?
+  report        Report[]
+  conversation  Conversation?
 
   @@index([status])
   @@index([city])
@@ -193,4 +212,47 @@ model AdminAction {
   admin User @relation(fields: [adminId], references: [id], onDelete: Cascade)
 
   @@map("admin_actions")
+}
+
+model Conversation {
+  id        String    @id @default(cuid())
+  requestId String    @unique @map("request_id")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+
+  request  Request   @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  messages Message[]
+
+  @@map("conversations")
+}
+
+model Message {
+  id             String   @id @default(cuid())
+  conversationId String   @map("conversation_id")
+  senderId       String   @map("sender_id")
+  content        String   @db.Text
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  sender       User         @relation(fields: [senderId], references: [id], onDelete: Cascade)
+
+  @@index([conversationId])
+  @@map("messages")
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  type      String   // NEW_OFFER, OFFER_ACCEPTED, NEW_MESSAGE, NEW_REVIEW, VERIFIED
+  title     String
+  body      String?  @db.Text
+  link      String?
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([userId, read])
+  @@map("notifications")
 }

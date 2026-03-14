@@ -68,3 +68,13 @@ export const MAX_IMAGE_SIZE_BYTES = 3 * 1024 * 1024; // 3MB
 
 // Pagination
 export const DEFAULT_PAGE_SIZE = 20;
+
+// Handyman availability
+export const AVAILABILITY_STATUS_OPTIONS = [
+  { value: "AVAILABLE", label: "Dostupan" },
+  { value: "BUSY", label: "Zauzet" },
+  { value: "EMERGENCY_ONLY", label: "Samo hitne intervencije" },
+] as const;
+
+// Gallery
+export const MAX_GALLERY_IMAGES = 10;

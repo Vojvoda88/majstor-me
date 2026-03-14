@@ -6,6 +6,8 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { HandymanRequestList } from "./handyman-request-list";
+import { OnboardingBanner } from "@/components/handyman/onboarding-banner";
+import { calcProfileCompletion } from "@/lib/handyman-onboarding";
 
 const URGENCY_LABELS: Record<string, string> = {
   HITNO_DANAS: "Hitno danas",
@@ -39,7 +41,7 @@ export default async function HandymanDashboardPage({
   const { prisma } = await import("@/lib/db");
   const profile = await prisma.handymanProfile.findUnique({
     where: { userId: session.user.id },
-    include: { user: { select: { city: true } } },
+    include: { user: { select: { city: true, phone: true } } },
   });
 
   if (!profile) {
@@ -104,8 +106,13 @@ export default async function HandymanDashboardPage({
   const requests = sorted.slice(skip, skip + limit).map(({ _distance, ...r }) => r);
   const totalDisplayed = sorted.length;
 
+  const onboarding = calcProfileCompletion(profile, profile?.user);
+
   return (
     <div className="container mx-auto max-w-4xl px-4 py-8">
+      {onboarding.percent < 100 && (
+        <OnboardingBanner percent={onboarding.percent} steps={onboarding.steps} className="mb-6" />
+      )}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-[#0F172A] sm:text-3xl">

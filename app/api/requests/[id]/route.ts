@@ -121,6 +121,10 @@ export async function PATCH(
       });
       if (acceptedOffer) {
         sendJobCompletedEmail(acceptedOffer.handymanId, updated.category);
+        await prisma.handymanProfile.updateMany({
+          where: { userId: acceptedOffer.handymanId },
+          data: { completedJobsCount: { increment: 1 } },
+        });
       }
     }
 

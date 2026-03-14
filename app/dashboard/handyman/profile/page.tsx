@@ -1,6 +1,8 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { HandymanProfileForm } from "./handyman-profile-form";
+import { calcProfileCompletion } from "@/lib/handyman-onboarding";
+import { OnboardingBanner } from "@/components/handyman/onboarding-banner";
 
 export const dynamic = "force-dynamic";
 
@@ -10,9 +12,18 @@ export default async function HandymanProfilePage() {
   if (session.user.role !== "HANDYMAN") redirect("/");
 
   const { prisma } = await import("@/lib/db");
-  const profile = await prisma.handymanProfile.findUnique({
-    where: { userId: session.user.id },
-  });
+  const [profile, user] = await Promise.all([
+    prisma.handymanProfile.findUnique({ where: { userId: session.user.id } }),
+    prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { phone: true },
+    }),
+  ]);
+  const profileData = profile
+    ? { ...profile, galleryImages: profile.galleryImages ?? [], phone: user?.phone ?? null }
+    : null;
+
+  const onboarding = calcProfileCompletion(profileData, user);
 
   return (
     <div className="container mx-auto max-w-lg px-4 py-8">
@@ -20,7 +31,10 @@ export default async function HandymanProfilePage() {
       <p className="page-description">
         Izaberite kategorije i gradove u kojima nudite usluge
       </p>
-      <HandymanProfileForm profile={profile} />
+      {onboarding.percent < 100 && (
+        <OnboardingBanner percent={onboarding.percent} steps={onboarding.steps} className="mb-6" />
+      )}
+      <HandymanProfileForm profile={profileData} />
     </div>
   );
 }

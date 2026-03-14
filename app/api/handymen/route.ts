@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getInternalCategory } from "@/lib/categories";
 import { DEFAULT_PAGE_SIZE } from "@/lib/constants";
 import { getDistanceBetweenCities } from "@/lib/distance";
+import { calcHandymanScore } from "@/lib/handyman-score";
 
 export const dynamic = "force-dynamic";
 
@@ -32,31 +33,42 @@ export async function GET(req: NextRequest) {
 
     let filtered = handymen.filter((u) => u.handymanProfile);
 
-    // When city provided: sort by distance (closest first). No city filter - svi majstori kategorije.
-    if (city) {
-      filtered = filtered
-        .map((u) => ({
-          ...u,
-          _distance: getDistanceBetweenCities(u.city, city),
-        }))
-        .sort((a, b) => (a._distance ?? 9999) - (b._distance ?? 9999));
-    } else {
-      filtered.sort((a, b) => {
-        const aProf = a.handymanProfile!;
-        const bProf = b.handymanProfile!;
-        if (sortBy === "reviews") {
-          return bProf.reviewCount - aProf.reviewCount;
-        }
-        return bProf.ratingAvg - aProf.ratingAvg;
-      });
+    const profileExt = (p: unknown) => p as { averageResponseMinutes?: number | null; completedJobsCount?: number; isPromoted?: boolean };
+
+    const withScore = filtered.map((u) => {
+      const prof = u.handymanProfile!;
+      return {
+        ...u,
+        _score: calcHandymanScore(
+          {
+            city: u.city,
+            handymanProfile: {
+              ratingAvg: prof.ratingAvg,
+              reviewCount: prof.reviewCount,
+              verifiedStatus: prof.verifiedStatus,
+              averageResponseMinutes: profileExt(prof).averageResponseMinutes,
+              completedJobsCount: profileExt(prof).completedJobsCount,
+            },
+            isPromoted: profileExt(prof).isPromoted,
+          },
+          city
+        ),
+        _distance: city ? getDistanceBetweenCities(u.city, city) : null,
+      };
+    });
+
+    if (city || sortBy === "rating" || sortBy === "reviews") {
+      withScore.sort((a, b) => b._score - a._score);
     }
 
-    const total = filtered.length;
+    filtered = withScore;
+
+    const total = withScore.length;
     const totalPages = Math.ceil(total / limit) || 1;
     const offset = (page - 1) * limit;
-    const items = filtered.slice(offset, offset + limit);
+    const items = withScore.slice(offset, offset + limit);
 
-    const mapItem = (u: (typeof items)[0]) => ({
+    const mapItem = (u: (typeof withScore)[0]) => ({
       id: u.id,
       name: u.name,
       city: u.city,
@@ -64,6 +76,7 @@ export async function GET(req: NextRequest) {
       ratingAvg: u.handymanProfile?.ratingAvg ?? 0,
       reviewCount: u.handymanProfile?.reviewCount ?? 0,
       avatarUrl: (u.handymanProfile as { avatarUrl?: string } | null)?.avatarUrl ?? null,
+      verifiedStatus: u.handymanProfile?.verifiedStatus ?? "PENDING",
     });
 
     return NextResponse.json({

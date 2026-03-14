@@ -7,6 +7,7 @@ import { HomeHeader } from "@/components/home-page/home-header";
 import { Wrench, MapPin, ChevronLeft, ChevronRight } from "lucide-react";
 import { HandymanCard } from "@/components/lists/handyman-card";
 import { CITIES, DEFAULT_PAGE_SIZE } from "@/lib/constants";
+import { HOMEPAGE_CITIES } from "@/lib/homepage-data";
 
 type Handyman = {
   id: string;
@@ -82,6 +83,17 @@ export function CategoryPageContent({
             {displayName}
           </h1>
 
+          <div className="mb-4 flex flex-wrap gap-2">
+            {HOMEPAGE_CITIES.slice(0, 8).map((c) => (
+              <Link
+                key={c.slug}
+                href={`/${slug}-${c.slug}`}
+                className="rounded-lg bg-white px-3 py-1.5 text-sm font-medium text-slate-600 shadow-sm hover:bg-blue-50 hover:text-blue-700"
+              >
+                {c.name}
+              </Link>
+            ))}
+          </div>
           <div className="mb-6 flex flex-wrap gap-4">
             <select
               value={cityFilter}
