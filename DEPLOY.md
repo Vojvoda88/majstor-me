@@ -59,9 +59,19 @@ DIRECT_DATABASE_URL="postgresql://postgres.[REF]:[PASSWORD]@[HOST].pooler.supaba
 npm install
 npx prisma generate
 npx prisma db push
+# ILI ako koristite migracije:
+npm run db:migrate:deploy
 ```
 
-`db push` kreira tabele. Za produkciju: pokreni lokalno sa `.env` koji pokazuje na Supabase (DIRECT_DATABASE_URL).
+`db push` kreira/ažurira tabele. Za produkciju: pokreni lokalno sa `.env` koji pokazuje na Supabase (DIRECT_DATABASE_URL).
+
+**Važno:** Nakon svake promjene schema (npr. nove tabele: conversations, messages, notifications), pokrenite:
+
+```bash
+npx prisma db push
+```
+
+prije push-a na git i deploya.
 
 **Prisma u produkciji (Vercel):**
 - Build koristi `prisma generate` (automatski)
