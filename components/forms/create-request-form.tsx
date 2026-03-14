@@ -85,14 +85,14 @@ export function CreateRequestForm() {
   });
 
   return (
-    <Card className="w-full border-[#E2E8F0] shadow-soft">
-      <CardHeader>
-        <CardTitle>Novi zahtjev</CardTitle>
-        <CardDescription>
+    <Card className="w-full rounded-xl bg-white shadow-sm transition hover:shadow-md">
+      <CardHeader className="px-4 sm:px-6">
+        <CardTitle className="text-xl sm:text-2xl">Novi zahtjev</CardTitle>
+        <CardDescription className="text-sm sm:text-base">
           Opisite problem ili potrebu. Majstori će vam poslati ponude.
         </CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="px-4 sm:px-6">
         <form
           onSubmit={handleSubmit((data) => mutation.mutate(data))}
           className="space-y-5"
@@ -121,7 +121,8 @@ export function CreateRequestForm() {
             <Textarea
               id="description"
               placeholder="Opišite šta vam treba: šta je pokvareno, dimenzije, kada vam treba, itd. Detaljniji opis = bolje ponude."
-              rows={4}
+              rows={5}
+              className="min-h-[120px] text-base"
               {...register("description")}
             />
             {errors.description && (
@@ -173,7 +174,12 @@ export function CreateRequestForm() {
               ))}
             </select>
           </div>
-          <Button type="submit" className="mt-2 w-full" size="lg" disabled={mutation.isPending}>
+          <Button
+            type="submit"
+            className="mt-2 h-14 min-h-[48px] w-full text-base font-semibold sm:h-12 sm:text-sm"
+            size="lg"
+            disabled={mutation.isPending}
+          >
             {mutation.isPending ? "Objavljivanje..." : "Objavi zahtjev"}
           </Button>
         </form>

@@ -39,7 +39,7 @@ export default async function UserDashboardPage() {
   });
 
   return (
-    <div className="container mx-auto max-w-4xl px-4 py-8">
+    <div className="mx-auto max-w-4xl px-4 py-6 sm:py-8">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-[#0F172A] sm:text-3xl">

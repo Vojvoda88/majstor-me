@@ -19,7 +19,7 @@ const MapInner = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="flex h-64 items-center justify-center rounded-xl border border-slate-200 bg-slate-50 text-slate-500">
+      <div className="flex h-56 min-h-[200px] items-center justify-center rounded-xl border border-slate-200 bg-slate-50 text-slate-500 sm:h-64">
         Učitavanje mape...
       </div>
     ),

@@ -53,62 +53,92 @@ function HandymanCardComponent({
     .toUpperCase()
     .slice(0, 2) ?? "?";
 
-  if (variant === "compact") {
-    return (
-      <Link
-        href={`/handyman/${id}`}
-        className="flex items-center gap-4 rounded-2xl border border-white bg-white p-4 shadow-sm transition hover:shadow-md"
-      >
-        <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full bg-blue-100">
+  const badges = (
+    <div className="mt-2 flex flex-wrap gap-2">
+      {isVerified && (
+        <span className="inline-flex items-center gap-1 rounded-lg bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-700">
+          <CheckCircle2 className="h-3.5 w-3.5" /> Verifikovan
+        </span>
+      )}
+      <span className="inline-flex items-center gap-1 rounded-lg bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-700">
+        <Star className="h-3.5 w-3.5 fill-amber-500" /> {ratingAvg.toFixed(1)} ({reviewCount})
+      </span>
+      {averageResponseMinutes != null && (
+        <span className="inline-flex items-center gap-1 rounded-lg bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-700">
+          <Clock className="h-3.5 w-3.5" /> Odgovara za ~{averageResponseMinutes} min
+        </span>
+      )}
+      {completedJobsCount > 0 && (
+        <span className="inline-flex items-center gap-1 rounded-lg bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-700">
+          <Briefcase className="h-3.5 w-3.5" /> {completedJobsCount} poslova
+        </span>
+      )}
+      {isPromoted && (
+        <span className="inline-flex items-center gap-1 rounded-lg bg-amber-100 px-2.5 py-1 text-xs font-medium text-amber-800">
+          <Award className="h-3.5 w-3.5" /> Premium
+        </span>
+      )}
+    </div>
+  );
+
+  const cardContent = (
+    <>
+      <div className="flex flex-col items-start gap-4 sm:flex-row sm:gap-4">
+        <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-full bg-blue-100 sm:h-20 sm:w-20">
           {avatarUrl ? (
-            <Image src={avatarUrl} alt={name ?? "Majstor"} width={56} height={56} className="object-cover" loading="lazy" sizes="56px" />
+            <Image src={avatarUrl} alt={name ?? "Majstor"} width={80} height={80} className="h-full w-full object-cover" loading="lazy" sizes="80px" />
           ) : (
-            <span className="text-lg font-bold text-blue-600">{initials}</span>
+            variant === "compact" ? (
+              <span className="text-xl font-bold text-blue-600 sm:text-2xl">{initials}</span>
+            ) : (
+              <Wrench className="h-8 w-8 text-blue-600 sm:h-10 sm:w-10" />
+            )
           )}
         </div>
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
-            <h3 className="font-bold text-slate-900">{name || "Majstor"}</h3>
-            {isVerified && (
-              <span className="inline-flex items-center gap-0.5 text-emerald-600" title="Verifikovan majstor">
-                <CheckCircle2 className="h-3.5 w-3.5" />
-              </span>
-            )}
-            {isPromoted && (
-              <span className="inline-flex items-center gap-0.5 text-amber-600" title="Premium majstor">
-                <Award className="h-3.5 w-3.5" />
-              </span>
+            <h3 className="text-base font-semibold text-gray-900 sm:text-lg">{name || "Majstor"}</h3>
+            <span className="flex items-center gap-1 text-amber-600">
+              <Star className="h-4 w-4 fill-amber-500" /> {ratingAvg.toFixed(1)}
+            </span>
+          </div>
+          <p className="mt-0.5 text-sm text-gray-600">
+            {categories[0] || "Majstor"} • {city || "Crna Gora"}
+          </p>
+          {badges}
+        </div>
+      </div>
+      <span className="mt-4 flex w-full min-h-[48px] items-center justify-center rounded-xl bg-blue-600 px-5 py-3 text-base font-semibold text-white transition active:scale-[0.98] sm:mt-4 sm:inline-flex sm:w-auto sm:min-h-0 sm:py-2.5 sm:text-sm">
+        Pogledaj profil
+      </span>
+    </>
+  );
+
+  if (variant === "compact") {
+    return (
+      <Link
+        href={`/handyman/${id}`}
+        className="flex flex-col rounded-xl bg-white p-5 shadow-sm transition hover:shadow-md active:scale-[0.99] sm:flex-row sm:items-center sm:p-6"
+      >
+        <div className="flex w-full gap-4 sm:flex-1">
+          <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full bg-blue-100 sm:h-16 sm:w-16">
+            {avatarUrl ? (
+              <Image src={avatarUrl} alt={name ?? "Majstor"} width={64} height={64} className="object-cover" loading="lazy" sizes="64px" />
+            ) : (
+              <span className="text-lg font-bold text-blue-600 sm:text-xl">{initials}</span>
             )}
           </div>
-          <p className="flex items-center gap-1 text-sm text-slate-500">
-            <MapPin className="h-4 w-4 shrink-0" />
-            {city || "Crna Gora"}
-          </p>
-          <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-sm">
-            <span className="flex items-center gap-1">
-              <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
-              <span className="font-semibold">{ratingAvg.toFixed(1)}</span>
-            </span>
-            <span className="text-slate-400">({reviewCount} rec.)</span>
-            {completedJobsCount > 0 && (
-              <span className="flex items-center gap-0.5 text-slate-500">
-                <Briefcase className="h-3.5 w-3.5" />
-                {completedJobsCount}
-              </span>
-            )}
-            {averageResponseMinutes != null && (
-              <span className="flex items-center gap-0.5 text-slate-500">
-                <Clock className="h-3.5 w-3.5" />
-                ~{averageResponseMinutes} min
-              </span>
-            )}
-            {availabilityStatus && (
-              <span className="rounded bg-slate-100 px-1.5 py-0.5 text-xs text-slate-600">
-                {AVAILABILITY_LABELS[availabilityStatus] ?? availabilityStatus}
-              </span>
-            )}
+          <div className="min-w-0 flex-1">
+            <h3 className="font-semibold text-gray-900">{name || "Majstor"}</h3>
+            <p className="text-sm text-gray-600">
+              {categories[0] || "Majstor"} • {city || "Crna Gora"}
+            </p>
+            {badges}
           </div>
         </div>
+        <span className="mt-4 flex min-h-[48px] w-full items-center justify-center rounded-xl bg-blue-600 text-base font-semibold text-white sm:mt-3 sm:min-h-0 sm:w-auto sm:flex-initial sm:px-4 sm:py-2 sm:text-sm">
+          Pogledaj profil →
+        </span>
       </Link>
     );
   }
@@ -116,62 +146,9 @@ function HandymanCardComponent({
   return (
     <Link
       href={`/handyman/${id}`}
-      className="group flex flex-col overflow-hidden rounded-2xl border border-white/80 bg-white shadow-[0_8px_30px_rgba(15,23,42,0.06)] transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_12px_40px_rgba(15,23,42,0.1)]"
+      className="group flex flex-col rounded-xl bg-white p-5 shadow-sm transition hover:shadow-md active:scale-[0.99] sm:flex-row sm:items-start sm:gap-4 sm:p-6"
     >
-      <div className="flex h-24 items-center justify-center bg-slate-50">
-        <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-full bg-blue-100">
-          {avatarUrl ? (
-            <Image src={avatarUrl} alt={name ?? "Majstor"} width={64} height={64} className="object-cover" loading="lazy" sizes="64px" />
-          ) : (
-            <Wrench className="h-8 w-8 text-blue-600" />
-          )}
-        </div>
-      </div>
-      <div className="flex flex-1 flex-col p-4">
-        <div className="flex flex-wrap items-center gap-2">
-          <h3 className="font-bold text-slate-900">{name || "Majstor"}</h3>
-          {isVerified && (
-            <span className="inline-flex items-center gap-0.5 text-emerald-600" title="Verifikovan majstor">
-              <CheckCircle2 className="h-3.5 w-3.5" />
-            </span>
-          )}
-          {isPromoted && (
-            <span className="inline-flex items-center gap-0.5 text-amber-600" title="Premium majstor">
-              <Award className="h-3.5 w-3.5" />
-            </span>
-          )}
-        </div>
-        <p className="mt-0.5 text-sm text-slate-500">
-          {categories[0] || "Majstor"} • {city || "Crna Gora"}
-        </p>
-        <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-sm">
-          <span className="flex items-center gap-1">
-            <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
-            <span className="font-semibold text-slate-800">{ratingAvg.toFixed(1)}</span>
-          </span>
-          <span className="text-slate-400">({reviewCount} rec.)</span>
-          {completedJobsCount != null && completedJobsCount > 0 && (
-            <span className="flex items-center gap-0.5 text-slate-500">
-              <Briefcase className="h-3.5 w-3.5" />
-              {completedJobsCount} poslova
-            </span>
-          )}
-          {averageResponseMinutes != null && (
-            <span className="flex items-center gap-0.5 text-slate-500">
-              <Clock className="h-3.5 w-3.5" />
-              ~{averageResponseMinutes} min odgovor
-            </span>
-          )}
-          {availabilityStatus && (
-            <span className="rounded bg-slate-100 px-1.5 py-0.5 text-xs text-slate-600">
-              {AVAILABILITY_LABELS[availabilityStatus] ?? availabilityStatus}
-            </span>
-          )}
-        </div>
-        <span className="mt-3 inline-flex w-full justify-center rounded-xl bg-blue-600 py-2.5 text-sm font-semibold text-white transition group-hover:bg-blue-700">
-          Pogledaj profil
-        </span>
-      </div>
+      {cardContent}
     </Link>
   );
 }

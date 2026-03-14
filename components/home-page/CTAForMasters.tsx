@@ -2,18 +2,18 @@ import Link from "next/link";
 
 export function CTAForMasters() {
   return (
-    <section className="py-10 lg:py-12">
-      <div className="overflow-hidden rounded-[28px] border border-white/80 bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 px-6 py-10 text-white shadow-[0_16px_50px_rgba(37,99,235,0.25)] sm:px-10 lg:px-14 lg:py-12">
+    <section className="py-10 sm:py-14 lg:py-16">
+      <div className="overflow-hidden rounded-xl bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 px-4 py-10 text-white shadow-lg sm:px-6 sm:py-12 lg:px-14 lg:py-14">
         <div className="mx-auto max-w-2xl text-center">
-          <h2 className="text-2xl font-black tracking-tight sm:text-3xl lg:text-4xl">
+          <h2 className="text-xl font-bold tracking-tight sm:text-2xl lg:text-4xl">
             Da li ste majstor?
           </h2>
-          <p className="mt-4 text-lg text-blue-100">
+          <p className="mt-3 text-sm text-blue-100 sm:mt-4 sm:text-base lg:text-lg">
             Napravite profil i počnite primati upite iz vašeg grada.
           </p>
           <Link
             href="/register?type=majstor"
-            className="mt-6 inline-flex h-14 items-center justify-center rounded-2xl bg-white px-8 text-base font-bold text-blue-700 shadow-xl transition hover:bg-blue-50"
+            className="mt-5 inline-flex h-14 min-h-[48px] w-full items-center justify-center rounded-xl bg-white px-8 text-base font-semibold text-blue-700 shadow-lg transition hover:bg-blue-50 active:scale-[0.98] sm:mt-6 sm:w-auto"
           >
             Registruj se kao majstor
           </Link>

@@ -27,16 +27,13 @@ export function TopMasters() {
 
   if (loading) {
     return (
-      <section className="py-10 lg:py-12">
-        <h2 className="mb-6 text-xl font-black tracking-tight text-slate-950 sm:text-2xl">
+      <section className="py-16">
+        <h2 className="mb-6 text-3xl font-semibold text-gray-900">
           Najbolje ocijenjeni majstori
         </h2>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {[1, 2, 3, 4].map((i) => (
-            <div
-              key={i}
-              className="h-48 animate-pulse rounded-2xl bg-slate-200"
-            />
+            <div key={i} className="h-56 animate-pulse rounded-xl bg-gray-200" />
           ))}
         </div>
       </section>
@@ -45,11 +42,11 @@ export function TopMasters() {
 
   if (handymen.length === 0) {
     return (
-      <section className="py-10 lg:py-12">
-        <h2 className="mb-6 text-xl font-black tracking-tight text-slate-950 sm:text-2xl">
+      <section className="py-16">
+        <h2 className="mb-6 text-3xl font-semibold text-gray-900">
           Najbolje ocijenjeni majstori
         </h2>
-        <p className="rounded-2xl border border-slate-200 bg-white p-8 text-center text-slate-500">
+        <p className="rounded-xl bg-white p-12 text-center text-gray-500 shadow-sm">
           Trenutno nema majstora. Postanite prvi!
         </p>
       </section>
@@ -57,12 +54,12 @@ export function TopMasters() {
   }
 
   return (
-    <section className="py-10 lg:py-12">
-      <h2 className="mb-6 text-xl font-black tracking-tight text-slate-950 sm:text-2xl">
+    <section className="py-16">
+      <h2 className="mb-6 text-3xl font-semibold text-gray-900">
         Najbolje ocijenjeni majstori
       </h2>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
         {handymen.map((u) => (
           <HandymanCard key={u.id} {...u} variant="full" />
         ))}

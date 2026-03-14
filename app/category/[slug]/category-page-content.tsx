@@ -70,138 +70,151 @@ export function CategoryPageContent({
   }, [internalCategory, cityFilter, sortBy, page]);
 
   return (
-    <main className="min-h-screen bg-slate-100 text-slate-900">
-      <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8">
+    <main className="min-h-screen bg-[#F6F8FB] text-gray-900">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <HomeHeader />
 
-        <div className="py-8">
-          <nav className="mb-6 text-sm text-slate-500">
-            <Link href="/" className="hover:text-slate-700">
+        <div className="py-6 sm:py-10 lg:py-16">
+          <nav className="mb-6 text-sm text-gray-500">
+            <Link href="/" className="hover:text-gray-700">
               Početna
             </Link>
             <span className="mx-2">/</span>
-            <span className="font-medium text-slate-900">{displayName}</span>
+            <span className="font-medium text-gray-900">{displayName}</span>
           </nav>
 
-          <h1 className="mb-6 text-2xl font-black tracking-tight text-slate-950 sm:text-3xl">
+          <h1 className="mb-6 text-2xl font-semibold text-gray-900 sm:mb-8 sm:text-3xl">
             {displayName}
           </h1>
 
-          <div className="mb-4 flex flex-wrap gap-2">
-            {HOMEPAGE_CITIES.slice(0, 8).map((c) => (
-              <Link
-                key={c.slug}
-                href={`/${slug}-${c.slug}`}
-                className="rounded-lg bg-white px-3 py-1.5 text-sm font-medium text-slate-600 shadow-sm hover:bg-blue-50 hover:text-blue-700"
-              >
-                {c.name}
-              </Link>
-            ))}
-          </div>
-          <div className="mb-6 flex flex-wrap items-center gap-4">
-            <select
-              value={cityFilter}
-              onChange={(e) => setCityFilter(e.target.value)}
-              className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700"
-            >
-              <option value="">Svi gradovi</option>
-              {CITIES.map((c) => (
-                <option key={c} value={c}>
-                  {c}
-                </option>
-              ))}
-            </select>
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as "rating" | "reviews")}
-              className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700"
-            >
-              <option value="rating">Sortiraj po ocjeni</option>
-              <option value="reviews">Sortiraj po broju recenzija</option>
-            </select>
-            <div className="ml-auto flex rounded-xl border border-slate-200 bg-white p-1">
-              <button
-                type="button"
-                onClick={() => setViewMode("list")}
-                className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium transition ${
-                  viewMode === "list" ? "bg-slate-100 text-slate-900" : "text-slate-600 hover:bg-slate-50"
-                }`}
-              >
-                <List className="h-4 w-4" />
-                Lista
-              </button>
-              <button
-                type="button"
-                onClick={() => setViewMode("map")}
-                className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium transition ${
-                  viewMode === "map" ? "bg-slate-100 text-slate-900" : "text-slate-600 hover:bg-slate-50"
-                }`}
-              >
-                <MapPin className="h-4 w-4" />
-                Mapa
-              </button>
-            </div>
-          </div>
-
-          {loading ? (
-            <p className="py-12 text-center text-slate-500">Učitavanje...</p>
-          ) : handymen.length === 0 ? (
-            <div className="rounded-2xl border border-white bg-white p-12 text-center shadow-sm">
-              <Wrench className="mx-auto mb-4 h-12 w-12 text-slate-300" />
-              <p className="text-slate-600">
-                Nema majstora za ovu kategoriju u izabranom gradu.
-              </p>
-              <Link
-                href={`/request/create?category=${encodeURIComponent(internalCategory)}${cityFilter ? `&city=${encodeURIComponent(cityFilter)}` : ""}`}
-                className="mt-4 inline-block font-medium text-blue-600 hover:underline"
-              >
-                Objavi zahtjev
-              </Link>
-            </div>
-          ) : (
-            <>
-              <div className="mb-4 text-sm text-slate-500">
-                {total} majstor(a)
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-4 lg:gap-8">
+            <aside className="space-y-5 rounded-xl bg-white p-5 shadow-sm sm:p-6 lg:order-2">
+              <div>
+                <label className="mb-2 block text-sm font-medium text-gray-700">Grad</label>
+                <select
+                  value={cityFilter}
+                  onChange={(e) => setCityFilter(e.target.value)}
+                  className="w-full rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 text-gray-900"
+                >
+                  <option value="">Svi gradovi</option>
+                  {CITIES.map((c) => (
+                    <option key={c} value={c}>{c}</option>
+                  ))}
+                </select>
               </div>
-              {viewMode === "map" ? (
-                <HandymanMapView
-                  handymen={handymen}
-                  city={cityFilter || undefined}
-                  className="mb-6"
-                />
-              ) : null}
-              {viewMode === "list" && (
-                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                  {handymen.map((h) => (
-                    <HandymanCard key={h.id} {...h} variant="compact" />
+              <div>
+                <label className="mb-2 block text-sm font-medium text-gray-700">Sortiraj</label>
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value as "rating" | "reviews")}
+                  className="w-full rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 text-gray-900"
+                >
+                  <option value="rating">Po ocjeni</option>
+                  <option value="reviews">Po broju recenzija</option>
+                </select>
+              </div>
+              <div>
+                <label className="mb-2 block text-sm font-medium text-gray-700">Prikaz</label>
+                <div className="flex min-h-[48px] rounded-xl border border-gray-200 bg-gray-50 p-1">
+                  <button
+                    type="button"
+                    onClick={() => setViewMode("list")}
+                    className={`flex flex-1 items-center justify-center gap-2 rounded-lg px-4 py-3 text-sm font-medium transition ${
+                      viewMode === "list" ? "bg-white text-gray-900 shadow-sm" : "text-gray-600 hover:text-gray-900"
+                    }`}
+                  >
+                    <List className="h-5 w-5" />
+                    Lista
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setViewMode("map")}
+                    className={`flex flex-1 items-center justify-center gap-2 rounded-lg px-4 py-3 text-sm font-medium transition ${
+                      viewMode === "map" ? "bg-white text-gray-900 shadow-sm" : "text-gray-600 hover:text-gray-900"
+                    }`}
+                  >
+                    <MapPin className="h-5 w-5" />
+                    Mapa
+                  </button>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <p className="text-sm font-medium text-gray-700">Brzi linkovi</p>
+                <div className="flex flex-wrap gap-2">
+                  {HOMEPAGE_CITIES.slice(0, 6).map((c) => (
+                    <Link
+                      key={c.slug}
+                      href={`/${slug}-${c.slug}`}
+                      className="rounded-lg bg-gray-100 px-3 py-1.5 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700"
+                    >
+                      {c.name}
+                    </Link>
                   ))}
                 </div>
-              )}
-              {viewMode === "list" && totalPages > 1 && (
-                <div className="mt-6 flex items-center justify-center gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setPage((p) => Math.max(1, p - 1))}
-                    disabled={page <= 1}
-                    className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-700 disabled:opacity-50 hover:bg-slate-50"
+              </div>
+            </aside>
+
+            <div className="lg:col-span-3 lg:order-1">
+              {loading ? (
+                <p className="py-12 text-center text-gray-500">Učitavanje...</p>
+              ) : handymen.length === 0 ? (
+                <div className="rounded-xl bg-white p-12 text-center shadow-sm">
+                  <Wrench className="mx-auto mb-4 h-12 w-12 text-gray-300" />
+                  <p className="text-gray-600">
+                    Nema majstora za ovu kategoriju u izabranom gradu.
+                  </p>
+                  <Link
+                    href={`/request/create?category=${encodeURIComponent(internalCategory)}${cityFilter ? `&city=${encodeURIComponent(cityFilter)}` : ""}`}
+                    className="mt-4 inline-block font-medium text-blue-600 hover:underline"
                   >
-                    <ChevronLeft className="h-5 w-5" />
-                  </button>
-                  <span className="px-4 text-sm text-slate-600">
-                    Strana {page} / {totalPages}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                    disabled={page >= totalPages}
-                    className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-700 disabled:opacity-50 hover:bg-slate-50"
-                  >
-                    <ChevronRight className="h-5 w-5" />
-                  </button>
+                    Objavi zahtjev
+                  </Link>
                 </div>
+              ) : (
+                <>
+                  <div className="mb-4 text-sm text-gray-500">
+                    {total} majstor(a)
+                  </div>
+                  {viewMode === "map" ? (
+                    <HandymanMapView
+                      handymen={handymen}
+                      city={cityFilter || undefined}
+                      className="mb-6 rounded-xl"
+                    />
+                  ) : (
+                    <div className="space-y-6">
+                      {handymen.map((h) => (
+                        <HandymanCard key={h.id} {...h} variant="compact" />
+                      ))}
+                    </div>
+                  )}
+                  {viewMode === "list" && totalPages > 1 && (
+                    <div className="mt-8 flex items-center justify-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setPage((p) => Math.max(1, p - 1))}
+                        disabled={page <= 1}
+                        className="flex h-10 w-10 items-center justify-center rounded-xl border border-gray-200 bg-white text-gray-700 transition hover:shadow-md disabled:opacity-50"
+                      >
+                        <ChevronLeft className="h-5 w-5" />
+                      </button>
+                      <span className="px-4 text-sm text-gray-600">
+                        Strana {page} / {totalPages}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                        disabled={page >= totalPages}
+                        className="flex h-10 w-10 items-center justify-center rounded-xl border border-gray-200 bg-white text-gray-700 transition hover:shadow-md disabled:opacity-50"
+                      >
+                        <ChevronRight className="h-5 w-5" />
+                      </button>
+                    </div>
+                  )}
+                </>
               )}
-            </>
-          )}
+            </div>
+          </div>
         </div>
       </div>
     </main>

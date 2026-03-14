@@ -71,7 +71,7 @@ export function SendOfferForm({ requestId }: { requestId: string }) {
   });
 
   return (
-    <Card className="rounded-2xl border-[#E2E8F0] shadow-card">
+    <Card className="rounded-xl bg-white shadow-sm transition hover:shadow-md">
       <CardHeader>
         <CardTitle>Pošalji ponudu</CardTitle>
         <CardDescription>
@@ -139,7 +139,12 @@ export function SendOfferForm({ requestId }: { requestId: string }) {
               {...register("proposedDate")}
             />
           </div>
-          <Button type="submit" size="lg" disabled={mutation.isPending}>
+          <Button
+            type="submit"
+            size="lg"
+            disabled={mutation.isPending}
+            className="h-14 min-h-[48px] w-full sm:h-10 sm:min-h-0 sm:w-auto"
+          >
             {mutation.isPending ? "Slanje..." : "Pošalji ponudu"}
           </Button>
         </form>

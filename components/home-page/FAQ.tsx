@@ -8,20 +8,20 @@ export function FAQ() {
   const [open, setOpen] = useState<number | null>(0);
 
   return (
-    <section className="py-10 lg:py-12">
-      <h2 className="mb-6 text-center text-xl font-black tracking-tight text-slate-950 sm:text-2xl">
+    <section className="py-10 sm:py-14 lg:py-16">
+      <h2 className="mb-4 text-center text-2xl font-semibold text-gray-900 sm:mb-6 sm:text-3xl">
         Često postavljana pitanja
       </h2>
 
-      <div className="mx-auto max-w-2xl space-y-2">
+      <div className="mx-auto max-w-2xl space-y-3 sm:space-y-4">
         {FAQ_ITEMS.map((faq, i) => (
           <div
             key={i}
-            className="overflow-hidden rounded-2xl border border-white/80 bg-white shadow-[0_8px_30px_rgba(15,23,42,0.06)]"
+            className="overflow-hidden rounded-xl bg-white shadow-sm transition hover:shadow-md"
           >
             <button
               onClick={() => setOpen(open === i ? null : i)}
-              className="flex w-full items-center justify-between px-6 py-4 text-left font-semibold text-slate-900"
+              className="flex w-full min-h-[56px] items-center justify-between px-4 py-4 text-left font-semibold text-gray-900 sm:px-6"
             >
               {faq.q}
               <ChevronDown
@@ -29,7 +29,7 @@ export function FAQ() {
               />
             </button>
             {open === i && (
-              <div className="border-t border-slate-100 px-6 py-4 text-slate-600">
+              <div className="border-t border-gray-100 px-6 py-4 text-gray-600">
                 {faq.a}
               </div>
             )}

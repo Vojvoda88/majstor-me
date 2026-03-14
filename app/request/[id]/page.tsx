@@ -88,9 +88,9 @@ export default async function RequestDetailPage({
   const acceptedOffer = req.offers.find((o) => o.status === "ACCEPTED");
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC]">
+    <div className="min-h-screen bg-[#F6F8FB]">
       <SiteHeader />
-      <div className="container mx-auto max-w-3xl px-4 py-8">
+      <div className="mx-auto max-w-3xl px-4 py-6 sm:px-6 sm:py-8">
         <Link
           href={session?.user?.role === "USER" ? "/dashboard/user" : session?.user?.role === "HANDYMAN" ? "/dashboard/handyman" : "/"}
           className="mb-6 inline-flex text-sm font-medium text-[#64748B] hover:text-[#0F172A]"
@@ -102,7 +102,7 @@ export default async function RequestDetailPage({
         <RequestSuccessBanner requestId={id} handymenNotified={handymenNotified} />
       )}
 
-      <Card className="rounded-2xl border-[#E2E8F0] shadow-card">
+      <Card className="rounded-xl bg-white shadow-sm transition hover:shadow-md">
         <CardHeader>
           <CardTitle className="text-xl font-bold text-[#0F172A] sm:text-2xl">
             {req.category}
@@ -170,7 +170,7 @@ export default async function RequestDetailPage({
       </Card>
 
       {isOwner && req.status === "IN_PROGRESS" && acceptedOffer && (
-        <Card className="mt-6 rounded-2xl border-[#E2E8F0] shadow-card">
+        <Card className="mt-6 rounded-xl bg-white shadow-sm transition hover:shadow-md">
           <CardHeader>
             <CardTitle>Prihvaćena ponuda</CardTitle>
             <CardDescription>Posao je u toku. Kada majstor završi, označite ga kao završen.</CardDescription>
@@ -187,7 +187,7 @@ export default async function RequestDetailPage({
       )}
 
       {session?.user?.role === "HANDYMAN" && req.status === "IN_PROGRESS" && acceptedOffer?.handymanId === session.user.id && (
-        <Card className="mt-6 rounded-2xl border-[#E2E8F0] shadow-card">
+        <Card className="mt-6 rounded-xl bg-white shadow-sm transition hover:shadow-md">
           <CardHeader>
             <CardTitle>Razgovor sa korisnikom</CardTitle>
           </CardHeader>
@@ -198,7 +198,7 @@ export default async function RequestDetailPage({
       )}
 
       {isOwner && req.status === "COMPLETED" && !req.review && acceptedOffer && (
-        <Card className="mt-6 rounded-2xl border-[#E2E8F0] shadow-card">
+        <Card className="mt-6 rounded-xl bg-white shadow-sm transition hover:shadow-md">
           <CardHeader>
             <CardTitle>Ostavite recenziju</CardTitle>
             <CardDescription>Ocijenite majstora {acceptedOffer.handyman.name}</CardDescription>
@@ -215,7 +215,7 @@ export default async function RequestDetailPage({
       )}
 
       {req.review && (
-        <Card className="mt-6 rounded-2xl border-[#E2E8F0] shadow-card">
+        <Card className="mt-6 rounded-xl bg-white shadow-sm transition hover:shadow-md">
           <CardHeader>
             <CardTitle>Vaša recenzija</CardTitle>
           </CardHeader>
@@ -230,7 +230,7 @@ export default async function RequestDetailPage({
 
       {/* Offers - for owner: see all; for handyman: see own; for others: nothing */}
       {isOwner && req.status === "OPEN" && (
-        <Card className="mt-6 rounded-2xl border-[#E2E8F0] shadow-card">
+        <Card className="mt-6 rounded-xl bg-white shadow-sm transition hover:shadow-md">
           <CardContent className="pt-6">
             <InviteHandymanForm requestId={req.id} />
           </CardContent>
@@ -244,7 +244,7 @@ export default async function RequestDetailPage({
       )}
 
       {(isOwner || session?.user?.role === "HANDYMAN") && req.offers.length > 0 && (
-        <Card className="mt-6 rounded-2xl border-[#E2E8F0] shadow-card">
+        <Card className="mt-6 rounded-xl bg-white shadow-sm transition hover:shadow-md">
           <CardHeader>
             <CardTitle className="text-xl">Ponude ({req.offers.length})</CardTitle>
             <CardDescription>Uporedite ponude i izaberite najboljeg majstora</CardDescription>

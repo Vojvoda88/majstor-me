@@ -59,7 +59,7 @@ export function NotificationsDropdown() {
           setOpen(!open);
           if (!open) fetchNotifications();
         }}
-        className="relative"
+        className="relative h-10 min-h-[44px] w-10"
       >
         <Bell className="h-5 w-5" />
         {unreadCount > 0 && (
@@ -75,7 +75,7 @@ export function NotificationsDropdown() {
             onClick={() => setOpen(false)}
             aria-hidden
           />
-          <div className="absolute right-0 top-full z-50 mt-2 w-80 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-lg">
+          <div className="absolute right-0 top-full z-50 mt-2 w-[calc(100vw-2rem)] max-w-sm overflow-hidden rounded-xl border border-slate-200 bg-white shadow-lg sm:w-80">
             <div className="flex items-center justify-between border-b border-slate-100 px-4 py-2">
               <span className="font-semibold text-slate-900">Notifikacije</span>
               {unreadCount > 0 && (
@@ -111,7 +111,7 @@ export function NotificationsDropdown() {
                       if (!n.read) markAsRead(n.id);
                       setOpen(false);
                     }}
-                    className={`block border-b border-slate-50 px-4 py-3 text-left transition hover:bg-slate-50 ${
+                    className={`block min-h-[56px] border-b border-slate-50 px-4 py-3 text-left transition hover:bg-slate-50 ${
                       !n.read ? "bg-blue-50/50" : ""
                     }`}
                   >

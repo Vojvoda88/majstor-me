@@ -49,8 +49,8 @@ export default async function HandymanDashboardPage({
 
   if (!profile) {
     return (
-      <div className="container mx-auto max-w-4xl px-4 py-8">
-        <Card className="rounded-2xl border-[#E2E8F0] shadow-card">
+      <div className="mx-auto max-w-5xl px-6 py-8">
+        <Card className="rounded-xl bg-white shadow-sm transition hover:shadow-md">
           <CardHeader>
             <CardTitle className="text-xl">Profil majstora</CardTitle>
             <CardDescription>
@@ -112,7 +112,7 @@ export default async function HandymanDashboardPage({
   const onboarding = calcProfileCompletion(profile, profile?.user);
 
   return (
-    <div className="container mx-auto max-w-4xl px-4 py-8">
+    <div className="mx-auto max-w-5xl px-4 py-6 sm:px-6 sm:py-8">
       {onboarding.percent < 100 && (
         <OnboardingBanner percent={onboarding.percent} steps={onboarding.steps} className="mb-6" />
       )}
@@ -132,21 +132,21 @@ export default async function HandymanDashboardPage({
         </Link>
       </div>
 
-      <div className="mt-6 grid gap-4 sm:grid-cols-3 lg:grid-cols-4">
-        <div className="rounded-2xl border border-[#E2E8F0] bg-white p-5 shadow-card">
+      <div className="mt-6 grid grid-cols-2 gap-6 md:grid-cols-4">
+        <div className="rounded-xl bg-white p-5 shadow-sm transition hover:shadow-md sm:p-6">
           <p className="text-sm font-medium text-[#64748B]">Otvoreni zahtjevi</p>
           <p className="mt-1 text-2xl font-bold text-[#0F172A]">{totalDisplayed}</p>
         </div>
-        <div className="rounded-2xl border border-[#E2E8F0] bg-white p-5 shadow-card">
+        <div className="rounded-xl bg-white p-5 shadow-sm transition hover:shadow-md sm:p-6">
           <p className="text-sm font-medium text-[#64748B]">Moje poslate ponude</p>
           <p className="mt-1 text-2xl font-bold text-[#0F172A]">{myOffersCount}</p>
         </div>
-        <div className="rounded-2xl border border-[#E2E8F0] bg-white p-5 shadow-card">
+        <div className="rounded-xl bg-white p-5 shadow-sm transition hover:shadow-md sm:p-6">
           <p className="text-sm font-medium text-[#64748B]">Prihvaćeni poslovi</p>
           <p className="mt-1 text-2xl font-bold text-[#16A34A]">{acceptedCount}</p>
         </div>
         {isCreditsRequired() && (
-          <div id="credits" className="rounded-2xl border border-[#E2E8F0] bg-white p-5 shadow-card scroll-mt-24">
+          <div id="credits" className="rounded-xl bg-white p-6 shadow-sm transition hover:shadow-md scroll-mt-24">
             <p className="text-sm font-medium text-[#64748B]">Krediti</p>
             <p className="mt-1 text-2xl font-bold text-[#0F172A]">{(profile as { creditsBalance?: number }).creditsBalance ?? 0}</p>
             {isPaymentConfigured() ? (

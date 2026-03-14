@@ -57,10 +57,10 @@ export function OfferCard({
 
   return (
     <div
-      className={`rounded-2xl border p-6 shadow-card transition-shadow ${
+      className={`rounded-xl p-5 shadow-sm transition sm:p-6 ${
         offer.status === "ACCEPTED"
-          ? "border-[#16A34A]/30 bg-[#F0FDF4]/50"
-          : "border-[#E2E8F0] bg-white hover:shadow-card-hover"
+          ? "border-2 border-green-200 bg-green-50/50"
+          : "bg-white hover:shadow-md"
       }`}
     >
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
@@ -119,7 +119,7 @@ export function OfferCard({
           )}
         </div>
         {isOwner && requestStatus === "OPEN" && offer.status === "PENDING" && (
-          <div className="flex shrink-0 flex-col items-stretch sm:items-end gap-1">
+          <div className="flex shrink-0 flex-col items-stretch gap-1 sm:items-end">
             {acceptMutation.error && (
               <p className="text-xs text-[#DC2626]">{acceptMutation.error.message}</p>
             )}
@@ -127,7 +127,7 @@ export function OfferCard({
               size="lg"
               onClick={() => acceptMutation.mutate()}
               disabled={acceptMutation.isPending}
-              className="w-full sm:w-auto"
+              className="h-14 min-h-[48px] w-full sm:h-10 sm:min-h-0 sm:w-auto"
             >
               {acceptMutation.isPending ? "Prihvatanje..." : "Prihvati ponudu"}
             </Button>

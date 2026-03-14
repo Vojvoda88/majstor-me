@@ -39,7 +39,7 @@ export function HandymanMapInner({ handymen, city, className = "" }: Props) {
       <MapContainer
         center={[center.lat, center.lng]}
         zoom={8}
-        className="h-64 w-full"
+        className="h-56 w-full min-h-[220px] sm:h-64"
         scrollWheelZoom={true}
       >
         <TileLayer

@@ -13,10 +13,7 @@ import {
   MessageSquare,
   Briefcase,
   ImageIcon,
-  MapPinned,
   MessageCircle,
-  Clock,
-  Euro,
   Award,
 } from "lucide-react";
 import { cityToSlug } from "@/lib/slugs";
@@ -113,253 +110,190 @@ export default async function HandymanProfilePage({
   });
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC]">
+    <div className="min-h-screen bg-[#F6F8FB]">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <SiteHeader />
-      <div className="container mx-auto max-w-2xl px-4 py-8">
+      <div className="mx-auto max-w-3xl px-4 py-6 sm:px-6 sm:py-8">
         <Link
           href={backHref}
-          className="mb-6 inline-flex text-sm font-medium text-[#64748B] hover:text-[#0F172A]"
+          className="mb-6 inline-flex text-sm font-medium text-gray-500 hover:text-gray-900"
         >
           ← Nazad
         </Link>
 
-        {/* Header - avatar, ime, grad, kategorija, rating, recenzije */}
-        <Card className="overflow-hidden rounded-2xl border-[#E2E8F0] shadow-card">
-          <CardHeader className="bg-gradient-to-br from-[#F8FAFC] to-white pb-8">
-            <div className="flex flex-col items-center gap-4 text-center sm:flex-row sm:items-start sm:text-left">
-              <div className="flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-full bg-blue-100 text-blue-600">
-                {avatarUrl ? (
-                  <img
-                    src={avatarUrl}
-                    alt={user.name}
-                    className="h-full w-full object-cover"
-                  />
-                ) : (
-                  <span className="text-2xl font-bold">
-                    {user.name?.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2) ?? "?"}
-                  </span>
-                )}
-              </div>
-              <div className="min-w-0 flex-1">
-                <div className="flex flex-wrap items-center justify-center gap-2 sm:justify-start">
-                  <CardTitle className="text-xl font-bold text-[#0F172A] sm:text-2xl">
-                    {user.name}
-                  </CardTitle>
-                  {isVerified && (
-                    <Badge variant="success" className="gap-1">
-                      <CheckCircle2 className="h-3.5 w-3.5" />
-                      Verifikovan
-                    </Badge>
-                  )}
-                </div>
-                <div className="mt-2 flex flex-wrap items-center justify-center gap-3 text-sm text-[#64748B] sm:justify-start">
-                  <span className="flex items-center gap-1">
-                    <Star className="h-4 w-4 fill-[#F59E0B] text-[#F59E0B]" />
-                    {profile.ratingAvg.toFixed(1)}
-                  </span>
-                  <span>{profile.reviewCount} recenzija</span>
-                  {user.city && (
-                    <span className="flex items-center gap-1">
-                      <MapPin className="h-4 w-4" />
-                      {user.city}
-                    </span>
-                  )}
-                </div>
-                {profile.categories.length > 0 && (
-                  <p className="mt-2 text-sm text-[#64748B]">
-                    {profile.categories.join(", ")}
-                  </p>
+        {/* Hero header */}
+        <div className="rounded-xl bg-white p-5 shadow-sm transition hover:shadow-md sm:p-8">
+          <div className="flex flex-col items-center gap-6 sm:flex-row sm:items-start">
+            <div className="flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-full bg-blue-100 text-blue-600 sm:h-28 sm:w-28">
+              {avatarUrl ? (
+                <img src={avatarUrl} alt={user.name} className="h-full w-full object-cover" />
+              ) : (
+                <span className="text-3xl font-bold">
+                  {user.name?.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2) ?? "?"}
+                </span>
+              )}
+            </div>
+            <div className="flex-1 text-center sm:text-left">
+              <div className="flex flex-wrap items-center justify-center gap-2 sm:justify-start">
+                <h1 className="text-xl font-semibold text-gray-900 sm:text-2xl">{user.name}</h1>
+                {isVerified && (
+                  <Badge variant="success" className="gap-1">
+                    <CheckCircle2 className="h-3.5 w-3.5" /> Verifikovan
+                  </Badge>
                 )}
                 {profileExt.isPromoted && (
-                  <Badge variant="outline" className="mt-2 border-amber-400 text-amber-700">
-                    <Award className="mr-1 h-3.5 w-3.5" />
-                    Premium
+                  <Badge variant="outline" className="border-amber-400 text-amber-700">
+                    <Award className="mr-1 h-3.5 w-3.5" /> Premium
                   </Badge>
                 )}
               </div>
-            </div>
-            {/* Stats row */}
-            <div className="mt-4 flex flex-wrap gap-4 border-t border-slate-100 pt-4">
-              {profileExt.yearsOfExperience != null && (
-                <span className="flex items-center gap-1.5 text-sm text-[#64748B]">
-                  <Award className="h-4 w-4 text-blue-500" />
-                  {profileExt.yearsOfExperience} god. iskustva
+              {profile.categories.length > 0 && (
+                <p className="mt-1 text-gray-600">{profile.categories.join(", ")}</p>
+              )}
+              <div className="mt-2 flex flex-wrap items-center justify-center gap-4 text-sm text-gray-600 sm:justify-start">
+                <span className="flex items-center gap-1">
+                  <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
+                  {profile.ratingAvg.toFixed(1)} ({profile.reviewCount} recenzija)
                 </span>
-              )}
-              {profileExt.startingPrice != null && (
-                <span className="flex items-center gap-1.5 text-sm text-[#64748B]">
-                  <Euro className="h-4 w-4 text-green-600" />
-                  Od {profileExt.startingPrice}€
-                </span>
-              )}
-              {(profileExt.completedJobsCount ?? profile.reviewCount) > 0 && (
-                <span className="flex items-center gap-1.5 text-sm text-[#64748B]">
-                  <Briefcase className="h-4 w-4 text-slate-500" />
-                  {(profileExt.completedJobsCount ?? profile.reviewCount)} završenih poslova
-                </span>
-              )}
-              {profileExt.averageResponseMinutes != null && (
-                <span className="flex items-center gap-1.5 text-sm text-[#64748B]">
-                  <Clock className="h-4 w-4 text-slate-500" />
-                  Odgovor u ~{profileExt.averageResponseMinutes} min
-                </span>
-              )}
-              {profileExt.availabilityStatus && (
-                <Badge variant="outline" className="text-xs">
-                  {AVAILABILITY_LABELS[profileExt.availabilityStatus] ?? profileExt.availabilityStatus}
-                </Badge>
-              )}
-            </div>
-          </CardHeader>
-          <CardContent className="space-y-6 pt-6">
-            {/* Opis usluga */}
-            <section>
-              <h3 className="flex items-center gap-2 font-semibold text-[#0F172A]">
-                <Briefcase className="h-5 w-5 text-blue-600" />
-                Opis usluga
-              </h3>
-              {profile.bio ? (
-                <p className="mt-2 text-[#64748B]">{profile.bio}</p>
-              ) : (
-                <p className="mt-2 italic text-[#94A3B8]">
-                  Nema opisa.
-                </p>
-              )}
-            </section>
-
-            {/* Galerija radova */}
-            <section>
-              <h3 className="flex items-center gap-2 font-semibold text-[#0F172A]">
-                <ImageIcon className="h-5 w-5 text-blue-600" />
-                Galerija radova
-              </h3>
-              {galleryImages.length > 0 ? (
-                <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3">
-                  {galleryImages.map((url, idx) => (
-                    <a
-                      key={idx}
-                      href={url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="relative aspect-square overflow-hidden rounded-xl border bg-slate-100"
-                    >
-                      <img
-                        src={url}
-                        alt={`Rad ${idx + 1}`}
-                        className="h-full w-full object-cover"
-                      />
-                    </a>
-                  ))}
-                </div>
-              ) : (
-                <p className="mt-2 text-sm italic text-[#94A3B8]">
-                  Nema slika u galeriji.
-                </p>
-              )}
-            </section>
-
-            {/* Gradovi pokrivenosti */}
-            {profile.cities.length > 0 && (
-              <section>
-                <h3 className="flex items-center gap-2 font-semibold text-[#0F172A]">
-                  <MapPinned className="h-5 w-5 text-blue-600" />
-                  Gradovi pokrivenosti
-                </h3>
-                <div className="mt-2 flex flex-wrap gap-2">
-                  {profile.cities.map((c) => (
-                    <Link
-                      key={c}
-                      href={`/grad/${cityToSlug(c)}`}
-                      className="rounded-lg bg-slate-100 px-3 py-1.5 text-sm font-medium text-[#475569] hover:bg-slate-200"
-                    >
-                      {c}
-                    </Link>
-                  ))}
-                </div>
-              </section>
-            )}
-
-            {/* Recenzije */}
-            <section>
-              <h3 className="flex items-center gap-2 font-semibold text-[#0F172A]">
-                <MessageCircle className="h-5 w-5 text-blue-600" />
-                Recenzije
-              </h3>
-              {user.reviewsReceived.length === 0 ? (
-                <p className="mt-2 text-sm text-[#94A3B8]">
-                  Još nema recenzija.
-                </p>
-              ) : (
-                <div className="mt-3 space-y-3">
-                  {user.reviewsReceived.map((r) => {
-                    const parts = r.reviewer.name?.trim().split(/\s+/) ?? [];
-                    const initials = parts.map((p) => p[0]).join("").toUpperCase().slice(0, 2) || "?";
-                    return (
-                      <div
-                        key={r.id}
-                        className="rounded-xl border border-slate-100 bg-slate-50/50 p-4"
-                      >
-                        <div className="flex items-center justify-between gap-2">
-                          <div className="flex items-center gap-2">
-                            <div className="flex gap-0.5">
-                              {Array.from({ length: r.rating }).map((_, i) => (
-                                <Star
-                                  key={i}
-                                  className="h-4 w-4 fill-amber-400 text-amber-400"
-                                />
-                              ))}
-                            </div>
-                            <span className="text-sm font-medium text-[#64748B]">
-                              {initials}.
-                            </span>
-                          </div>
-                          <span className="text-xs text-[#94A3B8]">
-                            {new Date(r.createdAt).toLocaleDateString("sr")}
-                          </span>
-                        </div>
-                        {r.comment && (
-                          <p className="mt-2 text-sm text-[#475569]">
-                            {r.comment}
-                          </p>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-            </section>
-
-            {/* CTA */}
-            <div className="pt-4">
-              <h3 className="mb-3 font-semibold text-[#0F172A]">
-                Pošalji zahtjev
-              </h3>
+                {user.city && (
+                  <span className="flex items-center gap-1">
+                    <MapPin className="h-4 w-4" />
+                    {user.city}
+                  </span>
+                )}
+              </div>
+              <div className="mt-4 flex flex-wrap gap-2">
+                {profileExt.yearsOfExperience != null && (
+                  <span className="rounded-lg bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-700">
+                    {profileExt.yearsOfExperience} god. iskustva
+                  </span>
+                )}
+                {(profileExt.completedJobsCount ?? profile.reviewCount) > 0 && (
+                  <span className="rounded-lg bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-700">
+                    {(profileExt.completedJobsCount ?? profile.reviewCount)} poslova
+                  </span>
+                )}
+                {profileExt.availabilityStatus && (
+                  <span className="rounded-lg bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-700">
+                    {AVAILABILITY_LABELS[profileExt.availabilityStatus] ?? profileExt.availabilityStatus}
+                  </span>
+                )}
+              </div>
               {session?.user?.role === "USER" && (
-                <Link href={`/request/create?${createParams}`}>
-                  <Button size="lg" className="w-full gap-2 sm:w-auto">
+                <Link href={`/request/create?${createParams}`} className="mt-6 block w-full sm:inline-block sm:w-auto">
+                  <Button size="lg" className="h-14 w-full min-h-[48px] gap-2 sm:h-11 sm:w-auto">
                     <MessageSquare className="h-5 w-5" />
                     Pošalji zahtjev
                   </Button>
                 </Link>
               )}
               {!session && (
-                <p className="text-sm text-[#64748B]">
-                  <Link
-                    href={`/login?callbackUrl=/handyman/${user.id}`}
-                    className="font-medium text-[#2563EB] hover:underline"
-                  >
+                <p className="mt-4 text-sm text-gray-600">
+                  <Link href={`/login?callbackUrl=/handyman/${user.id}`} className="font-medium text-blue-600 hover:underline">
                     Prijavite se
                   </Link>{" "}
-                  kao korisnik da pošaljete zahtjev ovom majstoru.
+                  da pošaljete zahtjev ovom majstoru.
                 </p>
               )}
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
+
+        {/* Sections */}
+        <div className="mt-6 space-y-6 sm:mt-8 sm:space-y-8">
+          {/* Galerija */}
+          <div className="rounded-xl bg-white p-5 shadow-sm transition hover:shadow-md sm:p-6">
+            <h3 className="mb-4 flex items-center gap-2 font-semibold text-gray-900">
+              <ImageIcon className="h-5 w-5 text-blue-600" />
+              Galerija radova
+            </h3>
+            {galleryImages.length > 0 ? (
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4">
+                {galleryImages.map((url, idx) => (
+                  <a
+                    key={idx}
+                    href={url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="relative aspect-square overflow-hidden rounded-xl bg-gray-100"
+                  >
+                    <img src={url} alt={`Rad ${idx + 1}`} className="h-full w-full object-cover" />
+                  </a>
+                ))}
+              </div>
+            ) : (
+              <p className="text-sm italic text-gray-500">Nema slika u galeriji.</p>
+            )}
+          </div>
+
+          {/* O meni */}
+          <div className="rounded-xl bg-white p-5 shadow-sm transition hover:shadow-md sm:p-6">
+            <h3 className="mb-4 flex items-center gap-2 font-semibold text-gray-900">
+              <Briefcase className="h-5 w-5 text-blue-600" />
+              O meni
+            </h3>
+            {profile.bio ? (
+              <p className="text-gray-600">{profile.bio}</p>
+            ) : (
+              <p className="text-sm italic text-gray-500">Nema opisa.</p>
+            )}
+            {profile.cities.length > 0 && (
+              <div className="mt-4">
+                <p className="mb-2 text-sm font-medium text-gray-700">Gradovi pokrivenosti</p>
+                <div className="flex flex-wrap gap-2">
+                  {profile.cities.map((c) => (
+                    <Link
+                      key={c}
+                      href={`/grad/${cityToSlug(c)}`}
+                      className="rounded-lg bg-gray-100 px-3 py-1.5 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700"
+                    >
+                      {c}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Recenzije */}
+          <div className="rounded-xl bg-white p-5 shadow-sm transition hover:shadow-md sm:p-6">
+            <h3 className="mb-4 flex items-center gap-2 font-semibold text-gray-900">
+              <MessageCircle className="h-5 w-5 text-blue-600" />
+              Recenzije
+            </h3>
+            {user.reviewsReceived.length === 0 ? (
+              <p className="text-sm text-gray-500">Još nema recenzija.</p>
+            ) : (
+              <div className="space-y-4">
+                {user.reviewsReceived.map((r) => {
+                  const parts = r.reviewer.name?.trim().split(/\s+/) ?? [];
+                  const initials = parts.map((p) => p[0]).join("").toUpperCase().slice(0, 2) || "?";
+                  return (
+                    <div key={r.id} className="rounded-xl border border-gray-100 bg-gray-50/50 p-4">
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="flex items-center gap-2">
+                          <div className="flex gap-0.5">
+                            {Array.from({ length: r.rating }).map((_, i) => (
+                              <Star key={i} className="h-4 w-4 fill-amber-400 text-amber-400" />
+                            ))}
+                          </div>
+                          <span className="text-sm font-medium text-gray-600">{initials}.</span>
+                        </div>
+                        <span className="text-xs text-gray-500">
+                          {new Date(r.createdAt).toLocaleDateString("sr")}
+                        </span>
+                      </div>
+                      {r.comment && <p className="mt-2 text-sm text-gray-600">{r.comment}</p>}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );

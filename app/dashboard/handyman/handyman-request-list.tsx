@@ -57,11 +57,11 @@ export function HandymanRequestList({
   const totalPages = Math.ceil(total / limit);
 
   return (
-    <div className="mt-8 space-y-4">
-      <div className="flex flex-wrap items-center gap-3 rounded-xl border border-[#E2E8F0] bg-white p-4 shadow-soft">
-        <span className="text-sm font-medium text-[#64748B]">Filter:</span>
+    <div className="mt-6 space-y-4 sm:mt-8">
+      <div className="flex flex-wrap items-center gap-3 rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+        <span className="w-full text-sm font-medium text-gray-600 sm:w-auto">Filter:</span>
         <select
-          className="h-11 rounded-xl border border-[#E2E8F0] bg-white px-4 text-sm focus:border-[#2563EB] focus:outline-none focus:ring-2 focus:ring-[#2563EB]/20"
+          className="min-h-[44px] flex-1 rounded-xl border border-gray-200 bg-white px-4 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 sm:min-h-0 sm:flex-initial sm:h-11"
           value={currentCategory}
           onChange={(e) => router.push(buildUrl(e.target.value, currentCity, 1))}
         >
@@ -75,7 +75,7 @@ export function HandymanRequestList({
               ))}
         </select>
         <select
-          className="h-11 rounded-xl border border-[#E2E8F0] bg-white px-4 text-sm focus:border-[#2563EB] focus:outline-none focus:ring-2 focus:ring-[#2563EB]/20"
+          className="min-h-[44px] flex-1 rounded-xl border border-gray-200 bg-white px-4 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 sm:min-h-0 sm:flex-initial sm:h-11"
           value={currentCity}
           onChange={(e) => router.push(buildUrl(currentCategory, e.target.value, 1))}
         >
@@ -94,7 +94,7 @@ export function HandymanRequestList({
       ) : (
         <div className="space-y-4">
           {requests.map((req) => (
-            <Card key={req.id} className="overflow-hidden transition-shadow hover:shadow-card-hover">
+            <Card key={req.id} className="overflow-hidden rounded-xl shadow-sm transition hover:shadow-md">
               <CardHeader className="pb-3">
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                   <div className="min-w-0 flex-1">

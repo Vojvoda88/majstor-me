@@ -6,21 +6,19 @@ import { HOMEPAGE_CITIES } from "@/lib/homepage-data";
 
 export function CitiesGrid() {
   return (
-    <section id="gradovi" className="py-10 lg:py-12">
-      <div className="mb-6">
-        <h2 className="text-xl font-black tracking-tight text-slate-950 sm:text-2xl">
-          Gradovi
-        </h2>
-      </div>
+    <section id="gradovi" className="py-10 sm:py-14 lg:py-16">
+      <h2 className="mb-4 text-2xl font-semibold text-gray-900 sm:mb-6 sm:text-3xl">
+        Gradovi
+      </h2>
 
-      <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-4 sm:gap-6 md:grid-cols-3 lg:grid-cols-4">
         {HOMEPAGE_CITIES.map((city) => (
           <Link
             key={city.slug}
             href={`/grad/${city.slug}`}
-            className="group relative overflow-hidden rounded-2xl shadow-[0_8px_30px_rgba(15,23,42,0.06)] transition duration-300 hover:shadow-[0_12px_40px_rgba(15,23,42,0.1)]"
+            className="group relative overflow-hidden rounded-xl shadow-sm transition hover:shadow-md"
           >
-            <div className="relative aspect-[4/3] overflow-hidden rounded-2xl">
+            <div className="relative aspect-[4/3] overflow-hidden rounded-xl">
               <Image
                 src={city.image}
                 alt={city.name}

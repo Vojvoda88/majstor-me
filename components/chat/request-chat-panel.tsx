@@ -71,10 +71,10 @@ export function RequestChatPanel({ requestId }: { requestId: string }) {
 
   return (
     <div className="rounded-xl border border-slate-200 bg-white">
-      <div className="border-b border-slate-100 px-4 py-2">
+      <div className="border-b border-slate-100 px-4 py-3 sm:py-2">
         <h4 className="font-medium text-slate-900">Razgovor</h4>
       </div>
-      <div className="max-h-64 overflow-y-auto p-4 space-y-3">
+      <div className="max-h-[50vh] overflow-y-auto p-4 space-y-3 sm:max-h-64">
         {messages.length === 0 ? (
           <p className="text-sm text-slate-500">Nema poruka. Pošaljite prvu!</p>
         ) : (
@@ -84,7 +84,7 @@ export function RequestChatPanel({ requestId }: { requestId: string }) {
               className={`flex ${m.isMe ? "justify-end" : "justify-start"}`}
             >
               <div
-                className={`max-w-[80%] rounded-2xl px-3 py-2 text-sm ${
+                className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm sm:px-3 sm:py-2 ${
                   m.isMe
                     ? "bg-blue-600 text-white"
                     : "bg-slate-100 text-slate-900"
@@ -103,16 +103,22 @@ export function RequestChatPanel({ requestId }: { requestId: string }) {
         )}
         <div ref={bottomRef} />
       </div>
-      <form onSubmit={sendMessage} className="flex gap-2 border-t border-slate-100 p-3">
+      <form onSubmit={sendMessage} className="flex gap-2 border-t border-slate-100 p-4 sm:p-3">
         <Input
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="Napišite poruku..."
           maxLength={2000}
           disabled={sending}
+          className="min-h-[48px] flex-1"
         />
-        <Button type="submit" size="icon" disabled={sending || !input.trim()}>
-          <Send className="h-4 w-4" />
+        <Button
+          type="submit"
+          size="icon"
+          disabled={sending || !input.trim()}
+          className="min-h-[48px] min-w-[48px] shrink-0"
+        >
+          <Send className="h-5 w-5" />
         </Button>
       </form>
     </div>

@@ -16,7 +16,7 @@ export default function HomePage() {
   const orgJson = organizationJsonLd();
   const faqJson = faqPageJsonLd(FAQ_ITEMS);
   return (
-    <main className="min-h-screen bg-slate-100 text-slate-900">
+    <main className="min-h-screen bg-[#F6F8FB] text-gray-900">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJson) }}
@@ -25,7 +25,7 @@ export default function HomePage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJson) }}
       />
-      <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <HomeHeader />
         <Hero />
         <HowItWorks />

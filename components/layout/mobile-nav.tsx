@@ -15,21 +15,21 @@ export function MobileNav() {
     <>
       {session.user.role === "USER" && (
         <Link href="/dashboard/user" onClick={() => setOpen(false)}>
-          <Button variant="ghost" className="w-full justify-start">
+          <Button variant="ghost" className="h-14 min-h-[48px] w-full justify-start text-base">
             Moji zahtjevi
           </Button>
         </Link>
       )}
       {session.user.role === "HANDYMAN" && (
         <Link href="/dashboard/handyman" onClick={() => setOpen(false)}>
-          <Button variant="ghost" className="w-full justify-start">
+          <Button variant="ghost" className="h-14 min-h-[48px] w-full justify-start text-base">
             Dashboard
           </Button>
         </Link>
       )}
       <Button
         variant="outline"
-        className="w-full justify-start"
+        className="h-14 min-h-[48px] w-full justify-start text-base"
         onClick={() => {
           setOpen(false);
           signOut({ callbackUrl: "/" });
@@ -41,12 +41,12 @@ export function MobileNav() {
   ) : (
     <>
       <Link href="/login" onClick={() => setOpen(false)}>
-        <Button variant="ghost" className="w-full justify-start">
+        <Button variant="ghost" className="h-14 min-h-[48px] w-full justify-start text-base">
           Prijava
         </Button>
       </Link>
       <Link href="/register" onClick={() => setOpen(false)}>
-        <Button className="w-full justify-start">Registracija</Button>
+        <Button className="h-14 min-h-[48px] w-full justify-start text-base">Registracija</Button>
       </Link>
     </>
   );
@@ -56,7 +56,7 @@ export function MobileNav() {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-[#64748B] hover:bg-[#F1F5F9] hover:text-[#0F172A] md:hidden"
+        className="flex min-h-[44px] min-w-[44px] shrink-0 items-center justify-center rounded-xl text-[#64748B] hover:bg-[#F1F5F9] hover:text-[#0F172A] active:bg-[#E2E8F0] md:hidden"
         aria-label="Otvori meni"
       >
         <Menu className="h-6 w-6" />
@@ -79,13 +79,13 @@ export function MobileNav() {
           <button
             type="button"
             onClick={() => setOpen(false)}
-            className="flex h-10 w-10 items-center justify-center rounded-xl text-[#64748B] hover:bg-[#F1F5F9]"
+            className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl text-[#64748B] hover:bg-[#F1F5F9] active:bg-[#E2E8F0]"
             aria-label="Zatvori meni"
           >
             <X className="h-5 w-5" />
           </button>
         </div>
-        <nav className="flex flex-col gap-1">{navItems}</nav>
+        <nav className="flex flex-col gap-2">{navItems}</nav>
       </div>
     </>
   );

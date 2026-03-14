@@ -44,14 +44,12 @@ const ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
 
 export function CategoriesGrid() {
   return (
-    <section id="kategorije" className="py-10 lg:py-12">
-      <div className="mb-6">
-        <h2 className="text-xl font-black tracking-tight text-slate-950 sm:text-2xl">
-          Popularne kategorije
-        </h2>
-      </div>
+    <section id="kategorije" className="py-10 sm:py-14 lg:py-16">
+      <h2 className="mb-4 text-2xl font-semibold text-gray-900 sm:mb-6 sm:text-3xl">
+        Popularne kategorije
+      </h2>
 
-      <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-4 sm:gap-6 md:grid-cols-4 lg:grid-cols-6">
         {POPULAR_CATEGORIES.map((cat) => {
           const Icon = ICONS[cat.icon];
           const image = CATEGORY_IMAGES[cat.displayName] || "/images/categories/handyman.jpg";
@@ -59,26 +57,24 @@ export function CategoriesGrid() {
             <Link
               key={cat.slug}
               href={`/category/${cat.slug}`}
-              className="group overflow-hidden rounded-2xl border border-white/80 bg-white shadow-[0_8px_30px_rgba(15,23,42,0.06)] transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_12px_40px_rgba(15,23,42,0.1)]"
+              className="group flex min-h-[120px] cursor-pointer flex-col rounded-xl bg-white p-5 shadow-sm transition hover:shadow-md active:scale-[0.98] sm:min-h-0 sm:p-6"
             >
-              <div className="relative flex h-20 items-center justify-center bg-slate-50">
+              <div className="relative flex h-12 flex-1 items-center justify-center sm:h-14">
                 {Icon ? (
                   <Icon className="h-10 w-10 text-blue-600 transition group-hover:scale-110" />
                 ) : (
-                  <div className="relative h-full w-full">
+                  <div className="relative h-14 w-14">
                     <Image
                       src={image}
                       alt={cat.displayName}
                       fill
-                      className="object-cover opacity-60"
-                      sizes="200px"
+                      className="object-cover opacity-60 rounded-lg"
+                      sizes="56px"
                     />
                   </div>
                 )}
               </div>
-              <div className="p-4">
-                <h3 className="text-base font-bold text-slate-900">{cat.displayName}</h3>
-              </div>
+              <h3 className="mt-2 text-sm font-semibold text-gray-900 sm:mt-3 sm:text-base">{cat.displayName}</h3>
             </Link>
           );
         })}
