@@ -31,6 +31,12 @@ export function CategoriesGrid() {
             </Link>
           ))}
         </div>
+        <Link
+          href="/category/vodoinstalater"
+          className="mt-4 flex min-h-[48px] items-center justify-center rounded-[14px] border border-[#D6E2F1] bg-white text-[15px] font-medium text-[#475569] shadow-[0_8px_20px_rgba(15,23,42,0.05)]"
+        >
+          Vidi još kategorija
+        </Link>
       </div>
     </section>
   );

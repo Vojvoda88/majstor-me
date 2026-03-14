@@ -8,13 +8,13 @@ import { POPULAR_CATEGORIES } from "@/lib/categories";
 
 export function MobileSearchCard() {
   const router = useRouter();
-  const [city, setCity] = useState("Cijela Crna Gora");
+  const [city, setCity] = useState("");
   const [category, setCategory] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const params = new URLSearchParams();
-    if (city && city !== "Cijela Crna Gora") params.set("city", city);
+    if (city) params.set("city", city);
     if (category) params.set("category", category);
     router.push(`/request/create?${params.toString()}`);
   };
@@ -33,7 +33,7 @@ export function MobileSearchCard() {
             onChange={(e) => setCity(e.target.value)}
             className="h-12 w-full appearance-none rounded-xl border border-[#E2E8F0] bg-white pl-10 pr-4 text-[#0F172A] focus:border-[#2563EB] focus:outline-none focus:ring-2 focus:ring-[#2563EB]/20"
           >
-            <option value="Cijela Crna Gora">Cijela Crna Gora</option>
+            <option value="">Svi gradovi</option>
             {CITIES.map((c) => (
               <option key={c} value={c}>
                 {c}

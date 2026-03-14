@@ -47,7 +47,7 @@ export function CreateRequestForm() {
   } = useForm<CreateRequestFormData>({
     resolver: zodResolver(createRequestSchema),
     defaultValues: {
-      city: urlCity || "Podgorica",
+      city: urlCity || "",
       urgency: "NIJE_HITNO",
       category: urlCategory,
       photos: [],
@@ -59,7 +59,7 @@ export function CreateRequestForm() {
   useEffect(() => {
     if (urlCategory || urlCity) {
       reset({
-        city: urlCity || "Podgorica",
+        city: urlCity || "",
         urgency: "NIJE_HITNO",
         category: urlCategory,
       });
@@ -85,6 +85,7 @@ export function CreateRequestForm() {
   });
 
   return (
+  <>
     <Card className="w-full rounded-[22px] border border-[#E7EDF5] bg-white shadow-[0_10px_30px_rgba(15,23,42,0.06)]">
       <CardHeader className="px-4 sm:px-6">
         <CardTitle className="text-xl sm:text-2xl">Novi zahtjev</CardTitle>
@@ -94,6 +95,7 @@ export function CreateRequestForm() {
       </CardHeader>
       <CardContent className="px-4 sm:px-6">
         <form
+          id="create-request-form"
           onSubmit={handleSubmit((data) => mutation.mutate(data))}
           className="space-y-5"
         >
@@ -136,7 +138,7 @@ export function CreateRequestForm() {
               className="select-premium"
               {...register("city")}
             >
-              <option value="">Odaberite grad...</option>
+              <option value="">Svi gradovi</option>
               {CITIES.map((c) => (
                 <option key={c} value={c}>{c}</option>
               ))}
@@ -177,12 +179,23 @@ export function CreateRequestForm() {
           <button
             type="submit"
             disabled={mutation.isPending}
-            className="btn-primary mt-2 flex w-full items-center justify-center disabled:opacity-50"
+            className="btn-primary mt-2 hidden w-full items-center justify-center disabled:opacity-50 md:flex"
           >
             {mutation.isPending ? "Objavljivanje..." : "Objavi zahtjev"}
           </button>
         </form>
       </CardContent>
     </Card>
+    <div className="fixed inset-x-0 bottom-0 z-[60] border-t border-[#E2E8F0] bg-[rgba(255,255,255,0.92)] px-4 pt-3 pb-[calc(env(safe-area-inset-bottom,0px)+12px)] shadow-[0_-8px_24px_rgba(15,23,42,0.08)] backdrop-blur-[16px] md:hidden">
+      <button
+        type="submit"
+        form="create-request-form"
+        disabled={mutation.isPending}
+        className="flex h-14 w-full items-center justify-center rounded-[16px] bg-gradient-to-br from-[#60A5FA] to-[#2563EB] text-lg font-bold text-white shadow-[0_10px_25px_rgba(37,99,235,0.35)] transition active:scale-[0.98] disabled:opacity-60"
+      >
+        {mutation.isPending ? "Objavljivanje..." : "Objavi zahtjev"}
+      </button>
+    </div>
+  </>
   );
 }

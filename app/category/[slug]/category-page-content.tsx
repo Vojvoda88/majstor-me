@@ -3,11 +3,11 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { HomeHeader } from "@/components/home-page/home-header";
-import { MobileStickyCTA } from "@/components/home-page/MobileStickyCTA";
+import { PremiumMobileHeader } from "@/components/layout/PremiumMobileHeader";
+import { StickyBottomCTA } from "@/components/layout/StickyBottomCTA";
 import { MobileFilterSheet } from "@/components/category/MobileFilterSheet";
 import { Wrench, MapPin, List, ChevronLeft, ChevronRight, SlidersHorizontal } from "lucide-react";
-import { HandymanCard } from "@/components/lists/handyman-card";
+import { PremiumHandymanCard } from "@/components/lists/PremiumHandymanCard";
 import { HandymanMapView } from "@/components/map/handyman-map-view";
 import { CITIES, DEFAULT_PAGE_SIZE } from "@/lib/constants";
 import { HOMEPAGE_CITIES } from "@/lib/homepage-data";
@@ -78,9 +78,9 @@ export function CategoryPageContent({
   }, [internalCategory, cityFilter, sortBy, page]);
 
   return (
-    <main className="min-h-screen bg-[#F4F7FB] pb-28 text-[#0F172A] md:pb-10">
+    <main className="min-h-screen bg-[#F4F7FB] pb-28 pt-16 text-[#0F172A] md:pb-10 md:pt-20">
       <div className="mx-auto max-w-[430px] px-4 md:max-w-4xl md:px-6">
-        <HomeHeader />
+        <PremiumMobileHeader />
 
         <div className="py-6 sm:py-10 lg:py-16">
           <nav className="mb-6 text-sm text-gray-500">
@@ -91,18 +91,46 @@ export function CategoryPageContent({
             <span className="font-medium text-gray-900">{displayName}</span>
           </nav>
 
-          <div className="mb-6 flex flex-wrap items-center justify-between gap-3 sm:mb-8">
-            <h1 className="text-2xl font-semibold text-gray-900 sm:text-3xl">
+          <div className="mb-4 sm:mb-6">
+            <h1 className="text-2xl font-semibold text-[#0F172A] sm:text-3xl">
               {displayName}
             </h1>
+          </div>
+
+          <div className="mb-6 flex flex-wrap items-center gap-2 lg:mb-8">
+            <span className="rounded-[14px] border border-[#E2E8F0] bg-white px-4 py-2.5 text-sm font-medium text-[#475569] shadow-[0_4px_12px_rgba(15,23,42,0.05)]">
+              {cityFilter || "Svi gradovi"}
+            </span>
             <button
               type="button"
               onClick={() => setFilterSheetOpen(true)}
-              className="flex min-h-[48px] items-center gap-2 rounded-[14px] border border-[#D6E2F1] bg-white px-4 py-2.5 text-sm font-medium text-[#0F172A] shadow-[0_10px_30px_rgba(15,23,42,0.06)] transition active:scale-[0.98] lg:hidden"
+              className="flex min-h-[44px] items-center gap-2 rounded-[14px] border border-[#E2E8F0] bg-white px-4 py-2.5 text-sm font-medium text-[#0F172A] shadow-[0_4px_12px_rgba(15,23,42,0.05)] transition active:scale-[0.98]"
             >
               <SlidersHorizontal className="h-4 w-4" />
               Filteri
             </button>
+            <div className="ml-auto flex min-h-[44px] overflow-hidden rounded-[14px] border border-[#E2E8F0] bg-white p-1 shadow-[0_4px_12px_rgba(15,23,42,0.05)]">
+              <button
+                type="button"
+                onClick={() => setViewMode("list")}
+                className={`flex items-center gap-2 rounded-[10px] px-4 py-2 text-sm font-medium transition ${
+                  viewMode === "list" ? "bg-[#2563EB] text-white" : "text-[#475569] hover:bg-[#F1F5F9]"
+                }`}
+              >
+                <List className="h-4 w-4" />
+                Lista
+              </button>
+              <button
+                type="button"
+                onClick={() => setViewMode("map")}
+                className={`flex items-center gap-2 rounded-[10px] px-4 py-2 text-sm font-medium transition ${
+                  viewMode === "map" ? "bg-[#2563EB] text-white" : "text-[#475569] hover:bg-[#F1F5F9]"
+                }`}
+              >
+                <MapPin className="h-4 w-4" />
+                Mapa
+              </button>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-4 lg:gap-8">
@@ -202,7 +230,7 @@ export function CategoryPageContent({
                   ) : (
                     <div className="space-y-0">
                       {handymen.map((h) => (
-                        <HandymanCard key={h.id} {...h} variant="list" />
+                        <PremiumHandymanCard key={h.id} {...h} />
                       ))}
                     </div>
                   )}
@@ -235,7 +263,7 @@ export function CategoryPageContent({
           </div>
         </div>
       </div>
-      <MobileStickyCTA />
+      <StickyBottomCTA href="/request/create" label="Objavi zahtjev" />
       <MobileFilterSheet
         open={filterSheetOpen}
         onClose={() => setFilterSheetOpen(false)}

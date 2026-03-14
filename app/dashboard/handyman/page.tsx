@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { HandymanRequestList } from "./handyman-request-list";
 import { OnboardingBanner } from "@/components/handyman/onboarding-banner";
+import { StickyBottomCTA } from "@/components/layout/StickyBottomCTA";
 import { calcProfileCompletion } from "@/lib/handyman-onboarding";
 import { isCreditsRequired } from "@/lib/credits";
 import { CREDIT_PACKAGES } from "@/lib/credit-packages";
@@ -169,6 +170,10 @@ export default async function HandymanDashboardPage({
         total={totalDisplayed}
         page={page}
         limit={limit}
+      />
+      <StickyBottomCTA
+        href={isCreditsRequired() ? "/dashboard/handyman/credits" : "/dashboard/handyman"}
+        label={isCreditsRequired() ? "Kupi kredite" : "Pregledaj zahtjeve"}
       />
     </div>
   );

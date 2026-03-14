@@ -78,7 +78,7 @@ export function MobileFilterSheet({
               onChange={(e) => onCityChange(e.target.value)}
               className="input-premium select-premium"
             >
-              <option value="">Cijela Crna Gora</option>
+              <option value="">Svi gradovi</option>
               {CITIES.map((c) => (
                 <option key={c} value={c}>
                   {c}

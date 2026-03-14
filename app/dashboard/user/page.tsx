@@ -2,6 +2,7 @@ import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
+import { StickyBottomCTA } from "@/components/layout/StickyBottomCTA";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -141,6 +142,7 @@ export default async function UserDashboardPage() {
         </div>
       )}
     </div>
+    <StickyBottomCTA href="/request/create" label="Objavi zahtjev" />
     </div>
   );
 }

@@ -1,15 +1,12 @@
-import { HomeHeader } from "@/components/home-page/home-header";
+import { PremiumMobileHeader } from "@/components/layout/PremiumMobileHeader";
 import { Hero } from "@/components/home-page/Hero";
-import { MobileStickyCTA } from "@/components/home-page/MobileStickyCTA";
-import { HowItWorks } from "@/components/home-page/HowItWorks";
+import { StickyBottomCTA } from "@/components/layout/StickyBottomCTA";
+import { HomeStatsSection } from "@/components/home-page/HomeStatsSection";
 import { CategoriesGrid } from "@/components/home-page/CategoriesGrid";
-import { CitiesGrid } from "@/components/home-page/CitiesGrid";
 import { TopMasters } from "@/components/home-page/TopMasters";
-import { PlatformStatsSection } from "@/components/home-page/PlatformStatsSection";
-import { TrustSection } from "@/components/home-page/TrustSection";
-import { Testimonials } from "@/components/home-page/Testimonials";
-import { CTAForMasters } from "@/components/home-page/CTAForMasters";
+import { HowItWorks } from "@/components/home-page/HowItWorks";
 import { FAQ } from "@/components/home-page/FAQ";
+import { CTAForMasters } from "@/components/home-page/CTAForMasters";
 import { organizationJsonLd, faqPageJsonLd } from "@/lib/json-ld";
 import { FAQ_ITEMS } from "@/lib/faq-data";
 
@@ -26,22 +23,15 @@ export default function HomePage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJson) }}
       />
-      <HomeHeader />
+      <PremiumMobileHeader />
       <Hero />
-      <PlatformStatsSection />
+      <HomeStatsSection />
       <CategoriesGrid />
       <TopMasters />
-      <section id="kako-radi" className="hidden md:block">
-        <HowItWorks />
-      </section>
-      <div className="hidden md:block">
-        <CitiesGrid />
-        <TrustSection />
-        <Testimonials />
-        <CTAForMasters />
-        <FAQ />
-      </div>
-      <MobileStickyCTA />
+      <HowItWorks />
+      <FAQ />
+      <CTAForMasters />
+      <StickyBottomCTA href="/request/create" label="Objavi zahtjev" />
     </main>
   );
 }

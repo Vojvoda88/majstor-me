@@ -7,13 +7,13 @@ import { POPULAR_CATEGORIES } from "@/lib/categories";
 
 export function HeroSearch() {
   const router = useRouter();
-  const [city, setCity] = useState("Cijela Crna Gora");
+  const [city, setCity] = useState("");
   const [category, setCategory] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const params = new URLSearchParams();
-    if (city && city !== "Cijela Crna Gora") params.set("city", city);
+    if (city) params.set("city", city);
     if (category) params.set("category", category);
     router.push(`/request/create?${params.toString()}`);
   };
@@ -27,7 +27,7 @@ export function HeroSearch() {
           onChange={(e) => setCity(e.target.value)}
           className="input-premium select-premium w-full"
         >
-          <option value="Cijela Crna Gora">Cijela Crna Gora</option>
+          <option value="">Svi gradovi</option>
           {CITIES.map((c) => (
             <option key={c} value={c}>{c}</option>
           ))}

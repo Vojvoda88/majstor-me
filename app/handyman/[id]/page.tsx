@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { SiteHeader } from "@/components/layout/site-header";
+import { PremiumMobileHeader } from "@/components/layout/PremiumMobileHeader";
 import {
   CheckCircle2,
   Star,
@@ -115,7 +115,7 @@ export default async function HandymanProfilePage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <SiteHeader />
+      <PremiumMobileHeader />
       <div className="mx-auto max-w-[430px] px-4 py-6 md:max-w-3xl md:px-6 md:py-8">
         <Link
           href={backHref}

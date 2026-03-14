@@ -7,12 +7,7 @@ export function Hero() {
   return (
     <section className="pt-[88px] pb-6 md:pt-24 md:pb-8">
       <div className="mx-auto max-w-[430px] px-4 md:max-w-4xl md:px-6">
-        <div
-          className="overflow-hidden rounded-[28px] border border-[rgba(191,219,254,0.7)] p-5 shadow-[0_16px_40px_rgba(37,99,235,0.10)] md:p-8"
-          style={{
-            background: "linear-gradient(180deg, rgba(219,234,254,0.85) 0%, rgba(255,255,255,0.92) 100%)",
-          }}
-        >
+        <div className="overflow-hidden rounded-[28px] border border-[rgba(191,219,254,0.7)] bg-gradient-to-b from-[rgba(219,234,254,0.85)] to-[rgba(255,255,255,0.92)] p-5 shadow-[0_16px_40px_rgba(37,99,235,0.10)] md:p-8">
           <h1 className="max-w-[90%] text-[28px] font-bold leading-[1.15] text-[#0F172A] md:text-3xl">
             Pronađite majstora za svaki posao
           </h1>
@@ -30,10 +25,7 @@ export function Hero() {
               { icon: Star, text: "Ocjena 4.8" },
               { icon: Map, text: "Cijela CG" },
             ].map(({ icon: Icon, text }) => (
-              <div
-                key={text}
-                className="rounded-[14px] bg-white/80 px-2.5 py-3 text-center"
-              >
+              <div key={text} className="rounded-[14px] bg-white/80 px-2.5 py-3 text-center">
                 <Icon className="mx-auto mb-1 h-5 w-5 text-[#2563EB]" />
                 <span className="text-xs font-medium text-[#475569]">{text}</span>
               </div>
