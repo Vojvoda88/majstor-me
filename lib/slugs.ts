@@ -16,25 +16,9 @@ export function slugify(text: string): string {
     .replace(/^-|-$/g, "");
 }
 
-// Popularne kategorije - slug -> display name
-export const CATEGORY_SLUGS: Record<string, string> = {
-  "vodoinstalater": "Vodoinstalater",
-  "elektricar": "Električar",
-  "keramicar": "Keramičar",
-  "gipsar": "Gipsar",
-  "stolar": "Stolar",
-  "bravar": "Bravar",
-  "fasader": "Fasader",
-  "parketar": "Parketar",
-  "klima-servis": "Klima servis",
-  "servis-bojlera": "Servis bojlera",
-  "servis-bijele-tehnike": "Servis bijele tehnike",
-  "selidbe": "Selidbe",
-  "ciscenje": "Čišćenje",
-  "bastovanstvo": "Baštovanstvo",
-  "pvc-stolarija": "PVC stolarija",
-  "krovopokrivac": "Krovopokrivač",
-};
+// Re-export iz centralnog categories modula
+import { CATEGORY_CONFIG, CATEGORY_SLUGS } from "./categories";
+export { CATEGORY_SLUGS, CATEGORY_CONFIG };
 
 // Gradovi - slug -> display name
 export const CITY_SLUGS: Record<string, string> = {
@@ -61,10 +45,10 @@ export const CITY_SLUGS: Record<string, string> = {
 };
 
 export function categoryToSlug(name: string): string {
-  const entry = Object.entries(CATEGORY_SLUGS).find(
-    ([_, n]) => n.toLowerCase() === name.toLowerCase()
+  const entry = CATEGORY_CONFIG.find(
+    (c) => c.displayName.toLowerCase() === name.toLowerCase()
   );
-  return entry ? entry[0] : slugify(name);
+  return entry ? entry.slug : slugify(name);
 }
 
 export function cityToSlug(name: string): string {

@@ -39,6 +39,7 @@ export default async function HandymanDashboardPage({
   const { prisma } = await import("@/lib/db");
   const profile = await prisma.handymanProfile.findUnique({
     where: { userId: session.user.id },
+    include: { user: { select: { city: true } } },
   });
 
   if (!profile) {
@@ -68,8 +69,12 @@ export default async function HandymanDashboardPage({
       where.category = { in: profile.categories };
     }
     if (city) where.city = city;
+    // Bez city filtra: majstori vide sve zahtjeve; sa city: samo taj grad
 
-  const [requests, total, myOffersCount, acceptedCount] = await Promise.all([
+  const handymanCity = profile.user?.city ?? null;
+  const { getDistanceBetweenCities } = await import("@/lib/distance");
+
+  const [requestsRaw, total, myOffersCount, acceptedCount] = await Promise.all([
     prisma.request.findMany({
       where,
       include: {
@@ -77,8 +82,8 @@ export default async function HandymanDashboardPage({
         offers: { select: { id: true } },
       },
       orderBy: { createdAt: "desc" },
-      skip,
-      take: limit,
+      skip: 0,
+      take: 500,
     }),
     prisma.request.count({ where }),
     prisma.offer.count({ where: { handymanId: session.user.id } }),
@@ -86,6 +91,18 @@ export default async function HandymanDashboardPage({
       where: { handymanId: session.user.id, status: "ACCEPTED" },
     }),
   ]);
+
+  // Sort by distance (closest first), then by createdAt
+  let sorted = [...requestsRaw]
+    .map((r) => ({
+      ...r,
+      _distance: handymanCity
+        ? getDistanceBetweenCities(handymanCity, r.city)
+        : 9999,
+    }))
+    .sort((a, b) => a._distance - b._distance || new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  const requests = sorted.slice(skip, skip + limit).map(({ _distance, ...r }) => r);
+  const totalDisplayed = sorted.length;
 
   return (
     <div className="container mx-auto max-w-4xl px-4 py-8">
@@ -108,7 +125,7 @@ export default async function HandymanDashboardPage({
       <div className="mt-6 grid gap-4 sm:grid-cols-3">
         <div className="rounded-2xl border border-[#E2E8F0] bg-white p-5 shadow-card">
           <p className="text-sm font-medium text-[#64748B]">Otvoreni zahtjevi</p>
-          <p className="mt-1 text-2xl font-bold text-[#0F172A]">{total}</p>
+          <p className="mt-1 text-2xl font-bold text-[#0F172A]">{totalDisplayed}</p>
         </div>
         <div className="rounded-2xl border border-[#E2E8F0] bg-white p-5 shadow-card">
           <p className="text-sm font-medium text-[#64748B]">Moje poslate ponude</p>
@@ -126,7 +143,7 @@ export default async function HandymanDashboardPage({
         profileCities={profile.cities}
         currentCategory={category}
         currentCity={city}
-        total={total}
+        total={totalDisplayed}
         page={page}
         limit={limit}
       />

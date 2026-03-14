@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useSession } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { MobileNav } from "./mobile-nav";
 
@@ -29,9 +29,13 @@ export function SiteHeader() {
                   <Button variant="ghost" size="sm">Dashboard</Button>
                 </Link>
               )}
-              <Link href="/api/auth/signout">
-                <Button variant="outline" size="sm">Odjava</Button>
-              </Link>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => signOut({ callbackUrl: "/" })}
+              >
+                Odjava
+              </Button>
             </>
           ) : (
             <>

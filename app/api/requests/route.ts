@@ -5,6 +5,7 @@ export const dynamic = "force-dynamic";
 import { auth } from "@/lib/auth";
 import { REQUEST_CATEGORIES, MAX_REQUESTS_PER_DAY, DEFAULT_PAGE_SIZE } from "@/lib/constants";
 import { logError } from "@/lib/logger";
+import { sendNewRequestEmail } from "@/lib/email";
 import { zodErrorToString } from "@/lib/api-response";
 
 const createRequestSchema = z.object({
@@ -123,6 +124,25 @@ export async function POST(request: Request) {
         description: descTrimmed,
       },
     });
+
+    // Notify all handymen with matching category (no city restriction)
+    const handymen = await prisma.user.findMany({
+      where: {
+        role: "HANDYMAN",
+        handymanProfile: {
+          categories: { has: parsed.data.category },
+        },
+      },
+      select: { id: true },
+    });
+    for (const h of handymen) {
+      sendNewRequestEmail(
+        h.id,
+        req.id,
+        parsed.data.category,
+        parsed.data.city
+      ).catch(() => {});
+    }
 
     return NextResponse.json({ success: true, data: req });
   } catch (error) {

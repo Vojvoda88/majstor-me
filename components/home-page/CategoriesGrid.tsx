@@ -20,7 +20,8 @@ import {
   Square,
   Home,
 } from "lucide-react";
-import { POPULAR_CATEGORIES, CATEGORY_IMAGES } from "@/lib/homepage-data";
+import { POPULAR_CATEGORIES } from "@/lib/categories";
+import { CATEGORY_IMAGES } from "@/lib/homepage-data";
 
 const ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
   Wrench,
@@ -53,7 +54,7 @@ export function CategoriesGrid() {
       <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
         {POPULAR_CATEGORIES.map((cat) => {
           const Icon = ICONS[cat.icon];
-          const image = CATEGORY_IMAGES[cat.name] || "/images/categories/handyman.jpg";
+          const image = CATEGORY_IMAGES[cat.displayName] || "/images/categories/handyman.jpg";
           return (
             <Link
               key={cat.slug}
@@ -67,7 +68,7 @@ export function CategoriesGrid() {
                   <div className="relative h-full w-full">
                     <Image
                       src={image}
-                      alt={cat.name}
+                      alt={cat.displayName}
                       fill
                       className="object-cover opacity-60"
                       sizes="200px"
@@ -76,7 +77,7 @@ export function CategoriesGrid() {
                 )}
               </div>
               <div className="p-4">
-                <h3 className="text-base font-bold text-slate-900">{cat.name}</h3>
+                <h3 className="text-base font-bold text-slate-900">{cat.displayName}</h3>
               </div>
             </Link>
           );

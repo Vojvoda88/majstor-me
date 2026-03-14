@@ -9,6 +9,7 @@ import { zodErrorToString } from "@/lib/api-response";
 
 const updateProfileSchema = z.object({
   bio: z.string().optional(),
+  avatarUrl: z.string().url().optional().nullable(),
   categories: z.array(z.enum(REQUEST_CATEGORIES as unknown as [string, ...string[]])),
   cities: z.array(z.string()),
 });
@@ -73,18 +74,21 @@ export async function PATCH(request: Request) {
       );
     }
 
+    const { avatarUrl, categories, cities, bio } = parsed.data;
     const profile = await prisma.handymanProfile.upsert({
       where: { userId: session.user.id },
       create: {
         userId: session.user.id,
-        ...parsed.data,
-        categories: parsed.data.categories as string[],
-        cities: parsed.data.cities,
+        bio,
+        avatarUrl: avatarUrl ?? undefined,
+        categories: categories as string[],
+        cities,
       },
       update: {
-        ...parsed.data,
-        categories: parsed.data.categories as string[],
-        cities: parsed.data.cities,
+        bio,
+        ...(avatarUrl !== undefined && { avatarUrl }),
+        categories: categories as string[],
+        cities,
       },
     });
 

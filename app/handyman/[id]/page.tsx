@@ -17,6 +17,7 @@ import {
   MessageCircle,
 } from "lucide-react";
 import { cityToSlug } from "@/lib/slugs";
+import { getSiteUrl } from "@/lib/site-url";
 
 export const dynamic = "force-dynamic";
 
@@ -34,9 +35,11 @@ export async function generateMetadata({
   if (!user?.handymanProfile) return { title: "Majstor | Majstor.me" };
   const cat = user.handymanProfile.categories[0] || "Majstor";
   const city = user.city || "";
+  const base = getSiteUrl();
   return {
     title: `${user.name} - ${cat} ${city ? city : ""} | Majstor.me`.trim(),
     description: user.handymanProfile.bio || `Profil majstora ${user.name}`,
+    alternates: { canonical: `${base}/handyman/${id}` },
   };
 }
 
@@ -92,8 +95,18 @@ export default async function HandymanProfilePage({
         <Card className="overflow-hidden rounded-2xl border-[#E2E8F0] shadow-card">
           <CardHeader className="bg-gradient-to-br from-[#F8FAFC] to-white pb-8">
             <div className="flex flex-col items-center gap-4 text-center sm:flex-row sm:items-start sm:text-left">
-              <div className="flex h-24 w-24 shrink-0 items-center justify-center rounded-full bg-blue-100 text-blue-600">
-                <Wrench className="h-12 w-12" />
+              <div className="flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-full bg-blue-100 text-blue-600">
+                {profile.avatarUrl ? (
+                  <img
+                    src={profile.avatarUrl}
+                    alt={user.name}
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <span className="text-2xl font-bold">
+                    {user.name?.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2) ?? "?"}
+                  </span>
+                )}
               </div>
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-center justify-center gap-2 sm:justify-start">

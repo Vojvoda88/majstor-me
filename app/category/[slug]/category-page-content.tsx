@@ -4,8 +4,9 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { HomeHeader } from "@/components/home-page/home-header";
-import { Star, Wrench, MapPin } from "lucide-react";
-import { CITIES } from "@/lib/constants";
+import { Wrench, MapPin, ChevronLeft, ChevronRight } from "lucide-react";
+import { HandymanCard } from "@/components/lists/handyman-card";
+import { CITIES, DEFAULT_PAGE_SIZE } from "@/lib/constants";
 
 type Handyman = {
   id: string;
@@ -17,10 +18,12 @@ type Handyman = {
 };
 
 export function CategoryPageContent({
-  category,
+  displayName,
+  internalCategory,
   slug,
 }: {
-  category: string;
+  displayName: string;
+  internalCategory: string;
   slug: string;
 }) {
   const searchParams = useSearchParams();
@@ -28,6 +31,9 @@ export function CategoryPageContent({
   const [handymen, setHandymen] = useState<Handyman[]>([]);
   const [cityFilter, setCityFilter] = useState<string>(cityFromUrl);
   const [sortBy, setSortBy] = useState<"rating" | "reviews">("rating");
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -35,19 +41,28 @@ export function CategoryPageContent({
   }, [cityFromUrl]);
 
   useEffect(() => {
+    setPage(1);
+  }, [internalCategory, cityFilter, sortBy]);
+
+  useEffect(() => {
     async function fetchHandymen() {
       setLoading(true);
       const params = new URLSearchParams();
-      params.set("category", category);
+      params.set("category", internalCategory);
       if (cityFilter) params.set("city", cityFilter);
-      params.set("sortBy", sortBy);
+      params.set("sort", sortBy);
+      params.set("page", String(page));
+      params.set("limit", String(DEFAULT_PAGE_SIZE));
       const res = await fetch(`/api/handymen?${params}`);
       const data = await res.json();
-      setHandymen(data.handymen || []);
+      const items = data.items ?? data.handymen ?? [];
+      setHandymen(items);
+      setTotalPages(data.totalPages ?? 1);
+      setTotal(data.total ?? items.length);
       setLoading(false);
     }
     fetchHandymen();
-  }, [category, cityFilter, sortBy]);
+  }, [internalCategory, cityFilter, sortBy, page]);
 
   return (
     <main className="min-h-screen bg-slate-100 text-slate-900">
@@ -60,11 +75,11 @@ export function CategoryPageContent({
               Početna
             </Link>
             <span className="mx-2">/</span>
-            <span className="font-medium text-slate-900">{category}</span>
+            <span className="font-medium text-slate-900">{displayName}</span>
           </nav>
 
           <h1 className="mb-6 text-2xl font-black tracking-tight text-slate-950 sm:text-3xl">
-            {category}
+            {displayName}
           </h1>
 
           <div className="mb-6 flex flex-wrap gap-4">
@@ -99,38 +114,46 @@ export function CategoryPageContent({
                 Nema majstora za ovu kategoriju u izabranom gradu.
               </p>
               <Link
-                href="/request/create"
+                href={`/request/create?category=${encodeURIComponent(internalCategory)}${cityFilter ? `&city=${encodeURIComponent(cityFilter)}` : ""}`}
                 className="mt-4 inline-block font-medium text-blue-600 hover:underline"
               >
                 Objavi zahtjev
               </Link>
             </div>
           ) : (
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {handymen.map((h) => (
-                <Link
-                  key={h.id}
-                  href={`/handyman/${h.id}`}
-                  className="flex items-center gap-4 rounded-2xl border border-white bg-white p-4 shadow-sm transition hover:shadow-md"
-                >
-                  <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-blue-100">
-                    <Wrench className="h-7 w-7 text-blue-600" />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <h3 className="font-bold text-slate-900">{h.name || "Majstor"}</h3>
-                    <p className="flex items-center gap-1 text-sm text-slate-500">
-                      <MapPin className="h-4 w-4" />
-                      {h.city || "Crna Gora"}
-                    </p>
-                    <div className="mt-1 flex items-center gap-2 text-sm">
-                      <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
-                      <span className="font-semibold">{h.ratingAvg.toFixed(1)}</span>
-                      <span className="text-slate-400">({h.reviewCount} recenzija)</span>
-                    </div>
-                  </div>
-                </Link>
-              ))}
-            </div>
+            <>
+              <div className="mb-4 text-sm text-slate-500">
+                {total} majstor(a)
+              </div>
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {handymen.map((h) => (
+                  <HandymanCard key={h.id} {...h} variant="compact" />
+                ))}
+              </div>
+              {totalPages > 1 && (
+                <div className="mt-6 flex items-center justify-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setPage((p) => Math.max(1, p - 1))}
+                    disabled={page <= 1}
+                    className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-700 disabled:opacity-50 hover:bg-slate-50"
+                  >
+                    <ChevronLeft className="h-5 w-5" />
+                  </button>
+                  <span className="px-4 text-sm text-slate-600">
+                    Strana {page} / {totalPages}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                    disabled={page >= totalPages}
+                    className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-700 disabled:opacity-50 hover:bg-slate-50"
+                  >
+                    <ChevronRight className="h-5 w-5" />
+                  </button>
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>

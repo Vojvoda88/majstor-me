@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Playfair_Display } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
+import { getSiteUrl } from "@/lib/site-url";
 import "./globals.css";
 import { Providers } from "./providers";
 
@@ -17,9 +18,11 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(getSiteUrl()),
   title: "Majstor.me | Pronađite majstora u Crnoj Gori",
   description: "Platforma za pronalaženje provjerenih majstora i servisera u Crnoj Gori.",
   keywords: "majstor, Crna Gora, Podgorica, vodoinstalater, električar, klima servis",
+  alternates: { canonical: "/" },
   openGraph: {
     title: "Majstor.me | Pronađite majstora u Crnoj Gori",
     description: "Platforma za pronalaženje provjerenih majstora i servisera u Crnoj Gori.",

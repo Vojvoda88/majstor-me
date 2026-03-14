@@ -89,6 +89,7 @@ model HandymanProfile {
   id               String         @id @default(cuid())
   userId           String         @unique @map("user_id")
   bio              String?
+  avatarUrl        String?        @map("avatar_url") // URL from storage; fallback to initials when null
   categories       String[]       // MVP: array of category names
   cities           String[]       // Cities where handyman works
   verifiedStatus   VerifiedStatus @default(PENDING) @map("verified_status")

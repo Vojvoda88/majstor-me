@@ -17,6 +17,37 @@ async function getUserEmail(userId: string): Promise<string | null> {
   return user?.email ?? null;
 }
 
+export async function sendNewRequestEmail(
+  handymanId: string,
+  requestId: string,
+  requestCategory: string,
+  requestCity: string
+) {
+  const resend = getResend();
+  if (!resend) return;
+  const to = await getUserEmail(handymanId);
+  if (!to) return;
+
+  const baseUrl = process.env.NEXTAUTH_URL ?? "https://majstor.me";
+  const link = `${baseUrl}/request/${requestId}`;
+
+  try {
+    await resend.emails.send({
+      from,
+      to,
+      subject: `Novi zahtjev: ${requestCategory} u ${requestCity}`,
+      html: `
+        <p>Zdravo,</p>
+        <p>Novi zahtjev za <strong>${requestCategory}</strong> u <strong>${requestCity}</strong>.</p>
+        <p><a href="${link}">Pogledaj zahtjev i pošalji ponudu →</a></p>
+        <p>— Majstor.me</p>
+      `,
+    });
+  } catch {
+    // Silently fail - email is non-critical
+  }
+}
+
 export async function sendNewOfferEmail(
   requestOwnerId: string,
   requestCategory: string,

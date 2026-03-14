@@ -4,12 +4,15 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { HomeHeader } from "@/components/home-page/home-header";
-import { Star, Wrench } from "lucide-react";
-import { POPULAR_CATEGORIES } from "@/lib/homepage-data";
+import { Wrench, ChevronLeft, ChevronRight } from "lucide-react";
+import { HandymanCard } from "@/components/lists/handyman-card";
+import { POPULAR_CATEGORIES } from "@/lib/categories";
+import { DEFAULT_PAGE_SIZE } from "@/lib/constants";
 
 type Handyman = {
   id: string;
   name: string | null;
+  city: string | null;
   categories: string[];
   ratingAvg: number;
   reviewCount: number;
@@ -25,20 +28,28 @@ export function GradPageContent({
   cityImage?: string;
 }) {
   const [handymen, setHandymen] = useState<Handyman[]>([]);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchHandymen() {
       setLoading(true);
-      const res = await fetch(
-        `/api/handymen?city=${encodeURIComponent(cityName)}`
-      );
+      const params = new URLSearchParams();
+      params.set("city", cityName);
+      params.set("page", String(page));
+      params.set("limit", String(DEFAULT_PAGE_SIZE));
+      const res = await fetch(`/api/handymen?${params}`);
       const data = await res.json();
-      setHandymen(data.handymen || []);
+      const items = data.items ?? data.handymen ?? [];
+      setHandymen(items);
+      setTotalPages(data.totalPages ?? 1);
+      setTotal(data.total ?? items.length);
       setLoading(false);
     }
     fetchHandymen();
-  }, [cityName]);
+  }, [cityName, page]);
 
   return (
     <main className="min-h-screen bg-slate-100 text-slate-900">
@@ -97,36 +108,39 @@ export function GradPageContent({
               </Link>
             </div>
           ) : (
-            <div className="mb-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {handymen.map((h) => (
-                <Link
-                  key={h.id}
-                  href={`/handyman/${h.id}`}
-                  className="flex items-center gap-4 rounded-2xl border border-white bg-white p-4 shadow-sm transition hover:shadow-md"
-                >
-                  <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-blue-100">
-                    <Wrench className="h-7 w-7 text-blue-600" />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <h3 className="font-bold text-slate-900">
-                      {h.name || "Majstor"}
-                    </h3>
-                    <p className="text-sm text-slate-500">
-                      {h.categories[0] || "Majstor"}
-                    </p>
-                    <div className="mt-1 flex items-center gap-2 text-sm">
-                      <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
-                      <span className="font-semibold">
-                        {h.ratingAvg.toFixed(1)}
-                      </span>
-                      <span className="text-slate-400">
-                        ({h.reviewCount} recenzija)
-                      </span>
-                    </div>
-                  </div>
-                </Link>
-              ))}
-            </div>
+            <>
+              <div className="mb-4 text-sm text-slate-500">
+                {total} majstor(a)
+              </div>
+              <div className="mb-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {handymen.map((h) => (
+                  <HandymanCard key={h.id} {...h} variant="compact" />
+                ))}
+              </div>
+              {totalPages > 1 && (
+                <div className="mb-12 flex items-center justify-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setPage((p) => Math.max(1, p - 1))}
+                    disabled={page <= 1}
+                    className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-700 disabled:opacity-50 hover:bg-slate-50"
+                  >
+                    <ChevronLeft className="h-5 w-5" />
+                  </button>
+                  <span className="px-4 text-sm text-slate-600">
+                    Strana {page} / {totalPages}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                    disabled={page >= totalPages}
+                    className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-700 disabled:opacity-50 hover:bg-slate-50"
+                  >
+                    <ChevronRight className="h-5 w-5" />
+                  </button>
+                </div>
+              )}
+            </>
           )}
 
           <h2 className="mb-4 text-lg font-bold text-slate-900">
@@ -140,7 +154,7 @@ export function GradPageContent({
                 href={`/category/${cat.slug}?city=${encodeURIComponent(cityName)}`}
                 className="rounded-xl border border-white bg-white px-4 py-3 text-center font-medium text-slate-700 shadow-sm transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700"
               >
-                {cat.name}
+                {cat.displayName}
               </Link>
             ))}
           </div>

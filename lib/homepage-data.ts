@@ -1,27 +1,7 @@
-// Homepage display data - categories, cities, featured
-// All images stored locally in /public/images
+// Homepage display data - cities, images
+// Kategorije su u lib/categories.ts (centralni source of truth)
 
 export const HERO_IMAGE = "/images/hero/hero-handyman.jpg";
-
-// Popularne kategorije za homepage grid (16)
-export const POPULAR_CATEGORIES = [
-  { name: "Vodoinstalater", slug: "vodoinstalater", icon: "Wrench" },
-  { name: "Električar", slug: "elektricar", icon: "Zap" },
-  { name: "Keramičar", slug: "keramicar", icon: "Grid3X3" },
-  { name: "Gipsar", slug: "gipsar", icon: "Paintbrush" },
-  { name: "Stolar", slug: "stolar", icon: "Hammer" },
-  { name: "Bravar", slug: "bravar", icon: "Key" },
-  { name: "Fasader", slug: "fasader", icon: "Building2" },
-  { name: "Parketar", slug: "parketar", icon: "Layout" },
-  { name: "Klima servis", slug: "klima-servis", icon: "Thermometer" },
-  { name: "Servis bojlera", slug: "servis-bojlera", icon: "Flame" },
-  { name: "Servis bijele tehnike", slug: "servis-bijele-tehnike", icon: "Package" },
-  { name: "Selidbe", slug: "selidbe", icon: "Truck" },
-  { name: "Čišćenje", slug: "ciscenje", icon: "Sparkles" },
-  { name: "Baštovanstvo", slug: "bastovanstvo", icon: "TreeDeciduous" },
-  { name: "PVC stolarija", slug: "pvc-stolarija", icon: "Square" },
-  { name: "Krovopokrivač", slug: "krovopokrivac", icon: "Home" },
-];
 
 // Category name -> local image path (fallbacks for slug-based lookup)
 export const CATEGORY_IMAGES: Record<string, string> = {

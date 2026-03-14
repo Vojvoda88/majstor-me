@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useSession } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -27,11 +27,16 @@ export function MobileNav() {
           </Button>
         </Link>
       )}
-      <Link href="/api/auth/signout" onClick={() => setOpen(false)}>
-        <Button variant="outline" className="w-full justify-start">
-          Odjava
-        </Button>
-      </Link>
+      <Button
+        variant="outline"
+        className="w-full justify-start"
+        onClick={() => {
+          setOpen(false);
+          signOut({ callbackUrl: "/" });
+        }}
+      >
+        Odjava
+      </Button>
     </>
   ) : (
     <>
