@@ -5,12 +5,33 @@ import { Badge } from "@/components/ui/badge";
 
 export const dynamic = "force-dynamic";
 
-export default async function AdminHandymenPage() {
+export default async function AdminHandymenPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ status?: string; city?: string; search?: string }>;
+}) {
   await requireAdminPermission("workers");
   const { prisma } = await import("@/lib/db");
+  const params = await searchParams;
+  const statusFilter = params.status;
+  const cityFilter = params.city;
+  const searchQ = params.search?.trim();
+
+  const where: Record<string, unknown> = { role: "HANDYMAN" };
+  if (statusFilter && ["PENDING_REVIEW", "ACTIVE", "SUSPENDED", "BANNED"].includes(statusFilter)) {
+    where.handymanProfile = { workerStatus: statusFilter };
+  }
+  if (cityFilter) where.city = cityFilter;
+  if (searchQ) {
+    where.OR = [
+      { name: { contains: searchQ, mode: "insensitive" } },
+      { phone: { contains: searchQ, mode: "insensitive" } },
+      { email: { contains: searchQ, mode: "insensitive" } },
+    ];
+  }
 
   const handymen = await prisma.user.findMany({
-    where: { role: "HANDYMAN" },
+    where,
     include: {
       handymanProfile: {
         include: {
@@ -32,6 +53,20 @@ export default async function AdminHandymenPage() {
       <div>
         <h1 className="text-2xl font-bold text-[#0F172A]">Majstori</h1>
         <p className="mt-1 text-sm text-[#64748B]">Upravljanje majstorima platforme</p>
+      </div>
+
+      <div className="flex flex-wrap items-center gap-2">
+        <span className="text-sm text-[#64748B]">Status:</span>
+        <Link href={`/admin/handymen${cityFilter ? `?city=${cityFilter}` : ""}${searchQ ? `${cityFilter ? "&" : "?"}search=${encodeURIComponent(searchQ)}` : ""}`}>
+          <Badge variant={!statusFilter ? "default" : "outline"}>Svi</Badge>
+        </Link>
+        {(["PENDING_REVIEW", "ACTIVE", "SUSPENDED", "BANNED"] as const).map((s) => (
+          <Link key={s} href={`/admin/handymen?status=${s}${cityFilter ? `&city=${cityFilter}` : ""}${searchQ ? `&search=${encodeURIComponent(searchQ)}` : ""}`}>
+            <Badge variant={statusFilter === s ? "default" : "outline"}>
+              {s === "PENDING_REVIEW" ? "Na čekanju" : s === "ACTIVE" ? "Aktivan" : s === "SUSPENDED" ? "Suspendovan" : "Banned"}
+            </Badge>
+          </Link>
+        ))}
       </div>
 
       <Card>
@@ -68,10 +103,12 @@ export default async function AdminHandymenPage() {
                       <td className="py-3 pr-4">{h.email}</td>
                       <td className="py-3 pr-4">{h.city ?? hp.cities[0] ?? "-"}</td>
                       <td className="py-3 pr-4">
-                        {isBanned ? (
+                        {(hp.workerStatus === "BANNED" || isBanned) ? (
                           <Badge variant="destructive">Banned</Badge>
-                        ) : isSuspended ? (
+                        ) : (hp.workerStatus === "SUSPENDED" || isSuspended) ? (
                           <Badge variant="secondary">Suspendovan</Badge>
+                        ) : hp.workerStatus === "PENDING_REVIEW" ? (
+                          <Badge variant="outline">Na čekanju</Badge>
                         ) : (
                           <Badge variant="success">Aktivan</Badge>
                         )}

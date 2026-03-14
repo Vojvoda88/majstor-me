@@ -81,10 +81,24 @@ export async function POST(request: Request) {
       );
     }
 
+    if (req.adminStatus && req.adminStatus !== "DISTRIBUTED") {
+      return NextResponse.json(
+        { success: false, error: "Ovaj zahtjev još nije odobren za ponude" },
+        { status: 400 }
+      );
+    }
+
     const profile = await prisma.handymanProfile.findUnique({
       where: { userId: session.user.id },
       include: { workerCategories: { include: { category: true } } },
     });
+
+    if (profile?.workerStatus && profile.workerStatus !== "ACTIVE") {
+      return NextResponse.json(
+        { success: false, error: "Vaš profil još nije odobren. Sačekajte odobrenje admina." },
+        { status: 403 }
+      );
+    }
 
     const hasCategory =
       profile?.workerCategories?.some((wc) => wc.category.name === req.category) ?? false;

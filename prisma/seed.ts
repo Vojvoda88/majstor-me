@@ -174,6 +174,7 @@ async function main() {
                   : "Servis i montaža klima uređaja.",
         cities: niksic,
         verifiedStatus: i < 2 ? "VERIFIED" : "PENDING",
+        workerStatus: "ACTIVE",
         ratingAvg: i < 2 ? 4.5 : 0,
         reviewCount: i < 2 ? 3 : 0,
       },
@@ -206,6 +207,7 @@ async function main() {
       address: "Trg oslobođenja 5",
       urgency: "HITNO_DANAS" as const,
       status: "OPEN" as const,
+      adminStatus: "DISTRIBUTED" as const,
     },
     {
       userId: users[0].id,
@@ -215,6 +217,7 @@ async function main() {
       address: "Trg oslobođenja 5",
       urgency: "U_NAREDNA_2_DANA" as const,
       status: "IN_PROGRESS" as const,
+      adminStatus: "CONTACT_UNLOCKED" as const,
     },
     {
       userId: users[1].id,
@@ -223,6 +226,7 @@ async function main() {
       city: "Nikšić",
       urgency: "NIJE_HITNO" as const,
       status: "COMPLETED" as const,
+      adminStatus: "CLOSED" as const,
     },
     {
       userId: users[1].id,
@@ -232,6 +236,7 @@ async function main() {
       address: "Bulevar Nemanjića 12",
       urgency: "U_NAREDNA_2_DANA" as const,
       status: "OPEN" as const,
+      adminStatus: "DISTRIBUTED" as const,
     },
     {
       userId: users[2].id,
@@ -240,6 +245,7 @@ async function main() {
       city: "Nikšić",
       urgency: "NIJE_HITNO" as const,
       status: "OPEN" as const,
+      adminStatus: "DISTRIBUTED" as const,
     },
     {
       userId: users[2].id,
@@ -248,6 +254,7 @@ async function main() {
       city: "Nikšić",
       urgency: "U_NAREDNA_2_DANA" as const,
       status: "OPEN" as const,
+      adminStatus: "DISTRIBUTED" as const,
     },
     {
       userId: users[0].id,
@@ -256,6 +263,7 @@ async function main() {
       city: "Nikšić",
       urgency: "NIJE_HITNO" as const,
       status: "COMPLETED" as const,
+      adminStatus: "CLOSED" as const,
     },
     {
       userId: users[1].id,
@@ -264,6 +272,7 @@ async function main() {
       city: "Nikšić",
       urgency: "HITNO_DANAS" as const,
       status: "COMPLETED" as const,
+      adminStatus: "CLOSED" as const,
     },
   ];
 

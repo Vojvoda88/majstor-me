@@ -5,11 +5,7 @@ export const dynamic = "force-dynamic";
 import { auth } from "@/lib/auth";
 import { REQUEST_CATEGORIES, MAX_REQUESTS_PER_DAY, DEFAULT_PAGE_SIZE } from "@/lib/constants";
 import { logError } from "@/lib/logger";
-import { sendNewRequestEmail } from "@/lib/email";
-import { createNotification } from "@/lib/notifications";
-import { sendPushToUser } from "@/lib/push";
 import { zodErrorToString } from "@/lib/api-response";
-import type { HandymanForDistribution } from "@/lib/smart-distribution";
 
 const createRequestSchema = z.object({
   requesterName: z.string().min(2, "Unesite ime"),
@@ -36,7 +32,10 @@ export async function GET(request: Request) {
     const limit = Math.min(Math.max(1, parseInt(searchParams.get("limit") ?? String(DEFAULT_PAGE_SIZE))), 50);
     const skip = (page - 1) * limit;
 
-    const where: Record<string, unknown> = { status };
+    const where: Record<string, unknown> = {
+      status,
+      OR: [{ adminStatus: "DISTRIBUTED" }, { adminStatus: null }],
+    };
     if (category) where.category = category;
     if (city) where.city = city;
 
@@ -128,6 +127,36 @@ export async function POST(request: Request) {
       );
     }
 
+    // Blacklist check – blacklisted telefoni ne mogu poslati nove zahtjeve
+    const phoneNorm = parsed.data.requesterPhone.replace(/\D/g, "");
+    const blacklistedPhones = await prisma.blacklistedPhone.findMany({
+      select: { phone: true },
+    });
+    const isBlacklisted = blacklistedPhones.some((b) => b.phone.replace(/\D/g, "") === phoneNorm);
+    if (isBlacklisted) {
+      const reqSpam = await prisma.request.create({
+        data: {
+          userId: isGuest ? null : session!.user!.id,
+          requesterName: isGuest ? requesterName : undefined,
+          requesterPhone: requesterPhone,
+          requesterEmail: isGuest ? (requesterEmail?.trim() || undefined) : undefined,
+          title: title ?? undefined,
+          category: parsed.data.category,
+          subcategory: parsed.data.subcategory,
+          description: descTrimmed,
+          city: parsed.data.city,
+          address: parsed.data.address,
+          urgency: parsed.data.urgency,
+          photos: parsed.data.photos ?? [],
+          adminStatus: "SPAM",
+        },
+      });
+      return NextResponse.json({
+        success: true,
+        data: { ...reqSpam, handymenNotified: 0 },
+      });
+    }
+
     const crypto = await import("crypto");
     const requesterToken = isGuest ? crypto.randomBytes(32).toString("hex") : undefined;
     const { requesterName, title, requesterPhone, requesterEmail, ...rest } = parsed.data;
@@ -143,74 +172,17 @@ export async function POST(request: Request) {
         title: title ?? undefined,
         ...rest,
         description: descTrimmed,
+        adminStatus: "PENDING_REVIEW",
       },
     });
 
-    // Fetch all handymen with category match – svi dobijaju obavještenje
-    const allHandymen = await prisma.user.findMany({
-      where: {
-        role: "HANDYMAN",
-        handymanProfile: {
-          workerCategories: {
-            some: { category: { name: parsed.data.category } },
-          },
-        },
-      },
-      select: {
-        id: true,
-        city: true,
-        handymanProfile: {
-          select: {
-            ratingAvg: true,
-            reviewCount: true,
-            verifiedStatus: true,
-            averageResponseMinutes: true,
-            completedJobsCount: true,
-            availabilityStatus: true,
-            isPromoted: true,
-          },
-        },
-      },
-    });
-
-    const withProfile = allHandymen.filter((u) => u.handymanProfile) as {
-      id: string;
-      city: string | null;
-      handymanProfile: NonNullable<(typeof allHandymen)[0]["handymanProfile"]>;
-    }[];
-
-    const forDist: HandymanForDistribution[] = withProfile.map((u) => ({
-      id: u.id,
-      city: u.city,
-      handymanProfile: u.handymanProfile!,
-      isPromoted: u.handymanProfile?.isPromoted ?? false,
-    }));
-
-    const notifyMsg = `Novi zahtjev: ${parsed.data.category} – ${parsed.data.city}. Otvori aplikaciju i pošalji ponudu.`;
-
-    // Email i notifikacija svim majstorima sa tom kategorijom (bez filtra po blizini)
-    for (const h of forDist) {
-      sendNewRequestEmail(h.id, req.id, parsed.data.category, parsed.data.city).catch(() => {});
-    }
-    for (const h of forDist) {
-      createNotification(h.id, "NEW_JOB", notifyMsg, {
-        body: (parsed.data.title ?? descTrimmed).slice(0, 100),
-        link: `/request/${req.id}`,
-      }).catch(() => {});
-      sendPushToUser(prisma, h.id, {
-        title: "Novi zahtjev: " + parsed.data.category + " – " + parsed.data.city,
-        body: "Otvori aplikaciju i pošalji ponudu.",
-        link: `/request/${req.id}`,
-        tag: "new-job-" + req.id,
-      }).catch(() => {});
-    }
-
+    // Distribucija se NE pokreće ovdje – samo kada admin odobri (adminStatus = DISTRIBUTED)
     return NextResponse.json({
       success: true,
       data: {
         ...req,
         requesterToken: requesterToken ?? undefined,
-        handymenNotified: forDist.length,
+        handymenNotified: 0,
       },
     });
   } catch (error) {

@@ -12,13 +12,24 @@ export async function POST(_req: Request, { params }: { params: Promise<{ id: st
     const { prisma } = await import("@/lib/db");
     const { id } = await params;
 
-    const user = await prisma.user.findUnique({ where: { id, role: "HANDYMAN" } });
+    const user = await prisma.user.findUnique({
+      where: { id, role: "HANDYMAN" },
+      include: { handymanProfile: true },
+    });
     if (!user) return NextResponse.json({ success: false, error: "Nije pronađen" }, { status: 404 });
 
-    await prisma.user.update({
-      where: { id },
-      data: { suspendedAt: new Date() },
-    });
+    await prisma.$transaction([
+      prisma.user.update({
+        where: { id },
+        data: { suspendedAt: new Date() },
+      }),
+      user.handymanProfile
+        ? prisma.handymanProfile.update({
+            where: { userId: id },
+            data: { workerStatus: "SUSPENDED" },
+          })
+        : Promise.resolve(),
+    ]);
 
     await createAuditLog(prisma, {
       adminId: auth.session.user.id,

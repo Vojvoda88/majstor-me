@@ -107,10 +107,13 @@ const ROLE_PERMISSIONS: Record<AdminRole, Permission[]> = {
   MODERATION_ADMIN: [
     "dashboard",
     "moderation",
+    "workers",
     "users",
     "requests",
     "chat",
     "trust_safety",
+    "workers_write",
+    "requests_write",
     "moderation_write",
   ],
   FINANCE_ADMIN: [

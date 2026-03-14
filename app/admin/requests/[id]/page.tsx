@@ -3,8 +3,20 @@ import { notFound } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
+import { RequestDetailActions } from "./request-detail-actions";
+import { RestoreRequestButton } from "./restore-button";
 
 export const dynamic = "force-dynamic";
+
+const ADMIN_STATUS_LABELS: Record<string, string> = {
+  PENDING_REVIEW: "Na čekanju",
+  DISTRIBUTED: "Distribuiran",
+  HAS_OFFERS: "Ima ponude",
+  CONTACT_UNLOCKED: "Kontakt otključan",
+  CLOSED: "Zatvoren",
+  SPAM: "Spam",
+  DELETED: "Obrisan",
+};
 
 const STATUS_LABELS: Record<string, string> = {
   OPEN: "Otvoren",
@@ -61,6 +73,7 @@ export default async function AdminRequestDetailPage({ params }: { params: Promi
             <CardTitle>Zahtjev</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2 text-sm">
+            <p><strong>Admin status:</strong> <Badge variant="outline">{ADMIN_STATUS_LABELS[req.adminStatus ?? ""] ?? req.adminStatus ?? "–"}</Badge></p>
             <p><strong>Status:</strong> <Badge>{STATUS_LABELS[req.status] ?? req.status}</Badge></p>
             <p><strong>Datum:</strong> {new Date(req.createdAt).toLocaleString("sr")}</p>
             <p><strong>Broj ponuda:</strong> {req.offers.length}</p>
@@ -113,6 +126,18 @@ export default async function AdminRequestDetailPage({ params }: { params: Promi
           {req.offers.length === 0 && <p className="text-[#64748B]">Nema ponuda</p>}
         </CardContent>
       </Card>
+
+      {req.adminStatus === "DELETED" && (
+        <RestoreRequestButton requestId={req.id} />
+      )}
+
+      {req.adminStatus === "PENDING_REVIEW" && (
+        <RequestDetailActions
+          requestId={req.id}
+          requesterPhone={req.requesterPhone}
+          adminStatus={req.adminStatus}
+        />
+      )}
 
       <Card>
         <CardHeader>

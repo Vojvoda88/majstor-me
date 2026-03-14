@@ -12,10 +12,23 @@ export async function POST(_req: Request, { params }: { params: Promise<{ id: st
     const { prisma } = await import("@/lib/db");
     const { id } = await params;
 
-    await prisma.user.update({
+    const user = await prisma.user.findUnique({
       where: { id },
-      data: { bannedAt: new Date(), suspendedAt: null },
+      include: { handymanProfile: true },
     });
+
+    await prisma.$transaction([
+      prisma.user.update({
+        where: { id },
+        data: { bannedAt: new Date(), suspendedAt: null },
+      }),
+      user?.handymanProfile
+        ? prisma.handymanProfile.update({
+            where: { userId: id },
+            data: { workerStatus: "BANNED" },
+          })
+        : Promise.resolve(),
+    ]);
 
     await createAuditLog(prisma, {
       adminId: auth.session.user.id,

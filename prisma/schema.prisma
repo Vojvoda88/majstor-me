@@ -35,6 +35,24 @@ enum RequestStatus {
   CANCELLED
 }
 
+// Moderation flow: PENDING_REVIEW -> DISTRIBUTED -> HAS_OFFERS -> CONTACT_UNLOCKED -> CLOSED | SPAM | DELETED
+enum RequestAdminStatus {
+  PENDING_REVIEW
+  DISTRIBUTED
+  HAS_OFFERS
+  CONTACT_UNLOCKED
+  CLOSED
+  SPAM
+  DELETED
+}
+
+enum WorkerStatus {
+  PENDING_REVIEW
+  ACTIVE
+  SUSPENDED
+  BANNED
+}
+
 enum OfferStatus {
   PENDING
   ACCEPTED
@@ -236,6 +254,7 @@ model HandymanProfile {
   travelRadiusKm        Int?               @map("travel_radius_km")
   availabilityStatus    AvailabilityStatus? @default(AVAILABLE) @map("availability_status")
   verifiedStatus        VerifiedStatus     @default(PENDING) @map("verified_status")
+  workerStatus          WorkerStatus       @default(PENDING_REVIEW) @map("worker_status")
   ratingAvg             Float              @default(0) @map("rating_avg")
   reviewCount           Int                @default(0) @map("review_count")
   subscriptionPlan      String             @default("FREE") @map("subscription_plan")
@@ -287,7 +306,7 @@ model Request {
   requesterPhone  String?       @map("requester_phone") // skriven dok ne otključa
   requesterEmail  String?       @map("requester_email") // opciono
   requesterToken  String?       @unique @map("requester_token")
-  adminStatus     String?       @map("admin_status") // NEW, DISTRIBUTED, HAS_OFFERS, CONTACT_UNLOCKED, CLOSED, SPAM, DELETED
+  adminStatus     RequestAdminStatus? @default(PENDING_REVIEW) @map("admin_status")
   deletedAt       DateTime?     @map("deleted_at")
   createdAt       DateTime      @default(now()) @map("created_at")
 

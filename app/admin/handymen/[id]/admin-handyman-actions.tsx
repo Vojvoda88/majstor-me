@@ -10,12 +10,14 @@ export function AdminHandymanActions({
   handymanId,
   adminRole,
   verifiedStatus,
+  workerStatus,
   suspendedAt,
   bannedAt,
 }: {
   handymanId: string;
   adminRole: AdminRole;
   verifiedStatus: string;
+  workerStatus?: string;
   suspendedAt: Date | null;
   bannedAt: Date | null;
 }) {
@@ -46,6 +48,26 @@ export function AdminHandymanActions({
 
   return (
     <div className="flex flex-wrap gap-2">
+      {workerStatus === "PENDING_REVIEW" && (
+        <>
+          <Button
+            size="sm"
+            variant="default"
+            onClick={() => action(`/handymen/${handymanId}/approve`)}
+            disabled={!!loading}
+          >
+            Approve
+          </Button>
+          <Button
+            size="sm"
+            variant="destructive"
+            onClick={() => action(`/handymen/${handymanId}/reject`)}
+            disabled={!!loading}
+          >
+            Reject
+          </Button>
+        </>
+      )}
       {verifiedStatus !== "VERIFIED" && (
         <Button
           size="sm"
@@ -95,6 +117,17 @@ export function AdminHandymanActions({
           disabled={!!loading}
         >
           Ban
+        </Button>
+      )}
+      {(workerStatus === "BANNED" || bannedAt) && (
+        <Button
+          size="sm"
+          variant="default"
+          className="bg-emerald-600 hover:bg-emerald-700"
+          onClick={() => action(`/handymen/${handymanId}/unban`)}
+          disabled={!!loading}
+        >
+          Unban (vrati)
         </Button>
       )}
       <Button

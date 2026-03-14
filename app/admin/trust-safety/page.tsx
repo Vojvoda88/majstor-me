@@ -1,5 +1,6 @@
 import { requireAdminPermission } from "@/lib/admin/auth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { AddPhoneForm } from "./add-phone-form";
 
 export const dynamic = "force-dynamic";
 
@@ -23,6 +24,7 @@ export default async function TrustSafetyPage() {
         <Card>
           <CardHeader>
             <CardTitle>Blacklist telefona ({blacklistedPhones.length})</CardTitle>
+            <AddPhoneForm />
           </CardHeader>
           <CardContent>
             <ul className="space-y-2 text-sm">

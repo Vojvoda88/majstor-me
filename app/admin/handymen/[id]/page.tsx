@@ -45,6 +45,7 @@ export default async function AdminHandymanDetailPage({ params }: { params: Prom
           handymanId={id}
           adminRole={adminRole}
           verifiedStatus={hp.verifiedStatus}
+          workerStatus={hp.workerStatus}
           suspendedAt={user.suspendedAt}
           bannedAt={user.bannedAt}
         />
@@ -58,7 +59,7 @@ export default async function AdminHandymanDetailPage({ params }: { params: Prom
           <CardContent className="space-y-2 text-sm">
             <p><strong>Telefon:</strong> {user.phone ?? "-"}</p>
             <p><strong>Grad:</strong> {user.city ?? hp.cities[0] ?? "-"}</p>
-            <p><strong>Status:</strong> {user.bannedAt ? "Banned" : user.suspendedAt ? "Suspendovan" : "Aktivan"}</p>
+            <p><strong>Status:</strong> {hp.workerStatus === "BANNED" || user.bannedAt ? "Banned" : hp.workerStatus === "SUSPENDED" || user.suspendedAt ? "Suspendovan" : hp.workerStatus === "PENDING_REVIEW" ? "Na čekanju" : "Aktivan"}</p>
             <p><strong>Verifikacija:</strong> {hp.verifiedStatus}</p>
             <p><strong>Kategorije:</strong> {categories.join(", ") || "-"}</p>
             <p><strong>Gradovi rada:</strong> {hp.cities.join(", ") || "-"}</p>

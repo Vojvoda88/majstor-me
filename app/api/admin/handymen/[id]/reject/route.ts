@@ -12,33 +12,36 @@ export async function POST(_req: Request, { params }: { params: Promise<{ id: st
     const { prisma } = await import("@/lib/db");
     const { id } = await params;
 
-    const user = await prisma.user.findUnique({
-      where: { id },
-      include: { handymanProfile: true },
+    const profile = await prisma.handymanProfile.findUnique({
+      where: { userId: id },
+      include: { user: true },
     });
 
+    if (!profile || profile.user.role !== "HANDYMAN") {
+      return NextResponse.json({ success: false, error: "Majstor nije pronađen" }, { status: 404 });
+    }
+
     await prisma.$transaction([
+      prisma.handymanProfile.update({
+        where: { userId: id },
+        data: { workerStatus: "BANNED" },
+      }),
       prisma.user.update({
         where: { id },
-        data: { suspendedAt: null },
+        data: { bannedAt: new Date(), suspendedAt: null },
       }),
-      user?.handymanProfile
-        ? prisma.handymanProfile.update({
-            where: { userId: id },
-            data: { workerStatus: "ACTIVE" },
-          })
-        : Promise.resolve(),
     ]);
 
     await createAuditLog(prisma, {
       adminId: auth.session.user.id,
       adminRole: auth.adminRole,
-      actionType: "UNSUSPEND",
+      actionType: "REJECT_WORKER",
       entityType: "handyman",
       entityId: id,
+      newValue: { workerStatus: "BANNED" },
     });
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true, data: { workerStatus: "BANNED" } });
   } catch (e) {
     console.error(e);
     return NextResponse.json({ success: false, error: "Greška" }, { status: 500 });
