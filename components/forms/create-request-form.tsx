@@ -21,10 +21,14 @@ import { REQUEST_CATEGORIES, URGENCY_OPTIONS, CITIES } from "@/lib/constants";
 import { RequestPhotosEditor } from "./request-photos-editor";
 
 const createRequestSchema = z.object({
+  requesterName: z.string().min(2, "Unesite ime"),
   category: z.string().min(1, "Odaberite kategoriju"),
+  title: z.string().min(3, "Naslov mora imati najmanje 3 karaktera"),
   description: z.string().min(10, "Opis mora imati najmanje 10 karaktera").max(2000),
   city: z.string().min(1, "Unesite grad"),
+  requesterPhone: z.string().min(6, "Unesite broj telefona"),
   address: z.string().optional(),
+  requesterEmail: z.union([z.string().email("Neispravan email"), z.literal("")]).optional(),
   urgency: z.enum(["HITNO_DANAS", "U_NAREDNA_2_DANA", "NIJE_HITNO"]),
   photos: z.array(z.string().url()).max(5).optional().default([]),
 });
@@ -51,6 +55,7 @@ export function CreateRequestForm() {
       urgency: "NIJE_HITNO",
       category: urlCategory,
       photos: [],
+      requesterEmail: "",
     },
   });
 
@@ -79,7 +84,8 @@ export function CreateRequestForm() {
     },
     onSuccess: (data) => {
       const notified = data.handymenNotified ?? 0;
-      router.push(`/request/${data.id}?created=1${notified > 0 ? `&notified=${notified}` : ""}`);
+      const token = data.requesterToken ? `&token=${encodeURIComponent(data.requesterToken)}` : "";
+      router.push(`/request/${data.id}?created=1${notified > 0 ? `&notified=${notified}` : ""}${token}`);
       router.refresh();
     },
   });
@@ -101,6 +107,29 @@ export function CreateRequestForm() {
         >
           {mutation.error && <div className="form-error">{mutation.error.message}</div>}
           <div className="space-y-3">
+            <Label htmlFor="requesterName">Ime *</Label>
+            <Input
+              id="requesterName"
+              placeholder="Vaše ime"
+              {...register("requesterName")}
+            />
+            {errors.requesterName && (
+              <p className="text-sm text-destructive">{errors.requesterName.message}</p>
+            )}
+          </div>
+          <div className="space-y-3">
+            <Label htmlFor="requesterPhone">Broj telefona *</Label>
+            <Input
+              id="requesterPhone"
+              type="tel"
+              placeholder="+382 69 123 456"
+              {...register("requesterPhone")}
+            />
+            {errors.requesterPhone && (
+              <p className="text-sm text-destructive">{errors.requesterPhone.message}</p>
+            )}
+          </div>
+          <div className="space-y-3">
             <Label htmlFor="category">Kategorija</Label>
             <select
               id="category"
@@ -116,6 +145,17 @@ export function CreateRequestForm() {
             </select>
             {errors.category && (
               <p className="text-sm text-destructive">{errors.category.message}</p>
+            )}
+          </div>
+          <div className="space-y-3">
+            <Label htmlFor="title">Naslov problema *</Label>
+            <Input
+              id="title"
+              placeholder="Kratak naslov šta vam treba"
+              {...register("title")}
+            />
+            {errors.title && (
+              <p className="text-sm text-destructive">{errors.title.message}</p>
             )}
           </div>
           <div className="space-y-3">
@@ -145,6 +185,18 @@ export function CreateRequestForm() {
             </select>
             {errors.city && (
               <p className="text-sm text-destructive">{errors.city.message}</p>
+            )}
+          </div>
+          <div className="space-y-3">
+            <Label htmlFor="requesterEmail">Email (opciono)</Label>
+            <Input
+              id="requesterEmail"
+              type="email"
+              placeholder="email@primjer.me"
+              {...register("requesterEmail")}
+            />
+            {errors.requesterEmail && (
+              <p className="text-sm text-destructive">{errors.requesterEmail.message}</p>
             )}
           </div>
           <div className="space-y-3">

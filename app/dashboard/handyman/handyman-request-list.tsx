@@ -32,7 +32,8 @@ export function HandymanRequestList({
     city: string;
     urgency: string;
     createdAt: Date;
-    user: { name: string };
+    user: { name: string } | null;
+    requesterName?: string | null;
     offers: { id: string }[];
   }>;
   profileCategories: string[];
@@ -132,7 +133,7 @@ export function HandymanRequestList({
                       </span>
                       <span className="flex items-center gap-1 text-sm text-[#94A3B8]">
                         <User className="h-4 w-4" />
-                        {req.user.name}
+                        {req.requesterName ?? req.user?.name ?? "-"}
                       </span>
                     </div>
                   </div>

@@ -22,6 +22,8 @@ const updateProfileSchema = z
     serviceAreasDescription: z.string().max(500).optional().nullable(),
     travelRadiusKm: z.number().int().min(0).max(200).optional().nullable(),
     availabilityStatus: z.enum(["AVAILABLE", "BUSY", "EMERGENCY_ONLY"]).optional().nullable(),
+    viberPhone: z.string().max(20).optional().nullable(),
+    whatsappPhone: z.string().max(20).optional().nullable(),
   })
   .refine((data) => data.categories.length <= MAX_HANDYMAN_CATEGORIES, {
     message: "Maksimalno 5 kategorija je dozvoljeno.",
@@ -107,6 +109,8 @@ export async function PATCH(request: Request) {
       serviceAreasDescription,
       travelRadiusKm,
       availabilityStatus,
+      viberPhone,
+      whatsappPhone,
     } = parsed.data;
 
     if (categories.length > MAX_HANDYMAN_CATEGORIES) {
@@ -156,6 +160,8 @@ export async function PATCH(request: Request) {
           ...(serviceAreasDescription !== undefined && { serviceAreasDescription }),
           ...(travelRadiusKm !== undefined && { travelRadiusKm }),
           ...(availabilityStatus !== undefined && { availabilityStatus }),
+          ...(viberPhone !== undefined && { viberPhone: viberPhone || null }),
+          ...(whatsappPhone !== undefined && { whatsappPhone: whatsappPhone || null }),
         },
       });
 

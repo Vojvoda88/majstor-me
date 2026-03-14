@@ -7,18 +7,19 @@ import { REQUEST_CATEGORIES, MAX_REQUESTS_PER_DAY, DEFAULT_PAGE_SIZE } from "@/l
 import { logError } from "@/lib/logger";
 import { sendNewRequestEmail } from "@/lib/email";
 import { createNotification } from "@/lib/notifications";
+import { sendPushToUser } from "@/lib/push";
 import { zodErrorToString } from "@/lib/api-response";
-import {
-  SMART_DISTRIBUTION_CONFIG,
-  rankHandymenForRequest,
-  type HandymanForDistribution,
-} from "@/lib/smart-distribution";
+import type { HandymanForDistribution } from "@/lib/smart-distribution";
 
 const createRequestSchema = z.object({
+  requesterName: z.string().min(2, "Unesite ime"),
+  title: z.string().min(3, "Naslov mora imati najmanje 3 karaktera"),
   category: z.enum(REQUEST_CATEGORIES as unknown as [string, ...string[]]),
   subcategory: z.string().optional(),
   description: z.string().min(10, "Opis mora imati najmanje 10 karaktera").max(2000, "Opis predug"),
   city: z.string().min(1, "Unesite grad"),
+  requesterPhone: z.string().min(6, "Unesite broj telefona"),
+  requesterEmail: z.string().email().optional().or(z.literal("")),
   address: z.string().optional(),
   urgency: z.enum(["HITNO_DANAS", "U_NAREDNA_2_DANA", "NIJE_HITNO"]),
   photos: z.array(z.string().url()).max(5, "Maksimalno 5 slika").optional().default([]),
@@ -70,37 +71,37 @@ export async function POST(request: Request) {
   try {
     const { prisma } = await import("@/lib/db");
     const session = await auth();
-    if (!session?.user?.id) {
-      return NextResponse.json(
-        { success: false, error: "Morate biti prijavljeni" },
-        { status: 401 }
-      );
-    }
+    const isGuest = !session?.user?.id;
 
-    if (session.user.role !== "USER") {
+    if (!isGuest && session!.user!.role !== "USER") {
       return NextResponse.json(
         { success: false, error: "Samo korisnici mogu kreirati zahtjeve" },
         { status: 403 }
       );
     }
 
-    const yesterday = new Date();
-    yesterday.setDate(yesterday.getDate() - 1);
-    const requestCount = await prisma.request.count({
-      where: {
-        userId: session.user.id,
-        createdAt: { gte: yesterday },
-      },
-    });
-    if (requestCount >= MAX_REQUESTS_PER_DAY) {
-      return NextResponse.json(
-        { success: false, error: "Dostigli ste dnevni limit zahtjeva (5)" },
-        { status: 429 }
-      );
+    if (!isGuest) {
+      const yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+      const requestCount = await prisma.request.count({
+        where: {
+          userId: session!.user!.id,
+          createdAt: { gte: yesterday },
+        },
+      });
+      if (requestCount >= MAX_REQUESTS_PER_DAY) {
+        return NextResponse.json(
+          { success: false, error: "Dostigli ste dnevni limit zahtjeva (5)" },
+          { status: 429 }
+        );
+      }
     }
 
     const body = await request.json();
-    const parsed = createRequestSchema.safeParse(body);
+    const parsed = createRequestSchema.safeParse({
+      ...body,
+      requesterEmail: body.requesterEmail?.trim() || undefined,
+    });
     if (!parsed.success) {
       return NextResponse.json(
         { success: false, error: zodErrorToString(parsed.error) },
@@ -109,13 +110,17 @@ export async function POST(request: Request) {
     }
 
     const descTrimmed = parsed.data.description.trim();
-    const duplicate = await prisma.request.findFirst({
-      where: {
-        userId: session.user.id,
-        description: descTrimmed,
-        createdAt: { gte: yesterday },
-      },
-    });
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    const duplicate = isGuest
+      ? null
+      : await prisma.request.findFirst({
+          where: {
+            userId: session!.user!.id,
+            description: descTrimmed,
+            createdAt: { gte: yesterday },
+          },
+        });
     if (duplicate) {
       return NextResponse.json(
         { success: false, error: "Već ste objavili isti zahtjev danas" },
@@ -123,15 +128,25 @@ export async function POST(request: Request) {
       );
     }
 
+    const crypto = await import("crypto");
+    const requesterToken = isGuest ? crypto.randomBytes(32).toString("hex") : undefined;
+    const { requesterName, title, requesterPhone, requesterEmail, ...rest } = parsed.data;
+    const emailTrimmed = requesterEmail?.trim() || undefined;
+
     const req = await prisma.request.create({
       data: {
-        userId: session.user.id,
-        ...parsed.data,
+        userId: isGuest ? null : session!.user!.id,
+        requesterName: isGuest ? requesterName : undefined,
+        requesterPhone: requesterPhone,
+        requesterEmail: isGuest ? emailTrimmed : undefined,
+        requesterToken: requesterToken ?? undefined,
+        title: title ?? undefined,
+        ...rest,
         description: descTrimmed,
       },
     });
 
-    // Fetch all handymen with category match (svi vide u dashboardu)
+    // Fetch all handymen with category match – svi dobijaju obavještenje
     const allHandymen = await prisma.user.findMany({
       where: {
         role: "HANDYMAN",
@@ -171,32 +186,32 @@ export async function POST(request: Request) {
       isPromoted: u.handymanProfile?.isPromoted ?? false,
     }));
 
-    const { topForNotify } = rankHandymenForRequest(forDist, parsed.data.city);
+    const notifyMsg = `Novi zahtjev: ${parsed.data.category} – ${parsed.data.city}. Otvori aplikaciju i pošalji ponudu.`;
 
-    // Samo top N dobijaju email (ili svi ako smart distribution disabled)
-    const toNotify = SMART_DISTRIBUTION_CONFIG.ENABLED ? topForNotify : forDist;
-    for (const h of toNotify) {
-      sendNewRequestEmail(
-        h.id,
-        req.id,
-        parsed.data.category,
-        parsed.data.city
-      ).catch(() => {});
-    }
-
-    // Notifikacija svim majstorima koji imaju tu kategoriju
+    // Email i notifikacija svim majstorima sa tom kategorijom (bez filtra po blizini)
     for (const h of forDist) {
-      createNotification(
-        h.id,
-        "NEW_JOB",
-        `Novi posao: ${parsed.data.category} u ${parsed.data.city}`,
-        { body: descTrimmed.slice(0, 100), link: `/request/${req.id}` }
-      ).catch(() => {});
+      sendNewRequestEmail(h.id, req.id, parsed.data.category, parsed.data.city).catch(() => {});
+    }
+    for (const h of forDist) {
+      createNotification(h.id, "NEW_JOB", notifyMsg, {
+        body: (parsed.data.title ?? descTrimmed).slice(0, 100),
+        link: `/request/${req.id}`,
+      }).catch(() => {});
+      sendPushToUser(prisma, h.id, {
+        title: "Novi zahtjev: " + parsed.data.category + " – " + parsed.data.city,
+        body: "Otvori aplikaciju i pošalji ponudu.",
+        link: `/request/${req.id}`,
+        tag: "new-job-" + req.id,
+      }).catch(() => {});
     }
 
     return NextResponse.json({
       success: true,
-      data: { ...req, handymenNotified: toNotify.length },
+      data: {
+        ...req,
+        requesterToken: requesterToken ?? undefined,
+        handymenNotified: forDist.length,
+      },
     });
   } catch (error) {
     logError("POST request error", error);

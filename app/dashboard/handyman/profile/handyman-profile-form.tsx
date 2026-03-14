@@ -32,6 +32,8 @@ const profileSchema = z.object({
   serviceAreasDescription: z.string().max(500).optional().nullable(),
   travelRadiusKm: z.number().int().min(0).max(200).optional().nullable(),
   availabilityStatus: z.enum(["AVAILABLE", "BUSY", "EMERGENCY_ONLY"]).optional().nullable(),
+  viberPhone: z.string().max(20).optional().nullable(),
+  whatsappPhone: z.string().max(20).optional().nullable(),
 });
 
 type ProfileFormData = z.infer<typeof profileSchema>;
@@ -52,6 +54,8 @@ type Profile = {
   serviceAreasDescription?: string | null;
   travelRadiusKm?: number | null;
   availabilityStatus?: string | null;
+  viberPhone?: string | null;
+  whatsappPhone?: string | null;
 } | null;
 
 export function HandymanProfileForm({ profile, userName }: { profile: Profile; userName?: string | null }) {
@@ -77,6 +81,8 @@ export function HandymanProfileForm({ profile, userName }: { profile: Profile; u
       serviceAreasDescription: profile?.serviceAreasDescription ?? null,
       travelRadiusKm: profile?.travelRadiusKm ?? null,
       availabilityStatus: (profile?.availabilityStatus as ProfileFormData["availabilityStatus"]) ?? "AVAILABLE",
+      viberPhone: profile?.viberPhone ?? null,
+      whatsappPhone: profile?.whatsappPhone ?? null,
     },
   });
 
@@ -145,6 +151,26 @@ export function HandymanProfileForm({ profile, userName }: { profile: Profile; u
               placeholder="npr. 069 123 456"
               className="mt-2"
             />
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div>
+              <Label>Viber broj (opciono)</Label>
+              <Input
+                {...register("viberPhone")}
+                type="tel"
+                placeholder="npr. 069 123 456"
+                className="mt-2"
+              />
+            </div>
+            <div>
+              <Label>WhatsApp broj (opciono)</Label>
+              <Input
+                {...register("whatsappPhone")}
+                type="tel"
+                placeholder="npr. 069 123 456"
+                className="mt-2"
+              />
+            </div>
           </div>
           <div>
             <Label>Bio / Opis usluga</Label>

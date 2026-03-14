@@ -181,15 +181,17 @@ export async function POST(
     });
 
     const otherUserId = isOwner ? acceptedHandymanId : req.userId;
-    await prisma.notification.create({
-      data: {
-        userId: otherUserId,
-        type: "NEW_MESSAGE",
-        title: "Nova poruka",
-        body: parsed.data.content.slice(0, 100),
-        link: `/request/${requestId}`,
-      },
-    });
+    if (otherUserId) {
+      await prisma.notification.create({
+        data: {
+          userId: otherUserId,
+          type: "NEW_MESSAGE",
+          title: "Nova poruka",
+          body: parsed.data.content.slice(0, 100),
+          link: `/request/${requestId}`,
+        },
+      });
+    }
 
     return NextResponse.json({
       success: true,

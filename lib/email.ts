@@ -48,15 +48,26 @@ export async function sendNewRequestEmail(
   }
 }
 
+/**
+ * Pošalji email korisniku o novoj ponudi.
+ * Za registrovanog korisnika: requestOwnerId.
+ * Za guest: requesterEmail (pozovite sendNewOfferEmailToAddress).
+ */
 export async function sendNewOfferEmail(
-  requestOwnerId: string,
+  requestOwnerId: string | null,
   requestCategory: string,
-  handymanName: string
+  handymanName: string,
+  requesterEmail?: string | null
 ) {
   const resend = getResend();
   if (!resend) return;
-  const to = await getUserEmail(requestOwnerId);
+  const to = requestOwnerId
+    ? await getUserEmail(requestOwnerId)
+    : requesterEmail?.trim() || null;
   if (!to) return;
+
+  const baseUrl = process.env.NEXTAUTH_URL ?? "https://majstor.me";
+  const link = `${baseUrl}/request`;
 
   try {
     await resend.emails.send({
@@ -67,7 +78,7 @@ export async function sendNewOfferEmail(
         <p>Zdravo,</p>
         <p><strong>${handymanName}</strong> vam je poslao ponudu na zahtjev za <strong>${requestCategory}</strong>.</p>
         <p>Pogledajte ponude i prihvatite onu koja vam najviše odgovara.</p>
-        <p><a href="${process.env.NEXTAUTH_URL}/dashboard/user">Pregledaj ponude →</a></p>
+        <p><a href="${link}">Pregledaj ponude →</a></p>
         <p>— Majstor.me</p>
       `,
     });

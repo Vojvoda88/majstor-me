@@ -85,6 +85,8 @@ model User {
   messagesSent    Message[]
   notifications   Notification[]
   creditTransactions CreditTransaction[]
+  contactUnlocks     RequestContactUnlock[]
+  pushSubscriptions  PushSubscription[]
 
   @@map("users")
 }
@@ -139,6 +141,8 @@ model HandymanProfile {
   isPromoted            Boolean            @default(false) @map("is_promoted")
   promotedUntil         DateTime?          @map("promoted_until")
   creditsBalance        Int                @default(0) @map("credits_balance")
+  viberPhone            String?            @map("viber_phone")
+  whatsappPhone         String?            @map("whatsapp_phone")
   createdAt             DateTime           @default(now()) @map("created_at")
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -150,7 +154,7 @@ model CreditTransaction {
   id           String   @id @default(cuid())
   handymanId   String   @map("handyman_id") // User.id of handyman
   amount       Int      // positive = add, negative = spend
-  type         String   // OFFER_SENT, PURCHASE, BONUS, REFUND
+  type         String   // OFFER_SENT, CONTACT_UNLOCK, PURCHASE, BONUS, REFUND
   referenceId  String?  @map("reference_id") // e.g. offerId for OFFER_SENT
   balanceAfter Int      @map("balance_after")
   createdAt    DateTime @default(now()) @map("created_at")
@@ -162,30 +166,52 @@ model CreditTransaction {
 }
 
 model Request {
-  id          String        @id @default(cuid())
-  userId      String        @map("user_id")
-  category    String
-  subcategory String?
-  description String
-  city        String
-  address     String?
-  urgency     UrgencyLevel  @default(NIJE_HITNO)
-  status      RequestStatus @default(OPEN)
-  photos      String[]      @default([]) // URLs from storage
-  createdAt   DateTime      @default(now()) @map("created_at")
+  id              String        @id @default(cuid())
+  userId          String?       @map("user_id") // null = guest zahtjev
+  category        String
+  subcategory     String?
+  title           String?       @map("title") // naslov problema
+  description     String
+  city            String
+  address         String?
+  urgency         UrgencyLevel  @default(NIJE_HITNO)
+  status          RequestStatus @default(OPEN)
+  photos          String[]      @default([]) // URLs from storage
+  requesterName   String?       @map("requester_name") // za guest
+  requesterPhone  String?       @map("requester_phone") // skriven dok ne otključa
+  requesterEmail  String?       @map("requester_email") // opciono
+  requesterToken  String?       @unique @map("requester_token") // za guest da vidi/prihvati
+  createdAt       DateTime      @default(now()) @map("created_at")
 
-  user          User          @relation("RequestCreator", fields: [userId], references: [id], onDelete: Cascade)
-  offers        Offer[]
-  review        Review?
-  report        Report[]
-  conversation  Conversation?
-  handymanInvites HandymanInvite[]
+  user              User?                @relation("RequestCreator", fields: [userId], references: [id], onDelete: Cascade)
+  offers            Offer[]
+  review            Review?
+  report            Report[]
+  conversation      Conversation?
+  handymanInvites   HandymanInvite[]
+  contactUnlocks    RequestContactUnlock[]
 
   @@index([status])
   @@index([city])
   @@index([category])
   @@index([createdAt])
   @@map("requests")
+}
+
+model RequestContactUnlock {
+  id         String   @id @default(cuid())
+  requestId  String   @map("request_id")
+  handymanId String   @map("handyman_id")
+
+  request  Request @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  handyman User    @relation(fields: [handymanId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@unique([requestId, handymanId])
+  @@index([requestId])
+  @@index([handymanId])
+  @@map("request_contact_unlocks")
 }
 
 model Offer {
@@ -196,6 +222,7 @@ model Offer {
   priceValue   Float?      @map("price_value") // Optional for PO_DOGOVORU
   message      String?
   proposedDate DateTime?   @map("proposed_date")
+  proposedArrival String?  @map("proposed_arrival") // procijenjeni dolazak (npr. "Sutra ujutro")
   status       OfferStatus @default(PENDING)
   createdAt    DateTime    @default(now()) @map("created_at")
 
@@ -296,6 +323,21 @@ model Notification {
   @@index([userId])
   @@index([userId, read])
   @@map("notifications")
+}
+
+model PushSubscription {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
+  userAgent String?  @map("user_agent")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("push_subscriptions")
 }
 
 model HandymanInvite {

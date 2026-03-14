@@ -24,6 +24,7 @@ const offerSchema = z.object({
   priceValue: z.number().optional().nullable(),
   message: z.string().optional(),
   proposedDate: z.string().optional(),
+  proposedArrival: z.string().optional(), // procijenjeni dolazak
 }).refine(
   (data) => data.priceType !== "FIKSNA" || (data.priceValue != null && data.priceValue >= 0),
   { message: "Fiksna cijena zahtijeva iznos", path: ["priceValue"] }
@@ -55,6 +56,7 @@ export function SendOfferForm({ requestId }: { requestId: string }) {
           ...data,
           priceValue: data.priceType === "FIKSNA" ? data.priceValue : undefined,
           proposedDate: data.proposedDate ? new Date(data.proposedDate).toISOString() : undefined,
+          proposedArrival: data.proposedArrival || undefined,
         }),
       });
       const json = await res.json();
@@ -137,6 +139,14 @@ export function SendOfferForm({ requestId }: { requestId: string }) {
               id="proposedDate"
               type="datetime-local"
               {...register("proposedDate")}
+            />
+          </div>
+          <div>
+            <Label htmlFor="proposedArrival">Procijenjeni dolazak (opciono)</Label>
+            <Input
+              id="proposedArrival"
+              placeholder="npr. Sutra ujutro, Danas popodne"
+              {...register("proposedArrival")}
             />
           </div>
           <Button

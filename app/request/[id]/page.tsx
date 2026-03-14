@@ -13,6 +13,7 @@ import { CancelRequestButton } from "@/components/request/cancel-request-button"
 import { RequestSuccessBanner } from "@/components/request/request-success-banner";
 import { RequestChatPanel } from "@/components/chat/request-chat-panel";
 import { InviteHandymanForm } from "@/components/invite/invite-handyman-form";
+import { UnlockContactButton } from "@/components/request/unlock-contact-button";
 import { SiteHeader } from "@/components/layout/site-header";
 import { MapPin, Calendar, User } from "lucide-react";
 
@@ -31,10 +32,13 @@ const STATUS_LABELS: Record<string, string> = {
 
 export default async function RequestDetailPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ token?: string }>;
 }) {
   const { id } = await params;
+  const { token } = await searchParams;
   const session = await auth();
 
   const { prisma } = await import("@/lib/db");
@@ -42,6 +46,7 @@ export default async function RequestDetailPage({
     where: { id },
     include: {
       user: { select: { id: true, name: true, city: true } },
+      contactUnlocks: { select: { handymanId: true } },
       offers: {
         include: {
           handyman: {
@@ -76,17 +81,17 @@ export default async function RequestDetailPage({
         workerCategories: {
           some: { category: { name: req.category } },
         },
-        OR: [
-          { cities: { has: req.city } },
-          { user: { city: req.city } },
-        ],
       },
     });
   } catch {
     // ignore
   }
 
-  const isOwner = session?.user?.id === req.userId;
+  const isOwner =
+    (req.userId && session?.user?.id === req.userId) ||
+    (!req.userId && !!req.requesterToken && token === req.requesterToken);
+  const requesterName = req.user?.name ?? req.requesterName ?? "Korisnik";
+  const handymanUnlocked = session?.user?.role === "HANDYMAN" && req.contactUnlocks.some((u) => u.handymanId === session.user.id);
   const acceptedOffer = req.offers.find((o) => o.status === "ACCEPTED");
 
   return (
@@ -107,8 +112,9 @@ export default async function RequestDetailPage({
       <Card className="rounded-xl bg-white shadow-sm transition hover:shadow-md">
         <CardHeader>
           <CardTitle className="text-xl font-bold text-[#0F172A] sm:text-2xl">
-            {req.category}
+            {req.title ?? req.category}
           </CardTitle>
+          <p className="text-sm text-[#64748B]">{req.category}</p>
           <div className="mt-3 flex flex-wrap items-center gap-2">
             <Badge
               variant={
@@ -143,7 +149,7 @@ export default async function RequestDetailPage({
             </span>
             <span className="flex items-center gap-1 text-sm text-[#64748B]">
               <User className="h-4 w-4" />
-              {req.user.name}
+              {requesterName}
             </span>
           </div>
         </CardHeader>
@@ -157,13 +163,37 @@ export default async function RequestDetailPage({
             <h3 className="text-sm font-medium text-[#475569]">Opis</h3>
             <p className="mt-1 text-[#64748B]">{req.description}</p>
           </div>
-          {req.address && (
+          {req.photos && req.photos.length > 0 && (
+            <div>
+              <h3 className="text-sm font-medium text-[#475569]">Slike</h3>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {req.photos.map((url) => (
+                  <a key={url} href={url} target="_blank" rel="noreferrer" className="block">
+                    <img src={url} alt="" className="h-24 w-24 rounded-lg object-cover" />
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
+          {(isOwner || handymanUnlocked) && req.address && (
             <div>
               <h3 className="text-sm font-medium text-[#475569]">Adresa</h3>
               <p className="mt-1 text-[#64748B]">{req.address}</p>
             </div>
           )}
-          {isOwner && (req.status === "OPEN" || req.status === "IN_PROGRESS") && (
+          {session?.user?.role === "HANDYMAN" && !isOwner && (
+            <div className="rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] p-4">
+              <h3 className="text-sm font-medium text-[#475569]">Kontakt korisnika</h3>
+              <p className="mt-1 text-sm text-[#64748B]">
+                Otključajte kontakt da biste vidjeli broj telefona i adresu. Troši 1 kredit.
+              </p>
+              <UnlockContactButton
+              requestId={req.id}
+              alreadyUnlocked={handymanUnlocked}
+            />
+            </div>
+          )}
+          {isOwner && session && (req.status === "OPEN" || req.status === "IN_PROGRESS") && (
             <div className="pt-2 border-t border-[#E2E8F0]">
               <CancelRequestButton requestId={req.id} />
             </div>
@@ -175,15 +205,21 @@ export default async function RequestDetailPage({
         <Card className="mt-6 rounded-xl bg-white shadow-sm transition hover:shadow-md">
           <CardHeader>
             <CardTitle>Prihvaćena ponuda</CardTitle>
-            <CardDescription>Posao je u toku. Kada majstor završi, označite ga kao završen.</CardDescription>
+            <CardDescription>
+              {session ? "Posao je u toku. Kada majstor završi, označite ga kao završen." : "Vaš izbor je primljen. Majstor će vas kontaktirati."}
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <RequestDetailClient
-              requestId={req.id}
-              acceptedOffer={acceptedOffer}
-              sessionUserId={session!.user!.id}
-            />
-            <RequestChatPanel requestId={req.id} />
+            {session?.user?.id && (
+              <>
+                <RequestDetailClient
+                  requestId={req.id}
+                  acceptedOffer={acceptedOffer}
+                  sessionUserId={session.user.id}
+                />
+                <RequestChatPanel requestId={req.id} />
+              </>
+            )}
           </CardContent>
         </Card>
       )}
@@ -199,7 +235,7 @@ export default async function RequestDetailPage({
         </Card>
       )}
 
-      {isOwner && req.status === "COMPLETED" && !req.review && acceptedOffer && (
+      {isOwner && session?.user?.id && req.status === "COMPLETED" && !req.review && acceptedOffer && (
         <Card className="mt-6 rounded-xl bg-white shadow-sm transition hover:shadow-md">
           <CardHeader>
             <CardTitle>Ostavite recenziju</CardTitle>
@@ -230,8 +266,7 @@ export default async function RequestDetailPage({
         </Card>
       )}
 
-      {/* Offers - for owner: see all; for handyman: see own; for others: nothing */}
-      {isOwner && req.status === "OPEN" && (
+      {isOwner && session?.user?.role === "USER" && req.status === "OPEN" && (
         <Card className="mt-6 rounded-xl bg-white shadow-sm transition hover:shadow-md">
           <CardContent className="pt-6">
             <InviteHandymanForm requestId={req.id} />
@@ -259,6 +294,7 @@ export default async function RequestDetailPage({
                   offer={offer}
                   isOwner={isOwner}
                   requestStatus={req.status}
+                  requesterToken={isOwner && !req.userId ? req.requesterToken : undefined}
                 />
               ))}
             </div>
@@ -266,7 +302,7 @@ export default async function RequestDetailPage({
         </Card>
       )}
 
-      {!session && (
+      {!session && !isOwner && (
         <div className="mt-6 text-center">
           <Link href={`/login?callbackUrl=/request/${id}`}>
             <Button>Prijavite se da vidite ponude</Button>

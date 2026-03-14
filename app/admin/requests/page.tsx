@@ -75,7 +75,7 @@ export default async function AdminRequestsPage({
                         {r.category}
                       </Link>
                     </td>
-                    <td className="px-4 py-3">{r.user.name}</td>
+                    <td className="px-4 py-3">{r.requesterName ?? r.user?.name ?? "-"}</td>
                     <td className="px-4 py-3">{r.city}</td>
                     <td className="px-4 py-3">
                       <Badge

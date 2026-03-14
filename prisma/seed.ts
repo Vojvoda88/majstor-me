@@ -261,7 +261,7 @@ async function main() {
     },
   ];
 
-  const requests: { id: string; userId: string; category: string; status: string }[] = [];
+  const requests: { id: string; userId: string | null; category: string; status: string }[] = [];
   for (const r of requestData) {
     const created = await prisma.request.create({
       data: r,
@@ -381,7 +381,7 @@ async function main() {
 
   let reviewCount = 0;
   for (const req of completedWithOffers) {
-    if (req.review || !req.offers[0]) continue;
+    if (req.review || !req.offers[0] || !req.userId) continue;
     if (reviewCount >= 3) break;
 
     await prisma.review.create({

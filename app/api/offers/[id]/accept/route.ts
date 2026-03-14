@@ -7,19 +7,12 @@ import { logError } from "@/lib/logger";
 export const dynamic = "force-dynamic";
 
 export async function POST(
-  _request: Request,
+  request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { prisma } = await import("@/lib/db");
     const session = await auth();
-    if (!session?.user?.id) {
-      return NextResponse.json(
-        { success: false, error: "Morate biti prijavljeni" },
-        { status: 401 }
-      );
-    }
-
     const { id: offerId } = await params;
 
     const offer = await prisma.offer.findUnique({
@@ -34,7 +27,17 @@ export async function POST(
       );
     }
 
-    if (offer.request.userId !== session.user.id) {
+    const req = offer.request;
+    let isOwner = false;
+    if (req.userId && session?.user?.id === req.userId) {
+      isOwner = true;
+    } else if (!req.userId && req.requesterToken) {
+      const body = await request.json().catch(() => ({}));
+      const token = (body as { token?: string }).token;
+      isOwner = token === req.requesterToken;
+    }
+
+    if (!isOwner) {
       return NextResponse.json(
         { success: false, error: "Samo vlasnik zahtjeva može prihvatiti ponudu" },
         { status: 403 }
@@ -73,17 +76,19 @@ export async function POST(
       }),
     ]);
 
-    const requestOwner = await prisma.user.findUnique({
-      where: { id: offer.request.userId },
-      select: { name: true },
-    });
+    const requesterName = req.userId
+      ? (await prisma.user.findUnique({
+          where: { id: req.userId },
+          select: { name: true },
+        }))?.name
+      : req.requesterName;
     sendOfferAcceptedEmail(
       offer.handymanId,
       offer.request.category,
-      requestOwner?.name ?? "Korisnik"
+      requesterName ?? "Korisnik"
     );
     createNotification(offer.handymanId, "OFFER_ACCEPTED", "Ponuda prihvaćena", {
-      body: `${requestOwner?.name ?? "Korisnik"} je prihvatio vašu ponudu za ${offer.request.category}`,
+      body: `${requesterName ?? "Korisnik"} je prihvatio vašu ponudu za ${offer.request.category}`,
       link: `/request/${offer.requestId}`,
     });
 

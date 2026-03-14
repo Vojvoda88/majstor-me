@@ -18,6 +18,7 @@ export function OfferCard({
   offer,
   isOwner,
   requestStatus,
+  requesterToken,
 }: {
   offer: {
     id: string;
@@ -25,6 +26,7 @@ export function OfferCard({
     priceValue: number | null;
     message: string | null;
     proposedDate: Date | null;
+    proposedArrival?: string | null;
     status: string;
     handyman: {
       id: string;
@@ -40,6 +42,7 @@ export function OfferCard({
   };
   isOwner: boolean;
   requestStatus: string;
+  requesterToken?: string | null;
 }) {
   const router = useRouter();
   const profile = offer.handyman.handymanProfile;
@@ -47,7 +50,11 @@ export function OfferCard({
 
   const acceptMutation = useMutation({
     mutationFn: async () => {
-      const res = await fetch(`/api/offers/${offer.id}/accept`, { method: "POST" });
+      const res = await fetch(`/api/offers/${offer.id}/accept`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(requesterToken ? { token: requesterToken } : {}),
+      });
       const json = await res.json();
       const msg = typeof json?.error === "string" ? json.error : "Greška pri prihvatanju";
       if (!json?.success) throw new Error(msg);
@@ -104,10 +111,10 @@ export function OfferCard({
                 <span className="text-[#2563EB]"> • {offer.priceValue} €</span>
               )}
             </p>
-            {offer.proposedDate && (
+            {(offer.proposedDate || offer.proposedArrival) && (
               <p className="mt-1 flex items-center gap-1 text-sm text-[#64748B]">
                 <Calendar className="h-4 w-4" />
-                Predloženi datum: {new Date(offer.proposedDate).toLocaleDateString("sr")}
+                {offer.proposedArrival || (offer.proposedDate ? `Predloženi datum: ${new Date(offer.proposedDate).toLocaleDateString("sr")}` : "")}
               </p>
             )}
           </div>

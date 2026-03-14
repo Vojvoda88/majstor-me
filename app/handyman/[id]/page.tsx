@@ -12,7 +12,9 @@ import {
   ImageIcon,
   MessageCircle,
   Award,
+  MessageCircleMore,
 } from "lucide-react";
+import { viberLink, whatsappLink } from "@/lib/phone-links";
 import { cityToSlug } from "@/lib/slugs";
 import { getSiteUrl } from "@/lib/site-url";
 import { localBusinessJsonLd } from "@/lib/json-ld";
@@ -72,6 +74,8 @@ export default async function HandymanProfilePage({
   const profileExt = profile as {
     avatarUrl?: string | null;
     galleryImages?: string[];
+    viberPhone?: string | null;
+    whatsappPhone?: string | null;
     yearsOfExperience?: number | null;
     startingPrice?: number | null;
     completedJobsCount?: number;
@@ -186,6 +190,32 @@ export default async function HandymanProfilePage({
         </div>
 
         <div className="mx-auto max-w-4xl px-4 py-6 md:px-6 md:py-8">
+          {(profileExt.viberPhone || profileExt.whatsappPhone) && (
+            <div className="mb-8 flex flex-wrap gap-3 md:mb-10">
+              {profileExt.viberPhone && (
+                <a
+                  href={viberLink(profileExt.viberPhone)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex h-14 items-center justify-center gap-2 rounded-xl bg-[#7360F2] px-6 font-semibold text-white transition hover:bg-[#6350E0]"
+                >
+                  <MessageCircleMore className="h-5 w-5" />
+                  Kontaktiraj putem Viber-a
+                </a>
+              )}
+              {profileExt.whatsappPhone && (
+                <a
+                  href={whatsappLink(profileExt.whatsappPhone)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex h-14 items-center justify-center gap-2 rounded-xl bg-[#25D366] px-6 font-semibold text-white transition hover:bg-[#20BD5A]"
+                >
+                  <MessageCircle className="h-5 w-5" />
+                  Kontaktiraj putem WhatsApp-a
+                </a>
+              )}
+            </div>
+          )}
           {session?.user?.role === "USER" && (
             <Link href={`/request/create?${createParams}`} className="mb-8 block w-full md:mb-10">
               <span className="flex h-14 w-full items-center justify-center gap-2 rounded-xl bg-[#2563EB] font-semibold text-white transition hover:bg-[#1D4ED8]">

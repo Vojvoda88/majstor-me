@@ -4,7 +4,6 @@ import { z } from "zod";
 export const dynamic = "force-dynamic";
 import { auth } from "@/lib/auth";
 import { isRateLimited, getRetryAfterSeconds } from "@/lib/rate-limit";
-import { isCreditsRequired, hasEnoughCredits, spendCreditsForOffer, CREDITS_PER_OFFER } from "@/lib/credits";
 import { sendNewOfferEmail } from "@/lib/email";
 import { createNotification } from "@/lib/notifications";
 import { logError } from "@/lib/logger";
@@ -17,6 +16,7 @@ const createOfferSchema = z
     priceValue: z.number().optional().nullable(),
     message: z.string().max(1000).optional(),
     proposedDate: z.union([z.string().datetime(), z.string()]).optional().nullable(),
+    proposedArrival: z.string().max(200).optional(), // procijenjeni dolazak (npr. "Sutra ujutro")
   })
   .refine(
     (data) => data.priceType !== "FIKSNA" || (data.priceValue != null && data.priceValue >= 0),
@@ -103,20 +103,6 @@ export async function POST(request: Request) {
       );
     }
 
-    if (isCreditsRequired()) {
-      const { ok, balance } = await hasEnoughCredits(prisma, session.user.id);
-      if (!ok) {
-        return NextResponse.json(
-          {
-            success: false,
-            error: `Nemate dovoljno kredita. Slanje ponude troši ${CREDITS_PER_OFFER} kredit. Imate: ${balance}.`,
-            needsCredits: true,
-          },
-          { status: 402 }
-        );
-      }
-    }
-
     if (priceType === "FIKSNA" && (priceValue == null || priceValue < 0)) {
       return NextResponse.json(
         { success: false, error: "Fiksna cijena zahtijeva iznos" },
@@ -137,25 +123,22 @@ export async function POST(request: Request) {
         priceValue: priceValue ?? undefined,
         message: message ?? undefined,
         proposedDate: proposedDate ? new Date(proposedDate) : undefined,
+        proposedArrival: body.proposedArrival ?? undefined,
       },
     });
 
-    if (isCreditsRequired()) {
-      const spent = await spendCreditsForOffer(prisma, session.user.id, offer.id);
-      if (!spent.ok) {
-        await prisma.offer.delete({ where: { id: offer.id } });
-        return NextResponse.json(
-          { success: false, error: spent.error, needsCredits: true },
-          { status: 402 }
-        );
-      }
+    sendNewOfferEmail(
+      req.userId ?? null,
+      req.category,
+      handyman?.name ?? "Majstor",
+      req.requesterEmail
+    );
+    if (req.userId) {
+      createNotification(req.userId, "NEW_OFFER", `Nova ponuda: ${req.category}`, {
+        body: `${handyman?.name ?? "Majstor"} vam je poslao ponudu`,
+        link: `/request/${requestId}`,
+      });
     }
-
-    sendNewOfferEmail(req.userId, req.category, handyman?.name ?? "Majstor");
-    createNotification(req.userId, "NEW_OFFER", `Nova ponuda: ${req.category}`, {
-      body: `${handyman?.name ?? "Majstor"} vam je poslao ponudu`,
-      link: `/request/${requestId}`,
-    });
 
     return NextResponse.json({ success: true, data: offer });
   } catch (error) {
