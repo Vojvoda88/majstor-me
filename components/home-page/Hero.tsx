@@ -1,51 +1,43 @@
-import Image from "next/image";
-import { ShieldCheck, Star, MapPin } from "lucide-react";
+"use client";
+
+import { ShieldCheck, Star, Map } from "lucide-react";
 import { HeroSearch } from "./hero-search";
-import { HERO_IMAGE } from "@/lib/homepage-data";
 
 export function Hero() {
   return (
-    <section className="relative mb-8 overflow-hidden rounded-2xl sm:mb-12 lg:mb-16">
-      <div className="relative flex min-h-[360px] items-center py-8 sm:min-h-[400px] sm:py-10 lg:h-[420px] lg:py-0">
-        <div className="absolute inset-0">
-          <Image
-            src={HERO_IMAGE}
-            alt=""
-            fill
-            className="object-cover object-[65%_center] sm:object-[70%_center]"
-            priority
-            sizes="100vw"
-          />
-          <div
-            className="absolute inset-0 bg-gradient-to-b from-slate-900/90 via-slate-900/70 to-slate-900/50 sm:bg-gradient-to-r sm:from-slate-900/85 sm:via-slate-900/55 sm:to-slate-900/25 backdrop-blur-[1px] sm:backdrop-blur-[2px]"
-            aria-hidden
-          />
-        </div>
-        <div className="relative z-10 mx-auto w-full max-w-7xl px-4 sm:px-6">
-          <div className="max-w-2xl">
-            <h1 className="text-2xl font-bold leading-tight text-white sm:text-4xl lg:text-5xl">
-              Pronađite majstora u blizini za nekoliko minuta
-            </h1>
-            <p className="mt-2 text-sm text-white/90 sm:mt-4 sm:text-base lg:text-lg">
-              Provjereni majstori, brze ponude — cijela Crna Gora.
-            </p>
-            <div className="mt-5 sm:mt-6 lg:mt-8">
-              <HeroSearch />
-            </div>
-            <div className="mt-5 flex flex-wrap gap-4 gap-y-2 text-xs text-white/90 sm:mt-6 sm:gap-5 sm:text-sm">
-              <span className="flex items-center gap-1.5">
-                <ShieldCheck className="h-4 w-4 shrink-0 text-blue-300 sm:h-5 sm:w-5" />
-                Verifikovani
-              </span>
-              <span className="flex items-center gap-1.5">
-                <Star className="h-4 w-4 shrink-0 fill-amber-400 text-amber-400 sm:h-5 sm:w-5" />
-                4.8 od korisnika
-              </span>
-              <span className="flex items-center gap-1.5">
-                <MapPin className="h-4 w-4 shrink-0 text-blue-300 sm:h-5 sm:w-5" />
-                Cijela Crna Gora
-              </span>
-            </div>
+    <section className="pt-[88px] pb-6 md:pt-24 md:pb-8">
+      <div className="mx-auto max-w-[430px] px-4 md:max-w-4xl md:px-6">
+        <div
+          className="overflow-hidden rounded-[28px] border border-[rgba(191,219,254,0.7)] p-5 shadow-[0_16px_40px_rgba(37,99,235,0.10)] md:p-8"
+          style={{
+            background: "linear-gradient(180deg, rgba(219,234,254,0.85) 0%, rgba(255,255,255,0.92) 100%)",
+          }}
+        >
+          <h1 className="max-w-[90%] text-[28px] font-bold leading-[1.15] text-[#0F172A] md:text-3xl">
+            Pronađite majstora za svaki posao
+          </h1>
+          <p className="mt-2 mb-[18px] text-base leading-relaxed text-[#475569]">
+            Brzo, lako i provjereno
+          </p>
+
+          <div className="mt-[18px] rounded-[20px] border border-white/70 bg-white/95 p-3.5 shadow-[0_12px_30px_rgba(15,23,42,0.08)] backdrop-blur-[14px] md:p-4">
+            <HeroSearch />
+          </div>
+
+          <div className="mt-3.5 grid grid-cols-3 gap-2.5">
+            {[
+              { icon: ShieldCheck, text: "Verifikovani" },
+              { icon: Star, text: "Ocjena 4.8" },
+              { icon: Map, text: "Cijela CG" },
+            ].map(({ icon: Icon, text }) => (
+              <div
+                key={text}
+                className="rounded-[14px] bg-white/80 px-2.5 py-3 text-center"
+              >
+                <Icon className="mx-auto mb-1 h-5 w-5 text-[#2563EB]" />
+                <span className="text-xs font-medium text-[#475569]">{text}</span>
+              </div>
+            ))}
           </div>
         </div>
       </div>

@@ -10,8 +10,8 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["var(--font-inter)", "system-ui", "sans-serif"],
-        display: ["var(--font-playfair)", "Georgia", "serif"],
+        sans: ["var(--font-plus-jakarta)", "var(--font-inter)", "system-ui", "sans-serif"],
+        display: ["var(--font-plus-jakarta)", "var(--font-inter)", "system-ui", "sans-serif"],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -57,8 +57,10 @@ const config: Config = {
       },
       boxShadow: {
         soft: "0 2px 8px -2px rgb(0 0 0 / 0.05), 0 4px 16px -4px rgb(0 0 0 / 0.05)",
-        card: "0 1px 3px rgb(0 0 0 / 0.04)",
-        "card-hover": "0 4px 12px -2px rgb(0 0 0 / 0.06)",
+        card: "0 10px 30px rgba(15,23,42,0.06)",
+        "card-hover": "0 16px 40px rgba(15,23,42,0.10)",
+        sticky: "0 -8px 24px rgba(15,23,42,0.08)",
+        "btn-primary": "0 10px 25px rgba(37,99,235,0.30)",
       },
     },
   },

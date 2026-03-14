@@ -110,13 +110,13 @@ export default async function HandymanProfilePage({
   });
 
   return (
-    <div className="min-h-screen bg-[#F6F8FB]">
+    <div className="min-h-screen bg-[#F4F7FB] pb-28 md:pb-10">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <SiteHeader />
-      <div className="mx-auto max-w-3xl px-4 py-6 sm:px-6 sm:py-8">
+      <div className="mx-auto max-w-[430px] px-4 py-6 md:max-w-3xl md:px-6 md:py-8">
         <Link
           href={backHref}
           className="mb-6 inline-flex text-sm font-medium text-gray-500 hover:text-gray-900"
@@ -125,9 +125,9 @@ export default async function HandymanProfilePage({
         </Link>
 
         {/* Hero header */}
-        <div className="rounded-xl bg-white p-5 shadow-sm transition hover:shadow-md sm:p-8">
+        <div className="rounded-[24px] border border-[#E7EDF5] bg-white p-[18px] shadow-[0_10px_30px_rgba(15,23,42,0.06)] sm:p-8">
           <div className="flex flex-col items-center gap-6 sm:flex-row sm:items-start">
-            <div className="flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-full bg-blue-100 text-blue-600 sm:h-28 sm:w-28">
+            <div className="flex h-[88px] w-[88px] shrink-0 items-center justify-center overflow-hidden rounded-full border-[3px] border-white bg-[#E0F2FE] text-[#2563EB] shadow-[0_4px_14px_rgba(0,0,0,0.08)] sm:h-28 sm:w-28">
               {avatarUrl ? (
                 <img src={avatarUrl} alt={user.name} className="h-full w-full object-cover" />
               ) : (
@@ -138,7 +138,7 @@ export default async function HandymanProfilePage({
             </div>
             <div className="flex-1 text-center sm:text-left">
               <div className="flex flex-wrap items-center justify-center gap-2 sm:justify-start">
-                <h1 className="text-xl font-semibold text-gray-900 sm:text-2xl">{user.name}</h1>
+                <h1 className="text-2xl font-semibold text-[#0F172A] sm:text-2xl">{user.name}</h1>
                 {isVerified && (
                   <Badge variant="success" className="gap-1">
                     <CheckCircle2 className="h-3.5 w-3.5" /> Verifikovan
@@ -184,10 +184,10 @@ export default async function HandymanProfilePage({
               </div>
               {session?.user?.role === "USER" && (
                 <Link href={`/request/create?${createParams}`} className="mt-6 block w-full sm:inline-block sm:w-auto">
-                  <Button size="lg" className="h-14 w-full min-h-[48px] gap-2 sm:h-11 sm:w-auto">
+                  <span className="flex h-[52px] w-full items-center justify-center gap-2 rounded-[14px] bg-gradient-to-br from-[#60A5FA] to-[#2563EB] font-semibold text-white shadow-[0_10px_25px_rgba(37,99,235,0.30)] sm:w-auto sm:px-6">
                     <MessageSquare className="h-5 w-5" />
                     Pošalji zahtjev
-                  </Button>
+                  </span>
                 </Link>
               )}
               {!session && (
@@ -205,7 +205,7 @@ export default async function HandymanProfilePage({
         {/* Sections */}
         <div className="mt-6 space-y-6 sm:mt-8 sm:space-y-8">
           {/* Galerija */}
-          <div className="rounded-xl bg-white p-5 shadow-sm transition hover:shadow-md sm:p-6">
+          <div className="rounded-[20px] border border-[#E7EDF5] bg-white p-5 shadow-[0_10px_30px_rgba(15,23,42,0.06)] sm:p-6">
             <h3 className="mb-4 flex items-center gap-2 font-semibold text-gray-900">
               <ImageIcon className="h-5 w-5 text-blue-600" />
               Galerija radova
@@ -230,7 +230,7 @@ export default async function HandymanProfilePage({
           </div>
 
           {/* O meni */}
-          <div className="rounded-xl bg-white p-5 shadow-sm transition hover:shadow-md sm:p-6">
+          <div className="rounded-[20px] border border-[#E7EDF5] bg-white p-5 shadow-[0_10px_30px_rgba(15,23,42,0.06)] sm:p-6">
             <h3 className="mb-4 flex items-center gap-2 font-semibold text-gray-900">
               <Briefcase className="h-5 w-5 text-blue-600" />
               O meni
@@ -259,7 +259,7 @@ export default async function HandymanProfilePage({
           </div>
 
           {/* Recenzije */}
-          <div className="rounded-xl bg-white p-5 shadow-sm transition hover:shadow-md sm:p-6">
+          <div className="rounded-[20px] border border-[#E7EDF5] bg-white p-5 shadow-[0_10px_30px_rgba(15,23,42,0.06)] sm:p-6">
             <h3 className="mb-4 flex items-center gap-2 font-semibold text-gray-900">
               <MessageCircle className="h-5 w-5 text-blue-600" />
               Recenzije
@@ -295,6 +295,16 @@ export default async function HandymanProfilePage({
           </div>
         </div>
       </div>
+      {session?.user?.role === "USER" && (
+        <div className="fixed inset-x-0 bottom-0 z-[60] border-t border-[#E2E8F0] bg-[rgba(255,255,255,0.92)] px-4 pt-3 pb-[calc(env(safe-area-inset-bottom,0px)+12px)] shadow-[0_-8px_24px_rgba(15,23,42,0.08)] backdrop-blur-[16px] md:hidden">
+          <Link
+            href={`/request/create?${createParams}`}
+            className="flex h-14 w-full items-center justify-center rounded-[16px] bg-gradient-to-br from-[#60A5FA] to-[#2563EB] text-lg font-bold text-white shadow-[0_10px_25px_rgba(37,99,235,0.35)]"
+          >
+            Pošalji zahtjev
+          </Link>
+        </div>
+      )}
     </div>
   );
 }

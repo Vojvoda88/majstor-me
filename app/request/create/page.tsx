@@ -28,9 +28,9 @@ export default async function CreateRequestPage({
   if (session.user.role !== "USER") redirect("/");
 
   return (
-    <div className="min-h-screen bg-[#F6F8FB]">
+    <div className="min-h-screen bg-[#F4F7FB] pb-28 md:pb-10">
       <SiteHeader />
-      <div className="mx-auto max-w-2xl px-4 py-6 sm:py-8">
+      <div className="mx-auto max-w-[430px] px-4 py-6 md:max-w-2xl md:py-8">
         <Breadcrumbs
           items={[
             { label: "Početna", href: "/" },

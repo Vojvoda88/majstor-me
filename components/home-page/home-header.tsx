@@ -1,106 +1,93 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
+import { useSession } from "next-auth/react";
 
 export function HomeHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const { data: session, status } = useSession();
 
   return (
-    <header className="sticky top-0 z-50 mb-4 border-b border-slate-200/60 bg-white/95 backdrop-blur-md">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-6 px-4 sm:px-6 lg:px-8">
-        {/* Logo - premium treatment */}
-        <Link
-          href="/"
-          className=" shrink-0 text-lg font-bold tracking-tight sm:text-[1.05rem]"
-        >
-          <span className="text-blue-600">Majstor</span>
-          <span className="text-slate-700">.me</span>
+    <header className="fixed left-0 right-0 top-0 z-50 h-16 border-b border-[rgba(226,232,240,0.85)] bg-[rgba(244,247,251,0.82)] backdrop-blur-[12px]">
+      <div className="mx-auto flex h-full max-w-[430px] items-center justify-between px-4 md:max-w-4xl md:px-6">
+        <Link href="/" className="shrink-0 text-[22px] font-semibold">
+          <span className="text-[#2563EB]">Majstor</span>
+          <span className="text-[#475569]">.me</span>
         </Link>
 
-        {/* Nav links - refined typography and spacing */}
-        <nav className="hidden items-center gap-7 md:flex">
-          <a
-            href="#kako-radi"
-            className="text-[13px] font-medium text-slate-600 transition-colors hover:text-slate-900"
-          >
-            Kako radi
-          </a>
-          <a
-            href="#kategorije"
-            className="text-[13px] font-medium text-slate-600 transition-colors hover:text-slate-900"
-          >
+        <nav className="hidden items-center gap-6 md:flex">
+          <a href="#kategorije" className="text-[13px] font-medium text-[#475569] transition hover:text-[#0F172A]">
             Kategorije
           </a>
-          <a
-            href="#gradovi"
-            className="text-[13px] font-medium text-slate-600 transition-colors hover:text-slate-900"
-          >
-            Gradovi
+          <a href="#kako-radi" className="text-[13px] font-medium text-[#475569] transition hover:text-[#0F172A]">
+            Kako radi
           </a>
         </nav>
 
-        {/* Right side - subtle Prijava, strong Registracija */}
         <div className="hidden items-center gap-3 md:flex">
           <Link
             href="/login"
-            className="rounded-lg px-3.5 py-2 text-[13px] font-medium text-slate-600 transition-colors hover:bg-slate-50 hover:text-slate-900"
+            className="rounded-[14px] px-4 py-2.5 text-[13px] font-medium text-[#475569] transition hover:bg-white/80 hover:text-[#0F172A]"
           >
             Prijava
           </Link>
           <Link
             href="/register"
-            className="rounded-lg bg-blue-600 px-4 py-2 text-[13px] font-semibold text-white shadow-sm shadow-blue-600/20 transition hover:bg-blue-700 hover:shadow-blue-600/25"
+            className="rounded-[14px] bg-gradient-to-br from-[#60A5FA] to-[#2563EB] px-4 py-2.5 text-[13px] font-semibold text-white shadow-[0_4px_14px_rgba(37,99,235,0.35)] transition hover:opacity-95"
           >
             Registracija
           </Link>
         </div>
 
-        <button
-          onClick={() => setMenuOpen(!menuOpen)}
-          className="inline-flex rounded-lg border border-slate-200/80 bg-white/80 p-2.5 transition hover:bg-slate-50 md:hidden"
-          aria-label="Meni"
-        >
-          {menuOpen ? <X className="h-5 w-5 text-slate-600" /> : <Menu className="h-5 w-5 text-slate-600" />}
-        </button>
+        {session?.user?.image ? (
+          <Link
+            href={session.user.role === "HANDYMAN" ? "/dashboard/handyman" : "/dashboard/user"}
+            className="flex min-h-[40px] min-w-[40px] items-center justify-center md:hidden"
+          >
+            <Image src={session.user.image} alt="" width={36} height={36} className="rounded-full object-cover" />
+          </Link>
+        ) : (
+          <button
+            onClick={() => setMenuOpen(!menuOpen)}
+            className="flex min-h-[40px] min-w-[40px] items-center justify-center rounded-xl text-[#475569] transition hover:bg-white/60 md:hidden"
+            aria-label="Meni"
+          >
+            {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
+        )}
       </div>
 
       {menuOpen && (
-        <div className="border-t border-slate-200/60 bg-white/98 px-4 py-4 backdrop-blur-md md:hidden">
+        <div className="border-t border-[#E2E8F0] bg-[rgba(255,255,255,0.98)] px-4 py-4 backdrop-blur-[12px] md:hidden">
           <nav className="flex flex-col gap-1">
             <a
-              href="#kako-radi"
-              className="rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-slate-900"
-              onClick={() => setMenuOpen(false)}
-            >
-              Kako radi
-            </a>
-            <a
               href="#kategorije"
-              className="rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-slate-900"
+              className="rounded-xl px-4 py-3.5 text-[15px] font-medium text-[#475569] transition hover:bg-[#F4F7FB]"
               onClick={() => setMenuOpen(false)}
             >
               Kategorije
             </a>
             <a
-              href="#gradovi"
-              className="rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-slate-900"
+              href="#kako-radi"
+              className="rounded-xl px-4 py-3.5 text-[15px] font-medium text-[#475569] transition hover:bg-[#F4F7FB]"
               onClick={() => setMenuOpen(false)}
             >
-              Gradovi
+              Kako radi
             </a>
-            <div className="mt-3 flex flex-col gap-2 border-t border-slate-200/80 pt-3">
+            <div className="mt-3 flex flex-col gap-2 border-t border-[#E2E8F0] pt-3">
               <Link
                 href="/login"
-                className="rounded-lg px-3 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
+                className="flex min-h-[48px] items-center rounded-xl px-4 text-[15px] font-medium text-[#0F172A]"
                 onClick={() => setMenuOpen(false)}
               >
                 Prijava
               </Link>
               <Link
                 href="/register"
-                className="rounded-lg bg-blue-600 px-4 py-3 text-center text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700"
+                className="flex min-h-[48px] items-center justify-center rounded-[14px] bg-gradient-to-br from-[#60A5FA] to-[#2563EB] font-semibold text-white"
                 onClick={() => setMenuOpen(false)}
               >
                 Registracija

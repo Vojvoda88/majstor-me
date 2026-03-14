@@ -4,7 +4,9 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { HomeHeader } from "@/components/home-page/home-header";
-import { Wrench, MapPin, List, ChevronLeft, ChevronRight } from "lucide-react";
+import { MobileStickyCTA } from "@/components/home-page/MobileStickyCTA";
+import { MobileFilterSheet } from "@/components/category/MobileFilterSheet";
+import { Wrench, MapPin, List, ChevronLeft, ChevronRight, SlidersHorizontal } from "lucide-react";
 import { HandymanCard } from "@/components/lists/handyman-card";
 import { HandymanMapView } from "@/components/map/handyman-map-view";
 import { CITIES, DEFAULT_PAGE_SIZE } from "@/lib/constants";
@@ -17,6 +19,11 @@ type Handyman = {
   categories: string[];
   ratingAvg: number;
   reviewCount: number;
+  avatarUrl?: string | null;
+  verifiedStatus?: string;
+  completedJobsCount?: number;
+  averageResponseMinutes?: number | null;
+  isPromoted?: boolean;
   lat?: number;
   lng?: number;
 };
@@ -40,6 +47,7 @@ export function CategoryPageContent({
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [viewMode, setViewMode] = useState<"list" | "map">("list");
+  const [filterSheetOpen, setFilterSheetOpen] = useState(false);
 
   useEffect(() => {
     setCityFilter(cityFromUrl);
@@ -70,8 +78,8 @@ export function CategoryPageContent({
   }, [internalCategory, cityFilter, sortBy, page]);
 
   return (
-    <main className="min-h-screen bg-[#F6F8FB] text-gray-900">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6">
+    <main className="min-h-screen bg-[#F4F7FB] pb-28 text-[#0F172A] md:pb-10">
+      <div className="mx-auto max-w-[430px] px-4 md:max-w-4xl md:px-6">
         <HomeHeader />
 
         <div className="py-6 sm:py-10 lg:py-16">
@@ -83,12 +91,22 @@ export function CategoryPageContent({
             <span className="font-medium text-gray-900">{displayName}</span>
           </nav>
 
-          <h1 className="mb-6 text-2xl font-semibold text-gray-900 sm:mb-8 sm:text-3xl">
-            {displayName}
-          </h1>
+          <div className="mb-6 flex flex-wrap items-center justify-between gap-3 sm:mb-8">
+            <h1 className="text-2xl font-semibold text-gray-900 sm:text-3xl">
+              {displayName}
+            </h1>
+            <button
+              type="button"
+              onClick={() => setFilterSheetOpen(true)}
+              className="flex min-h-[48px] items-center gap-2 rounded-[14px] border border-[#D6E2F1] bg-white px-4 py-2.5 text-sm font-medium text-[#0F172A] shadow-[0_10px_30px_rgba(15,23,42,0.06)] transition active:scale-[0.98] lg:hidden"
+            >
+              <SlidersHorizontal className="h-4 w-4" />
+              Filteri
+            </button>
+          </div>
 
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-4 lg:gap-8">
-            <aside className="space-y-5 rounded-xl bg-white p-5 shadow-sm sm:p-6 lg:order-2">
+            <aside className="hidden space-y-5 rounded-xl bg-white p-5 shadow-sm sm:p-6 lg:order-2 lg:block">
               <div>
                 <label className="mb-2 block text-sm font-medium text-gray-700">Grad</label>
                 <select
@@ -158,7 +176,7 @@ export function CategoryPageContent({
               {loading ? (
                 <p className="py-12 text-center text-gray-500">Učitavanje...</p>
               ) : handymen.length === 0 ? (
-                <div className="rounded-xl bg-white p-12 text-center shadow-sm">
+                <div className="rounded-[20px] border border-[#E7EDF5] bg-white p-12 text-center shadow-[0_10px_30px_rgba(15,23,42,0.06)]">
                   <Wrench className="mx-auto mb-4 h-12 w-12 text-gray-300" />
                   <p className="text-gray-600">
                     Nema majstora za ovu kategoriju u izabranom gradu.
@@ -182,9 +200,9 @@ export function CategoryPageContent({
                       className="mb-6 rounded-xl"
                     />
                   ) : (
-                    <div className="space-y-6">
+                    <div className="space-y-0">
                       {handymen.map((h) => (
-                        <HandymanCard key={h.id} {...h} variant="compact" />
+                        <HandymanCard key={h.id} {...h} variant="list" />
                       ))}
                     </div>
                   )}
@@ -217,6 +235,18 @@ export function CategoryPageContent({
           </div>
         </div>
       </div>
+      <MobileStickyCTA />
+      <MobileFilterSheet
+        open={filterSheetOpen}
+        onClose={() => setFilterSheetOpen(false)}
+        cityFilter={cityFilter}
+        onCityChange={setCityFilter}
+        sortBy={sortBy}
+        onSortChange={setSortBy}
+        viewMode={viewMode}
+        onViewModeChange={setViewMode}
+        slug={slug}
+      />
     </main>
   );
 }

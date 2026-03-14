@@ -2,69 +2,99 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Premium design system - Majstor.me */
 @layer base {
   :root {
-    --background: 210 40% 98%;
-    --foreground: 222 47% 11%;
-    --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
-    --primary: 221 83% 53%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 210 40% 96%;
-    --secondary-foreground: 222 47% 11%;
-    --muted: 210 40% 96%;
-    --muted-foreground: 215 16% 47%;
-    --accent: 210 40% 96%;
-    --accent-foreground: 222 47% 11%;
-    --destructive: 0 72% 51%;
-    --destructive-foreground: 0 0% 100%;
-    --success: 142 71% 45%;
-    --warning: 38 92% 50%;
-    --border: 214 32% 91%;
-    --input: 214 32% 91%;
-    --ring: 221 83% 53%;
-    --radius: 0.75rem;
-    --radius-lg: 1rem;
-    --radius-xl: 1.25rem;
+    --page-bg: #F4F7FB;
+    --section-alt: #EEF4FA;
+    --text-primary: #0F172A;
+    --text-secondary: #475569;
+    --text-muted: #64748B;
+    --border: #E2E8F0;
+    --primary: #2563EB;
+    --primary-hover: #1D4ED8;
+    --gradient-start: #60A5FA;
+    --gradient-end: #2563EB;
+    --success: #10B981;
+    --warning: #F59E0B;
+    --shadow-card: 0 10px 30px rgba(15,23,42,0.06);
+    --shadow-card-hover: 0 16px 40px rgba(15,23,42,0.10);
+    --shadow-sticky: 0 -8px 24px rgba(15,23,42,0.08);
+    --radius-lg: 20px;
+    --radius-md: 16px;
+    --radius-sm: 12px;
+    --radius-btn: 14px;
   }
 }
 
 @layer base {
   * {
-    @apply border-border;
+    border-color: var(--border);
   }
   body {
-    @apply bg-[#F6F8FB] text-gray-900 antialiased;
+    background-color: var(--page-bg);
+    color: var(--text-primary);
+    font-sans: inherit;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 }
 
-/* Premium component classes */
 @layer components {
   .card-premium {
-    @apply bg-white rounded-xl shadow-sm transition hover:shadow-md;
+    background: white;
+    border: 1px solid #E7EDF5;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
   }
-  .page-header {
-    @apply mb-8;
+  .btn-primary {
+    min-height: 52px;
+    border-radius: var(--radius-btn);
+    background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-end) 100%);
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    box-shadow: 0 10px 25px rgba(37,99,235,0.30);
   }
-  .page-title {
-    @apply text-3xl font-semibold text-gray-900;
+  .input-premium {
+    min-height: 52px;
+    border-radius: var(--radius-btn);
+    border: 1px solid #D9E3EF;
+    background: rgba(255,255,255,0.96);
+    padding-left: 14px;
+    padding-right: 14px;
+    font-size: 16px;
+    color: var(--text-primary);
   }
-  .page-description {
-    @apply mt-2 text-base text-gray-600;
-  }
-  .section-spacing {
-    @apply space-y-8;
+  .input-premium::placeholder {
+    color: #94A3B8;
   }
   .form-error {
-    @apply rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700;
+    border-radius: var(--radius-md);
+    border: 1px solid #FECACA;
+    background: #FEF2F2;
+    padding: 12px 16px;
+    font-size: 14px;
+    color: #B91C1C;
   }
   .form-success {
-    @apply rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700;
+    border-radius: var(--radius-md);
+    border: 1px solid #A7F3D0;
+    background: #ECFDF5;
+    padding: 12px 16px;
+    font-size: 14px;
+    color: #047857;
   }
   .select-premium {
-    @apply flex min-h-[48px] h-12 w-full rounded-xl border border-[#E2E8F0] bg-white px-4 py-3 text-base transition-colors placeholder:text-[#94A3B8] focus:border-[#2563EB] focus:outline-none focus:ring-2 focus:ring-[#2563EB]/20;
+    min-height: 52px;
+    height: 52px;
+    width: 100%;
+    border-radius: var(--radius-btn);
+    border: 1px solid #D9E3EF;
+    background: rgba(255,255,255,0.96);
+    padding: 0 14px;
+    font-size: 16px;
+    color: var(--text-primary);
   }
   .scrollbar-hide {
     -ms-overflow-style: none;
@@ -72,5 +102,13 @@
   }
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
+  }
+  .page-container {
+    width: 100%;
+    max-width: 430px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 16px;
+    padding-right: 16px;
   }
 }

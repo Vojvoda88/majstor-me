@@ -85,7 +85,7 @@ export function CreateRequestForm() {
   });
 
   return (
-    <Card className="w-full rounded-xl bg-white shadow-sm transition hover:shadow-md">
+    <Card className="w-full rounded-[22px] border border-[#E7EDF5] bg-white shadow-[0_10px_30px_rgba(15,23,42,0.06)]">
       <CardHeader className="px-4 sm:px-6">
         <CardTitle className="text-xl sm:text-2xl">Novi zahtjev</CardTitle>
         <CardDescription className="text-sm sm:text-base">
@@ -174,14 +174,13 @@ export function CreateRequestForm() {
               ))}
             </select>
           </div>
-          <Button
+          <button
             type="submit"
-            className="mt-2 h-14 min-h-[48px] w-full text-base font-semibold sm:h-12 sm:text-sm"
-            size="lg"
             disabled={mutation.isPending}
+            className="btn-primary mt-2 flex w-full items-center justify-center disabled:opacity-50"
           >
             {mutation.isPending ? "Objavljivanje..." : "Objavi zahtjev"}
-          </Button>
+          </button>
         </form>
       </CardContent>
     </Card>

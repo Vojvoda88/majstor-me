@@ -3,7 +3,8 @@
 import { memo } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Star, Wrench, MapPin, CheckCircle2, Clock, Briefcase, Award } from "lucide-react";
+import { Star, Wrench, CheckCircle2, Clock, Briefcase, Award } from "lucide-react";
+import { HERO_IMAGE } from "@/lib/homepage-data";
 
 export type HandymanCardData = {
   id: string;
@@ -21,7 +22,7 @@ export type HandymanCardData = {
 };
 
 type HandymanCardProps = HandymanCardData & {
-  variant?: "compact" | "full";
+  variant?: "compact" | "full" | "list";
 };
 
 const AVAILABILITY_LABELS: Record<string, string> = {
@@ -114,11 +115,40 @@ function HandymanCardComponent({
     </>
   );
 
+  if (variant === "list") {
+    const imgSrc = avatarUrl ?? HERO_IMAGE;
+    return (
+      <Link
+        href={`/handyman/${id}`}
+        className="mb-4 block overflow-hidden rounded-[22px] border border-[#E7EDF5] bg-white shadow-[0_10px_30px_rgba(15,23,42,0.06)] transition active:scale-[0.99]"
+      >
+        <div className="relative h-[150px] w-full">
+          <Image src={imgSrc} alt="" fill className="object-cover" sizes="430px" />
+        </div>
+        <div className="p-4">
+          <div className="flex items-start justify-between gap-2">
+            <h3 className="text-xl font-semibold text-[#0F172A]">{name || "Majstor"}</h3>
+            <span className="shrink-0 rounded-full bg-amber-100 px-2.5 py-1 text-sm font-semibold text-amber-800">
+              ⭐ {ratingAvg.toFixed(1)}
+            </span>
+          </div>
+          <p className="mt-0.5 text-sm text-[#475569]">
+            {categories[0] || "Majstor"} • {city || "Crna Gora"}
+          </p>
+          <div className="mt-2 flex flex-wrap gap-2">{badges}</div>
+          <span className="mt-3 flex h-[46px] w-full items-center justify-center rounded-[12px] bg-gradient-to-br from-[#60A5FA] to-[#2563EB] text-base font-semibold text-white shadow-[0_4px_14px_rgba(37,99,235,0.35)]">
+            Pogledaj profil
+          </span>
+        </div>
+      </Link>
+    );
+  }
+
   if (variant === "compact") {
     return (
       <Link
         href={`/handyman/${id}`}
-        className="flex flex-col rounded-xl bg-white p-5 shadow-sm transition hover:shadow-md active:scale-[0.99] sm:flex-row sm:items-center sm:p-6"
+        className="flex flex-col rounded-[22px] border border-[#E7EDF5] bg-white p-5 shadow-[0_10px_30px_rgba(15,23,42,0.06)] transition active:scale-[0.99] sm:flex-row sm:items-center sm:p-6"
       >
         <div className="flex w-full gap-4 sm:flex-1">
           <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full bg-blue-100 sm:h-16 sm:w-16">
@@ -136,7 +166,7 @@ function HandymanCardComponent({
             {badges}
           </div>
         </div>
-        <span className="mt-4 flex min-h-[48px] w-full items-center justify-center rounded-xl bg-blue-600 text-base font-semibold text-white sm:mt-3 sm:min-h-0 sm:w-auto sm:flex-initial sm:px-4 sm:py-2 sm:text-sm">
+        <span className="mt-4 flex min-h-[48px] w-full items-center justify-center rounded-[14px] bg-gradient-to-br from-[#60A5FA] to-[#2563EB] text-base font-semibold text-white sm:mt-3 sm:min-h-0 sm:w-auto sm:flex-initial sm:px-4 sm:py-2 sm:text-sm">
           Pogledaj profil →
         </span>
       </Link>

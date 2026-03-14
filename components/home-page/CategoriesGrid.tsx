@@ -1,83 +1,36 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
-import {
-  Wrench,
-  Zap,
-  Grid3X3,
-  Paintbrush,
-  Hammer,
-  Key,
-  Building2,
-  Layout,
-  Thermometer,
-  Flame,
-  Package,
-  Truck,
-  Sparkles,
-  TreeDeciduous,
-  Square,
-  Home,
-} from "lucide-react";
-import { POPULAR_CATEGORIES } from "@/lib/categories";
-import { CATEGORY_IMAGES } from "@/lib/homepage-data";
+import { Wrench, Zap, Grid3X3, Thermometer, Truck, Sparkles } from "lucide-react";
 
-const ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
-  Wrench,
-  Zap,
-  Grid3X3,
-  Paintbrush,
-  Hammer,
-  Key,
-  Building2,
-  Layout,
-  Thermometer,
-  Flame,
-  Package,
-  Truck,
-  Sparkles,
-  TreeDeciduous,
-  Square,
-  Home,
-};
+const TOP_CATEGORIES = [
+  { slug: "vodoinstalater", name: "Vodoinstalater", icon: Wrench },
+  { slug: "elektricar", name: "Električar", icon: Zap },
+  { slug: "keramicar", name: "Keramičar", icon: Grid3X3 },
+  { slug: "klima-servis", name: "Klima servis", icon: Thermometer },
+  { slug: "selidbe", name: "Selidbe", icon: Truck },
+  { slug: "ciscenje", name: "Čišćenje", icon: Sparkles },
+];
 
 export function CategoriesGrid() {
   return (
-    <section id="kategorije" className="py-10 sm:py-14 lg:py-16">
-      <h2 className="mb-4 text-2xl font-semibold text-gray-900 sm:mb-6 sm:text-3xl">
-        Popularne kategorije
-      </h2>
-
-      <div className="grid grid-cols-2 gap-4 sm:gap-6 md:grid-cols-4 lg:grid-cols-6">
-        {POPULAR_CATEGORIES.map((cat) => {
-          const Icon = ICONS[cat.icon];
-          const image = CATEGORY_IMAGES[cat.displayName] || "/images/categories/handyman.jpg";
-          return (
+    <section id="kategorije" className="mt-7 md:mt-10">
+      <div className="mx-auto max-w-[430px] px-4 md:max-w-4xl md:px-6">
+        <h2 className="mb-3 text-xl font-bold text-[#0F172A]">Top kategorije</h2>
+        <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4">
+          {TOP_CATEGORIES.map(({ slug, name, icon: Icon }) => (
             <Link
-              key={cat.slug}
-              href={`/category/${cat.slug}`}
-              className="group flex min-h-[120px] cursor-pointer flex-col rounded-xl bg-white p-5 shadow-sm transition hover:shadow-md active:scale-[0.98] sm:min-h-0 sm:p-6"
+              key={slug}
+              href={`/category/${slug}`}
+              className="flex min-h-[92px] items-center gap-3 rounded-[18px] border border-[#E6EDF5] bg-white p-4 shadow-[0_8px_20px_rgba(15,23,42,0.05)] transition active:scale-[0.98]"
             >
-              <div className="relative flex h-12 flex-1 items-center justify-center sm:h-14">
-                {Icon ? (
-                  <Icon className="h-10 w-10 text-blue-600 transition group-hover:scale-110" />
-                ) : (
-                  <div className="relative h-14 w-14">
-                    <Image
-                      src={image}
-                      alt={cat.displayName}
-                      fill
-                      className="object-cover opacity-60 rounded-lg"
-                      sizes="56px"
-                    />
-                  </div>
-                )}
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[14px] bg-gradient-to-br from-[#60A5FA]/20 to-[#2563EB]/15">
+                <Icon className="h-[22px] w-[22px] text-[#2563EB]" />
               </div>
-              <h3 className="mt-2 text-sm font-semibold text-gray-900 sm:mt-3 sm:text-base">{cat.displayName}</h3>
+              <span className="text-[15px] font-semibold text-[#0F172A]">{name}</span>
             </Link>
-          );
-        })}
+          ))}
+        </div>
       </div>
     </section>
   );

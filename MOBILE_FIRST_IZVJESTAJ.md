@@ -194,3 +194,58 @@ Mobile-first prilagodbe obuhvataju:
 - Opšte – više spacinga, veći fontovi, lakši tap
 
 Sajt je na telefonu prilagođen da izgleda kao moderna, premium aplikacija, a ne samo responsive desktop verzija.
+
+---
+
+## Završni mobile UX polish (13.03.2025)
+
+### 1. Sticky CTA na homepage (mobile only)
+
+**Nova komponenta:** `components/home-page/MobileStickyCTA.tsx`
+
+- Fiksirana traka na dnu ekrana, samo na mobilnom (`md:hidden`)
+- Dugme "Objavi zahtjev" → `/request/create`
+- Stil: `bg-white/95`, `backdrop-blur`, `shadow-[0_-8px_24px_...]`, `safe-area-inset-bottom`
+- Homepage dobija `pb-24 md:pb-0` da sticky CTA ne prekriva sadržaj
+
+### 2. Bottom sheet filter na category page (mobile)
+
+**Nova komponenta:** `components/category/MobileFilterSheet.tsx`
+
+- Dugme "Filteri" pri vrhu stranice (mobile only)
+- Klik otvara bottom sheet sa filterima: Grad, Sortiraj (ocjena/recenzije), Prikaz (Lista/Mapa), Brzi linkovi
+- Panel: `rounded-t-3xl`, `max-h-[85vh]`, `overflow-y-auto`, backdrop overlay
+- Zatvaranje: klik van, Escape, dugme X, "Primijeni"
+- Desktop: zadržan postojeći sidebar
+
+**Izmijenjen:** `app/category/[slug]/category-page-content.tsx` – sidebar skriven na mobile (`hidden lg:block`), dodato Filter dugme i `MobileFilterSheet`
+
+### 3. Sticky chat input na mobile
+
+**Izmijenjen:** `components/chat/request-chat-panel.tsx`
+
+- Chat panel: `flex flex-col`, `max-h-[60vh]` na mobilnom
+- Poruke: `flex-1 min-h-0 overflow-y-auto` – skroluju iznad inputa
+- Input zona: `shrink-0`, uvijek na dnu panela
+- Stil na mobilnom: `bg-white/95`, `backdrop-blur`, `border-t`, safe-area padding
+- Desktop layout nepromijenjen
+
+### Izmijenjeni fajlovi
+
+| Fajl | Izmjena |
+|------|---------|
+| `app/page.tsx` | Import `MobileStickyCTA`, `pb-24 md:pb-0`, render CTA |
+| `app/category/[slug]/category-page-content.tsx` | Sidebar `hidden lg:block`, Filter dugme, `MobileFilterSheet` |
+| `components/chat/request-chat-panel.tsx` | Flex layout, sticky input, safe-area |
+
+### Nove komponente
+
+- `components/home-page/MobileStickyCTA.tsx`
+- `components/category/MobileFilterSheet.tsx`
+
+### Build
+
+```bash
+npm run build
+# ✅ Prolazi
+```

@@ -7,52 +7,54 @@ import { POPULAR_CATEGORIES } from "@/lib/categories";
 
 export function HeroSearch() {
   const router = useRouter();
-  const [city, setCity] = useState("Podgorica");
-  const [category, setCategory] = useState<string>(POPULAR_CATEGORIES[0]?.internalCategory ?? "Vodoinstalater");
+  const [city, setCity] = useState("Cijela Crna Gora");
+  const [category, setCategory] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const params = new URLSearchParams();
-    if (city) params.set("city", city);
+    if (city && city !== "Cijela Crna Gora") params.set("city", city);
     if (category) params.set("category", category);
     router.push(`/request/create?${params.toString()}`);
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="rounded-2xl bg-white p-4 shadow-xl sm:p-5"
-    >
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-4">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+      <div>
+        <label className="mb-1 block text-sm font-medium text-[#475569]">Grad</label>
         <select
           value={city}
           onChange={(e) => setCity(e.target.value)}
-          className="h-14 min-h-[44px] flex-1 rounded-xl border border-gray-200 bg-gray-50 px-4 text-base text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 sm:h-12"
+          className="input-premium select-premium w-full"
         >
+          <option value="Cijela Crna Gora">Cijela Crna Gora</option>
           {CITIES.map((c) => (
-            <option key={c} value={c}>
-              {c}
-            </option>
+            <option key={c} value={c}>{c}</option>
           ))}
         </select>
+      </div>
+      <div>
+        <label className="mb-1 block text-sm font-medium text-[#475569]">Kategorija</label>
         <select
           value={category}
           onChange={(e) => setCategory(e.target.value)}
-          className="h-14 min-h-[44px] flex-1 rounded-xl border border-gray-200 bg-gray-50 px-4 text-base text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 sm:h-12"
+          required
+          className="input-premium select-premium w-full"
         >
+          <option value="">Izaberite kategoriju</option>
           {POPULAR_CATEGORIES.map((cat) => (
             <option key={cat.slug} value={cat.internalCategory}>
               {cat.displayName}
             </option>
           ))}
         </select>
-        <button
-          type="submit"
-          className="h-14 min-h-[48px] w-full shrink-0 rounded-xl bg-blue-600 px-6 font-semibold text-white transition hover:bg-blue-700 active:scale-[0.98] sm:h-12 sm:w-auto sm:px-8"
-        >
-          Objavi zahtjev
-        </button>
       </div>
+      <button
+        type="submit"
+        className="btn-primary mt-1 flex w-full items-center justify-center font-semibold transition active:scale-[0.98]"
+      >
+        Objavi zahtjev
+      </button>
     </form>
   );
 }

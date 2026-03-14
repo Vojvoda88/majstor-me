@@ -1,5 +1,6 @@
 import { HomeHeader } from "@/components/home-page/home-header";
 import { Hero } from "@/components/home-page/Hero";
+import { MobileStickyCTA } from "@/components/home-page/MobileStickyCTA";
 import { HowItWorks } from "@/components/home-page/HowItWorks";
 import { CategoriesGrid } from "@/components/home-page/CategoriesGrid";
 import { CitiesGrid } from "@/components/home-page/CitiesGrid";
@@ -16,7 +17,7 @@ export default function HomePage() {
   const orgJson = organizationJsonLd();
   const faqJson = faqPageJsonLd(FAQ_ITEMS);
   return (
-    <main className="min-h-screen bg-[#F6F8FB] text-gray-900">
+    <main className="min-h-screen bg-[#F4F7FB] pb-28 text-[#0F172A] md:pb-10">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJson) }}
@@ -25,19 +26,22 @@ export default function HomePage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJson) }}
       />
-      <div className="mx-auto max-w-7xl px-4 sm:px-6">
-        <HomeHeader />
-        <Hero />
+      <HomeHeader />
+      <Hero />
+      <PlatformStatsSection />
+      <CategoriesGrid />
+      <TopMasters />
+      <section id="kako-radi" className="hidden md:block">
         <HowItWorks />
-        <CategoriesGrid />
+      </section>
+      <div className="hidden md:block">
         <CitiesGrid />
-        <PlatformStatsSection />
-        <TopMasters />
         <TrustSection />
         <Testimonials />
         <CTAForMasters />
         <FAQ />
       </div>
+      <MobileStickyCTA />
     </main>
   );
 }
