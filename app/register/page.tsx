@@ -13,9 +13,16 @@ export const metadata: Metadata = {
 
 export const dynamic = "force-dynamic";
 
-export default async function RegisterPage() {
+export default async function RegisterPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ type?: string }>;
+}) {
   const session = await auth();
   if (session) redirect("/");
+
+  const { type } = await searchParams;
+  const defaultRole = type === "majstor" ? "HANDYMAN" : "USER";
 
   return (
     <div className="min-h-screen bg-[#F8FAFC]">
@@ -26,7 +33,7 @@ export default async function RegisterPage() {
             <h1 className="text-2xl font-bold text-[#0F172A] sm:text-3xl">Kreirajte nalog</h1>
             <p className="mt-2 text-[#64748B]">Korisnik ili majstor — izaberite kako želite da koristite platformu</p>
           </div>
-          <RegisterForm />
+          <RegisterForm defaultRole={defaultRole} />
           <p className="mt-6 text-center">
             <Link href="/">
               <Button variant="ghost" size="sm">← Nazad na početnu</Button>

@@ -31,7 +31,11 @@ const registerSchema = z.object({
 
 type RegisterFormData = z.infer<typeof registerSchema>;
 
-export function RegisterForm() {
+export function RegisterForm({
+  defaultRole = "USER",
+}: {
+  defaultRole?: "USER" | "HANDYMAN";
+}) {
   const router = useRouter();
   const [error, setError] = useState<string>("");
 
@@ -42,7 +46,7 @@ export function RegisterForm() {
     formState: { errors, isSubmitting },
   } = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
-    defaultValues: { role: "USER" },
+    defaultValues: { role: defaultRole },
   });
 
   async function onSubmit(data: RegisterFormData) {
