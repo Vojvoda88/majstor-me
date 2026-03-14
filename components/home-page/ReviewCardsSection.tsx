@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Star, CheckCircle2 } from "lucide-react";
+import { Star, CheckCircle2, ArrowRight } from "lucide-react";
 import { HERO_IMAGE } from "@/lib/homepage-data";
 
 type Handyman = {
@@ -18,9 +18,9 @@ type Handyman = {
 };
 
 const SAMPLE_TEXTS = [
-  "Verifikovan. Ponosan majstor zanata, rješavam sve vaše probleme.",
-  "Verifikovan. Radim kvalitetno i brzo, preporučujem se svima.",
-  "Verifikovan. Kvalitetna keramika i precizan rad su moj moto.",
+  "Pouzdan majstor zanata, rješavam sve vaše probleme kvalitetno i na vrijeme.",
+  "Radim kvalitetno i brzo. Preporučujem se svima koji traže profesionalca.",
+  "Kvalitetna keramika i precizan rad su moj moto. Zadovoljni klijenti govore umjesto mene.",
 ];
 
 export function ReviewCardsSection() {
@@ -36,44 +36,50 @@ export function ReviewCardsSection() {
   if (handymen.length === 0) return null;
 
   return (
-    <section className="py-20">
-      <h2 className="mb-10 text-2xl font-bold text-gray-900">Najbolje Ocijenjeni Majstori</h2>
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+    <section className="py-24">
+      <h2 className="mb-4 text-3xl font-bold tracking-tight text-slate-900 md:text-4xl">
+        Najbolje Ocijenjeni Majstori
+      </h2>
+      <p className="mb-14 max-w-xl text-slate-500">
+        Provjereni stručnjaci s najvišim ocjenama od zadovoljnih klijenata
+      </p>
+      <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
         {handymen.slice(0, 3).map((h, idx) => {
           const isVerified = h.verifiedStatus === "VERIFIED";
           const imgSrc = h.avatarUrl ?? HERO_IMAGE;
           return (
             <div
               key={h.id}
-              className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm"
+              className="group overflow-hidden rounded-2xl border border-slate-100 bg-white p-8 shadow-soft transition hover:shadow-card"
             >
-              <div className="mb-6 flex items-center gap-4">
-                <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-full border-2 border-white shadow-sm">
-                  <Image src={imgSrc} alt="" fill className="object-cover" sizes="56px" />
+              <div className="mb-6 flex items-center gap-5">
+                <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-2xl shadow-md">
+                  <Image src={imgSrc} alt="" fill className="object-cover" sizes="64px" />
                 </div>
                 <div>
-                  <h4 className="font-bold text-gray-900">{h.name ?? "Majstor"}</h4>
-                  <p className="text-xs text-gray-400">{h.categories[0] ?? "Usluge"}</p>
-                  <div className="mt-1 flex items-center gap-1 text-sm text-amber-400">
-                    <Star className="h-4 w-4 fill-current" />
-                    <span className="font-bold text-gray-900">{h.ratingAvg.toFixed(1)}</span>
+                  <div className="flex items-center gap-2">
+                    <h4 className="font-bold text-slate-900">{h.name ?? "Majstor"}</h4>
+                    {isVerified && (
+                      <CheckCircle2 className="h-5 w-5 text-emerald-500" />
+                    )}
+                  </div>
+                  <p className="text-sm text-slate-500">{h.categories[0] ?? "Usluge"}</p>
+                  <div className="mt-2 flex items-center gap-1.5">
+                    <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
+                    <span className="text-sm font-bold text-slate-900">{h.ratingAvg.toFixed(1)}</span>
+                    <span className="text-sm text-slate-400">({h.reviewCount} recenzija)</span>
                   </div>
                 </div>
               </div>
-              <p className="mb-6 text-[13px] leading-snug text-gray-500">
-                {isVerified && (
-                  <>
-                    <CheckCircle2 className="mr-1 inline h-4 w-4 text-emerald-500" /> Verifikovan{" "}
-                    <br />
-                  </>
-                )}
-                {SAMPLE_TEXTS[idx % SAMPLE_TEXTS.length].replace("Verifikovan. ", "").trim()}
+              <p className="mb-6 text-[15px] leading-relaxed text-slate-600">
+                {SAMPLE_TEXTS[idx % SAMPLE_TEXTS.length]}
               </p>
               <Link
                 href={`/handyman/${h.id}`}
-                className="flex w-full items-center justify-center rounded-lg bg-[#2563EB] py-3 font-bold text-white transition hover:bg-[#1D4ED8]"
+                className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#1d4ed8] py-3.5 text-[15px] font-bold text-white transition hover:bg-[#1e40af] group-hover:gap-3"
               >
                 Pogledaj profil
+                <ArrowRight className="h-4 w-4" />
               </Link>
             </div>
           );

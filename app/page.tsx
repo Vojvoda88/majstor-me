@@ -14,7 +14,7 @@ export default function HomePage() {
   const orgJson = organizationJsonLd();
   const faqJson = faqPageJsonLd(FAQ_ITEMS);
   return (
-    <main className="min-h-screen bg-[#f8fafc] pb-28 md:pb-10">
+    <main className="min-h-screen bg-[#FAFBFC] pb-28 md:pb-16">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJson) }}
@@ -29,7 +29,7 @@ export default function HomePage() {
         <FloatingStatsCard />
       </div>
 
-      <div className="mx-auto max-w-6xl px-4 py-8">
+      <div className="mx-auto max-w-6xl px-6 py-16">
         <CategoriesGrid />
         <ReviewCardsSection />
         <HowItWorks />

@@ -20,44 +20,44 @@ export function FloatingStatsCard() {
   const items = [
     {
       icon: Users,
-      iconColor: "text-[#2563EB]",
+      className: "bg-blue-50 text-blue-600",
       value: "12,000+",
       label: "Korisnika",
     },
     {
       icon: Briefcase,
-      iconColor: "text-blue-500",
+      className: "bg-indigo-50 text-indigo-600",
       value: stats?.handymanCount != null && stats.handymanCount > 0 ? `${stats.handymanCount.toLocaleString("sr")}+` : "850+",
       label: "Majstora",
     },
     {
       icon: Star,
-      iconColor: "text-amber-500",
+      className: "bg-amber-50 text-amber-600",
       value: stats?.avgRating != null ? `${stats.avgRating.toFixed(1)}` : "4.8",
       label: "Prosječna ocjena",
     },
     {
       icon: MapPin,
-      iconColor: "text-blue-700",
+      className: "bg-emerald-50 text-emerald-600",
       value: stats?.citiesCount != null && stats.citiesCount > 0 ? `${stats.citiesCount}+` : "20+",
       label: "Gradova",
     },
   ];
 
   return (
-    <div className="relative z-20 mx-auto -mt-12 max-w-5xl px-4">
-      <div className="grid grid-cols-2 gap-6 rounded-xl border border-gray-100 bg-white p-6 shadow-lg md:grid-cols-4">
-        {items.map(({ icon: Icon, iconColor, value, label }, idx) => (
+    <div className="relative z-20 mx-auto -mt-16 max-w-5xl px-4 md:-mt-20">
+      <div className="grid grid-cols-2 gap-6 rounded-2xl border border-slate-100 bg-white p-8 shadow-premium md:grid-cols-4">
+        {items.map(({ icon: Icon, className, value, label }, idx) => (
           <div
             key={label}
-            className={`flex items-center gap-4 ${idx < 3 ? "md:border-r md:border-gray-100 md:pr-4" : ""}`}
+            className={`flex items-center gap-5 ${idx < 3 ? "md:border-r md:border-slate-100 md:pr-8" : ""}`}
           >
-            <div className={`text-2xl ${iconColor}`}>
+            <div className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-xl ${className}`}>
               <Icon className="h-6 w-6" />
             </div>
             <div>
-              <p className="text-xl font-bold leading-tight text-gray-900">{value}</p>
-              <p className="text-xs font-bold uppercase tracking-wider text-gray-400">{label}</p>
+              <p className="text-2xl font-bold tracking-tight text-slate-900">{value}</p>
+              <p className="mt-0.5 text-xs font-semibold uppercase tracking-widest text-slate-400">{label}</p>
             </div>
           </div>
         ))}

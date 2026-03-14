@@ -7,7 +7,7 @@ const steps = [
   {
     icon: FileText,
     title: "Objavite zahtjev",
-    desc: "Opišite zahtjev sa opisom posla u vašem gradu.",
+    desc: "Opišite posao i grad. Jasno i detaljno.",
     btn: "Objavite zahtjev",
     href: "/request/create",
   },
@@ -21,7 +21,7 @@ const steps = [
   {
     icon: CheckCircle,
     title: "Izaberite majstora",
-    desc: "Elektronski proces rješavanja hitnih popravki.",
+    desc: "Uporedite ocjene, cijene i izaberite najbolju ponudu.",
     btn: "Vidi majstore",
     href: "/category/vodoinstalater",
   },
@@ -29,22 +29,30 @@ const steps = [
 
 export function HowItWorks() {
   return (
-    <section id="kako-radi" className="bg-white py-20">
-      <h2 className="mb-12 text-2xl font-bold text-gray-900">Kako funkcioniše</h2>
-      <div className="grid grid-cols-1 gap-8 text-center md:grid-cols-3 md:text-left">
-        {steps.map(({ icon: Icon, title, desc, btn, href }) => (
+    <section id="kako-radi" className="rounded-3xl bg-white py-24 shadow-soft">
+      <h2 className="mb-4 text-3xl font-bold tracking-tight text-slate-900 md:text-4xl">
+        Kako funkcioniše
+      </h2>
+      <p className="mb-16 max-w-xl text-slate-500">
+        Tri jednostavna koraka do provjerenog majstora
+      </p>
+      <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+        {steps.map(({ icon: Icon, title, desc, btn, href }, idx) => (
           <div
             key={title}
-            className="flex flex-col items-center rounded-2xl border border-gray-100 bg-gray-50 p-8 md:items-start"
+            className="group relative flex flex-col rounded-2xl border border-slate-100 bg-slate-50/50 p-8 transition hover:border-slate-200 hover:bg-white hover:shadow-card"
           >
-            <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-xl bg-white text-2xl text-[#2563EB] shadow-sm">
-              <Icon className="h-6 w-6" />
+            <span className="absolute -top-3 left-8 bg-white px-3 py-1 text-xs font-bold text-slate-400">
+              {idx + 1}
+            </span>
+            <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-white text-[#1d4ed8] shadow-soft">
+              <Icon className="h-7 w-7" />
             </div>
-            <h3 className="mb-3 text-xl font-bold text-gray-900">{title}</h3>
-            <p className="mb-8 text-sm leading-relaxed text-gray-500">{desc}</p>
+            <h3 className="mb-3 text-xl font-bold text-slate-900">{title}</h3>
+            <p className="mb-8 flex-1 text-[15px] leading-relaxed text-slate-500">{desc}</p>
             <Link
               href={href}
-              className="w-full rounded-lg bg-[#2563EB] py-3 text-center text-sm font-bold text-white transition hover:bg-[#1D4ED8]"
+              className="flex w-full items-center justify-center rounded-xl bg-[#1d4ed8] py-3.5 text-[15px] font-bold text-white transition hover:bg-[#1e40af]"
             >
               {btn}
             </Link>

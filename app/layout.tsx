@@ -44,7 +44,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="sr" className={`${inter.variable} ${plusJakarta.variable}`}>
-      <body className="font-sans antialiased bg-[#f8fafc] text-[#0F172A]">
+      <body className="font-[family-name:var(--font-plus-jakarta)] antialiased bg-[#FAFBFC] text-[#0F172A]">
         <Providers>{children}</Providers>
         <Analytics />
       </body>
