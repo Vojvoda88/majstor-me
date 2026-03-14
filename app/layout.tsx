@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Plus_Jakarta_Sans, Syne } from "next/font/google";
+import { Inter, DM_Sans, Outfit } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { getSiteUrl } from "@/lib/site-url";
 import "./globals.css";
@@ -11,16 +11,17 @@ const inter = Inter({
   display: "swap",
 });
 
-const plusJakarta = Plus_Jakarta_Sans({
+const dmSans = DM_Sans({
   subsets: ["latin", "latin-ext"],
-  variable: "--font-plus-jakarta",
+  variable: "--font-dm-sans",
+  weight: ["400", "500", "600", "700"],
   display: "swap",
 });
 
-const syne = Syne({
+const outfit = Outfit({
   subsets: ["latin", "latin-ext"],
-  variable: "--font-syne",
-  weight: ["400", "500", "600", "700", "800"],
+  variable: "--font-outfit",
+  weight: ["500", "600", "700", "800"],
   display: "swap",
 });
 
@@ -50,8 +51,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="sr" className={`${inter.variable} ${plusJakarta.variable} ${syne.variable}`}>
-      <body className="font-[family-name:var(--font-plus-jakarta)] antialiased bg-[#FAFBFC] text-[#0F172A]">
+    <html lang="sr" className={`${inter.variable} ${dmSans.variable} ${outfit.variable}`}>
+      <body className="font-[family-name:var(--font-dm-sans)] antialiased bg-[#FAFBFC] text-[#0F172A]">
         <Providers>{children}</Providers>
         <Analytics />
       </body>

@@ -2,8 +2,8 @@
 // Kategorije su u lib/categories.ts (centralni source of truth)
 
 export const HERO_IMAGE = "/images/hero/hero-handyman.jpg";
-// Handyman with tools - premium hero (TaskRabbit/Thumbtack style)
-export const HERO_IMAGE_FALLBACK = "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=1920&q=85";
+// Majstor na poslu - vodoinstalater/električar, NE laptop
+export const HERO_IMAGE_FALLBACK = "https://images.unsplash.com/photo-1504148455328-c376907d081c?w=1920&q=85";
 
 // Category name -> local image path (fallbacks for slug-based lookup)
 export const CATEGORY_IMAGES: Record<string, string> = {

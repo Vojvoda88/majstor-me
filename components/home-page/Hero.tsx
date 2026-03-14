@@ -37,7 +37,7 @@ export function Hero() {
           {HERO_PILLS.map((cat) => (
             <Link
               key={cat.slug}
-              href={`/category/${cat.slug}`}
+              href={`/request/create?category=${encodeURIComponent(cat.internalCategory)}`}
               className="rounded-full border border-white/30 bg-white/10 px-4 py-2 text-sm font-medium text-white backdrop-blur-sm transition hover:bg-white/20 hover:border-white/50"
             >
               {cat.displayName}

@@ -21,12 +21,12 @@ export function HeroSearch() {
 
   return (
     <form onSubmit={handleSubmit}>
-      <div className="mx-auto flex max-w-4xl flex-col gap-0 overflow-hidden rounded-2xl bg-white/98 p-2 shadow-premium-lg backdrop-blur-sm md:flex-row md:gap-0">
-        <div className="relative flex-1">
+      <div className="mx-auto flex max-w-4xl flex-col gap-0 overflow-hidden rounded-2xl bg-white p-2 shadow-premium-lg md:flex-row md:gap-0">
+        <div className="relative flex-1 rounded-xl bg-slate-50">
           <select
             value={city}
             onChange={(e) => setCity(e.target.value)}
-            className="w-full cursor-pointer appearance-none bg-transparent py-4 pl-5 pr-12 text-left text-[15px] font-medium text-slate-800 outline-none transition hover:bg-slate-50/50"
+            className="w-full cursor-pointer appearance-none bg-transparent py-4 pl-5 pr-12 text-left text-[15px] font-medium text-slate-700 outline-none transition hover:bg-slate-100/80"
             aria-label="Odaberi grad"
           >
             <option value="">Svi gradovi</option>
@@ -34,17 +34,17 @@ export function HeroSearch() {
               <option key={c} value={c}>{c}</option>
             ))}
           </select>
-          <div className="pointer-events-none absolute right-5 top-1/2 -translate-y-1/2 text-slate-400">
+          <div className="pointer-events-none absolute right-5 top-1/2 -translate-y-1/2 text-slate-500">
             <ChevronDown className="h-5 w-5" />
           </div>
         </div>
 
-        <div className="relative flex-1 border-t border-slate-100 md:border-t-0 md:border-l md:border-slate-200/80">
+        <div className="relative flex-1 rounded-xl bg-slate-50 md:ml-2">
           <select
             value={category}
             onChange={(e) => setCategory(e.target.value)}
             required
-            className="w-full cursor-pointer appearance-none bg-transparent py-4 pl-5 pr-12 text-left text-[15px] font-medium text-slate-800 outline-none transition hover:bg-slate-50/50"
+            className="w-full cursor-pointer appearance-none bg-transparent py-4 pl-5 pr-12 text-left text-[15px] font-medium text-slate-700 outline-none transition hover:bg-slate-100/80"
             aria-label="Odaberi kategoriju"
           >
             <option value="">Odaberi kategoriju</option>
@@ -54,7 +54,7 @@ export function HeroSearch() {
               </option>
             ))}
           </select>
-          <div className="pointer-events-none absolute right-5 top-1/2 -translate-y-1/2 text-slate-400">
+          <div className="pointer-events-none absolute right-5 top-1/2 -translate-y-1/2 text-slate-500">
             <ChevronDown className="h-5 w-5" />
           </div>
         </div>

@@ -33,7 +33,7 @@ export function CategoriesGrid() {
           return (
             <Link
               key={cat.slug}
-              href={`/category/${cat.slug}`}
+              href={`/request/create?category=${encodeURIComponent(cat.internalCategory)}`}
               className="group relative h-56 overflow-hidden rounded-2xl transition duration-300 hover:-translate-y-1 hover:shadow-premium md:h-64"
             >
               <Image
@@ -47,7 +47,7 @@ export function CategoriesGrid() {
               <div className="absolute inset-0 flex flex-col justify-end p-6">
                 <span className="text-xl font-bold text-white drop-shadow-lg">{cat.displayName}</span>
                 <span className="mt-2 inline-flex items-center gap-1 text-sm font-medium text-white/90 opacity-0 transition group-hover:opacity-100">
-                  Pogledaj majstore
+                  Objavi zahtjev
                   <ArrowRight className="h-4 w-4" />
                 </span>
               </div>
@@ -56,10 +56,10 @@ export function CategoriesGrid() {
         })}
       </div>
       <Link
-        href="/category/vodoinstalater"
+        href="/request/create"
         className="mt-10 inline-flex items-center gap-2 text-[15px] font-semibold text-[#1d4ed8] transition hover:text-[#1e40af] hover:gap-3"
       >
-        Vidi sve kategorije
+        Objavi zahtjev
         <ArrowRight className="h-4 w-4" />
       </Link>
     </section>
