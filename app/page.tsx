@@ -1,6 +1,7 @@
 import { PremiumMobileHeader } from "@/components/layout/PremiumMobileHeader";
 import { Hero } from "@/components/home-page/Hero";
 import { FloatingStatsCard } from "@/components/home-page/FloatingStatsCard";
+import { WhyMajstorSection } from "@/components/home-page/WhyMajstorSection";
 import { CategoriesGrid } from "@/components/home-page/CategoriesGrid";
 import { ReviewCardsSection } from "@/components/home-page/ReviewCardsSection";
 import { HowItWorks } from "@/components/home-page/HowItWorks";
@@ -30,10 +31,13 @@ export default function HomePage() {
       </div>
 
       <div className="mx-auto max-w-6xl px-6 py-16">
-        <div className="animate-fade-up">
-          <CategoriesGrid />
+        <div className="animate-fade-up" style={{ animationDelay: "0.05s", animationFillMode: "both" }}>
+          <WhyMajstorSection />
         </div>
         <div className="animate-fade-up" style={{ animationDelay: "0.1s", animationFillMode: "both" }}>
+          <CategoriesGrid />
+        </div>
+        <div className="animate-fade-up" style={{ animationDelay: "0.15s", animationFillMode: "both" }}>
           <ReviewCardsSection />
         </div>
         <div className="animate-fade-up" style={{ animationDelay: "0.2s", animationFillMode: "both" }}>

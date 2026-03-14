@@ -10,23 +10,25 @@ const CATEGORY_IMAGES: Record<string, string> = {
   Električar: "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=600&auto=format&fit=crop",
   Keramičar: "https://images.unsplash.com/photo-1581578731548-c64695ce6958?w=600&auto=format&fit=crop",
   "Klima servis": "https://images.unsplash.com/photo-1595467793069-45069736f88d?w=600&auto=format&fit=crop",
+  Stolar: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=600&auto=format&fit=crop",
+  Čišćenje: "https://images.unsplash.com/photo-1581578731548-c64695ce6958?w=600&auto=format&fit=crop",
 };
 
-const TOP_4 = CATEGORY_CONFIG.filter((c) =>
-  ["Vodoinstalater", "Električar", "Keramičar", "Klima servis"].includes(c.displayName)
+const TOP_6 = CATEGORY_CONFIG.filter((c) =>
+  ["Vodoinstalater", "Električar", "Keramičar", "Klima servis", "Stolar", "Čišćenje"].includes(c.displayName)
 );
 
 export function CategoriesGrid() {
   return (
     <section id="kategorije" className="py-24">
-      <h2 className="font-display mb-4 text-3xl font-bold tracking-tight text-slate-900 md:text-4xl">
-        Popularne Kategorije
+      <h2 className="font-display mb-3 text-3xl font-bold tracking-tight text-slate-900 md:text-4xl">
+        Popularni poslovi
       </h2>
       <p className="mb-12 max-w-xl text-slate-500">
-        Brzo pronađite provjerene majstore za vaš posao
+        Od vodoinstalatera do keramičara — pronađite provjerene majstore za svaki posao
       </p>
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        {TOP_4.map((cat) => {
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {TOP_6.map((cat) => {
           const imgSrc = CATEGORY_IMAGES[cat.displayName] ?? CATEGORY_IMAGES.Vodoinstalater;
           return (
             <Link

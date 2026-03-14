@@ -45,8 +45,8 @@ export function FloatingStatsCard() {
   ];
 
   return (
-    <div className="relative z-20 mx-auto -mt-16 max-w-5xl px-4 md:-mt-20">
-      <div className="grid grid-cols-2 gap-6 rounded-2xl border border-slate-100 bg-white p-8 shadow-premium md:grid-cols-4">
+    <div className="relative z-20 mx-auto -mt-20 max-w-5xl px-4 md:-mt-24">
+      <div className="grid grid-cols-2 gap-6 rounded-2xl border border-slate-100 bg-white p-8 shadow-premium-lg md:grid-cols-4">
         {items.map(({ icon: Icon, className, value, label }, idx) => (
           <div
             key={label}
