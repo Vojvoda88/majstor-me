@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
 
 export async function GET(req: NextRequest) {
   try {
-    const { searchParams } = new URL(req.url);
+    const { prisma } = await import("@/lib/db");
+    const searchParams = req.nextUrl?.searchParams ?? new URLSearchParams();
     const category = searchParams.get("category");
     const city = searchParams.get("city");
     const sortBy = searchParams.get("sortBy") || "rating";
