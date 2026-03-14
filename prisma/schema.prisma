@@ -19,6 +19,15 @@ enum UserRole {
   ADMIN
 }
 
+enum AdminRole {
+  SUPER_ADMIN
+  OPERATIONS_ADMIN
+  MODERATION_ADMIN
+  FINANCE_ADMIN
+  SUPPORT_ADMIN
+  READ_ONLY
+}
+
 enum RequestStatus {
   OPEN
   IN_PROGRESS
@@ -70,6 +79,8 @@ model User {
   passwordHash  String   @map("password_hash")
   city          String?
   emailVerified DateTime? @map("email_verified")
+  suspendedAt   DateTime? @map("suspended_at")
+  bannedAt      DateTime? @map("banned_at")
   createdAt     DateTime @default(now()) @map("created_at")
 
   // Relations
@@ -87,6 +98,7 @@ model User {
   creditTransactions CreditTransaction[]
   contactUnlocks     RequestContactUnlock[]
   pushSubscriptions  PushSubscription[]
+  adminProfile       AdminProfile?
 
   @@map("users")
 }
@@ -100,9 +112,98 @@ enum AvailabilityStatus {
 model Category {
   id               String           @id @default(cuid())
   name             String           @unique
+  slug             String?          @unique
+  description      String?          @db.Text
+  iconUrl          String?          @map("icon_url")
+  active           Boolean          @default(true)
+  sortOrder        Int              @default(0) @map("sort_order")
   workerCategories WorkerCategory[]
 
   @@map("categories")
+}
+
+model AdminProfile {
+  id        String    @id @default(cuid())
+  userId    String    @unique @map("user_id")
+  adminRole AdminRole @default(SUPER_ADMIN) @map("admin_role")
+  createdAt DateTime  @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("admin_profiles")
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  adminId    String   @map("admin_id")
+  adminRole  String   @map("admin_role")
+  actionType String   @map("action_type")
+  entityType String   @map("entity_type")
+  entityId   String?  @map("entity_id")
+  oldValue   Json?    @map("old_value")
+  newValue   Json?    @map("new_value")
+  reason     String?  @db.Text
+  ipAddress  String?  @map("ip_address")
+  userAgent  String?  @map("user_agent")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  @@index([adminId])
+  @@index([entityType, entityId])
+  @@index([actionType])
+  @@index([createdAt])
+  @@map("audit_logs")
+}
+
+model BlacklistedPhone {
+  id        String   @id @default(cuid())
+  phone     String   @unique
+  reason    String?  @db.Text
+  addedById String?  @map("added_by_id")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([phone])
+  @@map("blacklisted_phones")
+}
+
+model BlacklistedEmail {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  reason    String?  @db.Text
+  addedById String?  @map("added_by_id")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([email])
+  @@map("blacklisted_emails")
+}
+
+model SystemSetting {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String   @db.Text
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("system_settings")
+}
+
+model FaqItem {
+  id        String   @id @default(cuid())
+  question  String   @db.Text
+  answer    String   @db.Text
+  sortOrder Int      @default(0) @map("sort_order")
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("faq_items")
+}
+
+model City {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  slug      String?  @unique
+  active    Boolean  @default(true)
+  sortOrder Int      @default(0) @map("sort_order")
+
+  @@map("cities")
 }
 
 model WorkerCategory {
@@ -151,17 +252,22 @@ model HandymanProfile {
 }
 
 model CreditTransaction {
-  id           String   @id @default(cuid())
-  handymanId   String   @map("handyman_id") // User.id of handyman
-  amount       Int      // positive = add, negative = spend
-  type         String   // OFFER_SENT, CONTACT_UNLOCK, PURCHASE, BONUS, REFUND
-  referenceId  String?  @map("reference_id") // e.g. offerId for OFFER_SENT
-  balanceAfter Int      @map("balance_after")
-  createdAt    DateTime @default(now()) @map("created_at")
+  id              String   @id @default(cuid())
+  handymanId      String   @map("handyman_id")
+  amount          Int
+  type            String   // PURCHASE, ADMIN_ADD, ADMIN_REMOVE, REFUND, UNLOCK_CONTACT, PROMO_BONUS, CORRECTION, OFFER_SENT, CONTACT_UNLOCK, BONUS
+  referenceId     String?  @map("reference_id")
+  balanceBefore   Int?     @map("balance_before")
+  balanceAfter    Int      @map("balance_after")
+  reason          String?  @db.Text
+  createdByAdminId String? @map("created_by_admin_id")
+  createdAt       DateTime @default(now()) @map("created_at")
 
   handyman User @relation(fields: [handymanId], references: [id], onDelete: Cascade)
 
   @@index([handymanId])
+  @@index([type])
+  @@index([createdAt])
   @@map("credit_transactions")
 }
 
@@ -180,7 +286,9 @@ model Request {
   requesterName   String?       @map("requester_name") // za guest
   requesterPhone  String?       @map("requester_phone") // skriven dok ne otključa
   requesterEmail  String?       @map("requester_email") // opciono
-  requesterToken  String?       @unique @map("requester_token") // za guest da vidi/prihvati
+  requesterToken  String?       @unique @map("requester_token")
+  adminStatus     String?       @map("admin_status") // NEW, DISTRIBUTED, HAS_OFFERS, CONTACT_UNLOCKED, CLOSED, SPAM, DELETED
+  deletedAt       DateTime?     @map("deleted_at")
   createdAt       DateTime      @default(now()) @map("created_at")
 
   user              User?                @relation("RequestCreator", fields: [userId], references: [id], onDelete: Cascade)
@@ -256,6 +364,8 @@ model Report {
   reporterId     String       @map("reporter_id")
   reportedUserId String       @map("reported_user_id")
   requestId      String?      @map("request_id")
+  messageId      String?      @map("message_id")
+  targetType     String?      @map("target_type") // REQUEST, PROFILE, MESSAGE, USER
   type           String
   description    String?
   status         ReportStatus @default(PENDING)
@@ -265,6 +375,8 @@ model Report {
   reportedUser User     @relation("ReportReported", fields: [reportedUserId], references: [id], onDelete: Cascade)
   request      Request? @relation(fields: [requestId], references: [id], onDelete: SetNull)
 
+  @@index([status])
+  @@index([targetType])
   @@map("reports")
 }
 

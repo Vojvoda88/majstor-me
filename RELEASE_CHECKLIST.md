@@ -86,7 +86,7 @@ Finalne provjere prije pokretanja za prve korisnike.
 
 ## Test nalozi
 
-- [ ] Admin: admin@majstor.me / Test123!
+- [ ] Admin: (ADMIN_EMAIL iz .env) / Test123!
 - [ ] Korisnik: marko@test.me / Test123!
 - [ ] Majstor: majstor.vodoinstalater@test.me / Test123!
 

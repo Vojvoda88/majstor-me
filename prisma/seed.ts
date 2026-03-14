@@ -26,16 +26,22 @@ async function main() {
   const password = await hash("Test123!", 12);
 
   // Admin
+  const adminEmail = process.env.ADMIN_EMAIL ?? "admin@majstor.me";
   const admin = await prisma.user.upsert({
-    where: { email: "admin@majstor.me" },
+    where: { email: adminEmail },
     update: {},
     create: {
-      email: "admin@majstor.me",
+      email: adminEmail,
       name: "Admin Korisnik",
       passwordHash: password,
       role: "ADMIN",
       city: "Nikšić",
     },
+  });
+  await prisma.adminProfile.upsert({
+    where: { userId: admin.id },
+    update: { adminRole: "SUPER_ADMIN" },
+    create: { userId: admin.id, adminRole: "SUPER_ADMIN" },
   });
   console.log("Admin:", admin.email);
 

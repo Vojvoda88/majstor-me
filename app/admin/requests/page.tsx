@@ -1,7 +1,9 @@
+import { requireAdminPermission } from "@/lib/admin/auth";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
-import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { EmptyState } from "@/components/ui/empty-state";
+
+export const dynamic = "force-dynamic";
 
 const STATUS_LABELS: Record<string, string> = {
   OPEN: "Otvoren",
@@ -10,97 +12,103 @@ const STATUS_LABELS: Record<string, string> = {
   CANCELLED: "Otkazan",
 };
 
-export const dynamic = "force-dynamic";
-
 export default async function AdminRequestsPage({
   searchParams,
 }: {
   searchParams: Promise<{ status?: string }>;
 }) {
-  const params = await searchParams;
-  const status = params.status;
-
+  await requireAdminPermission("requests");
   const { prisma } = await import("@/lib/db");
-  const where = status ? { status: status as "OPEN" | "IN_PROGRESS" | "COMPLETED" | "CANCELLED" } : {};
+  const params = await searchParams;
+  const statusFilter = params.status as string | undefined;
+
+  const where = statusFilter && ["OPEN", "IN_PROGRESS", "COMPLETED", "CANCELLED"].includes(statusFilter)
+    ? { status: statusFilter as "OPEN" | "IN_PROGRESS" | "COMPLETED" | "CANCELLED" }
+    : {};
 
   const requests = await prisma.request.findMany({
     where,
     include: {
       user: { select: { name: true } },
       offers: { select: { id: true } },
+      contactUnlocks: { select: { id: true } },
     },
     orderBy: { createdAt: "desc" },
     take: 100,
   });
 
   return (
-    <div>
-      <h1 className="page-title">Zahtjevi</h1>
-      <p className="page-description">Pregled svih zahtjeva po statusu</p>
-      <div className="mt-4 flex flex-wrap gap-2">
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-2xl font-bold text-[#0F172A]">Zahtjevi</h1>
+        <p className="mt-1 text-sm text-[#64748B]">Svi zahtjevi / leadovi</p>
+      </div>
+
+      <div className="flex gap-2">
         <Link href="/admin/requests">
-          <Badge variant={!status ? "default" : "outline"}>Svi</Badge>
+          <Badge variant={!statusFilter ? "default" : "outline"}>Svi</Badge>
         </Link>
         {(["OPEN", "IN_PROGRESS", "COMPLETED", "CANCELLED"] as const).map((s) => (
-          <Link
-            key={s}
-            href={status === s ? "/admin/requests" : `/admin/requests?status=${s}`}
-          >
-            <Badge variant={status === s ? "default" : "outline"}>{STATUS_LABELS[s]}</Badge>
+          <Link key={s} href={`/admin/requests?status=${s}`}>
+            <Badge variant={statusFilter === s ? "default" : "outline"}>{STATUS_LABELS[s]}</Badge>
           </Link>
         ))}
       </div>
-      {requests.length === 0 ? (
-        <EmptyState className="mt-6" title="Nema zahtjeva" description="Za izabrani filter nema rezultata." />
-      ) : (
-      <Card className="mt-8 border-[#E2E8F0]">
-        <CardContent className="p-0">
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Lista zahtjeva ({requests.length})</CardTitle>
+        </CardHeader>
+        <CardContent>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b">
-                  <th className="px-4 py-3 text-left font-medium">Kategorija</th>
-                  <th className="px-4 py-3 text-left font-medium">Korisnik</th>
-                  <th className="px-4 py-3 text-left font-medium">Grad</th>
-                  <th className="px-4 py-3 text-left font-medium">Status</th>
-                  <th className="px-4 py-3 text-left font-medium">Ponude</th>
-                  <th className="px-4 py-3 text-left font-medium">Datum</th>
+                <tr className="border-b text-left">
+                  <th className="pb-3 pr-4">ID</th>
+                  <th className="pb-3 pr-4">Korisnik</th>
+                  <th className="pb-3 pr-4">Grad</th>
+                  <th className="pb-3 pr-4">Kategorija</th>
+                  <th className="pb-3 pr-4">Naslov</th>
+                  <th className="pb-3 pr-4">Datum</th>
+                  <th className="pb-3 pr-4">Status</th>
+                  <th className="pb-3 pr-4">Ponude</th>
+                  <th className="pb-3 pr-4">Otključanja</th>
+                  <th className="pb-3"></th>
                 </tr>
               </thead>
               <tbody>
                 {requests.map((r) => (
                   <tr key={r.id} className="border-b last:border-0">
-                    <td className="px-4 py-3">
-                      <Link href={`/request/${r.id}`} className="hover:underline">
-                        {r.category}
-                      </Link>
-                    </td>
-                    <td className="px-4 py-3">{r.requesterName ?? r.user?.name ?? "-"}</td>
-                    <td className="px-4 py-3">{r.city}</td>
-                    <td className="px-4 py-3">
+                    <td className="py-3 pr-4 font-mono text-xs">{r.id.slice(0, 8)}</td>
+                    <td className="py-3 pr-4">{r.requesterName ?? r.user?.name ?? "Guest"}</td>
+                    <td className="py-3 pr-4">{r.city}</td>
+                    <td className="py-3 pr-4">{r.category}</td>
+                    <td className="max-w-[150px] truncate py-3 pr-4">{r.title ?? r.description.slice(0, 30)}</td>
+                    <td className="py-3 pr-4 text-[#64748B]">{new Date(r.createdAt).toLocaleDateString("sr")}</td>
+                    <td className="py-3 pr-4">
                       <Badge
                         variant={
-                          r.status === "OPEN" ? "secondary" :
-                          r.status === "IN_PROGRESS" ? "default" :
-                          r.status === "COMPLETED" ? "success" :
-                          "destructive"
+                          r.status === "COMPLETED" ? "success" : r.status === "CANCELLED" ? "secondary" : "default"
                         }
                       >
-                        {STATUS_LABELS[r.status]}
+                        {STATUS_LABELS[r.status] ?? r.status}
                       </Badge>
                     </td>
-                    <td className="px-4 py-3">{r.offers.length}</td>
-                    <td className="px-4 py-3 text-muted-foreground">
-                      {new Date(r.createdAt).toLocaleDateString("sr")}
+                    <td className="py-3 pr-4">{r.offers.length}</td>
+                    <td className="py-3 pr-4">{r.contactUnlocks.length}</td>
+                    <td className="py-3">
+                      <Link href={`/admin/requests/${r.id}`} className="text-[#2563EB] hover:underline">
+                        Detalji
+                      </Link>
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
+          {requests.length === 0 && <p className="py-8 text-center text-[#64748B]">Nema zahtjeva</p>}
         </CardContent>
       </Card>
-      )}
     </div>
   );
 }

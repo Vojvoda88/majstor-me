@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { requireAdminApi } from "@/lib/admin/api-auth";
+import { createAuditLog } from "@/lib/admin/audit";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -13,18 +15,19 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { auth } = await import("@/lib/auth");
-    const { prisma } = await import("@/lib/db");
+    const authResult = await requireAdminApi("workers_write");
+    if (!authResult.ok) return authResult.response;
 
-    const session = await auth();
-    if (!session?.user?.id || session.user.role !== "ADMIN") {
-      return NextResponse.json(
-        { success: false, error: "Nemate pristup" },
-        { status: 403 }
-      );
+    const { prisma } = await import("@/lib/db");
+    const { id: handymanUserId } = await params;
+
+    const profile = await prisma.handymanProfile.findUnique({
+      where: { userId: handymanUserId },
+    });
+    if (!profile) {
+      return NextResponse.json({ success: false, error: "Majstor nije pronađen" }, { status: 404 });
     }
 
-    const { id } = await params;
     const body = _request.headers.get("content-type")?.includes("application/json")
       ? await _request.json()
       : {};
@@ -36,21 +39,23 @@ export async function POST(
       );
     }
 
-    const profile = await prisma.handymanProfile.update({
-      where: { id },
+    const oldStatus = profile.verifiedStatus;
+    const updated = await prisma.handymanProfile.update({
+      where: { userId: handymanUserId },
       data: { verifiedStatus: parsed.data.status },
     });
 
-    await prisma.adminAction.create({
-      data: {
-        adminId: session.user.id,
-        targetType: "handyman",
-        targetId: id,
-        action: `verify_${parsed.data.status.toLowerCase()}`,
-      },
+    await createAuditLog(prisma, {
+      adminId: authResult.session.user.id,
+      adminRole: authResult.adminRole,
+      actionType: "VERIFY_HANDYMAN",
+      entityType: "handyman",
+      entityId: handymanUserId,
+      oldValue: { verifiedStatus: oldStatus },
+      newValue: { verifiedStatus: parsed.data.status },
     });
 
-    return NextResponse.json({ success: true, data: profile });
+    return NextResponse.json({ success: true, data: updated });
   } catch (error) {
     if (process.env.NODE_ENV === "development") {
       console.error("Verify handyman error", error);

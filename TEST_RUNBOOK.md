@@ -87,7 +87,7 @@ Tačni koraci za ručno testiranje cijelog flow-a.
 ## Flow 8: Prijava kao admin
 
 1. Odjavite se
-2. Prijavite se: admin@majstor.me / Test123!
+2. Prijavite se: (ADMIN_EMAIL iz .env) / Test123!
 3. Klik **Admin** u navigaciji
 4. **Očekivano:** Pristup admin dashboardu
 

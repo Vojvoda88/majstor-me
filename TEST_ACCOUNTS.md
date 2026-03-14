@@ -9,7 +9,7 @@ Nalozi za ručno testiranje. Lozinka za sve: **Test123!**
 | Polje | Vrijednost |
 |-------|------------|
 | **Uloga** | ADMIN |
-| **Email** | admin@majstor.me |
+| **Email** | vidi ADMIN_EMAIL u .env |
 | **Lozinka** | Test123! |
 | **Svrha** | Pristup admin panelu, verifikacija majstora |
 
