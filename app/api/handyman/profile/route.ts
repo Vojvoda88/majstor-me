@@ -80,7 +80,6 @@ export async function PATCH(request: Request) {
       create: {
         userId: session.user.id,
         bio,
-        avatarUrl: avatarUrl ?? undefined,
         categories: categories as string[],
         cities,
       },
