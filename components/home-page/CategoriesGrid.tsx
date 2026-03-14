@@ -1,41 +1,48 @@
 "use client";
 
 import Link from "next/link";
-import { Wrench, Zap, Grid3X3, Thermometer, Truck, Sparkles } from "lucide-react";
+import Image from "next/image";
+import { CATEGORY_CONFIG } from "@/lib/categories";
+import { CATEGORY_IMAGES } from "@/lib/homepage-data";
 
-const TOP_CATEGORIES = [
-  { slug: "vodoinstalater", name: "Vodoinstalater", icon: Wrench },
-  { slug: "elektricar", name: "Električar", icon: Zap },
-  { slug: "keramicar", name: "Keramičar", icon: Grid3X3 },
-  { slug: "klima-servis", name: "Klima servis", icon: Thermometer },
-  { slug: "selidbe", name: "Selidbe", icon: Truck },
-  { slug: "ciscenje", name: "Čišćenje", icon: Sparkles },
-];
+const TOP_6 = CATEGORY_CONFIG.slice(0, 6);
 
 export function CategoriesGrid() {
   return (
-    <section id="kategorije" className="mt-7 md:mt-10">
-      <div className="mx-auto max-w-[430px] px-4 md:max-w-4xl md:px-6">
-        <h2 className="mb-3 text-xl font-bold text-[#0F172A]">Top kategorije</h2>
-        <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4">
-          {TOP_CATEGORIES.map(({ slug, name, icon: Icon }) => (
-            <Link
-              key={slug}
-              href={`/category/${slug}`}
-              className="flex min-h-[92px] items-center gap-3 rounded-[18px] border border-[#E6EDF5] bg-white p-4 shadow-[0_8px_20px_rgba(15,23,42,0.05)] transition active:scale-[0.98]"
-            >
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[14px] bg-gradient-to-br from-[#60A5FA]/20 to-[#2563EB]/15">
-                <Icon className="h-[22px] w-[22px] text-[#2563EB]" />
-              </div>
-              <span className="text-[15px] font-semibold text-[#0F172A]">{name}</span>
-            </Link>
-          ))}
+    <section id="kategorije" className="mt-12 md:mt-16">
+      <div>
+        <h2 className="mb-6 text-2xl font-bold text-[#0F172A]">Popularne Kategorije</h2>
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-3 md:gap-5">
+          {TOP_6.map((cat) => {
+            const imgSrc = CATEGORY_IMAGES[cat.displayName] ?? CATEGORY_IMAGES["Vodoinstalater"];
+            return (
+              <Link
+                key={cat.slug}
+                href={`/category/${cat.slug}`}
+                className="group relative block overflow-hidden rounded-lg border border-[#E5E7EB] bg-white shadow-sm transition hover:shadow-md"
+              >
+                <div className="relative aspect-[4/3] w-full">
+                  <Image
+                    src={imgSrc}
+                    alt={cat.displayName}
+                    fill
+                    className="object-cover transition group-hover:scale-[1.02]"
+                    sizes="(max-width: 768px) 50vw, 33vw"
+                  />
+                </div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                <p className="absolute bottom-0 left-0 right-0 p-4 text-base font-semibold text-white">
+                  {cat.displayName}
+                </p>
+              </Link>
+            );
+          })}
         </div>
         <Link
           href="/category/vodoinstalater"
-          className="mt-4 flex min-h-[48px] items-center justify-center rounded-[14px] border border-[#D6E2F1] bg-white text-[15px] font-medium text-[#475569] shadow-[0_8px_20px_rgba(15,23,42,0.05)]"
+          className="mt-6 inline-block text-[15px] font-medium text-[#475569] transition hover:text-[#2563EB]"
         >
-          Vidi još kategorija
+          Vidi još kategorija →
         </Link>
       </div>
     </section>

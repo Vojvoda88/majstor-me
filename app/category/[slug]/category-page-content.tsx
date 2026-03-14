@@ -6,9 +6,9 @@ import { useSearchParams } from "next/navigation";
 import { PremiumMobileHeader } from "@/components/layout/PremiumMobileHeader";
 import { StickyBottomCTA } from "@/components/layout/StickyBottomCTA";
 import { MobileFilterSheet } from "@/components/category/MobileFilterSheet";
-import { Wrench, MapPin, List, ChevronLeft, ChevronRight, SlidersHorizontal } from "lucide-react";
-import { PremiumHandymanCard } from "@/components/lists/PremiumHandymanCard";
+import { CategoryHandymanCard } from "@/components/lists/CategoryHandymanCard";
 import { HandymanMapView } from "@/components/map/handyman-map-view";
+import { Wrench, MapPin, List, ChevronLeft, ChevronRight, SlidersHorizontal } from "lucide-react";
 import { CITIES, DEFAULT_PAGE_SIZE } from "@/lib/constants";
 import { HOMEPAGE_CITIES } from "@/lib/homepage-data";
 
@@ -77,44 +77,61 @@ export function CategoryPageContent({
     fetchHandymen();
   }, [internalCategory, cityFilter, sortBy, page]);
 
-  return (
-    <main className="min-h-screen bg-[#F4F7FB] pb-28 pt-16 text-[#0F172A] md:pb-10 md:pt-20">
-      <div className="mx-auto max-w-[430px] px-4 md:max-w-4xl md:px-6">
-        <PremiumMobileHeader />
+  const sortLabel = sortBy === "rating" ? "Po ocjeni" : "Po broju recenzija";
 
-        <div className="py-6 sm:py-10 lg:py-16">
-          <nav className="mb-6 text-sm text-gray-500">
-            <Link href="/" className="hover:text-gray-700">
+  return (
+    <main className="min-h-screen bg-[#F3F4F6] pb-28 pt-16 text-[#0F172A] md:pb-10 md:pt-20">
+      <PremiumMobileHeader />
+
+      <div className="mx-auto max-w-[430px] px-4 md:max-w-4xl md:px-6 lg:max-w-[1400px] lg:px-8">
+        <div className="py-6 lg:py-10">
+          {/* Breadcrumb */}
+          <nav className="mb-4 text-sm text-[#64748B]">
+            <Link href="/" className="hover:text-[#2563EB] transition">
               Početna
             </Link>
             <span className="mx-2">/</span>
-            <span className="font-medium text-gray-900">{displayName}</span>
+            <span className="font-medium text-[#0F172A]">{displayName}</span>
           </nav>
 
-          <div className="mb-4 sm:mb-6">
-            <h1 className="text-2xl font-semibold text-[#0F172A] sm:text-3xl">
+          {/* Header zone */}
+          <header className="mb-8">
+            <h1 className="text-4xl font-bold tracking-tight text-[#0F172A] md:text-5xl">
               {displayName}
             </h1>
-          </div>
+            <p className="mt-3 text-lg text-[#64748B]">
+              Provjereni majstori širom Crne Gore
+            </p>
+          </header>
 
-          <div className="mb-6 flex flex-wrap items-center gap-2 lg:mb-8">
-            <span className="rounded-[14px] border border-[#E2E8F0] bg-white px-4 py-2.5 text-sm font-medium text-[#475569] shadow-[0_4px_12px_rgba(15,23,42,0.05)]">
-              {cityFilter || "Svi gradovi"}
-            </span>
-            <button
-              type="button"
-              onClick={() => setFilterSheetOpen(true)}
-              className="flex min-h-[44px] items-center gap-2 rounded-[14px] border border-[#E2E8F0] bg-white px-4 py-2.5 text-sm font-medium text-[#0F172A] shadow-[0_4px_12px_rgba(15,23,42,0.05)] transition active:scale-[0.98]"
-            >
-              <SlidersHorizontal className="h-4 w-4" />
-              Filteri
-            </button>
-            <div className="ml-auto flex min-h-[44px] overflow-hidden rounded-[14px] border border-[#E2E8F0] bg-white p-1 shadow-[0_4px_12px_rgba(15,23,42,0.05)]">
+          {/* Toolbar */}
+          <div className="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
+            <div className="flex flex-wrap items-center gap-3">
+              <span className="flex h-12 items-center rounded-full border border-[#DCE6F2] bg-white px-5 text-[15px] font-medium text-[#0F172A] shadow-sm">
+                {cityFilter || "Svi gradovi"}
+              </span>
+              <button
+                type="button"
+                onClick={() => setFilterSheetOpen(true)}
+                className="flex h-12 items-center gap-2 rounded-full border border-[#DCE6F2] bg-white px-5 text-[15px] font-medium text-[#0F172A] shadow-sm transition active:scale-[0.98] lg:hidden"
+              >
+                <SlidersHorizontal className="h-4 w-4" />
+                Filteri
+              </button>
+              <span className="hidden h-12 items-center rounded-full border border-[#DCE6F2] bg-white px-5 text-[15px] font-medium text-[#0F172A] shadow-sm lg:flex">
+                Sortiraj: {sortLabel}
+              </span>
+            </div>
+
+            {/* Lista / Mapa segmented control */}
+            <div className="flex h-12 overflow-hidden rounded-full border border-[#DCE6F2] bg-white p-1 shadow-sm">
               <button
                 type="button"
                 onClick={() => setViewMode("list")}
-                className={`flex items-center gap-2 rounded-[10px] px-4 py-2 text-sm font-medium transition ${
-                  viewMode === "list" ? "bg-[#2563EB] text-white" : "text-[#475569] hover:bg-[#F1F5F9]"
+                className={`flex items-center gap-2 rounded-full px-5 py-2 text-[15px] font-medium transition ${
+                  viewMode === "list"
+                    ? "bg-[#2563EB] text-white shadow-sm"
+                    : "text-[#475569] hover:bg-[#F8FAFC]"
                 }`}
               >
                 <List className="h-4 w-4" />
@@ -123,8 +140,10 @@ export function CategoryPageContent({
               <button
                 type="button"
                 onClick={() => setViewMode("map")}
-                className={`flex items-center gap-2 rounded-[10px] px-4 py-2 text-sm font-medium transition ${
-                  viewMode === "map" ? "bg-[#2563EB] text-white" : "text-[#475569] hover:bg-[#F1F5F9]"
+                className={`flex items-center gap-2 rounded-full px-5 py-2 text-[15px] font-medium transition ${
+                  viewMode === "map"
+                    ? "bg-[#2563EB] text-white shadow-sm"
+                    : "text-[#475569] hover:bg-[#F8FAFC]"
                 }`}
               >
                 <MapPin className="h-4 w-4" />
@@ -133,125 +152,69 @@ export function CategoryPageContent({
             </div>
           </div>
 
-          <div className="grid grid-cols-1 gap-6 lg:grid-cols-4 lg:gap-8">
-            <aside className="hidden space-y-5 rounded-xl bg-white p-5 shadow-sm sm:p-6 lg:order-2 lg:block">
-              <div>
-                <label className="mb-2 block text-sm font-medium text-gray-700">Grad</label>
-                <select
-                  value={cityFilter}
-                  onChange={(e) => setCityFilter(e.target.value)}
-                  className="w-full rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 text-gray-900"
-                >
-                  <option value="">Svi gradovi</option>
-                  {CITIES.map((c) => (
-                    <option key={c} value={c}>{c}</option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="mb-2 block text-sm font-medium text-gray-700">Sortiraj</label>
-                <select
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value as "rating" | "reviews")}
-                  className="w-full rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 text-gray-900"
-                >
-                  <option value="rating">Po ocjeni</option>
-                  <option value="reviews">Po broju recenzija</option>
-                </select>
-              </div>
-              <div>
-                <label className="mb-2 block text-sm font-medium text-gray-700">Prikaz</label>
-                <div className="flex min-h-[48px] rounded-xl border border-gray-200 bg-gray-50 p-1">
-                  <button
-                    type="button"
-                    onClick={() => setViewMode("list")}
-                    className={`flex flex-1 items-center justify-center gap-2 rounded-lg px-4 py-3 text-sm font-medium transition ${
-                      viewMode === "list" ? "bg-white text-gray-900 shadow-sm" : "text-gray-600 hover:text-gray-900"
-                    }`}
-                  >
-                    <List className="h-5 w-5" />
-                    Lista
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setViewMode("map")}
-                    className={`flex flex-1 items-center justify-center gap-2 rounded-lg px-4 py-3 text-sm font-medium transition ${
-                      viewMode === "map" ? "bg-white text-gray-900 shadow-sm" : "text-gray-600 hover:text-gray-900"
-                    }`}
-                  >
-                    <MapPin className="h-5 w-5" />
-                    Mapa
-                  </button>
-                </div>
-              </div>
-              <div className="space-y-2">
-                <p className="text-sm font-medium text-gray-700">Brzi linkovi</p>
-                <div className="flex flex-wrap gap-2">
-                  {HOMEPAGE_CITIES.slice(0, 6).map((c) => (
-                    <Link
-                      key={c.slug}
-                      href={`/${slug}-${c.slug}`}
-                      className="rounded-lg bg-gray-100 px-3 py-1.5 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700"
-                    >
-                      {c.name}
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            </aside>
-
-            <div className="lg:col-span-3 lg:order-1">
+          {/* Main content grid: list left, filter sidebar right (desktop only) */}
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_320px] lg:gap-8">
+            {/* List / Map content */}
+            <div className="min-w-0">
               {loading ? (
-                <p className="py-12 text-center text-gray-500">Učitavanje...</p>
+                <div className="flex min-h-[300px] items-center justify-center rounded-xl border border-[#E5E7EB] bg-white">
+                  <p className="text-[#64748B]">Učitavanje...</p>
+                </div>
               ) : handymen.length === 0 ? (
-                <div className="rounded-[20px] border border-[#E7EDF5] bg-white p-12 text-center shadow-[0_10px_30px_rgba(15,23,42,0.06)]">
-                  <Wrench className="mx-auto mb-4 h-12 w-12 text-gray-300" />
-                  <p className="text-gray-600">
+                <div className="overflow-hidden rounded-xl border border-[#E5E7EB] bg-white p-12 text-center shadow-sm">
+                  <Wrench className="mx-auto mb-4 h-14 w-14 text-[#94A3B8]" />
+                  <p className="text-lg text-[#64748B]">
                     Nema majstora za ovu kategoriju u izabranom gradu.
                   </p>
                   <Link
                     href={`/request/create?category=${encodeURIComponent(internalCategory)}${cityFilter ? `&city=${encodeURIComponent(cityFilter)}` : ""}`}
-                    className="mt-4 inline-block font-medium text-blue-600 hover:underline"
+                    className="mt-6 inline-flex h-14 items-center justify-center rounded-2xl bg-[#2563EB] px-8 text-lg font-semibold text-white shadow-[0_12px_24px_rgba(37,99,235,0.25)] transition hover:opacity-95"
                   >
                     Objavi zahtjev
                   </Link>
                 </div>
               ) : (
                 <>
-                  <div className="mb-4 text-sm text-gray-500">
+                  <p className="mb-4 text-sm text-[#64748B]">
                     {total} majstor(a)
-                  </div>
+                  </p>
+
                   {viewMode === "map" ? (
-                    <HandymanMapView
-                      handymen={handymen}
-                      city={cityFilter || undefined}
-                      className="mb-6 rounded-xl"
-                    />
+                    <div className="overflow-hidden rounded-xl border border-[#E5E7EB] bg-white shadow-md">
+                      <div className="min-h-[420px]">
+                        <HandymanMapView
+                          handymen={handymen}
+                          city={cityFilter || undefined}
+                          className="h-[420px] min-h-[420px]"
+                        />
+                      </div>
+                    </div>
                   ) : (
-                    <div className="space-y-0">
+                    <div className="space-y-6">
                       {handymen.map((h) => (
-                        <PremiumHandymanCard key={h.id} {...h} />
+                        <CategoryHandymanCard key={h.id} {...h} />
                       ))}
                     </div>
                   )}
+
                   {viewMode === "list" && totalPages > 1 && (
-                    <div className="mt-8 flex items-center justify-center gap-2">
+                    <div className="mt-10 flex items-center justify-center gap-2">
                       <button
                         type="button"
                         onClick={() => setPage((p) => Math.max(1, p - 1))}
                         disabled={page <= 1}
-                        className="flex h-10 w-10 items-center justify-center rounded-xl border border-gray-200 bg-white text-gray-700 transition hover:shadow-md disabled:opacity-50"
+                        className="flex h-12 w-12 items-center justify-center rounded-2xl border border-[#DCE6F2] bg-white text-[#0F172A] shadow-sm transition hover:shadow-md disabled:opacity-50 disabled:hover:shadow-sm"
                       >
                         <ChevronLeft className="h-5 w-5" />
                       </button>
-                      <span className="px-4 text-sm text-gray-600">
+                      <span className="px-5 text-[15px] text-[#64748B]">
                         Strana {page} / {totalPages}
                       </span>
                       <button
                         type="button"
                         onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                         disabled={page >= totalPages}
-                        className="flex h-10 w-10 items-center justify-center rounded-xl border border-gray-200 bg-white text-gray-700 transition hover:shadow-md disabled:opacity-50"
+                        className="flex h-12 w-12 items-center justify-center rounded-2xl border border-[#DCE6F2] bg-white text-[#0F172A] shadow-sm transition hover:shadow-md disabled:opacity-50 disabled:hover:shadow-sm"
                       >
                         <ChevronRight className="h-5 w-5" />
                       </button>
@@ -260,9 +223,100 @@ export function CategoryPageContent({
                 </>
               )}
             </div>
+
+            {/* Premium filter sidebar (desktop only) */}
+            <aside className="hidden lg:block">
+              <div className="sticky top-24 space-y-7 overflow-hidden rounded-xl border border-[#E5E7EB] bg-white p-7 shadow-md">
+                <div>
+                  <label className="mb-3 block text-[18px] font-semibold text-[#0F172A]">
+                    Grad
+                  </label>
+                  <select
+                    value={cityFilter}
+                    onChange={(e) => setCityFilter(e.target.value)}
+                    className="h-14 w-full rounded-2xl border border-[#DCE6F2] bg-[#F8FBFF] px-4 text-[16px] text-[#0F172A]"
+                  >
+                    <option value="">Svi gradovi</option>
+                    {CITIES.map((c) => (
+                      <option key={c} value={c}>
+                        {c}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="mb-3 block text-[18px] font-semibold text-[#0F172A]">
+                    Sortiraj
+                  </label>
+                  <select
+                    value={sortBy}
+                    onChange={(e) => setSortBy(e.target.value as "rating" | "reviews")}
+                    className="h-14 w-full rounded-2xl border border-[#DCE6F2] bg-[#F8FBFF] px-4 text-[16px] text-[#0F172A]"
+                  >
+                    <option value="rating">Po ocjeni</option>
+                    <option value="reviews">Po broju recenzija</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="mb-3 block text-[18px] font-semibold text-[#0F172A]">
+                    Prikaz
+                  </label>
+                  <div className="flex h-14 overflow-hidden rounded-2xl border border-[#DCE6F2] bg-[#F8FBFF] p-1">
+                    <button
+                      type="button"
+                      onClick={() => setViewMode("list")}
+                      className={`flex flex-1 items-center justify-center gap-2 text-[15px] font-medium transition ${
+                        viewMode === "list"
+                          ? "rounded-xl bg-[#2563EB] text-white"
+                          : "text-[#475569] hover:bg-white"
+                      }`}
+                    >
+                      <List className="h-4 w-4" />
+                      Lista
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setViewMode("map")}
+                      className={`flex flex-1 items-center justify-center gap-2 text-[15px] font-medium transition ${
+                        viewMode === "map"
+                          ? "rounded-xl bg-[#2563EB] text-white"
+                          : "text-[#475569] hover:bg-white"
+                      }`}
+                    >
+                      <MapPin className="h-4 w-4" />
+                      Mapa
+                    </button>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="mb-3 block text-[18px] font-semibold text-[#0F172A]">
+                    Brzi gradovi
+                  </label>
+                  <div className="flex flex-wrap gap-3">
+                    {HOMEPAGE_CITIES.slice(0, 8).map((c) => (
+                      <Link
+                        key={c.slug}
+                        href={`/category/${slug}?city=${encodeURIComponent(c.name)}`}
+                        className={`rounded-full border px-4 py-2.5 text-[15px] font-medium transition ${
+                          cityFilter === c.name
+                            ? "border-[#2563EB] bg-[#EFF6FF] text-[#2563EB]"
+                            : "border-[#DCE6F2] bg-[#F8FBFF] text-[#0F172A] hover:bg-white"
+                        }`}
+                      >
+                        {c.name}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </aside>
           </div>
         </div>
       </div>
+
       <StickyBottomCTA href="/request/create" label="Objavi zahtjev" />
       <MobileFilterSheet
         open={filterSheetOpen}

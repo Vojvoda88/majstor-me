@@ -35,11 +35,11 @@ export function HandymanMapInner({ handymen, city, className = "" }: Props) {
   const center = city ? getCityCoords(city) : DEFAULT_COORDS;
 
   return (
-    <div className={`overflow-hidden rounded-xl border border-slate-200 ${className}`}>
+    <div className={`flex h-full min-h-[200px] overflow-hidden rounded-xl border-0 ${className}`}>
       <MapContainer
         center={[center.lat, center.lng]}
         zoom={8}
-        className="h-56 w-full min-h-[220px] sm:h-64"
+        className="h-full min-h-[200px] w-full sm:min-h-[300px]"
         scrollWheelZoom={true}
       >
         <TileLayer

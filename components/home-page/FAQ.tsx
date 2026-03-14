@@ -8,14 +8,14 @@ export function FAQ() {
   const [open, setOpen] = useState<number | null>(0);
 
   return (
-    <section className="mt-8 md:mt-12">
-      <div className="mx-auto max-w-[430px] px-4 md:max-w-4xl md:px-6">
-        <h2 className="mb-4 text-xl font-bold text-[#0F172A]">Često postavljana pitanja</h2>
+    <section className="mt-12 md:mt-16">
+      <div>
+        <h2 className="mb-6 text-2xl font-bold text-[#0F172A]">Često postavljana pitanja</h2>
         <div className="space-y-3">
           {FAQ_ITEMS.map((faq, i) => (
             <div
               key={i}
-              className="overflow-hidden rounded-[18px] border border-[#E7EDF5] bg-white shadow-[0_10px_30px_rgba(15,23,42,0.06)]"
+              className="overflow-hidden rounded-xl border border-[#E5E7EB] bg-white shadow-sm"
             >
               <button
                 onClick={() => setOpen(open === i ? null : i)}

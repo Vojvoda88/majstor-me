@@ -28,7 +28,7 @@ export default async function CreateRequestPage({
   if (session.user.role !== "USER") redirect("/");
 
   return (
-    <div className="min-h-screen bg-[#F4F7FB] pb-28 pt-16 md:pb-10 md:pt-20">
+    <div className="min-h-screen bg-[#F3F4F6] pb-28 pt-16 md:pb-10 md:pt-20">
       <PremiumMobileHeader />
       <div className="mx-auto max-w-[430px] px-4 py-6 md:max-w-2xl md:py-8">
         <Breadcrumbs

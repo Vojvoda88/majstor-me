@@ -6,7 +6,7 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen bg-[#F4F7FB] pt-16">
+    <div className="min-h-screen bg-[#F3F4F6] pt-16">
       <PremiumMobileHeader />
       {children}
     </div>

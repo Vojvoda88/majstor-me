@@ -55,28 +55,28 @@ export function MobileFilterSheet({
       />
       <div
         className={cn(
-          "fixed inset-x-0 bottom-0 z-50 max-h-[85vh] overflow-y-auto rounded-t-3xl border-t border-slate-200 bg-white shadow-2xl transition-transform duration-300 ease-out lg:hidden",
+          "fixed inset-x-0 bottom-0 z-50 max-h-[85vh] overflow-y-auto rounded-t-xl border-t border-[#E5E7EB] bg-white shadow-[0_-16px_48px_rgba(15,23,42,0.12)] transition-transform duration-300 ease-out lg:hidden",
           open ? "translate-y-0" : "translate-y-full"
         )}
       >
-        <div className="sticky top-0 z-10 flex items-center justify-between border-b border-slate-100 bg-white px-4 py-4 sm:px-6">
-          <h3 className="text-lg font-semibold text-slate-900">Filteri</h3>
+        <div className="sticky top-0 z-10 flex items-center justify-between border-b border-[#E7EDF5] bg-white px-5 py-5">
+          <h3 className="text-[20px] font-semibold text-[#0F172A]">Filteri</h3>
           <button
             type="button"
             onClick={onClose}
-            className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl text-slate-500 transition hover:bg-slate-100 hover:text-slate-900"
+            className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-2xl text-[#64748B] transition hover:bg-[#F8FAFC] hover:text-[#0F172A]"
             aria-label="Zatvori"
           >
             <X className="h-5 w-5" />
           </button>
         </div>
-        <div className="space-y-5 p-4 pb-[calc(env(safe-area-inset-bottom,0px)+1rem)] sm:p-6">
+        <div className="space-y-6 p-5 pb-[calc(env(safe-area-inset-bottom,0px)+1.5rem)]">
           <div>
-            <label className="mb-2 block text-sm font-medium text-gray-700">Grad</label>
+            <label className="mb-3 block text-[16px] font-semibold text-[#0F172A]">Grad</label>
             <select
               value={cityFilter}
               onChange={(e) => onCityChange(e.target.value)}
-              className="input-premium select-premium"
+              className="h-14 w-full rounded-2xl border border-[#DCE6F2] bg-[#F8FBFF] px-4 text-[16px] text-[#0F172A]"
             >
               <option value="">Svi gradovi</option>
               {CITIES.map((c) => (
@@ -87,24 +87,26 @@ export function MobileFilterSheet({
             </select>
           </div>
           <div>
-            <label className="mb-2 block text-sm font-medium text-gray-700">Sortiraj</label>
+            <label className="mb-3 block text-[16px] font-semibold text-[#0F172A]">Sortiraj</label>
             <select
               value={sortBy}
               onChange={(e) => onSortChange(e.target.value as "rating" | "reviews")}
-              className="min-h-[48px] w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-base text-gray-900"
+              className="h-14 w-full rounded-2xl border border-[#DCE6F2] bg-[#F8FBFF] px-4 text-[16px] text-[#0F172A]"
             >
               <option value="rating">Po ocjeni</option>
               <option value="reviews">Po broju recenzija</option>
             </select>
           </div>
           <div>
-            <label className="mb-2 block text-sm font-medium text-gray-700">Prikaz</label>
-            <div className="flex min-h-[48px] rounded-xl border border-gray-200 bg-gray-50 p-1">
+            <label className="mb-3 block text-[16px] font-semibold text-[#0F172A]">Prikaz</label>
+            <div className="flex h-14 overflow-hidden rounded-2xl border border-[#DCE6F2] bg-[#F8FBFF] p-1">
               <button
                 type="button"
                 onClick={() => onViewModeChange("list")}
-                className={`flex flex-1 items-center justify-center gap-2 rounded-lg px-4 py-3 text-sm font-medium transition ${
-                  viewMode === "list" ? "bg-white text-gray-900 shadow-sm" : "text-gray-600 hover:text-gray-900"
+                className={`flex flex-1 items-center justify-center gap-2 text-[15px] font-medium transition ${
+                  viewMode === "list"
+                    ? "rounded-xl bg-[#2563EB] text-white"
+                    : "text-[#475569] hover:bg-white"
                 }`}
               >
                 <List className="h-5 w-5" />
@@ -113,8 +115,10 @@ export function MobileFilterSheet({
               <button
                 type="button"
                 onClick={() => onViewModeChange("map")}
-                className={`flex flex-1 items-center justify-center gap-2 rounded-lg px-4 py-3 text-sm font-medium transition ${
-                  viewMode === "map" ? "bg-white text-gray-900 shadow-sm" : "text-gray-600 hover:text-gray-900"
+                className={`flex flex-1 items-center justify-center gap-2 text-[15px] font-medium transition ${
+                  viewMode === "map"
+                    ? "rounded-xl bg-[#2563EB] text-white"
+                    : "text-[#475569] hover:bg-white"
                 }`}
               >
                 <MapPin className="h-5 w-5" />
@@ -122,15 +126,19 @@ export function MobileFilterSheet({
               </button>
             </div>
           </div>
-          <div className="space-y-2">
-            <p className="text-sm font-medium text-gray-700">Brzi linkovi</p>
-            <div className="flex flex-wrap gap-2">
-              {HOMEPAGE_CITIES.slice(0, 6).map((c) => (
+          <div>
+            <label className="mb-3 block text-[16px] font-semibold text-[#0F172A]">Brzi gradovi</label>
+            <div className="flex flex-wrap gap-3">
+              {HOMEPAGE_CITIES.slice(0, 8).map((c) => (
                 <Link
                   key={c.slug}
-                  href={`/${slug}-${c.slug}`}
+                  href={`/category/${slug}?city=${encodeURIComponent(c.name)}`}
                   onClick={onClose}
-                  className="rounded-xl bg-gray-100 px-4 py-3 text-sm text-gray-700 transition hover:bg-blue-50 hover:text-blue-700"
+                  className={`rounded-full border px-4 py-2.5 text-[15px] font-medium transition ${
+                    cityFilter === c.name
+                      ? "border-[#2563EB] bg-[#EFF6FF] text-[#2563EB]"
+                      : "border-[#DCE6F2] bg-[#F8FBFF] text-[#0F172A] hover:bg-white"
+                  }`}
                 >
                   {c.name}
                 </Link>
@@ -140,7 +148,7 @@ export function MobileFilterSheet({
           <button
             type="button"
             onClick={onClose}
-            className="w-full rounded-xl bg-blue-600 py-3 font-medium text-white transition hover:bg-blue-700 active:scale-[0.98]"
+            className="w-full rounded-2xl bg-[#2563EB] py-4 text-[17px] font-semibold text-white shadow-sm transition hover:opacity-95 active:scale-[0.98]"
           >
             Primijeni
           </button>
