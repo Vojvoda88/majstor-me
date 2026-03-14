@@ -2,6 +2,7 @@
 // Kategorije su u lib/categories.ts (centralni source of truth)
 
 export const HERO_IMAGE = "/images/hero/hero-handyman.jpg";
+export const HERO_IMAGE_FALLBACK = "https://images.unsplash.com/photo-1581578731548-c64695ce6958?w=1920&q=85";
 
 // Category name -> local image path (fallbacks for slug-based lookup)
 export const CATEGORY_IMAGES: Record<string, string> = {

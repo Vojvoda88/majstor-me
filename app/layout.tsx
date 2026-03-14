@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Plus_Jakarta_Sans } from "next/font/google";
+import { Inter, Plus_Jakarta_Sans, Syne } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { getSiteUrl } from "@/lib/site-url";
 import "./globals.css";
@@ -14,6 +14,13 @@ const inter = Inter({
 const plusJakarta = Plus_Jakarta_Sans({
   subsets: ["latin", "latin-ext"],
   variable: "--font-plus-jakarta",
+  display: "swap",
+});
+
+const syne = Syne({
+  subsets: ["latin", "latin-ext"],
+  variable: "--font-syne",
+  weight: ["400", "500", "600", "700", "800"],
   display: "swap",
 });
 
@@ -43,7 +50,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="sr" className={`${inter.variable} ${plusJakarta.variable}`}>
+    <html lang="sr" className={`${inter.variable} ${plusJakarta.variable} ${syne.variable}`}>
       <body className="font-[family-name:var(--font-plus-jakarta)] antialiased bg-[#FAFBFC] text-[#0F172A]">
         <Providers>{children}</Providers>
         <Analytics />

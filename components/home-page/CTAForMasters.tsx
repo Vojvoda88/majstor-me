@@ -6,7 +6,7 @@ export function CTAForMasters() {
     <section className="py-24">
       <div className="overflow-hidden rounded-3xl bg-gradient-to-br from-[#1d4ed8] to-[#1e40af] p-10 md:p-14">
         <div className="max-w-2xl">
-          <h3 className="text-2xl font-bold text-white md:text-3xl">
+          <h3 className="font-display text-2xl font-bold text-white md:text-3xl">
             Nudite usluge?
           </h3>
           <p className="mt-4 text-lg text-white/90">

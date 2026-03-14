@@ -19,7 +19,7 @@ const TOP_4 = CATEGORY_CONFIG.filter((c) =>
 export function CategoriesGrid() {
   return (
     <section id="kategorije" className="py-24">
-      <h2 className="mb-4 text-3xl font-bold tracking-tight text-slate-900 md:text-4xl">
+      <h2 className="font-display mb-4 text-3xl font-bold tracking-tight text-slate-900 md:text-4xl">
         Popularne Kategorije
       </h2>
       <p className="mb-12 max-w-xl text-slate-500">
@@ -32,7 +32,7 @@ export function CategoriesGrid() {
             <Link
               key={cat.slug}
               href={`/category/${cat.slug}`}
-              className="group relative h-56 overflow-hidden rounded-2xl md:h-64"
+              className="group relative h-56 overflow-hidden rounded-2xl transition duration-300 hover:-translate-y-1 hover:shadow-premium md:h-64"
             >
               <Image
                 src={imgSrc}

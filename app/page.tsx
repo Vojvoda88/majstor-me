@@ -14,7 +14,7 @@ export default function HomePage() {
   const orgJson = organizationJsonLd();
   const faqJson = faqPageJsonLd(FAQ_ITEMS);
   return (
-    <main className="min-h-screen bg-[#FAFBFC] pb-28 md:pb-16">
+    <main className="relative min-h-screen bg-[#FAFBFC] pb-28 md:pb-16 before:absolute before:inset-0 before:content-[''] before:bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(37,99,235,0.08),transparent)] before:pointer-events-none isolate">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJson) }}
@@ -30,11 +30,21 @@ export default function HomePage() {
       </div>
 
       <div className="mx-auto max-w-6xl px-6 py-16">
-        <CategoriesGrid />
-        <ReviewCardsSection />
-        <HowItWorks />
-        <FAQ />
-        <CTAForMasters />
+        <div className="animate-fade-up">
+          <CategoriesGrid />
+        </div>
+        <div className="animate-fade-up" style={{ animationDelay: "0.1s", animationFillMode: "both" }}>
+          <ReviewCardsSection />
+        </div>
+        <div className="animate-fade-up" style={{ animationDelay: "0.2s", animationFillMode: "both" }}>
+          <HowItWorks />
+        </div>
+        <div className="animate-fade-up" style={{ animationDelay: "0.25s", animationFillMode: "both" }}>
+          <FAQ />
+        </div>
+        <div className="animate-fade-up" style={{ animationDelay: "0.3s", animationFillMode: "both" }}>
+          <CTAForMasters />
+        </div>
       </div>
 
       <StickyBottomCTA href="/request/create" label="Objavi zahtjev" />

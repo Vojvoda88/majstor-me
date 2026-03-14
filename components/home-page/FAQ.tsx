@@ -9,7 +9,7 @@ export function FAQ() {
 
   return (
     <section className="py-24">
-      <h2 className="mb-4 text-3xl font-bold tracking-tight text-slate-900 md:text-4xl">
+      <h2 className="font-display mb-4 text-3xl font-bold tracking-tight text-slate-900 md:text-4xl">
         Često postavljana pitanja
       </h2>
       <p className="mb-14 max-w-xl text-slate-500">

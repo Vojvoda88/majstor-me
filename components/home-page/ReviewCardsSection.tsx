@@ -37,7 +37,7 @@ export function ReviewCardsSection() {
 
   return (
     <section className="py-24">
-      <h2 className="mb-4 text-3xl font-bold tracking-tight text-slate-900 md:text-4xl">
+      <h2 className="font-display mb-4 text-3xl font-bold tracking-tight text-slate-900 md:text-4xl">
         Najbolje Ocijenjeni Majstori
       </h2>
       <p className="mb-14 max-w-xl text-slate-500">
@@ -50,7 +50,7 @@ export function ReviewCardsSection() {
           return (
             <div
               key={h.id}
-              className="group overflow-hidden rounded-2xl border border-slate-100 bg-white p-8 shadow-soft transition hover:shadow-card"
+              className="group overflow-hidden rounded-2xl border border-slate-100 bg-white p-8 shadow-soft transition duration-300 hover:-translate-y-1 hover:shadow-premium"
             >
               <div className="mb-6 flex items-center gap-5">
                 <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-2xl shadow-md">
