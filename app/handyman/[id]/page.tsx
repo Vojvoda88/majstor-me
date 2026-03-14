@@ -66,6 +66,7 @@ export default async function HandymanProfilePage({
   if (!user?.handymanProfile) notFound();
 
   const profile = user.handymanProfile;
+  const avatarUrl = (profile as { avatarUrl?: string | null }).avatarUrl;
   const isVerified = profile.verifiedStatus === "VERIFIED";
   const session = await auth();
   const backHref =
@@ -96,9 +97,9 @@ export default async function HandymanProfilePage({
           <CardHeader className="bg-gradient-to-br from-[#F8FAFC] to-white pb-8">
             <div className="flex flex-col items-center gap-4 text-center sm:flex-row sm:items-start sm:text-left">
               <div className="flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-full bg-blue-100 text-blue-600">
-                {profile.avatarUrl ? (
+                {avatarUrl ? (
                   <img
-                    src={profile.avatarUrl}
+                    src={avatarUrl}
                     alt={user.name}
                     className="h-full w-full object-cover"
                   />
