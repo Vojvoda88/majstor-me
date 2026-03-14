@@ -44,7 +44,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="sr" className={`${inter.variable} ${plusJakarta.variable}`}>
-      <body className="font-sans antialiased bg-[#F3F4F6] text-[#0F172A]">
+      <body className="font-sans antialiased bg-[#f8fafc] text-[#0F172A]">
         <Providers>{children}</Providers>
         <Analytics />
       </body>

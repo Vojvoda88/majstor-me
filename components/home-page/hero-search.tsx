@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { ChevronDown } from "lucide-react";
 import { CITIES } from "@/lib/constants";
 import { POPULAR_CATEGORIES } from "@/lib/categories";
 
@@ -20,35 +21,47 @@ export function HeroSearch() {
 
   return (
     <form onSubmit={handleSubmit}>
-      <div className="flex flex-col gap-3 rounded-xl bg-white p-4 shadow-md md:flex-row md:items-center md:gap-4 md:p-4">
-        <select
-          value={city}
-          onChange={(e) => setCity(e.target.value)}
-          className="h-14 flex-1 rounded-lg border border-[#E5E7EB] bg-white px-4 text-[16px] text-[#0F172A]"
-          aria-label="Odaberi grad"
-        >
-          <option value="">Cijela Crna Gora</option>
-          {CITIES.map((c) => (
-            <option key={c} value={c}>{c}</option>
-          ))}
-        </select>
-        <select
-          value={category}
-          onChange={(e) => setCategory(e.target.value)}
-          required
-          className="h-14 flex-1 rounded-lg border border-[#E5E7EB] bg-white px-4 text-[16px] text-[#0F172A]"
-          aria-label="Odaberi kategoriju"
-        >
-          <option value="">Odaberi kategoriju</option>
-          {POPULAR_CATEGORIES.map((cat) => (
-            <option key={cat.slug} value={cat.internalCategory}>
-              {cat.displayName}
-            </option>
-          ))}
-        </select>
+      <div className="mx-auto flex max-w-4xl flex-col gap-2 rounded-lg bg-white p-2 shadow-2xl md:flex-row">
+        <div className="relative flex-1">
+          <select
+            value={city}
+            onChange={(e) => setCity(e.target.value)}
+            className="w-full cursor-pointer appearance-none rounded bg-transparent p-4 text-left text-sm text-gray-700 outline-none"
+            aria-label="Odaberi grad"
+          >
+            <option value="">Svi gradovi</option>
+            {CITIES.map((c) => (
+              <option key={c} value={c}>{c}</option>
+            ))}
+          </select>
+          <div className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2">
+            <ChevronDown className="h-4 w-4 text-gray-400" />
+          </div>
+        </div>
+
+        <div className="relative flex-1 border-t border-gray-100 md:border-t-0 md:border-l md:border-gray-100">
+          <select
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            required
+            className="w-full cursor-pointer appearance-none rounded bg-transparent p-4 text-left text-sm text-gray-700 outline-none"
+            aria-label="Odaberi kategoriju"
+          >
+            <option value="">Odaberi kategoriju</option>
+            {POPULAR_CATEGORIES.map((cat) => (
+              <option key={cat.slug} value={cat.internalCategory}>
+                {cat.displayName}
+              </option>
+            ))}
+          </select>
+          <div className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2">
+            <ChevronDown className="h-4 w-4 text-gray-400" />
+          </div>
+        </div>
+
         <button
           type="submit"
-          className="h-14 shrink-0 rounded-lg bg-[#2563EB] px-6 text-[16px] font-semibold text-white transition hover:bg-[#1D4ED8] md:px-8"
+          className="whitespace-nowrap rounded bg-[#2563EB] px-10 py-4 font-bold text-white transition hover:bg-[#1D4ED8]"
         >
           Objavi zahtjev
         </button>

@@ -8,30 +8,27 @@ export function FAQ() {
   const [open, setOpen] = useState<number | null>(0);
 
   return (
-    <section className="mt-12 md:mt-16">
-      <div>
-        <h2 className="mb-6 text-2xl font-bold text-[#0F172A]">Često postavljana pitanja</h2>
-        <div className="space-y-3">
-          {FAQ_ITEMS.map((faq, i) => (
-            <div
-              key={i}
-              className="overflow-hidden rounded-xl border border-[#E5E7EB] bg-white shadow-sm"
+    <section className="max-w-4xl py-20">
+      <h2 className="mb-8 text-2xl font-bold text-gray-900">Često postavljana pitanja</h2>
+      <div className="space-y-3">
+        {FAQ_ITEMS.map((faq, i) => (
+          <div
+            key={i}
+            className="overflow-hidden rounded-lg border border-gray-100 bg-white shadow-sm transition hover:bg-gray-50"
+          >
+            <button
+              type="button"
+              onClick={() => setOpen(open === i ? null : i)}
+              className="flex w-full cursor-pointer items-center justify-between p-5 text-left"
             >
-              <button
-                onClick={() => setOpen(open === i ? null : i)}
-                className="flex w-full min-h-[56px] items-center justify-between px-4 py-4 text-left font-semibold text-[#0F172A]"
-              >
-                {faq.q}
-                <ChevronDown className={`h-5 w-5 shrink-0 transition ${open === i ? "rotate-180" : ""}`} />
-              </button>
-              {open === i && (
-                <div className="border-t border-[#E2E8F0] px-4 py-4 text-[15px] text-[#475569]">
-                  {faq.a}
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
+              <span className="font-medium text-gray-700">{faq.q}</span>
+              <ChevronDown className={`h-4 w-4 shrink-0 text-gray-400 transition ${open === i ? "rotate-180" : ""}`} />
+            </button>
+            {open === i && (
+              <div className="border-t border-gray-100 px-5 py-4 text-gray-600">{faq.a}</div>
+            )}
+          </div>
+        ))}
       </div>
     </section>
   );

@@ -1,8 +1,8 @@
 // Montenegro - svi gradovi
 export const CITIES = [
-  "Podgorica", "Nikšić", "Budva", "Bar", "Herceg Novi", "Cetinje", "Kotor", "Tivat",
-  "Ulcinj", "Bijelo Polje", "Berane", "Pljevlja", "Rožaje", "Danilovgrad", "Mojkovac",
-  "Kolašin", "Žabljak", "Plav", "Andrijevica", "Šavnik", "Plužine", "Gusinje", "Tuzi",
+  "Podgorica", "Nikšić", "Herceg Novi", "Budva", "Bar", "Kotor", "Tivat", "Cetinje",
+  "Berane", "Bijelo Polje", "Pljevlja", "Rožaje", "Danilovgrad", "Ulcinj", "Mojkovac",
+  "Kolašin", "Plav", "Žabljak", "Šavnik", "Andrijevica", "Petnjica", "Gusinje",
 ] as const;
 
 // Categories - Crna Gora (extended for homepage display + form validation)
