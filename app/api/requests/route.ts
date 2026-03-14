@@ -6,6 +6,7 @@ import { auth } from "@/lib/auth";
 import { REQUEST_CATEGORIES, MAX_REQUESTS_PER_DAY, DEFAULT_PAGE_SIZE } from "@/lib/constants";
 import { logError } from "@/lib/logger";
 import { sendNewRequestEmail } from "@/lib/email";
+import { createNotification } from "@/lib/notifications";
 import { zodErrorToString } from "@/lib/api-response";
 import {
   SMART_DISTRIBUTION_CONFIG,
@@ -135,7 +136,9 @@ export async function POST(request: Request) {
       where: {
         role: "HANDYMAN",
         handymanProfile: {
-          categories: { has: parsed.data.category },
+          workerCategories: {
+            some: { category: { name: parsed.data.category } },
+          },
         },
       },
       select: {
@@ -178,6 +181,16 @@ export async function POST(request: Request) {
         req.id,
         parsed.data.category,
         parsed.data.city
+      ).catch(() => {});
+    }
+
+    // Notifikacija svim majstorima koji imaju tu kategoriju
+    for (const h of forDist) {
+      createNotification(
+        h.id,
+        "NEW_JOB",
+        `Novi posao: ${parsed.data.category} u ${parsed.data.city}`,
+        { body: descTrimmed.slice(0, 100), link: `/request/${req.id}` }
       ).catch(() => {});
     }
 

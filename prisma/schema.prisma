@@ -95,14 +95,36 @@ enum AvailabilityStatus {
   EMERGENCY_ONLY
 }
 
+model Category {
+  id               String           @id @default(cuid())
+  name             String           @unique
+  workerCategories WorkerCategory[]
+
+  @@map("categories")
+}
+
+model WorkerCategory {
+  id         String   @id @default(cuid())
+  workerId   String   @map("worker_id")
+  categoryId String   @map("category_id")
+
+  worker   HandymanProfile @relation(fields: [workerId], references: [id], onDelete: Cascade)
+  category Category        @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@unique([workerId, categoryId])
+  @@index([workerId])
+  @@index([categoryId])
+  @@map("worker_categories")
+}
+
 model HandymanProfile {
   id                    String             @id @default(cuid())
   userId                String             @unique @map("user_id")
   bio                   String?
   avatarUrl             String?            @map("avatar_url")
   galleryImages         String[]           @default([]) @map("gallery_images")
-  categories            String[]           // array of category names
   cities                String[]           // Cities where handyman works
+  workerCategories      WorkerCategory[]
   yearsOfExperience     Int?               @map("years_of_experience")
   startingPrice         Float?             @map("starting_price")
   completedJobsCount    Int                @default(0) @map("completed_jobs_count")

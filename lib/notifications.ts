@@ -5,7 +5,8 @@ export type NotificationType =
   | "OFFER_ACCEPTED"
   | "NEW_MESSAGE"
   | "NEW_REVIEW"
-  | "VERIFIED";
+  | "VERIFIED"
+  | "NEW_JOB";
 
 export async function createNotification(
   userId: string,

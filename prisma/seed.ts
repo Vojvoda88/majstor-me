@@ -141,41 +141,53 @@ async function main() {
 
   const niksic = ["Nikšić"];
 
-  await Promise.all(
-    handymanUsers.map((u, i) =>
-      prisma.handymanProfile.upsert({
-        where: { userId: u.id },
-        update: {},
-        create: {
-          userId: u.id,
-          bio:
-            i === 0
-              ? "Vodoinstalaterske usluge 15+ godina iskustva. Brzi odgovor."
-              : i === 1
-                ? "Električarske radove obavljam profesionalno i pouzdano."
-                : i === 2
-                  ? "Moleraj, gipsarski radovi, sitne popravke."
-                  : i === 3
-                    ? "Profesionalno čišćenje stanova i poslovnih prostora."
-                    : "Servis i montaža klima uređaja.",
-          categories:
-            i === 0
-              ? ["Vodoinstalater"]
-              : i === 1
-                ? ["Električar"]
-                : i === 2
-                  ? ["Moler / sitne kućne popravke", "Montaža namještaja"]
-                  : i === 3
-                    ? ["Čišćenje"]
-                    : ["Klima servis"],
-          cities: niksic,
-          verifiedStatus: i < 2 ? "VERIFIED" : "PENDING",
-          ratingAvg: i < 2 ? 4.5 : 0,
-          reviewCount: i < 2 ? 3 : 0,
+  const profileCategories: string[][] = [
+    ["Vodoinstalater"],
+    ["Električar"],
+    ["Moler / sitne kućne popravke", "Montaža namještaja"],
+    ["Čišćenje"],
+    ["Klima servis"],
+  ];
+
+  for (let i = 0; i < handymanUsers.length; i++) {
+    const u = handymanUsers[i];
+    const prof = await prisma.handymanProfile.upsert({
+      where: { userId: u.id },
+      update: {},
+      create: {
+        userId: u.id,
+        bio:
+          i === 0
+            ? "Vodoinstalaterske usluge 15+ godina iskustva. Brzi odgovor."
+            : i === 1
+              ? "Električarske radove obavljam profesionalno i pouzdano."
+              : i === 2
+                ? "Moleraj, gipsarski radovi, sitne popravke."
+                : i === 3
+                  ? "Profesionalno čišćenje stanova i poslovnih prostora."
+                  : "Servis i montaža klima uređaja.",
+        cities: niksic,
+        verifiedStatus: i < 2 ? "VERIFIED" : "PENDING",
+        ratingAvg: i < 2 ? 4.5 : 0,
+        reviewCount: i < 2 ? 3 : 0,
+      },
+    });
+
+    const cats = profileCategories[i] ?? [];
+    const categoryRecs = await prisma.category.findMany({
+      where: { name: { in: cats } },
+      select: { id: true },
+    });
+    for (const c of categoryRecs) {
+      await prisma.workerCategory.upsert({
+        where: {
+          workerId_categoryId: { workerId: prof.id, categoryId: c.id },
         },
-      })
-    )
-  );
+        update: {},
+        create: { workerId: prof.id, categoryId: c.id },
+      });
+    }
+  }
   console.log("Handymen:", handymanUsers.length);
 
   // Requests

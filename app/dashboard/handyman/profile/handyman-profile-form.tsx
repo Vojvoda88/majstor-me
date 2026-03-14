@@ -14,11 +14,16 @@ import { REQUEST_CATEGORIES, CITIES, AVAILABILITY_STATUS_OPTIONS } from "@/lib/c
 import { GalleryEditor } from "@/components/profile/gallery-editor";
 import { AvatarUpload } from "@/components/profile/avatar-upload";
 
+const MAX_CATEGORIES = 5;
+
 const profileSchema = z.object({
   avatarUrl: z.string().url().optional().nullable(),
   phone: z.string().max(20).optional().nullable(),
   bio: z.string().optional(),
-  categories: z.array(z.string()).min(1, "Odaberite najmanje jednu kategoriju"),
+  categories: z
+    .array(z.string())
+    .min(1, "Odaberite najmanje jednu kategoriju")
+    .max(MAX_CATEGORIES, "Možete izabrati maksimalno 5 kategorija."),
   cities: z.array(z.string()).min(1, "Odaberite najmanje jedan grad"),
   galleryImages: z.array(z.string().url()).optional(),
   yearsOfExperience: z.number().int().min(0).max(50).optional().nullable(),
@@ -98,10 +103,13 @@ export function HandymanProfileForm({ profile, userName }: { profile: Profile; u
   });
 
   const toggleCategory = (cat: string) => {
-    const next = categories.includes(cat)
-      ? categories.filter((c) => c !== cat)
-      : [...categories, cat];
-    setValue("categories", next);
+    if (categories.includes(cat)) {
+      setValue("categories", categories.filter((c) => c !== cat));
+    } else if (categories.length >= MAX_CATEGORIES) {
+      return; // Ne dodavaj, prikaži error ispod
+    } else {
+      setValue("categories", [...categories, cat]);
+    }
   };
 
   const toggleCity = (city: string) => {
@@ -149,10 +157,12 @@ export function HandymanProfileForm({ profile, userName }: { profile: Profile; u
           </div>
           <div>
             <Label>Kategorije *</Label>
-            <p className="text-sm text-muted-foreground">Odaberite kategorije u kojima nudite usluge</p>
+            <p className="text-sm text-muted-foreground">
+              Odaberite kategorije u kojima nudite usluge (maks. {MAX_CATEGORIES})
+            </p>
             <div className="mt-2 flex flex-wrap gap-2">
               {REQUEST_CATEGORIES.map((cat) => (
-                <label key={cat} className="flex items-center gap-2">
+                <label key={cat} className="flex cursor-pointer items-center gap-2">
                   <input
                     type="checkbox"
                     checked={categories.includes(cat)}
@@ -164,6 +174,9 @@ export function HandymanProfileForm({ profile, userName }: { profile: Profile; u
             </div>
             {errors.categories && (
               <p className="mt-1 text-sm text-destructive">{errors.categories.message}</p>
+            )}
+            {categories.length >= MAX_CATEGORIES && !errors.categories && (
+              <p className="mt-1 text-sm text-amber-600">Možete izabrati maksimalno 5 kategorija.</p>
             )}
           </div>
           <div>

@@ -29,10 +29,13 @@ export async function generateMetadata({
   const { prisma } = await import("@/lib/db");
   const user = await prisma.user.findUnique({
     where: { id, role: "HANDYMAN" },
-    include: { handymanProfile: true },
+    include: {
+      handymanProfile: { include: { workerCategories: { include: { category: true } } } },
+    },
   });
   if (!user?.handymanProfile) return { title: "Majstor | Majstor.me" };
-  const cat = user.handymanProfile.categories[0] || "Majstor";
+  const categories = user.handymanProfile.workerCategories.map((wc) => wc.category.name);
+  const cat = categories[0] || "Majstor";
   const city = user.city || "";
   const base = getSiteUrl();
   return {
@@ -53,7 +56,7 @@ export default async function HandymanProfilePage({
   const user = await prisma.user.findUnique({
     where: { id, role: "HANDYMAN" },
     include: {
-      handymanProfile: true,
+      handymanProfile: { include: { workerCategories: { include: { category: true } } } },
       reviewsReceived: {
         include: { reviewer: true },
         orderBy: { createdAt: "desc" },
@@ -65,6 +68,7 @@ export default async function HandymanProfilePage({
   if (!user?.handymanProfile) notFound();
 
   const profile = user.handymanProfile;
+  const profileCategories = profile.workerCategories.map((wc) => wc.category.name);
   const profileExt = profile as {
     avatarUrl?: string | null;
     galleryImages?: string[];
@@ -94,8 +98,8 @@ export default async function HandymanProfilePage({
 
   const createParams = new URLSearchParams();
   if (profile.cities.length > 0) createParams.set("city", profile.cities[0]);
-  if (profile.categories.length > 0)
-    createParams.set("category", profile.categories[0]);
+  if (profileCategories.length > 0)
+    createParams.set("category", profileCategories[0]);
 
   const jsonLd = localBusinessJsonLd({
     name: user.name ?? "Majstor",
@@ -148,8 +152,8 @@ export default async function HandymanProfilePage({
                 </div>
                 <div className="pb-1">
                   <h1 className="text-2xl font-bold text-white md:text-3xl">{user.name}</h1>
-                  {profile.categories.length > 0 && (
-                    <p className="mt-0.5 text-white/90">{profile.categories.join(", ")}</p>
+                  {profileCategories.length > 0 && (
+                    <p className="mt-0.5 text-white/90">{profileCategories.join(", ")}</p>
                   )}
                   <div className="mt-2 flex flex-wrap items-center gap-3 text-sm text-white/90">
                     <span className="flex items-center gap-1">

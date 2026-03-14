@@ -19,7 +19,7 @@ export function PremiumMobileHeader() {
         </Link>
 
         <nav className="hidden items-center gap-10 md:flex">
-          <a href="/#kategorije" className="text-[15px] font-medium text-slate-600 transition hover:text-[#1d4ed8]">
+          <a href="/categories" className="text-[15px] font-medium text-slate-600 transition hover:text-[#1d4ed8]">
             Kategorije
           </a>
           <a href="/#kako-radi" className="text-[15px] font-medium text-slate-600 transition hover:text-[#1d4ed8]">
@@ -66,7 +66,7 @@ export function PremiumMobileHeader() {
       {menuOpen && (
         <div className="border-t border-slate-100 bg-white px-6 py-5 md:hidden">
           <nav className="flex flex-col gap-1">
-            <a href="/#kategorije" className="py-3 text-[16px] font-medium text-slate-700" onClick={() => setMenuOpen(false)}>
+            <a href="/categories" className="py-3 text-[16px] font-medium text-slate-700" onClick={() => setMenuOpen(false)}>
               Kategorije
             </a>
             <a href="/#kako-radi" className="py-3 text-[16px] font-medium text-slate-700" onClick={() => setMenuOpen(false)}>

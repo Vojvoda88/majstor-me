@@ -25,11 +25,17 @@ export async function GET(req: NextRequest) {
         role: "HANDYMAN",
         ...(category && {
           handymanProfile: {
-            categories: { has: category },
+            workerCategories: {
+              some: { category: { name: category } },
+            },
           },
         }),
       },
-      include: { handymanProfile: true },
+      include: {
+        handymanProfile: {
+          include: { workerCategories: { include: { category: true } } },
+        },
+      },
     });
 
     let filtered = handymen.filter((u) => u.handymanProfile);
@@ -78,7 +84,10 @@ export async function GET(req: NextRequest) {
         id: u.id,
         name: u.name,
         city: u.city,
-        categories: prof.categories ?? [],
+        categories:
+          (prof as { workerCategories?: { category: { name: string } }[] }).workerCategories?.map(
+            (wc) => wc.category.name
+          ) ?? [],
         ratingAvg: prof.ratingAvg ?? 0,
         reviewCount: prof.reviewCount ?? 0,
         avatarUrl: (prof as { avatarUrl?: string }).avatarUrl ?? null,

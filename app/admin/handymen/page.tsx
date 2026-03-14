@@ -10,6 +10,7 @@ export default async function AdminHandymenPage() {
   const handymen = await prisma.handymanProfile.findMany({
     include: {
       user: { select: { name: true, email: true, phone: true, city: true } },
+      workerCategories: { include: { category: true } },
     },
     orderBy: { createdAt: "desc" },
   });
@@ -41,7 +42,7 @@ export default async function AdminHandymenPage() {
                     <td className="px-4 py-3">{hp.user.name}</td>
                     <td className="px-4 py-3">{hp.user.email}</td>
                     <td className="px-4 py-3">
-                      {hp.categories.join(", ") || "-"}
+                      {hp.workerCategories.map((wc) => wc.category.name).join(", ") || "-"}
                     </td>
                     <td className="px-4 py-3">
                       ★ {hp.ratingAvg.toFixed(1)} ({hp.reviewCount})

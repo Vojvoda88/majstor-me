@@ -3,25 +3,30 @@ import { z } from "zod";
 
 export const dynamic = "force-dynamic";
 import { auth } from "@/lib/auth";
-import { REQUEST_CATEGORIES, MAX_GALLERY_IMAGES } from "@/lib/constants";
+import { REQUEST_CATEGORIES, MAX_GALLERY_IMAGES, MAX_HANDYMAN_CATEGORIES } from "@/lib/constants";
 import { logError } from "@/lib/logger";
 import { zodErrorToString } from "@/lib/api-response";
 
-const updateProfileSchema = z.object({
-  phone: z.string().max(20).optional().nullable(),
-  bio: z.string().optional(),
-  avatarUrl: z.string().url().optional().nullable(),
-  categories: z.array(z.enum(REQUEST_CATEGORIES as unknown as [string, ...string[]])),
-  cities: z.array(z.string()),
-  galleryImages: z.array(z.string().url()).max(MAX_GALLERY_IMAGES).optional(),
-  yearsOfExperience: z.number().int().min(0).max(50).optional().nullable(),
-  startingPrice: z.number().min(0).optional().nullable(),
-  completedJobsCount: z.number().int().min(0).optional(),
-  averageResponseMinutes: z.number().int().min(0).max(1440).optional().nullable(),
-  serviceAreasDescription: z.string().max(500).optional().nullable(),
-  travelRadiusKm: z.number().int().min(0).max(200).optional().nullable(),
-  availabilityStatus: z.enum(["AVAILABLE", "BUSY", "EMERGENCY_ONLY"]).optional().nullable(),
-});
+const updateProfileSchema = z
+  .object({
+    phone: z.string().max(20).optional().nullable(),
+    bio: z.string().optional(),
+    avatarUrl: z.string().url().optional().nullable(),
+    categories: z.array(z.enum(REQUEST_CATEGORIES as unknown as [string, ...string[]])),
+    cities: z.array(z.string()),
+    galleryImages: z.array(z.string().url()).max(MAX_GALLERY_IMAGES).optional(),
+    yearsOfExperience: z.number().int().min(0).max(50).optional().nullable(),
+    startingPrice: z.number().min(0).optional().nullable(),
+    completedJobsCount: z.number().int().min(0).optional(),
+    averageResponseMinutes: z.number().int().min(0).max(1440).optional().nullable(),
+    serviceAreasDescription: z.string().max(500).optional().nullable(),
+    travelRadiusKm: z.number().int().min(0).max(200).optional().nullable(),
+    availabilityStatus: z.enum(["AVAILABLE", "BUSY", "EMERGENCY_ONLY"]).optional().nullable(),
+  })
+  .refine((data) => data.categories.length <= MAX_HANDYMAN_CATEGORIES, {
+    message: "Maksimalno 5 kategorija je dozvoljeno.",
+    path: ["categories"],
+  });
 
 export async function GET() {
   try {
@@ -36,7 +41,10 @@ export async function GET() {
 
     const profile = await prisma.handymanProfile.findUnique({
       where: { userId: session.user.id },
-      include: { user: { select: { name: true, email: true, phone: true, city: true } } },
+      include: {
+        user: { select: { name: true, email: true, phone: true, city: true } },
+        workerCategories: { include: { category: true } },
+      },
     });
 
     if (!profile) {
@@ -46,7 +54,9 @@ export async function GET() {
       );
     }
 
-    return NextResponse.json({ success: true, data: profile });
+    const categories = profile.workerCategories.map((wc) => wc.category.name);
+    const { workerCategories, ...rest } = profile;
+    return NextResponse.json({ success: true, data: { ...rest, categories } });
   } catch (error) {
     logError("GET handyman profile error", error);
     return NextResponse.json(
@@ -99,6 +109,13 @@ export async function PATCH(request: Request) {
       availabilityStatus,
     } = parsed.data;
 
+    if (categories.length > MAX_HANDYMAN_CATEGORIES) {
+      return NextResponse.json(
+        { success: false, error: "Maksimalno 5 kategorija je dozvoljeno." },
+        { status: 400 }
+      );
+    }
+
     if (phone !== undefined) {
       await prisma.user.update({
         where: { id: session.user.id },
@@ -106,32 +123,66 @@ export async function PATCH(request: Request) {
       });
     }
 
-    const profile = await prisma.handymanProfile.upsert({
-      where: { userId: session.user.id },
-      create: {
-        userId: session.user.id,
-        bio,
-        categories: categories as string[],
-        cities,
-        galleryImages: galleryImages ?? [],
-      },
-      update: {
-        bio,
-        categories: categories as string[],
-        cities,
-        ...(avatarUrl !== undefined && { avatarUrl }),
-        ...(galleryImages !== undefined && { galleryImages }),
-        ...(yearsOfExperience !== undefined && { yearsOfExperience }),
-        ...(startingPrice !== undefined && { startingPrice }),
-        ...(completedJobsCount !== undefined && { completedJobsCount }),
-        ...(averageResponseMinutes !== undefined && { averageResponseMinutes }),
-        ...(serviceAreasDescription !== undefined && { serviceAreasDescription }),
-        ...(travelRadiusKm !== undefined && { travelRadiusKm }),
-        ...(availabilityStatus !== undefined && { availabilityStatus }),
-      },
+    const categoryRecords = await prisma.category.findMany({
+      where: { name: { in: categories } },
+      select: { id: true },
+    });
+    const categoryIds = categoryRecords.map((c) => c.id);
+    if (categoryIds.length !== categories.length) {
+      return NextResponse.json(
+        { success: false, error: "Jedna ili više kategorija nije validna." },
+        { status: 400 }
+      );
+    }
+
+    const profile = await prisma.$transaction(async (tx) => {
+      const prof = await tx.handymanProfile.upsert({
+        where: { userId: session.user!.id },
+        create: {
+          userId: session.user!.id,
+          bio,
+          cities,
+          galleryImages: galleryImages ?? [],
+        },
+        update: {
+          bio,
+          cities,
+          ...(avatarUrl !== undefined && { avatarUrl }),
+          ...(galleryImages !== undefined && { galleryImages }),
+          ...(yearsOfExperience !== undefined && { yearsOfExperience }),
+          ...(startingPrice !== undefined && { startingPrice }),
+          ...(completedJobsCount !== undefined && { completedJobsCount }),
+          ...(averageResponseMinutes !== undefined && { averageResponseMinutes }),
+          ...(serviceAreasDescription !== undefined && { serviceAreasDescription }),
+          ...(travelRadiusKm !== undefined && { travelRadiusKm }),
+          ...(availabilityStatus !== undefined && { availabilityStatus }),
+        },
+      });
+
+      await tx.workerCategory.deleteMany({ where: { workerId: prof.id } });
+      if (categoryIds.length > 0) {
+        await tx.workerCategory.createMany({
+          data: categoryIds.map((categoryId) => ({
+            workerId: prof.id,
+            categoryId,
+          })),
+          skipDuplicates: true,
+        });
+      }
+
+      return tx.handymanProfile.findUnique({
+        where: { id: prof.id },
+        include: { workerCategories: { include: { category: true } } },
+      });
     });
 
-    return NextResponse.json({ success: true, data: profile });
+    if (!profile) {
+      return NextResponse.json({ success: false, error: "Greška" }, { status: 500 });
+    }
+
+    const cats = profile.workerCategories.map((wc) => wc.category.name);
+    const { workerCategories, ...rest } = profile;
+    return NextResponse.json({ success: true, data: { ...rest, categories: cats } });
   } catch (error) {
     logError("PATCH handyman profile error", error);
     return NextResponse.json(

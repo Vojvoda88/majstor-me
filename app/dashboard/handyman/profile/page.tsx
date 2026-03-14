@@ -12,15 +12,23 @@ export default async function HandymanProfilePage() {
   if (session.user.role !== "HANDYMAN") redirect("/");
 
   const { prisma } = await import("@/lib/db");
-  const [profile, user] = await Promise.all([
-    prisma.handymanProfile.findUnique({ where: { userId: session.user.id } }),
+  const [profileRaw, user] = await Promise.all([
+    prisma.handymanProfile.findUnique({
+      where: { userId: session.user.id },
+      include: { workerCategories: { include: { category: true } } },
+    }),
     prisma.user.findUnique({
       where: { id: session.user.id },
       select: { phone: true },
     }),
   ]);
-  const profileData = profile
-    ? { ...profile, galleryImages: profile.galleryImages ?? [], phone: user?.phone ?? null }
+  const profileData = profileRaw
+    ? {
+        ...profileRaw,
+        categories: profileRaw.workerCategories.map((wc) => wc.category.name),
+        galleryImages: profileRaw.galleryImages ?? [],
+        phone: user?.phone ?? null,
+      }
     : null;
 
   const onboarding = calcProfileCompletion(profileData, user);

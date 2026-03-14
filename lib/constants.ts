@@ -62,6 +62,9 @@ export const PRICE_TYPES = [
 // Request limits per user per day (anti-spam)
 export const MAX_REQUESTS_PER_DAY = 5;
 
+// Majstor max kategorija
+export const MAX_HANDYMAN_CATEGORIES = 5;
+
 // Image upload limits
 export const MAX_IMAGES_PER_REQUEST = 5;
 export const MAX_IMAGE_SIZE_BYTES = 3 * 1024 * 1024; // 3MB

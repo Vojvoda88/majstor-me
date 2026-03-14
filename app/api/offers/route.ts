@@ -83,9 +83,12 @@ export async function POST(request: Request) {
 
     const profile = await prisma.handymanProfile.findUnique({
       where: { userId: session.user.id },
+      include: { workerCategories: { include: { category: true } } },
     });
 
-    if (!profile || !profile.categories.includes(req.category)) {
+    const hasCategory =
+      profile?.workerCategories?.some((wc) => wc.category.name === req.category) ?? false;
+    if (!profile || !hasCategory) {
       return NextResponse.json(
         { success: false, error: "Niste registrovani za ovu kategoriju" },
         { status: 403 }

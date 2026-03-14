@@ -43,10 +43,19 @@ export default async function HandymanDashboardPage({
   const skip = (page - 1) * limit;
 
   const { prisma } = await import("@/lib/db");
-  const profile = await prisma.handymanProfile.findUnique({
+  const profileRaw = await prisma.handymanProfile.findUnique({
     where: { userId: session.user.id },
-    include: { user: { select: { city: true, phone: true } } },
+    include: {
+      user: { select: { city: true, phone: true } },
+      workerCategories: { include: { category: true } },
+    },
   });
+  const profile = profileRaw
+    ? {
+        ...profileRaw,
+        categories: profileRaw.workerCategories.map((wc) => wc.category.name),
+      }
+    : null;
 
   if (!profile) {
     return (

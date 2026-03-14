@@ -52,10 +52,10 @@ export default async function RequestDetailPage({
               handymanProfile: {
                 select: {
                   bio: true,
-                  categories: true,
                   ratingAvg: true,
                   reviewCount: true,
                   verifiedStatus: true,
+                  workerCategories: { include: { category: true } },
                 },
               },
             },
@@ -73,7 +73,9 @@ export default async function RequestDetailPage({
   try {
     handymenNotified = await prisma.handymanProfile.count({
       where: {
-        categories: { has: req.category },
+        workerCategories: {
+          some: { category: { name: req.category } },
+        },
         OR: [
           { cities: { has: req.city } },
           { user: { city: req.city } },

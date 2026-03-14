@@ -32,10 +32,10 @@ export async function GET(
                 handymanProfile: {
                   select: {
                     bio: true,
-                    categories: true,
                     ratingAvg: true,
                     reviewCount: true,
                     verifiedStatus: true,
+                    workerCategories: { include: { category: true } },
                   },
                 },
               },

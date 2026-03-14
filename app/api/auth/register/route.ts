@@ -79,7 +79,6 @@ export async function POST(request: Request) {
         await tx.handymanProfile.create({
           data: {
             userId: u.id,
-            categories: [],
             cities: [],
           },
         });
