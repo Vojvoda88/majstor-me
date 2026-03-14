@@ -12,8 +12,10 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { REQUEST_CATEGORIES, CITIES, AVAILABILITY_STATUS_OPTIONS } from "@/lib/constants";
 import { GalleryEditor } from "@/components/profile/gallery-editor";
+import { AvatarUpload } from "@/components/profile/avatar-upload";
 
 const profileSchema = z.object({
+  avatarUrl: z.string().url().optional().nullable(),
   phone: z.string().max(20).optional().nullable(),
   bio: z.string().optional(),
   categories: z.array(z.string()).min(1, "Odaberite najmanje jednu kategoriju"),
@@ -32,6 +34,7 @@ type ProfileFormData = z.infer<typeof profileSchema>;
 const CITIES_LIST = [...CITIES];
 
 type Profile = {
+  avatarUrl?: string | null;
   phone?: string | null;
   bio: string | null;
   categories: string[];
@@ -46,7 +49,7 @@ type Profile = {
   availabilityStatus?: string | null;
 } | null;
 
-export function HandymanProfileForm({ profile }: { profile: Profile }) {
+export function HandymanProfileForm({ profile, userName }: { profile: Profile; userName?: string | null }) {
   const router = useRouter();
   const {
     register,
@@ -57,6 +60,7 @@ export function HandymanProfileForm({ profile }: { profile: Profile }) {
   } = useForm<ProfileFormData>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
+      avatarUrl: profile?.avatarUrl ?? null,
       phone: profile?.phone ?? "",
       bio: profile?.bio ?? "",
       categories: profile?.categories ?? [],
@@ -74,6 +78,7 @@ export function HandymanProfileForm({ profile }: { profile: Profile }) {
   const categories = watch("categories");
   const cities = watch("cities");
   const galleryImages = watch("galleryImages") ?? [];
+  const avatarUrl = watch("avatarUrl");
 
   const mutation = useMutation({
     mutationFn: async (data: ProfileFormData) => {
@@ -116,6 +121,14 @@ export function HandymanProfileForm({ profile }: { profile: Profile }) {
           <CardTitle>Osnovni podaci</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
+          <div>
+            <Label>Profilna slika</Label>
+            <AvatarUpload
+              currentUrl={avatarUrl ?? null}
+              onChange={(url) => setValue("avatarUrl", url)}
+              userName={userName}
+            />
+          </div>
           <div>
             <Label>Broj telefona</Label>
             <Input

@@ -75,6 +75,7 @@ model User {
   // Relations
   handymanProfile HandymanProfile?
   requests        Request[]       @relation("RequestCreator")
+  handymanInvites HandymanInvite[]
   offers          Offer[]
   reviewsGiven    Review[]        @relation("Reviewer")
   reviewsReceived Review[]        @relation("Reviewee")
@@ -83,6 +84,7 @@ model User {
   adminActions    AdminAction[]
   messagesSent    Message[]
   notifications   Notification[]
+  creditTransactions CreditTransaction[]
 
   @@map("users")
 }
@@ -114,11 +116,27 @@ model HandymanProfile {
   subscriptionPlan      String             @default("FREE") @map("subscription_plan")
   isPromoted            Boolean            @default(false) @map("is_promoted")
   promotedUntil         DateTime?          @map("promoted_until")
+  creditsBalance        Int                @default(0) @map("credits_balance")
   createdAt             DateTime           @default(now()) @map("created_at")
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("handyman_profiles")
+}
+
+model CreditTransaction {
+  id           String   @id @default(cuid())
+  handymanId   String   @map("handyman_id") // User.id of handyman
+  amount       Int      // positive = add, negative = spend
+  type         String   // OFFER_SENT, PURCHASE, BONUS, REFUND
+  referenceId  String?  @map("reference_id") // e.g. offerId for OFFER_SENT
+  balanceAfter Int      @map("balance_after")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  handyman User @relation(fields: [handymanId], references: [id], onDelete: Cascade)
+
+  @@index([handymanId])
+  @@map("credit_transactions")
 }
 
 model Request {
@@ -139,6 +157,7 @@ model Request {
   review        Review?
   report        Report[]
   conversation  Conversation?
+  handymanInvites HandymanInvite[]
 
   @@index([status])
   @@index([city])
@@ -255,4 +274,22 @@ model Notification {
   @@index([userId])
   @@index([userId, read])
   @@map("notifications")
+}
+
+model HandymanInvite {
+  id        String   @id @default(cuid())
+  inviterId String   @map("inviter_id")
+  email     String?
+  phone     String?
+  requestId String?  @map("request_id")
+  token     String   @unique
+  status    String   @default("PENDING") // PENDING, SENT, ACCEPTED
+  createdAt DateTime @default(now()) @map("created_at")
+
+  inviter User     @relation(fields: [inviterId], references: [id], onDelete: Cascade)
+  request Request? @relation(fields: [requestId], references: [id], onDelete: SetNull)
+
+  @@index([token])
+  @@index([inviterId])
+  @@map("handyman_invites")
 }

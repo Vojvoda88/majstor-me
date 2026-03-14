@@ -18,13 +18,15 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { REQUEST_CATEGORIES, URGENCY_OPTIONS, CITIES } from "@/lib/constants";
+import { RequestPhotosEditor } from "./request-photos-editor";
 
 const createRequestSchema = z.object({
   category: z.string().min(1, "Odaberite kategoriju"),
-  description: z.string().min(10, "Opis mora imati najmanje 10 karaktera"),
+  description: z.string().min(10, "Opis mora imati najmanje 10 karaktera").max(2000),
   city: z.string().min(1, "Unesite grad"),
   address: z.string().optional(),
   urgency: z.enum(["HITNO_DANAS", "U_NAREDNA_2_DANA", "NIJE_HITNO"]),
+  photos: z.array(z.string().url()).max(5).optional().default([]),
 });
 
 type CreateRequestFormData = z.infer<typeof createRequestSchema>;
@@ -38,6 +40,8 @@ export function CreateRequestForm() {
   const {
     register,
     handleSubmit,
+    watch,
+    setValue,
     formState: { errors },
     reset,
   } = useForm<CreateRequestFormData>({
@@ -46,8 +50,11 @@ export function CreateRequestForm() {
       city: urlCity || "Podgorica",
       urgency: "NIJE_HITNO",
       category: urlCategory,
+      photos: [],
     },
   });
+
+  const photos = watch("photos") ?? [];
 
   useEffect(() => {
     if (urlCategory || urlCity) {
@@ -64,14 +71,15 @@ export function CreateRequestForm() {
       const res = await fetch("/api/requests", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...data, photos: [] }),
+        body: JSON.stringify(data),
       });
       const json = await res.json();
       if (!json.success) throw new Error(json.error ?? "Greška");
       return json.data;
     },
     onSuccess: (data) => {
-      router.push(`/request/${data.id}`);
+      const notified = data.handymenNotified ?? 0;
+      router.push(`/request/${data.id}?created=1${notified > 0 ? `&notified=${notified}` : ""}`);
       router.refresh();
     },
   });
@@ -109,10 +117,10 @@ export function CreateRequestForm() {
             )}
           </div>
           <div className="space-y-3">
-            <Label htmlFor="description">Opis</Label>
+            <Label htmlFor="description">Opis problema ili posla *</Label>
             <Textarea
               id="description"
-              placeholder="Detaljno opišite problem..."
+              placeholder="Opišite šta vam treba: šta je pokvareno, dimenzije, kada vam treba, itd. Detaljniji opis = bolje ponude."
               rows={4}
               {...register("description")}
             />
@@ -142,6 +150,13 @@ export function CreateRequestForm() {
               id="address"
               placeholder="Ulica i broj"
               {...register("address")}
+            />
+          </div>
+          <div className="space-y-3">
+            <Label htmlFor="photos">Slike (opciono)</Label>
+            <RequestPhotosEditor
+              photos={photos}
+              onChange={(p) => setValue("photos", p)}
             />
           </div>
           <div className="space-y-2">

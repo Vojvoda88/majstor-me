@@ -10,7 +10,9 @@ import { OfferCard } from "@/components/lists/offer-card";
 import { RequestDetailClient } from "./request-detail-client";
 import { SendOfferForm } from "@/components/forms/send-offer-form";
 import { CancelRequestButton } from "@/components/request/cancel-request-button";
+import { RequestSuccessBanner } from "@/components/request/request-success-banner";
 import { RequestChatPanel } from "@/components/chat/request-chat-panel";
+import { InviteHandymanForm } from "@/components/invite/invite-handyman-form";
 import { SiteHeader } from "@/components/layout/site-header";
 import { MapPin, Calendar, User } from "lucide-react";
 
@@ -95,6 +97,10 @@ export default async function RequestDetailPage({
         >
           ← Nazad
         </Link>
+
+      {isOwner && (
+        <RequestSuccessBanner requestId={id} handymenNotified={handymenNotified} />
+      )}
 
       <Card className="rounded-2xl border-[#E2E8F0] shadow-card">
         <CardHeader>
@@ -223,6 +229,14 @@ export default async function RequestDetailPage({
       )}
 
       {/* Offers - for owner: see all; for handyman: see own; for others: nothing */}
+      {isOwner && req.status === "OPEN" && (
+        <Card className="mt-6 rounded-2xl border-[#E2E8F0] shadow-card">
+          <CardContent className="pt-6">
+            <InviteHandymanForm requestId={req.id} />
+          </CardContent>
+        </Card>
+      )}
+
       {session?.user?.role === "HANDYMAN" && req.status === "OPEN" && (
         <div className="mt-6">
           <SendOfferForm requestId={req.id} />

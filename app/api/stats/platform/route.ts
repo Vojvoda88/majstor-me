@@ -1,0 +1,59 @@
+import { NextResponse } from "next/server";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 60;
+
+/**
+ * Platform statistike za homepage trust sekciju.
+ * Vraća null za vrijednosti ako nema dovoljno podataka (fallback bez lažnog prikaza).
+ */
+export async function GET() {
+  try {
+    const { prisma } = await import("@/lib/db");
+
+    const [handymanCount, completedCount, reviewAgg, requestCount] = await Promise.all([
+      prisma.handymanProfile.count(),
+      prisma.request.count({ where: { status: "COMPLETED" } }),
+      prisma.review.aggregate({
+        _avg: { rating: true },
+        _count: true,
+      }),
+      prisma.request.count(),
+    ]);
+
+    const avgRating = reviewAgg._avg.rating ?? 0;
+    const reviewCount = reviewAgg._count;
+
+    // Samo ako imamo smislene podatke
+    const hasEnoughData = handymanCount > 0 || completedCount > 0 || reviewCount > 0;
+
+    const cities = await prisma.request.findMany({
+      select: { city: true },
+      distinct: ["city"],
+    });
+    const categories = await prisma.request.findMany({
+      select: { category: true },
+      distinct: ["category"],
+    });
+
+    return NextResponse.json({
+      handymanCount: hasEnoughData ? handymanCount : null,
+      completedJobsCount: hasEnoughData ? completedCount : null,
+      avgRating: hasEnoughData && reviewCount > 0 ? Math.round(avgRating * 10) / 10 : null,
+      reviewCount: hasEnoughData ? reviewCount : null,
+      citiesCount: cities.length,
+      categoriesCount: categories.length,
+      requestCount: hasEnoughData ? requestCount : null,
+    });
+  } catch {
+    return NextResponse.json({
+      handymanCount: null,
+      completedJobsCount: null,
+      avgRating: null,
+      reviewCount: null,
+      citiesCount: 0,
+      categoriesCount: 0,
+      requestCount: null,
+    });
+  }
+}

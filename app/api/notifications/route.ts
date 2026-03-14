@@ -4,7 +4,7 @@ import { logError } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
     const { prisma } = await import("@/lib/db");
     const session = await auth();
@@ -15,10 +15,13 @@ export async function GET() {
       );
     }
 
+    const { searchParams } = new URL(request.url);
+    const limit = Math.min(50, Math.max(5, parseInt(searchParams.get("limit") ?? "20", 10)));
+
     const notifications = await prisma.notification.findMany({
       where: { userId: session.user.id },
       orderBy: { createdAt: "desc" },
-      take: 50,
+      take: limit,
     });
 
     const unreadCount = await prisma.notification.count({

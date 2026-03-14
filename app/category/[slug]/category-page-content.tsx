@@ -4,8 +4,9 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { HomeHeader } from "@/components/home-page/home-header";
-import { Wrench, MapPin, ChevronLeft, ChevronRight } from "lucide-react";
+import { Wrench, MapPin, List, ChevronLeft, ChevronRight } from "lucide-react";
 import { HandymanCard } from "@/components/lists/handyman-card";
+import { HandymanMapView } from "@/components/map/handyman-map-view";
 import { CITIES, DEFAULT_PAGE_SIZE } from "@/lib/constants";
 import { HOMEPAGE_CITIES } from "@/lib/homepage-data";
 
@@ -16,6 +17,8 @@ type Handyman = {
   categories: string[];
   ratingAvg: number;
   reviewCount: number;
+  lat?: number;
+  lng?: number;
 };
 
 export function CategoryPageContent({
@@ -36,6 +39,7 @@ export function CategoryPageContent({
   const [totalPages, setTotalPages] = useState(1);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [viewMode, setViewMode] = useState<"list" | "map">("list");
 
   useEffect(() => {
     setCityFilter(cityFromUrl);
@@ -94,7 +98,7 @@ export function CategoryPageContent({
               </Link>
             ))}
           </div>
-          <div className="mb-6 flex flex-wrap gap-4">
+          <div className="mb-6 flex flex-wrap items-center gap-4">
             <select
               value={cityFilter}
               onChange={(e) => setCityFilter(e.target.value)}
@@ -115,6 +119,28 @@ export function CategoryPageContent({
               <option value="rating">Sortiraj po ocjeni</option>
               <option value="reviews">Sortiraj po broju recenzija</option>
             </select>
+            <div className="ml-auto flex rounded-xl border border-slate-200 bg-white p-1">
+              <button
+                type="button"
+                onClick={() => setViewMode("list")}
+                className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium transition ${
+                  viewMode === "list" ? "bg-slate-100 text-slate-900" : "text-slate-600 hover:bg-slate-50"
+                }`}
+              >
+                <List className="h-4 w-4" />
+                Lista
+              </button>
+              <button
+                type="button"
+                onClick={() => setViewMode("map")}
+                className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium transition ${
+                  viewMode === "map" ? "bg-slate-100 text-slate-900" : "text-slate-600 hover:bg-slate-50"
+                }`}
+              >
+                <MapPin className="h-4 w-4" />
+                Mapa
+              </button>
+            </div>
           </div>
 
           {loading ? (
@@ -137,12 +163,21 @@ export function CategoryPageContent({
               <div className="mb-4 text-sm text-slate-500">
                 {total} majstor(a)
               </div>
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {handymen.map((h) => (
-                  <HandymanCard key={h.id} {...h} variant="compact" />
-                ))}
-              </div>
-              {totalPages > 1 && (
+              {viewMode === "map" ? (
+                <HandymanMapView
+                  handymen={handymen}
+                  city={cityFilter || undefined}
+                  className="mb-6"
+                />
+              ) : null}
+              {viewMode === "list" && (
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                  {handymen.map((h) => (
+                    <HandymanCard key={h.id} {...h} variant="compact" />
+                  ))}
+                </div>
+              )}
+              {viewMode === "list" && totalPages > 1 && (
                 <div className="mt-6 flex items-center justify-center gap-2">
                   <button
                     type="button"

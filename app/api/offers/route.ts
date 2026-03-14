@@ -4,6 +4,7 @@ import { z } from "zod";
 export const dynamic = "force-dynamic";
 import { auth } from "@/lib/auth";
 import { isRateLimited, getRetryAfterSeconds } from "@/lib/rate-limit";
+import { isCreditsRequired, hasEnoughCredits, spendCreditsForOffer, CREDITS_PER_OFFER } from "@/lib/credits";
 import { sendNewOfferEmail } from "@/lib/email";
 import { createNotification } from "@/lib/notifications";
 import { logError } from "@/lib/logger";
@@ -99,6 +100,20 @@ export async function POST(request: Request) {
       );
     }
 
+    if (isCreditsRequired()) {
+      const { ok, balance } = await hasEnoughCredits(prisma, session.user.id);
+      if (!ok) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: `Nemate dovoljno kredita. Slanje ponude troši ${CREDITS_PER_OFFER} kredit. Imate: ${balance}.`,
+            needsCredits: true,
+          },
+          { status: 402 }
+        );
+      }
+    }
+
     if (priceType === "FIKSNA" && (priceValue == null || priceValue < 0)) {
       return NextResponse.json(
         { success: false, error: "Fiksna cijena zahtijeva iznos" },
@@ -121,6 +136,17 @@ export async function POST(request: Request) {
         proposedDate: proposedDate ? new Date(proposedDate) : undefined,
       },
     });
+
+    if (isCreditsRequired()) {
+      const spent = await spendCreditsForOffer(prisma, session.user.id, offer.id);
+      if (!spent.ok) {
+        await prisma.offer.delete({ where: { id: offer.id } });
+        return NextResponse.json(
+          { success: false, error: spent.error, needsCredits: true },
+          { status: 402 }
+        );
+      }
+    }
 
     sendNewOfferEmail(req.userId, req.category, handyman?.name ?? "Majstor");
     createNotification(req.userId, "NEW_OFFER", `Nova ponuda: ${req.category}`, {

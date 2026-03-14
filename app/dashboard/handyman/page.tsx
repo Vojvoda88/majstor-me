@@ -8,6 +8,9 @@ import { Button } from "@/components/ui/button";
 import { HandymanRequestList } from "./handyman-request-list";
 import { OnboardingBanner } from "@/components/handyman/onboarding-banner";
 import { calcProfileCompletion } from "@/lib/handyman-onboarding";
+import { isCreditsRequired } from "@/lib/credits";
+import { CREDIT_PACKAGES } from "@/lib/credit-packages";
+import { isPaymentConfigured } from "@/lib/payment";
 
 const URGENCY_LABELS: Record<string, string> = {
   HITNO_DANAS: "Hitno danas",
@@ -129,7 +132,7 @@ export default async function HandymanDashboardPage({
         </Link>
       </div>
 
-      <div className="mt-6 grid gap-4 sm:grid-cols-3">
+      <div className="mt-6 grid gap-4 sm:grid-cols-3 lg:grid-cols-4">
         <div className="rounded-2xl border border-[#E2E8F0] bg-white p-5 shadow-card">
           <p className="text-sm font-medium text-[#64748B]">Otvoreni zahtjevi</p>
           <p className="mt-1 text-2xl font-bold text-[#0F172A]">{totalDisplayed}</p>
@@ -142,6 +145,19 @@ export default async function HandymanDashboardPage({
           <p className="text-sm font-medium text-[#64748B]">Prihvaćeni poslovi</p>
           <p className="mt-1 text-2xl font-bold text-[#16A34A]">{acceptedCount}</p>
         </div>
+        {isCreditsRequired() && (
+          <div id="credits" className="rounded-2xl border border-[#E2E8F0] bg-white p-5 shadow-card scroll-mt-24">
+            <p className="text-sm font-medium text-[#64748B]">Krediti</p>
+            <p className="mt-1 text-2xl font-bold text-[#0F172A]">{(profile as { creditsBalance?: number }).creditsBalance ?? 0}</p>
+            {isPaymentConfigured() ? (
+              <Link href="/dashboard/handyman/credits" className="mt-2 inline-block text-sm font-medium text-blue-600 hover:underline">
+                Kupi kredite →
+              </Link>
+            ) : (
+              <p className="mt-1 text-xs text-[#94A3B8]">1 kredit = 1 ponuda</p>
+            )}
+          </div>
+        )}
       </div>
 
       <HandymanRequestList

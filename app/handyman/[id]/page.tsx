@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import { cityToSlug } from "@/lib/slugs";
 import { getSiteUrl } from "@/lib/site-url";
+import { localBusinessJsonLd } from "@/lib/json-ld";
 
 export const dynamic = "force-dynamic";
 
@@ -100,8 +101,23 @@ export default async function HandymanProfilePage({
   if (profile.categories.length > 0)
     createParams.set("category", profile.categories[0]);
 
+  const jsonLd = localBusinessJsonLd({
+    name: user.name ?? "Majstor",
+    description: profile.bio ?? undefined,
+    image: profileExt.avatarUrl ?? undefined,
+    address: user.city ? { city: user.city } : undefined,
+    aggregateRating:
+      profile.reviewCount > 0
+        ? { ratingValue: profile.ratingAvg, reviewCount: profile.reviewCount }
+        : undefined,
+  });
+
   return (
     <div className="min-h-screen bg-[#F8FAFC]">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <SiteHeader />
       <div className="container mx-auto max-w-2xl px-4 py-8">
         <Link

@@ -34,7 +34,7 @@ export default async function HandymanProfilePage() {
       {onboarding.percent < 100 && (
         <OnboardingBanner percent={onboarding.percent} steps={onboarding.steps} className="mb-6" />
       )}
-      <HandymanProfileForm profile={profileData} />
+      <HandymanProfileForm profile={profileData} userName={session.user.name} />
     </div>
   );
 }

@@ -4,24 +4,24 @@ import { useState, useRef } from "react";
 import { X, Upload, Link2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { MAX_GALLERY_IMAGES, MAX_IMAGE_SIZE_BYTES } from "@/lib/constants";
+import { MAX_IMAGES_PER_REQUEST, MAX_IMAGE_SIZE_BYTES } from "@/lib/constants";
 
-type GalleryEditorProps = {
-  images: string[];
-  onChange: (images: string[]) => void;
+type RequestPhotosEditorProps = {
+  photos: string[];
+  onChange: (photos: string[]) => void;
 };
 
 const VALID_TYPES = ["image/jpeg", "image/png", "image/webp"];
 const MAX_SIZE_MB = MAX_IMAGE_SIZE_BYTES / (1024 * 1024);
 
-export function GalleryEditor({ images, onChange }: GalleryEditorProps) {
+export function RequestPhotosEditor({ photos, onChange }: RequestPhotosEditorProps) {
   const [newUrl, setNewUrl] = useState("");
   const [uploading, setUploading] = useState(false);
-  const [uploadError, setUploadError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const [uploadAvailable, setUploadAvailable] = useState<boolean | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const checkUploadAvailability = async () => {
+  const checkUpload = async () => {
     if (uploadAvailable !== null) return;
     try {
       const res = await fetch("/api/upload");
@@ -34,65 +34,60 @@ export function GalleryEditor({ images, onChange }: GalleryEditorProps) {
 
   const addByUrl = () => {
     const trimmed = newUrl.trim();
-    if (!trimmed || images.length >= MAX_GALLERY_IMAGES) return;
+    if (!trimmed || photos.length >= MAX_IMAGES_PER_REQUEST) return;
     try {
       new URL(trimmed);
-      if (!images.includes(trimmed)) {
-        onChange([...images, trimmed]);
+      if (!photos.includes(trimmed)) {
+        onChange([...photos, trimmed]);
         setNewUrl("");
       }
     } catch {
-      setUploadError("Neispravan URL");
-      setTimeout(() => setUploadError(null), 3000);
+      setError("Neispravan URL");
+      setTimeout(() => setError(null), 3000);
     }
   };
 
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     e.target.value = "";
-    if (!file || images.length >= MAX_GALLERY_IMAGES) return;
+    if (!file || photos.length >= MAX_IMAGES_PER_REQUEST) return;
 
     if (!VALID_TYPES.includes(file.type)) {
-      setUploadError("Dozvoljeni formati: JPEG, PNG, WebP.");
-      setTimeout(() => setUploadError(null), 3000);
+      setError("Dozvoljeni: JPEG, PNG, WebP.");
+      setTimeout(() => setError(null), 3000);
       return;
     }
     if (file.size > MAX_IMAGE_SIZE_BYTES) {
-      setUploadError(`Maksimalna veličina ${MAX_SIZE_MB}MB.`);
-      setTimeout(() => setUploadError(null), 3000);
+      setError(`Maks. ${MAX_SIZE_MB}MB po slici.`);
+      setTimeout(() => setError(null), 3000);
       return;
     }
 
     setUploading(true);
-    setUploadError(null);
+    setError(null);
     try {
       const formData = new FormData();
       formData.set("file", file);
-      formData.set("type", "gallery");
-      const res = await fetch("/api/upload", {
-        method: "POST",
-        body: formData,
-      });
+      formData.set("type", "request");
+      const res = await fetch("/api/upload", { method: "POST", body: formData });
       const data = await res.json();
       if (data.ok && data.url) {
-        onChange([...images, data.url]);
+        onChange([...photos, data.url]);
       } else {
-        setUploadError(data.error || "Upload nije uspio. Koristite URL.");
+        setError(data.error || "Koristite URL.");
         if (data.uploadAvailable === false) setUploadAvailable(false);
       }
     } catch {
-      setUploadError("Greška pri uploadu.");
+      setError("Greška pri uploadu.");
     } finally {
       setUploading(false);
     }
   };
 
-  const removeImage = (idx: number) => {
-    onChange(images.filter((_, i) => i !== idx));
-  };
+  const remove = (idx: number) => onChange(photos.filter((_, i) => i !== idx));
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       <input
         ref={fileInputRef}
         type="file"
@@ -106,67 +101,55 @@ export function GalleryEditor({ images, onChange }: GalleryEditorProps) {
           variant="outline"
           size="sm"
           onClick={() => {
-            checkUploadAvailability();
+            checkUpload();
             if (uploadAvailable === false) return;
             fileInputRef.current?.click();
           }}
-          disabled={uploading || images.length >= MAX_GALLERY_IMAGES}
+          disabled={uploading || photos.length >= MAX_IMAGES_PER_REQUEST}
         >
           <Upload className="mr-2 h-4 w-4" />
-          {uploading ? "Uploadujem..." : "Dodaj datoteku"}
+          {uploading ? "Upload..." : "Dodaj sliku"}
         </Button>
         <span className="flex items-center text-sm text-slate-500">ili</span>
-        <div className="flex min-w-[200px] flex-1 gap-2">
+        <div className="flex min-w-[180px] flex-1 gap-2">
           <Input
             type="url"
-            placeholder="https://example.com/slika.jpg"
+            placeholder="URL slike"
             value={newUrl}
             onChange={(e) => setNewUrl(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addByUrl())}
-            className="flex-1"
+            className="flex-1 text-sm"
           />
           <Button
             type="button"
             variant="outline"
             size="icon"
             onClick={addByUrl}
-            disabled={!newUrl.trim() || images.length >= MAX_GALLERY_IMAGES}
+            disabled={!newUrl.trim() || photos.length >= MAX_IMAGES_PER_REQUEST}
           >
             <Link2 className="h-4 w-4" />
           </Button>
         </div>
       </div>
-      {uploadError && <p className="text-sm text-red-600">{uploadError}</p>}
-      {uploadAvailable === false && (
-        <p className="text-xs text-amber-700">
-          Upload nije konfigurisan. Unesite URL slike.
-        </p>
-      )}
-      {images.length > 0 && (
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-          {images.map((url, idx) => (
-            <div
-              key={`${url}-${idx}`}
-              className="group relative aspect-square overflow-hidden rounded-xl border bg-slate-50"
-            >
-              <img
-                src={url}
-                alt={`Rad ${idx + 1}`}
-                className="h-full w-full object-cover"
-              />
+      {error && <p className="text-sm text-red-600">{error}</p>}
+      {photos.length > 0 && (
+        <div className="flex flex-wrap gap-2">
+          {photos.map((url, idx) => (
+            <div key={`${url}-${idx}`} className="group relative h-20 w-20 overflow-hidden rounded-lg border">
+              <img src={url} alt={`Slika ${idx + 1}`} className="h-full w-full object-cover" />
               <button
                 type="button"
-                onClick={() => removeImage(idx)}
-                className="absolute right-1 top-1 rounded-full bg-black/50 p-1.5 text-white opacity-0 transition group-hover:opacity-100"
+                onClick={() => remove(idx)}
+                className="absolute right-0.5 top-0.5 rounded-full bg-black/50 p-1 text-white"
               >
-                <X className="h-4 w-4" />
+                <X className="h-3 w-3" />
               </button>
             </div>
           ))}
         </div>
       )}
       <p className="text-xs text-slate-500">
-        {images.length} / {MAX_GALLERY_IMAGES} slika. JPEG, PNG, WebP do {MAX_SIZE_MB}MB.
+        {photos.length} / {MAX_IMAGES_PER_REQUEST} slika (opciono). Pomažu majstorima da bolje procijene.
       </p>
     </div>
   );

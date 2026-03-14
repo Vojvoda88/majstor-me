@@ -47,6 +47,9 @@ DIRECT_DATABASE_URL="postgresql://postgres.[REF]:[PASSWORD]@[HOST].pooler.supaba
 |-----------|------|
 | `RESEND_API_KEY` | Za email. Bez nje app radi normalno – samo se ne šalju notifikacije |
 | `EMAIL_FROM` | Npr. `Majstor.me <noreply@majstor.me>` |
+| `SUPABASE_URL` | Za upload (avatar, galerija). Npr. https://xxx.supabase.co |
+| `SUPABASE_SERVICE_ROLE_KEY` | Service role key za Supabase Storage |
+| `STORAGE_BUCKET` | Naziv bucketa (default: majstor-me). Kreirati u Supabase Storage. |
 
 ---
 

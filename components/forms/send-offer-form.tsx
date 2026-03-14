@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -58,7 +59,11 @@ export function SendOfferForm({ requestId }: { requestId: string }) {
       });
       const json = await res.json();
       const msg = typeof json?.error === "string" ? json.error : "Greška pri slanju ponude";
-      if (!json?.success) throw new Error(msg);
+      if (!json?.success) {
+        const err = new Error(msg) as Error & { needsCredits?: boolean };
+        err.needsCredits = json.needsCredits === true;
+        throw err;
+      }
     },
     onSuccess: () => {
       router.refresh();
@@ -75,7 +80,19 @@ export function SendOfferForm({ requestId }: { requestId: string }) {
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit((data) => mutation.mutate(data))} className="space-y-5">
-          {mutation.error && <div className="form-error">{mutation.error.message}</div>}
+          {mutation.error && (
+            <div className="space-y-2">
+              <div className="form-error">{mutation.error.message}</div>
+              {(mutation.error as Error & { needsCredits?: boolean }).needsCredits && (
+                <Link
+                  href="/dashboard/handyman#credits"
+                  className="inline-block text-sm font-medium text-blue-600 hover:underline"
+                >
+                  Kupi kredite →
+                </Link>
+              )}
+            </div>
+          )}
           <div>
             <Label>Tip cijene</Label>
             <select

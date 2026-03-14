@@ -7,6 +7,11 @@ import { REQUEST_CATEGORIES, MAX_REQUESTS_PER_DAY, DEFAULT_PAGE_SIZE } from "@/l
 import { logError } from "@/lib/logger";
 import { sendNewRequestEmail } from "@/lib/email";
 import { zodErrorToString } from "@/lib/api-response";
+import {
+  SMART_DISTRIBUTION_CONFIG,
+  rankHandymenForRequest,
+  type HandymanForDistribution,
+} from "@/lib/smart-distribution";
 
 const createRequestSchema = z.object({
   category: z.enum(REQUEST_CATEGORIES as unknown as [string, ...string[]]),
@@ -125,17 +130,49 @@ export async function POST(request: Request) {
       },
     });
 
-    // Notify all handymen with matching category (no city restriction)
-    const handymen = await prisma.user.findMany({
+    // Fetch all handymen with category match (svi vide u dashboardu)
+    const allHandymen = await prisma.user.findMany({
       where: {
         role: "HANDYMAN",
         handymanProfile: {
           categories: { has: parsed.data.category },
         },
       },
-      select: { id: true },
+      select: {
+        id: true,
+        city: true,
+        handymanProfile: {
+          select: {
+            ratingAvg: true,
+            reviewCount: true,
+            verifiedStatus: true,
+            averageResponseMinutes: true,
+            completedJobsCount: true,
+            availabilityStatus: true,
+            isPromoted: true,
+          },
+        },
+      },
     });
-    for (const h of handymen) {
+
+    const withProfile = allHandymen.filter((u) => u.handymanProfile) as {
+      id: string;
+      city: string | null;
+      handymanProfile: NonNullable<(typeof allHandymen)[0]["handymanProfile"]>;
+    }[];
+
+    const forDist: HandymanForDistribution[] = withProfile.map((u) => ({
+      id: u.id,
+      city: u.city,
+      handymanProfile: u.handymanProfile!,
+      isPromoted: u.handymanProfile?.isPromoted ?? false,
+    }));
+
+    const { topForNotify } = rankHandymenForRequest(forDist, parsed.data.city);
+
+    // Samo top N dobijaju email (ili svi ako smart distribution disabled)
+    const toNotify = SMART_DISTRIBUTION_CONFIG.ENABLED ? topForNotify : forDist;
+    for (const h of toNotify) {
       sendNewRequestEmail(
         h.id,
         req.id,
@@ -144,7 +181,10 @@ export async function POST(request: Request) {
       ).catch(() => {});
     }
 
-    return NextResponse.json({ success: true, data: req });
+    return NextResponse.json({
+      success: true,
+      data: { ...req, handymenNotified: toNotify.length },
+    });
   } catch (error) {
     logError("POST request error", error);
     return NextResponse.json(

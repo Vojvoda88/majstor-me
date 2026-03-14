@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";
@@ -22,6 +22,8 @@ export default async function AdminDashboardPage() {
     newUsersLast7d,
     newHandymenLast7d,
     newRequestsLast7d,
+    offersAcceptedCount,
+    offersReceivedCount,
   ] = await Promise.all([
     prisma.user.count(),
     prisma.handymanProfile.count(),
@@ -34,6 +36,8 @@ export default async function AdminDashboardPage() {
     prisma.user.count({ where: { createdAt: { gte: sevenDaysAgo } } }),
     prisma.handymanProfile.count({ where: { createdAt: { gte: sevenDaysAgo } } }),
     prisma.request.count({ where: { createdAt: { gte: sevenDaysAgo } } }),
+    prisma.offer.count({ where: { status: "ACCEPTED" } }),
+    prisma.offer.count(),
   ]);
 
   const requestsByDay = await Promise.all(
@@ -112,6 +116,43 @@ export default async function AdminDashboardPage() {
                 <span className="text-xs font-medium text-[#0F172A]">{d.count}</span>
               </div>
             ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card className="mt-8">
+        <CardHeader>
+          <CardTitle>Conversion funnel</CardTitle>
+          <CardDescription>
+            Request created → Offer received → Offer accepted → Completed → Reviewed
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-wrap items-end gap-4">
+            <div className="flex flex-col items-center">
+              <span className="text-2xl font-bold text-[#0F172A]">{openRequestCount + activeRequestCount + completedCount}</span>
+              <span className="text-xs text-[#64748B]">Zahtjevi</span>
+            </div>
+            <span className="text-[#94A3B8]">→</span>
+            <div className="flex flex-col items-center">
+              <span className="text-2xl font-bold text-[#0F172A]">{offersReceivedCount}</span>
+              <span className="text-xs text-[#64748B]">Ponude</span>
+            </div>
+            <span className="text-[#94A3B8]">→</span>
+            <div className="flex flex-col items-center">
+              <span className="text-2xl font-bold text-[#16A34A]">{offersAcceptedCount}</span>
+              <span className="text-xs text-[#64748B]">Prihvaćene</span>
+            </div>
+            <span className="text-[#94A3B8]">→</span>
+            <div className="flex flex-col items-center">
+              <span className="text-2xl font-bold text-[#16A34A]">{completedCount}</span>
+              <span className="text-xs text-[#64748B]">Završeni</span>
+            </div>
+            <span className="text-[#94A3B8]">→</span>
+            <div className="flex flex-col items-center">
+              <span className="text-2xl font-bold text-[#16A34A]">{reviewCount}</span>
+              <span className="text-xs text-[#64748B]">Recenzije</span>
+            </div>
           </div>
         </CardContent>
       </Card>

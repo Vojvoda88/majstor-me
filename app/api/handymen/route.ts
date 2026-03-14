@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getInternalCategory } from "@/lib/categories";
 import { DEFAULT_PAGE_SIZE } from "@/lib/constants";
+import { getCityCoords } from "@/lib/cities";
 import { getDistanceBetweenCities } from "@/lib/distance";
 import { calcHandymanScore } from "@/lib/handyman-score";
 
@@ -68,16 +69,27 @@ export async function GET(req: NextRequest) {
     const offset = (page - 1) * limit;
     const items = withScore.slice(offset, offset + limit);
 
-    const mapItem = (u: (typeof withScore)[0]) => ({
-      id: u.id,
-      name: u.name,
-      city: u.city,
-      categories: u.handymanProfile?.categories ?? [],
-      ratingAvg: u.handymanProfile?.ratingAvg ?? 0,
-      reviewCount: u.handymanProfile?.reviewCount ?? 0,
-      avatarUrl: (u.handymanProfile as { avatarUrl?: string } | null)?.avatarUrl ?? null,
-      verifiedStatus: u.handymanProfile?.verifiedStatus ?? "PENDING",
-    });
+    const mapItem = (u: (typeof withScore)[0]) => {
+      const prof = u.handymanProfile!;
+      const ext = profileExt(prof);
+      const city = u.city;
+      const coords = city ? getCityCoords(city) : null;
+      return {
+        id: u.id,
+        name: u.name,
+        city: u.city,
+        categories: prof.categories ?? [],
+        ratingAvg: prof.ratingAvg ?? 0,
+        reviewCount: prof.reviewCount ?? 0,
+        avatarUrl: (prof as { avatarUrl?: string }).avatarUrl ?? null,
+        verifiedStatus: prof.verifiedStatus ?? "PENDING",
+        completedJobsCount: ext.completedJobsCount ?? 0,
+        averageResponseMinutes: ext.averageResponseMinutes ?? null,
+        availabilityStatus: (prof as { availabilityStatus?: string }).availabilityStatus ?? null,
+        isPromoted: ext.isPromoted ?? false,
+        ...(coords && { lat: coords.lat, lng: coords.lng }),
+      };
+    };
 
     return NextResponse.json({
       items: items.map(mapItem),

@@ -23,7 +23,7 @@ export function NotificationsDropdown() {
 
   const fetchNotifications = async () => {
     setLoading(true);
-    const res = await fetch("/api/notifications");
+    const res = await fetch("/api/notifications?limit=15");
     const json = await res.json();
     if (json.success && json.data) {
       setNotifications(json.data.notifications ?? []);
@@ -94,15 +94,20 @@ export function NotificationsDropdown() {
                   Učitavanje...
                 </div>
               ) : notifications.length === 0 ? (
-                <div className="p-4 text-center text-sm text-slate-500">
-                  Nema notifikacija
+                <div className="flex flex-col items-center justify-center gap-2 p-8 text-center">
+                  <Bell className="h-10 w-10 text-slate-300" />
+                  <p className="text-sm font-medium text-slate-600">Nema notifikacija</p>
+                  <p className="text-xs text-slate-400">
+                    Obavještenja ćete dobiti kad dobijete ponudu ili novu poruku
+                  </p>
                 </div>
               ) : (
                 notifications.map((n) => (
                   <Link
                     key={n.id}
                     href={n.link ?? "#"}
-                    onClick={() => {
+                    onClick={(e) => {
+                      if (!n.link) e.preventDefault();
                       if (!n.read) markAsRead(n.id);
                       setOpen(false);
                     }}
