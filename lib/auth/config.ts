@@ -50,9 +50,14 @@ export const authOptions: NextAuthOptions = {
       return token;
     },
     async session({ session, token }) {
-      if (session.user) {
+      if (session.user && token.id) {
         (session.user as { id?: string }).id = token.id as string;
-        (session.user as { role?: string }).role = token.role as string;
+        const { prisma } = await import("@/lib/db");
+        const dbUser = await prisma.user.findUnique({
+          where: { id: token.id as string },
+          select: { role: true },
+        });
+        (session.user as { role?: string }).role = dbUser?.role ?? (token.role as string);
       }
       return session;
     },
