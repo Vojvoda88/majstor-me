@@ -3,8 +3,8 @@ import { ShieldCheck, Zap, CreditCard } from "lucide-react";
 const ITEMS = [
   {
     icon: CreditCard,
-    title: "Besplatno objavljivanje",
-    desc: "Nema troškova za objavljivanje zahtjeva. Plaćate samo kada izaberete majstora.",
+    title: "Besplatno za korisnike",
+    desc: "Objava zahtjeva i prijem ponuda su potpuno besplatni. Pregledajte majstore i uporedite ponude bez naknade.",
   },
   {
     icon: ShieldCheck,
