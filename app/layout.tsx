@@ -32,6 +32,10 @@ export const metadata: Metadata = {
   description: "Platforma za pronalaženje provjerenih majstora i servisera u Crnoj Gori.",
   keywords: "majstor, Crna Gora, Podgorica, vodoinstalater, električar, klima servis",
   alternates: { canonical: "/" },
+  icons: {
+    icon: "/icon-192.png",
+    apple: "/icon-192.png",
+  },
   openGraph: {
     title: "Majstor.me | Pronađite majstora u Crnoj Gori",
     description: "Platforma za pronalaženje provjerenih majstora i servisera u Crnoj Gori.",

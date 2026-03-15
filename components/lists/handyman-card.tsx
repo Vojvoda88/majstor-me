@@ -4,7 +4,7 @@ import { memo } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Star, Wrench, CheckCircle2, Clock, Briefcase, Award } from "lucide-react";
-import { HERO_IMAGE } from "@/lib/homepage-data";
+import { AVATAR_IMAGE_FALLBACK } from "@/lib/homepage-data";
 
 export type HandymanCardData = {
   id: string;
@@ -116,7 +116,7 @@ function HandymanCardComponent({
   );
 
   if (variant === "list") {
-    const imgSrc = avatarUrl ?? HERO_IMAGE;
+    const imgSrc = avatarUrl ?? AVATAR_IMAGE_FALLBACK;
     return (
       <Link
         href={`/handyman/${id}`}

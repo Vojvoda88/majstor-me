@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Star, CheckCircle2 } from "lucide-react";
-import { HERO_IMAGE } from "@/lib/homepage-data";
+import { AVATAR_IMAGE_FALLBACK } from "@/lib/homepage-data";
 
 type Props = {
   id: string;
@@ -32,7 +32,7 @@ export function PremiumHandymanCard({
   averageResponseMinutes,
 }: Props) {
   const isVerified = verifiedStatus === "VERIFIED";
-  const imgSrc = avatarUrl ?? HERO_IMAGE;
+  const imgSrc = avatarUrl ?? AVATAR_IMAGE_FALLBACK;
 
   return (
     <Link

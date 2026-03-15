@@ -18,7 +18,7 @@ import { viberLink, whatsappLink } from "@/lib/phone-links";
 import { cityToSlug } from "@/lib/slugs";
 import { getSiteUrl } from "@/lib/site-url";
 import { localBusinessJsonLd } from "@/lib/json-ld";
-import { HERO_IMAGE } from "@/lib/homepage-data";
+import { AVATAR_IMAGE_FALLBACK } from "@/lib/homepage-data";
 
 export const dynamic = "force-dynamic";
 
@@ -85,7 +85,7 @@ export default async function HandymanProfilePage({
   };
   const avatarUrl = profileExt.avatarUrl;
   const galleryImages = profileExt.galleryImages ?? [];
-  const heroImage = galleryImages[0] ?? avatarUrl ?? HERO_IMAGE;
+  const heroImage = galleryImages[0] ?? avatarUrl ?? AVATAR_IMAGE_FALLBACK;
   const isVerified = profile.verifiedStatus === "VERIFIED";
   const AVAILABILITY_LABELS: Record<string, string> = {
     AVAILABLE: "Dostupan",

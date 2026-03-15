@@ -54,11 +54,11 @@ test.describe("Public routes", () => {
     await assertNoServerComponentError(page);
   });
 
-  test("Click Postani majstor goes to /register", async ({ page }) => {
+  test("Click Registruj se kao majstor goes to /register", async ({ page }) => {
     await page.goto("/");
     await assertNoServerComponentError(page);
-    await page.getByTestId("nav-postani-majstor").scrollIntoViewIfNeeded();
-    await page.getByTestId("nav-postani-majstor").click();
+    await page.getByTestId("nav-registracija-majstor").scrollIntoViewIfNeeded();
+    await page.getByTestId("nav-registracija-majstor").click();
     await expect(page).toHaveURL(/\/register/);
     await assertNoServerComponentError(page);
   });

@@ -5,7 +5,7 @@ import { assertNoServerComponentError, assertNoErrorPage } from "./helpers/error
 test.describe("Smoke – main clicks", () => {
   test.use({ viewport: { width: 1280, height: 720 } });
 
-  test("PublicHeader: Početna, Kategorije, Postani majstor, Prijava", async ({ page }) => {
+  test("PublicHeader: Početna, Kategorije, Registruj se kao majstor, Prijava", async ({ page }) => {
     await page.goto("/");
     await assertNoServerComponentError(page);
     await page.getByTestId("nav-pocetna").click();
@@ -14,7 +14,7 @@ test.describe("Smoke – main clicks", () => {
     await page.getByTestId("nav-kategorije").click();
     await expect(page).toHaveURL(/\/categories/);
     await assertNoServerComponentError(page);
-    await page.getByTestId("nav-postani-majstor").click();
+    await page.getByTestId("nav-registracija-majstor").click();
     await expect(page).toHaveURL(/\/register/);
     await page.getByTestId("nav-prijava").click();
     await expect(page).toHaveURL(/\/login/);

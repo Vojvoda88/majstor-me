@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Star, CheckCircle2, ArrowRight } from "lucide-react";
-import { HERO_IMAGE } from "@/lib/homepage-data";
+import { AVATAR_IMAGE_FALLBACK } from "@/lib/homepage-data";
 
 export type Handyman = {
   id: string;
@@ -48,7 +48,7 @@ export function ReviewCardsSection({ initialHandymen = [] }: { initialHandymen?:
       <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
         {handymen.slice(0, 3).map((h, idx) => {
           const isVerified = h.verifiedStatus === "VERIFIED";
-          const imgSrc = h.avatarUrl ?? HERO_IMAGE;
+          const imgSrc = h.avatarUrl ?? AVATAR_IMAGE_FALLBACK;
           return (
             <div
               key={h.id}

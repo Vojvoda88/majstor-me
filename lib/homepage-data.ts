@@ -2,8 +2,10 @@
 // Kategorije su u lib/categories.ts (centralni source of truth)
 
 export const HERO_IMAGE = "/images/hero/hero-handyman.jpg";
-// Majstor na poslu - vodoinstalater/električar, NE laptop
+// Majstor na poslu - vodoinstalater/električar, NE laptop. Koristi se u Hero kada postoji local file.
 export const HERO_IMAGE_FALLBACK = "https://images.unsplash.com/photo-1504148455328-c376907d081c?w=1920&q=85";
+// Fallback za avatare/kartice kada local /images/ nije dostupan (izbjegava 404).
+export const AVATAR_IMAGE_FALLBACK = HERO_IMAGE_FALLBACK;
 
 // Category name -> local image path (fallbacks for slug-based lookup)
 export const CATEGORY_IMAGES: Record<string, string> = {
