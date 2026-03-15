@@ -3,7 +3,7 @@ import { defineConfig, devices } from "@playwright/test";
 /**
  * E2E config – Majstor.me
  * BaseURL: lokalni dev server (npm run dev).
- * test:e2e = headless, test:e2e:headed = with browser, test:e2e:ui = Playwright UI.
+ * Admin tests use shared storage state from global setup (no per-test login).
  */
 export default defineConfig({
   testDir: "./tests/e2e",

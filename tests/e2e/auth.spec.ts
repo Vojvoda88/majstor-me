@@ -12,8 +12,9 @@ test.describe("Auth", () => {
   test("Login page opens and shows form", async ({ page }) => {
     await page.goto("/login");
     expect(page.url()).toContain("/login");
-    await expect(page.getByLabel(/email/i)).toBeVisible();
-    await expect(page.getByLabel(/lozinka|password/i)).toBeVisible();
+    await expect(page.getByTestId("login-form")).toBeVisible();
+    await expect(page.getByTestId("login-email")).toBeVisible();
+    await expect(page.getByTestId("login-password")).toBeVisible();
     await assertNoServerComponentError(page);
   });
 
@@ -51,15 +52,14 @@ test.describe("Auth", () => {
     await page.goto("/login");
     await fillLoginForm(page, "wrong@test.me", "WrongPass1!");
     await expect(page).toHaveURL(/\/login/);
-    const errorOrForm = page.locator(".form-error, [role=alert], form");
-    await expect(errorOrForm.first()).toBeVisible({ timeout: 8000 });
+    await expect(page.getByTestId("login-error")).toBeVisible({ timeout: 8000 });
   });
 
   test("Logout from admin", async ({ page }) => {
     await loginAsAdmin(page);
     await page.goto("/admin");
     await expect(page).toHaveURL(/\/admin/);
-    await page.locator('form[action*="signout"]').first().submit();
+    await page.getByTestId("admin-signout").click();
     await page.waitForURL(/\/(login)?(\?|$)/, { timeout: 12_000 });
     await page.goto("/admin");
     await page.waitForURL(/\/login/, { timeout: 10_000 });

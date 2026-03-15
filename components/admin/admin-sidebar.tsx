@@ -56,10 +56,10 @@ export function AdminSidebar({ adminRole }: { adminRole: AdminRole }) {
   );
 
   return (
-    <aside className="fixed left-0 top-0 z-40 h-screen w-64 border-r border-[#E2E8F0] bg-white">
+    <aside className="fixed left-0 top-0 z-40 h-screen w-64 border-r border-[#E2E8F0] bg-white" data-testid="admin-sidebar">
       <div className="flex h-full flex-col">
         <div className="flex h-16 items-center border-b border-[#E2E8F0] px-4">
-          <Link href="/admin" className="font-semibold text-[#0F172A]">
+          <Link href="/admin" className="font-semibold text-[#0F172A]" data-testid="admin-nav-dashboard">
             Admin Panel
           </Link>
         </div>
@@ -68,10 +68,12 @@ export function AdminSidebar({ adminRole }: { adminRole: AdminRole }) {
             {visibleItems.map((item) => {
               const Icon = item.icon;
               const isActive = pathname === item.href || (item.href !== "/admin" && pathname.startsWith(item.href + "/"));
+              const testId = item.href === "/admin" ? "admin-nav-dashboard" : "admin-nav-" + item.href.replace(/^\/admin\/?/, "");
               return (
                 <li key={item.href}>
                   <Link
                     href={item.href}
+                    data-testid={testId}
                     className={cn(
                       "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
                       isActive

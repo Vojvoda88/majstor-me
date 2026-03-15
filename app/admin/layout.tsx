@@ -34,6 +34,7 @@ export default async function AdminLayout({
                   <button
                     type="submit"
                     className="text-sm font-medium text-[#64748B] hover:text-[#DC2626]"
+                    data-testid="admin-signout"
                   >
                     Odjavi se
                   </button>

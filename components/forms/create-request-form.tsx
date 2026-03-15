@@ -104,6 +104,7 @@ export function CreateRequestForm() {
           id="create-request-form"
           onSubmit={handleSubmit((data) => mutation.mutate(data))}
           className="space-y-5"
+          data-testid="create-request-form"
         >
           {mutation.error && <div className="form-error">{mutation.error.message}</div>}
           <div className="space-y-3">
@@ -232,6 +233,7 @@ export function CreateRequestForm() {
             type="submit"
             disabled={mutation.isPending}
             className="btn-primary mt-2 hidden w-full items-center justify-center disabled:opacity-50 md:flex"
+            data-testid="create-request-submit"
           >
             {mutation.isPending ? "Objavljivanje..." : "Objavi zahtjev"}
           </button>
@@ -244,6 +246,7 @@ export function CreateRequestForm() {
         form="create-request-form"
         disabled={mutation.isPending}
         className="flex h-14 w-full items-center justify-center rounded-[16px] bg-gradient-to-br from-[#60A5FA] to-[#2563EB] text-lg font-bold text-white shadow-[0_10px_25px_rgba(37,99,235,0.35)] transition active:scale-[0.98] disabled:opacity-60"
+        data-testid="create-request-submit"
       >
         {mutation.isPending ? "Objavljivanje..." : "Objavi zahtjev"}
       </button>

@@ -28,16 +28,18 @@ export async function fillCreateRequestForm(page: Page, overrides?: Partial<{
  * Submit create-request form (desktop or mobile submit button).
  */
 export async function submitCreateRequestForm(page: Page): Promise<void> {
-  const submit = page.getByRole("button", { name: /objavi zahtjev/i });
-  await submit.click();
+  await page.getByTestId("create-request-submit").first().click();
 }
 
 /**
- * Full flow: fill minimal request form and submit. Returns after navigation to /request/[id].
+ * Full flow: fill minimal request form and submit. Waits for API response then redirect.
  */
 export async function createRequestAndWaitForRedirect(page: Page): Promise<string> {
   await fillCreateRequestForm(page);
+  const responsePromise = page.waitForResponse((res) => res.url().includes("/api/requests") && res.request().method() === "POST", { timeout: 15_000 });
   await submitCreateRequestForm(page);
+  const response = await responsePromise;
+  if (!response.ok()) throw new Error("Create request API failed: " + response.status());
   await page.waitForURL(/\/request\/[^/]+/, { timeout: 15_000 });
   const url = page.url();
   const match = url.match(/\/request\/([^/?#]+)/);

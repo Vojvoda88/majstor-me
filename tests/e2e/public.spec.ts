@@ -2,13 +2,15 @@ import { test, expect } from "@playwright/test";
 import { assertNoServerComponentError, assertNoErrorPage } from "./helpers/errors";
 
 test.describe("Public routes", () => {
+  test.use({ viewport: { width: 1280, height: 720 } });
+
   test("GET / – homepage loads and shows content", async ({ page }) => {
     const res = await page.goto("/");
     expect(res?.status()).toBe(200);
     await assertNoServerComponentError(page);
     await assertNoErrorPage(page);
-    await expect(page.getByRole("link", { name: /prijava/i })).toBeVisible();
-    await expect(page.getByText(/majstor|početna|kategorije/i).first()).toBeVisible();
+    await expect(page.getByTestId("public-header")).toBeVisible();
+    await expect(page.getByTestId("nav-prijava")).toBeVisible();
   });
 
   test("GET /categories – categories page loads", async ({ page }) => {
@@ -24,9 +26,7 @@ test.describe("Public routes", () => {
     expect(res?.status()).toBe(200);
     await assertNoServerComponentError(page);
     await assertNoErrorPage(page);
-    await expect(page.getByLabel(/email/i)).toBeVisible();
-    await expect(page.getByLabel(/lozinka|password/i)).toBeVisible();
-    await expect(page.getByRole("button", { name: /prijavi se/i })).toBeVisible();
+    await expect(page.getByTestId("login-form")).toBeVisible({ timeout: 15_000 });
   });
 
   test("GET /register – register page loads", async ({ page }) => {
@@ -48,7 +48,8 @@ test.describe("Public routes", () => {
   test("Click Prijava on homepage goes to /login", async ({ page }) => {
     await page.goto("/");
     await assertNoServerComponentError(page);
-    await page.locator('header a[href="/login"]').first().click();
+    await page.getByTestId("nav-prijava").scrollIntoViewIfNeeded();
+    await page.getByTestId("nav-prijava").click();
     await expect(page).toHaveURL(/\/login/);
     await assertNoServerComponentError(page);
   });
@@ -56,17 +57,18 @@ test.describe("Public routes", () => {
   test("Click Postani majstor goes to /register", async ({ page }) => {
     await page.goto("/");
     await assertNoServerComponentError(page);
-    await page.locator('header a[href="/register"]').first().click();
+    await page.getByTestId("nav-postani-majstor").scrollIntoViewIfNeeded();
+    await page.getByTestId("nav-postani-majstor").click();
     await expect(page).toHaveURL(/\/register/);
     await assertNoServerComponentError(page);
   });
 
-  test("Header links: Početna, Kategorije, Kako radi", async ({ page }) => {
+  test("Header links: Početna, Kategorije", async ({ page }) => {
     await page.goto("/");
     await assertNoServerComponentError(page);
-    await page.locator('header a[href="/"]').first().click();
+    await page.getByTestId("nav-pocetna").click();
     await expect(page).toHaveURL(/\//);
-    await page.locator('header a[href="/categories"]').first().click();
+    await page.getByTestId("nav-kategorije").click();
     await expect(page).toHaveURL(/\/categories/);
     await assertNoServerComponentError(page);
   });

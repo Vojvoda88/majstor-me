@@ -46,11 +46,11 @@ test.describe("Admin flow", () => {
   test("Admin sidebar navigation works", async ({ page }) => {
     await page.goto("/admin");
     await assertNoServerComponentError(page);
-    await page.locator('nav a[href="/admin/requests"]').first().click();
+    await page.getByTestId("admin-nav-requests").click();
     await expect(page).toHaveURL(/\/admin\/requests/);
-    await page.locator('nav a[href="/admin/users"]').first().click();
+    await page.getByTestId("admin-nav-users").click();
     await expect(page).toHaveURL(/\/admin\/users/);
-    await page.locator('nav a[href="/admin/handymen"]').first().click();
+    await page.getByTestId("admin-nav-handymen").click();
     await expect(page).toHaveURL(/\/admin\/handymen/);
     await assertNoServerComponentError(page);
   });

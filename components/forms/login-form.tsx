@@ -53,14 +53,15 @@ export function LoginForm() {
   return (
     <Card className="w-full rounded-2xl border-[#E2E8F0] shadow-card">
       <CardContent className="pt-8">
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-          {error && <div className="form-error">{error}</div>}
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5" data-testid="login-form">
+          {error && <div className="form-error" data-testid="login-error">{error}</div>}
           <div className="space-y-3">
             <Label htmlFor="email">Email</Label>
             <Input
               id="email"
               type="email"
               placeholder="ime@primjer.me"
+              data-testid="login-email"
               {...register("email")}
             />
             {errors.email && (
@@ -72,13 +73,14 @@ export function LoginForm() {
             <Input
               id="password"
               type="password"
+              data-testid="login-password"
               {...register("password")}
             />
             {errors.password && (
               <p className="text-sm text-destructive">{errors.password.message}</p>
             )}
           </div>
-          <Button type="submit" className="mt-2 w-full" size="lg" disabled={isSubmitting}>
+          <Button type="submit" className="mt-2 w-full" size="lg" disabled={isSubmitting} data-testid="login-submit">
             {isSubmitting ? "Prijava..." : "Prijavi se"}
           </Button>
           <p className="mt-4 text-center text-sm text-[#64748B]">
