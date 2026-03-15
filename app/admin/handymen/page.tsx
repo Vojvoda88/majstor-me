@@ -5,10 +5,12 @@ import { Badge } from "@/components/ui/badge";
 
 export const dynamic = "force-dynamic";
 
+const PAGE_SIZE = 25;
+
 export default async function AdminHandymenPage({
   searchParams,
 }: {
-  searchParams: Promise<{ status?: string; city?: string; search?: string }>;
+  searchParams: Promise<{ status?: string; city?: string; search?: string; page?: string }>;
 }) {
   await requireAdminPermission("workers");
   const { prisma } = await import("@/lib/db");
@@ -16,6 +18,8 @@ export default async function AdminHandymenPage({
   const statusFilter = params.status;
   const cityFilter = params.city;
   const searchQ = params.search?.trim();
+  const page = Math.max(1, parseInt(String(params.page ?? "1"), 10) || 1);
+  const skip = (page - 1) * PAGE_SIZE;
 
   const where: Record<string, unknown> = { role: "HANDYMAN" };
   if (statusFilter && ["PENDING_REVIEW", "ACTIVE", "SUSPENDED", "BANNED"].includes(statusFilter)) {
@@ -30,23 +34,34 @@ export default async function AdminHandymenPage({
     ];
   }
 
-  const handymen = await prisma.user.findMany({
-    where,
-    include: {
-      handymanProfile: {
-        include: {
-          workerCategories: { include: { category: true } },
+  const [handymen, total] = await Promise.all([
+    prisma.user.findMany({
+      where,
+      include: {
+        handymanProfile: {
+          include: {
+            workerCategories: { include: { category: true } },
+          },
+        },
+        _count: {
+          select: { offers: true },
         },
       },
-      _count: {
-        select: { offers: true },
-      },
-    },
-    orderBy: { createdAt: "desc" },
-    take: 100,
-  });
+      orderBy: { createdAt: "desc" },
+      skip,
+      take: PAGE_SIZE,
+    }),
+    prisma.user.count({ where }),
+  ]);
 
   const withProfile = handymen.filter((h) => h.handymanProfile);
+  const totalPages = Math.ceil(total / PAGE_SIZE) || 1;
+  const baseQuery = new URLSearchParams();
+  if (statusFilter) baseQuery.set("status", statusFilter);
+  if (cityFilter) baseQuery.set("city", cityFilter);
+  if (searchQ) baseQuery.set("search", searchQ);
+  const queryStr = baseQuery.toString();
+  const pageLink = (p: number) => `/admin/handymen${queryStr ? `?${queryStr}&page=${p}` : `?page=${p}`}`;
 
   return (
     <div className="space-y-6">
@@ -71,7 +86,7 @@ export default async function AdminHandymenPage({
 
       <Card>
         <CardHeader>
-          <CardTitle>Lista majstora ({withProfile.length})</CardTitle>
+          <CardTitle>Lista majstora ({total})</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="overflow-x-auto">
@@ -137,6 +152,23 @@ export default async function AdminHandymenPage({
             </table>
           </div>
           {withProfile.length === 0 && <p className="py-8 text-center text-[#64748B]">Nema majstora</p>}
+          {totalPages > 1 && (
+            <div className="mt-4 flex items-center justify-center gap-2">
+              {page > 1 && (
+                <Link href={pageLink(page - 1)} className="rounded border px-3 py-1 text-sm hover:bg-slate-100">
+                  ← Prethodna
+                </Link>
+              )}
+              <span className="text-sm text-[#64748B]">
+                Strana {page} / {totalPages}
+              </span>
+              {page < totalPages && (
+                <Link href={pageLink(page + 1)} className="rounded border px-3 py-1 text-sm hover:bg-slate-100">
+                  Sljedeća →
+                </Link>
+              )}
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>

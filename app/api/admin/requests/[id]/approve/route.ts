@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { requireAdminApi } from "@/lib/admin/api-auth";
 import { createAuditLog } from "@/lib/admin/audit";
-import { distributeRequestToHandymen } from "@/lib/request-distribution";
+import { createDistributionJob, processDistributionJob } from "@/lib/distribution-job";
 
 export const dynamic = "force-dynamic";
 
@@ -45,27 +45,24 @@ export async function POST(
       data: { adminStatus: "DISTRIBUTED" },
     });
 
+    const jobId = await createDistributionJob(prisma, id);
+
     await createAuditLog(prisma, {
       adminId: auth.session.user.id,
       adminRole: auth.adminRole,
       actionType: "APPROVE_REQUEST",
       entityType: "request",
       entityId: id,
-      newValue: { adminStatus: "DISTRIBUTED", distribution: "async" },
+      newValue: { adminStatus: "DISTRIBUTED", distributionJobId: jobId },
     });
 
-    distributeRequestToHandymen({
-      prisma,
-      requestId: id,
-      category: request.category,
-      city: request.city,
-      title: request.title,
-      description: request.description,
-    }).catch((err) => console.error("Background distribution error:", err));
+    processDistributionJob(jobId).catch((err) =>
+      console.error("[Approve] Distribution job error:", jobId, err)
+    );
 
     return NextResponse.json({
       success: true,
-      data: { adminStatus: "DISTRIBUTED", handymenNotified: "in_progress" },
+      data: { adminStatus: "DISTRIBUTED", handymenNotified: "in_progress", jobId },
     });
   } catch (error) {
     console.error("Approve request error:", error);

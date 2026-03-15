@@ -1,5 +1,7 @@
 import { notFound } from "next/navigation";
 import { CITY_SLUGS } from "@/lib/slugs";
+
+export const revalidate = 3600;
 import { HOMEPAGE_CITIES } from "@/lib/homepage-data";
 import { getSiteUrl } from "@/lib/site-url";
 import { GradPageContent } from "./grad-page-content";

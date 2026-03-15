@@ -28,3 +28,29 @@ export async function createNotification(
     // Non-critical, silently fail
   }
 }
+
+/** Bulk insert za distribuciju – jedna DB operacija umjesto N. */
+export async function createNotificationsBulk(
+  items: { userId: string; type: NotificationType; title: string; body?: string | null; link?: string | null }[]
+) {
+  if (items.length === 0) return;
+  try {
+    await prisma.notification.createMany({
+      data: items.map(({ userId, type, title, body, link }) => ({
+        userId,
+        type,
+        title,
+        body: body ?? null,
+        link: link ?? null,
+      })),
+      skipDuplicates: true,
+    });
+  } catch {
+    // Fallback: pojedinačno (non-blocking)
+    await Promise.allSettled(
+      items.map((item) =>
+        createNotification(item.userId, item.type, item.title, { body: item.body ?? undefined, link: item.link ?? undefined })
+      )
+    );
+  }
+}

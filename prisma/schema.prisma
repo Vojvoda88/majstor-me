@@ -270,6 +270,7 @@ model HandymanProfile {
 
   @@index([workerStatus])
   @@index([verifiedStatus])
+  @@index([createdAt])
   @@map("handyman_profiles")
 }
 
@@ -493,4 +494,21 @@ model HandymanInvite {
   @@index([token])
   @@index([inviterId])
   @@map("handyman_invites")
+}
+
+model DistributionJob {
+  id          String    @id @default(cuid())
+  requestId   String    @map("request_id")
+  status      String    @default("PENDING") // PENDING, PROCESSING, COMPLETED, FAILED
+  attempts    Int       @default(0)
+  maxAttempts Int       @default(3) @map("max_attempts")
+  lastError   String?   @db.Text @map("last_error")
+  resultMeta  Json?     @map("result_meta") // { handymenNotified, durationMs }
+  createdAt   DateTime  @default(now()) @map("created_at")
+  processedAt DateTime? @map("processed_at")
+
+  @@index([status])
+  @@index([requestId])
+  @@index([createdAt])
+  @@map("distribution_jobs")
 }

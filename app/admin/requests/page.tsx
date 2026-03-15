@@ -24,10 +24,17 @@ const ADMIN_STATUS_LABELS: Record<string, string> = {
   DELETED: "Obrisan",
 };
 
+const PAGE_SIZE = 25;
+
+function paginationParams(params: Record<string, string | undefined>) {
+  const p = Math.max(1, parseInt(String(params.page ?? "1"), 10) || 1);
+  return { page: p, skip: (p - 1) * PAGE_SIZE, take: PAGE_SIZE };
+}
+
 export default async function AdminRequestsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ status?: string; adminStatus?: string; city?: string; category?: string; search?: string }>;
+  searchParams: Promise<{ status?: string; adminStatus?: string; city?: string; category?: string; search?: string; page?: string }>;
 }) {
   await requireAdminPermission("requests");
   const { prisma } = await import("@/lib/db");
@@ -37,6 +44,7 @@ export default async function AdminRequestsPage({
   const cityFilter = params.city;
   const categoryFilter = params.category;
   const searchQ = params.search?.trim();
+  const { page, skip, take } = paginationParams(params);
 
   const where: Record<string, unknown> = {};
   if (statusFilter && ["OPEN", "IN_PROGRESS", "COMPLETED", "CANCELLED"].includes(statusFilter)) {
@@ -60,16 +68,29 @@ export default async function AdminRequestsPage({
     where.deletedAt = null;
   }
 
-  const requests = await prisma.request.findMany({
-    where,
-    include: {
-      user: { select: { name: true } },
-      offers: { select: { id: true } },
-      contactUnlocks: { select: { id: true } },
-    },
-    orderBy: { createdAt: "desc" },
-    take: 100,
-  });
+  const [requests, total] = await Promise.all([
+    prisma.request.findMany({
+      where,
+      include: {
+        user: { select: { name: true } },
+        offers: { select: { id: true } },
+        contactUnlocks: { select: { id: true } },
+      },
+      orderBy: { createdAt: "desc" },
+      skip,
+      take,
+    }),
+    prisma.request.count({ where }),
+  ]);
+  const totalPages = Math.ceil(total / PAGE_SIZE) || 1;
+  const baseQuery = new URLSearchParams();
+  if (statusFilter) baseQuery.set("status", statusFilter);
+  if (adminStatusFilter) baseQuery.set("adminStatus", adminStatusFilter);
+  if (cityFilter) baseQuery.set("city", cityFilter);
+  if (categoryFilter) baseQuery.set("category", categoryFilter);
+  if (searchQ) baseQuery.set("search", searchQ);
+  const queryStr = baseQuery.toString();
+  const pageLink = (p: number) => `/admin/requests${queryStr ? `?${queryStr}&page=${p}` : `?page=${p}`}`;
 
   return (
     <div className="space-y-6">
@@ -169,6 +190,23 @@ export default async function AdminRequestsPage({
             </table>
           </div>
           {requests.length === 0 && <p className="py-8 text-center text-[#64748B]">Nema zahtjeva</p>}
+          {totalPages > 1 && (
+            <div className="mt-4 flex items-center justify-center gap-2">
+              {page > 1 && (
+                <Link href={pageLink(page - 1)} className="rounded border px-3 py-1 text-sm hover:bg-slate-100">
+                  ← Prethodna
+                </Link>
+              )}
+              <span className="text-sm text-[#64748B]">
+                Strana {page} / {totalPages}
+              </span>
+              {page < totalPages && (
+                <Link href={pageLink(page + 1)} className="rounded border px-3 py-1 text-sm hover:bg-slate-100">
+                  Sljedeća →
+                </Link>
+              )}
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>

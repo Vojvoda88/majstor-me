@@ -6,7 +6,7 @@
 
 import type { PrismaClient } from "@prisma/client";
 import { sendNewRequestEmail } from "@/lib/email";
-import { createNotification } from "@/lib/notifications";
+import { createNotificationsBulk } from "@/lib/notifications";
 import { sendPushToUser } from "@/lib/push";
 import { rankHandymenForRequest } from "@/lib/smart-distribution";
 import type { HandymanForDistribution } from "@/lib/smart-distribution";
@@ -21,7 +21,10 @@ export type DistributeRequestParams = {
   description: string;
 };
 
-export async function distributeRequestToHandymen(params: DistributeRequestParams) {
+export type DistributeResult = { handymenNotified: number; durationMs: number };
+
+export async function distributeRequestToHandymen(params: DistributeRequestParams): Promise<DistributeResult> {
+  const start = Date.now();
   const { prisma, requestId, category, city, title, description } = params;
   const descTrimmed = (description ?? "").slice(0, 100);
 
@@ -76,22 +79,35 @@ export async function distributeRequestToHandymen(params: DistributeRequestParam
     : forDist;
 
   const notifyMsg = `Novi zahtjev: ${category} – ${city}. Otvori aplikaciju i pošalji ponudu.`;
+  const bodyTrim = (title ?? descTrimmed).slice(0, 100);
+  const link = `/request/${requestId}`;
 
-  for (const h of toNotify) {
-    sendNewRequestEmail(h.id, requestId, category, city).catch(() => {});
-  }
-  for (const h of toNotify) {
-    createNotification(h.id, "NEW_JOB", notifyMsg, {
-      body: (title ?? descTrimmed).slice(0, 100),
-      link: `/request/${requestId}`,
-    }).catch(() => {});
-    sendPushToUser(prisma, h.id, {
-      title: "Novi zahtjev: " + category + " – " + city,
-      body: "Otvori aplikaciju i pošalji ponudu.",
-      link: `/request/${requestId}`,
-      tag: "new-job-" + requestId,
-    }).catch(() => {});
-  }
+  await createNotificationsBulk(
+    toNotify.map((h) => ({
+      userId: h.id,
+      type: "NEW_JOB" as const,
+      title: notifyMsg,
+      body: bodyTrim,
+      link,
+    }))
+  );
 
-  return { handymenNotified: toNotify.length };
+  await Promise.allSettled(
+    toNotify.map((h) =>
+      sendNewRequestEmail(h.id, requestId, category, city)
+    )
+  );
+  await Promise.allSettled(
+    toNotify.map((h) =>
+      sendPushToUser(prisma, h.id, {
+        title: "Novi zahtjev: " + category + " – " + city,
+        body: "Otvori aplikaciju i pošalji ponudu.",
+        link,
+        tag: "new-job-" + requestId,
+      })
+    )
+  );
+
+  const durationMs = Date.now() - start;
+  return { handymenNotified: toNotify.length, durationMs };
 }

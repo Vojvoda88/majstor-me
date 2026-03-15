@@ -1,6 +1,8 @@
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { getCategoryBySlug } from "@/lib/categories";
+
+export const revalidate = 3600;
 import { getSiteUrl } from "@/lib/site-url";
 import { CategoryPageContent } from "./category-page-content";
 

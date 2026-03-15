@@ -8,7 +8,8 @@ import { calcHandymanScore } from "@/lib/handyman-score";
 export const dynamic = "force-dynamic";
 export const revalidate = 60;
 
-const MAX_HANDYMEN_LOAD = 500;
+const MAX_HANDYMEN_LOAD = 200;
+const MAX_PAGE_SIZE = 50;
 
 export async function GET(req: NextRequest) {
   try {
@@ -18,71 +19,92 @@ export async function GET(req: NextRequest) {
     const city = searchParams.get("city");
     const sortBy = searchParams.get("sort") || searchParams.get("sortBy") || "rating";
     const page = Math.max(1, parseInt(searchParams.get("page") ?? "1", 10));
-    const limit = Math.min(50, Math.max(1, parseInt(searchParams.get("limit") ?? String(DEFAULT_PAGE_SIZE), 10)));
+    const limit = Math.min(MAX_PAGE_SIZE, Math.max(1, parseInt(searchParams.get("limit") ?? String(DEFAULT_PAGE_SIZE), 10)));
 
     const category = categoryParam ? (getInternalCategory(categoryParam) ?? categoryParam) : null;
-
-    const handymen = await prisma.user.findMany({
-      where: {
-        role: "HANDYMAN",
-        bannedAt: null,
-        suspendedAt: null,
-        handymanProfile: {
-          workerStatus: "ACTIVE",
-          ...(category && {
-            workerCategories: {
-              some: { category: { name: category } },
-            },
-          }),
-        },
+    const baseWhere = {
+      role: "HANDYMAN" as const,
+      bannedAt: null,
+      suspendedAt: null,
+      handymanProfile: {
+        workerStatus: "ACTIVE" as const,
+        ...(category && {
+          workerCategories: {
+            some: { category: { name: category } },
+          },
+        }),
       },
-      include: {
-        handymanProfile: {
-          include: { workerCategories: { include: { category: true } } },
-        },
-      },
-      take: MAX_HANDYMEN_LOAD,
-    });
-
-    let filtered = handymen.filter((u) => u.handymanProfile);
+    };
 
     const profileExt = (p: unknown) => p as { averageResponseMinutes?: number | null; completedJobsCount?: number; isPromoted?: boolean };
 
-    const withScore = filtered.map((u) => {
-      const prof = u.handymanProfile!;
-      return {
-        ...u,
-        _score: calcHandymanScore(
-          {
-            city: u.city,
-            handymanProfile: {
-              ratingAvg: prof.ratingAvg,
-              reviewCount: prof.reviewCount,
-              verifiedStatus: prof.verifiedStatus,
-              averageResponseMinutes: profileExt(prof).averageResponseMinutes,
-              completedJobsCount: profileExt(prof).completedJobsCount,
-            },
-            isPromoted: profileExt(prof).isPromoted,
-          },
-          city
-        ),
-        _distance: city ? getDistanceBetweenCities(u.city, city) : null,
-      };
-    });
+    const useDbPagination = !city && (sortBy === "rating" || sortBy === "reviews");
+    let items: Awaited<ReturnType<typeof prisma.user.findMany>>;
+    let total: number;
 
-    if (city || sortBy === "rating" || sortBy === "reviews") {
+    if (useDbPagination) {
+      const orderByKey = sortBy === "reviews" ? "reviewCount" : "ratingAvg";
+      const [users, count] = await Promise.all([
+        prisma.user.findMany({
+          where: baseWhere,
+          include: {
+            handymanProfile: {
+              include: { workerCategories: { include: { category: true } } },
+            },
+          },
+          orderBy: { handymanProfile: { [orderByKey]: "desc" } },
+          skip: (page - 1) * limit,
+          take: limit,
+        }),
+        prisma.user.count({
+          where: baseWhere,
+        }),
+      ]);
+      items = users.filter((u) => u.handymanProfile);
+      total = count;
+    } else {
+      const handymen = await prisma.user.findMany({
+        where: baseWhere,
+        include: {
+          handymanProfile: {
+            include: { workerCategories: { include: { category: true } } },
+          },
+        },
+        take: MAX_HANDYMEN_LOAD,
+      });
+
+      const filtered = handymen.filter((u) => u.handymanProfile);
+      const withScore = filtered.map((u) => {
+        const prof = u.handymanProfile!;
+        return {
+          ...u,
+          _score: calcHandymanScore(
+            {
+              city: u.city,
+              handymanProfile: {
+                ratingAvg: prof.ratingAvg,
+                reviewCount: prof.reviewCount,
+                verifiedStatus: prof.verifiedStatus,
+                averageResponseMinutes: profileExt(prof).averageResponseMinutes,
+                completedJobsCount: profileExt(prof).completedJobsCount,
+              },
+              isPromoted: profileExt(prof).isPromoted,
+            },
+            city
+          ),
+        };
+      });
       withScore.sort((a, b) => b._score - a._score);
+      total = withScore.length;
+      const offset = (page - 1) * limit;
+      items = withScore.slice(offset, offset + limit) as typeof handymen;
     }
 
-    filtered = withScore;
-
-    const total = withScore.length;
     const totalPages = Math.ceil(total / limit) || 1;
-    const offset = (page - 1) * limit;
-    const items = withScore.slice(offset, offset + limit);
 
-    const mapItem = (u: (typeof withScore)[0]) => {
-      const prof = u.handymanProfile!;
+    type UserWithProfile = { id: string; name: string | null; city: string | null; handymanProfile: NonNullable<Awaited<ReturnType<typeof prisma.user.findMany>>[number]["handymanProfile"]> & { workerCategories?: { category: { name: string } }[] } };
+    const mapItem = (u: UserWithProfile) => {
+      const prof = u.handymanProfile;
       const ext = profileExt(prof);
       const city = u.city;
       const coords = city ? getCityCoords(city) : null;

@@ -1,13 +1,20 @@
+import { unstable_cache } from "next/cache";
 import { requireAdminPermission } from "@/lib/admin/auth";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 
-export default async function AdminDashboardPage() {
-  await requireAdminPermission("dashboard");
-  const { prisma } = await import("@/lib/db");
+const DASHBOARD_CACHE_SECONDS = 20;
 
+async function withTiming<T>(label: string, fn: () => Promise<T>): Promise<{ result: T; label: string; ms: number }> {
+  const start = Date.now();
+  const result = await fn();
+  return { result, label, ms: Date.now() - start };
+}
+
+async function loadDashboardData() {
+  const { prisma } = await import("@/lib/db");
   const now = new Date();
   const todayStart = new Date(now);
   todayStart.setHours(0, 0, 0, 0);
@@ -16,7 +23,119 @@ export default async function AdminDashboardPage() {
   const monthStart = new Date(now);
   monthStart.setDate(monthStart.getDate() - 30);
 
-  const [
+  const dayRanges = ([6, 5, 4, 3, 2, 1, 0] as const).map((d) => {
+    const start = new Date(now);
+    start.setDate(start.getDate() - d);
+    start.setHours(0, 0, 0, 0);
+    const end = new Date(start);
+    end.setDate(end.getDate() + 1);
+    return { start, end, label: start.toLocaleDateString("sr", { weekday: "short" }) };
+  });
+
+  const runTimed = process.env.NODE_ENV === "development" || process.env.ADMIN_DASHBOARD_TIMING === "1";
+
+  const all = await Promise.all([
+    runTimed ? withTiming("requestsToday", () => prisma.request.count({ where: { createdAt: { gte: todayStart } } })) : prisma.request.count({ where: { createdAt: { gte: todayStart } } }).then((r) => ({ result: r, label: "", ms: 0 })),
+    runTimed ? withTiming("requestsWeek", () => prisma.request.count({ where: { createdAt: { gte: weekStart } } })) : prisma.request.count({ where: { createdAt: { gte: weekStart } } }).then((r) => ({ result: r, label: "", ms: 0 })),
+    runTimed ? withTiming("handymenToday", () => prisma.handymanProfile.count({ where: { createdAt: { gte: todayStart } } })) : prisma.handymanProfile.count({ where: { createdAt: { gte: todayStart } } }).then((r) => ({ result: r, label: "", ms: 0 })),
+    runTimed ? withTiming("handymenActive", () => prisma.handymanProfile.count()) : prisma.handymanProfile.count().then((r) => ({ result: r, label: "", ms: 0 })),
+    runTimed ? withTiming("offersCount", () => prisma.offer.count()) : prisma.offer.count().then((r) => ({ result: r, label: "", ms: 0 })),
+    runTimed ? withTiming("contactUnlocksCount", () => prisma.requestContactUnlock.count()) : prisma.requestContactUnlock.count().then((r) => ({ result: r, label: "", ms: 0 })),
+    runTimed ? withTiming("reportsPending", () => prisma.report.count({ where: { status: "PENDING" } })) : prisma.report.count({ where: { status: "PENDING" } }).then((r) => ({ result: r, label: "", ms: 0 })),
+    runTimed ? withTiming("creditsToday", () => prisma.creditTransaction.count({ where: { createdAt: { gte: todayStart }, amount: { lt: 0 }, type: "CONTACT_UNLOCK" } })) : prisma.creditTransaction.count({ where: { createdAt: { gte: todayStart }, amount: { lt: 0 }, type: "CONTACT_UNLOCK" } }).then((r) => ({ result: r, label: "", ms: 0 })),
+    runTimed ? withTiming("creditsWeek", () => prisma.creditTransaction.count({ where: { createdAt: { gte: weekStart }, amount: { lt: 0 } } })) : prisma.creditTransaction.count({ where: { createdAt: { gte: weekStart }, amount: { lt: 0 } } }).then((r) => ({ result: r, label: "", ms: 0 })),
+    runTimed ? withTiming("creditsMonth", () => prisma.creditTransaction.count({ where: { createdAt: { gte: monthStart }, amount: { lt: 0 } } })) : prisma.creditTransaction.count({ where: { createdAt: { gte: monthStart }, amount: { lt: 0 } } }).then((r) => ({ result: r, label: "", ms: 0 })),
+    runTimed ? withTiming("recentRequests", () => prisma.request.findMany({ take: 5, orderBy: { createdAt: "desc" }, include: { user: { select: { name: true } } } })) : prisma.request.findMany({ take: 5, orderBy: { createdAt: "desc" }, include: { user: { select: { name: true } } } }).then((r) => ({ result: r, label: "", ms: 0 })),
+    runTimed ? withTiming("recentHandymen", () => prisma.user.findMany({ where: { role: "HANDYMAN" }, take: 5, orderBy: { createdAt: "desc" }, select: { id: true, name: true, createdAt: true } })) : prisma.user.findMany({ where: { role: "HANDYMAN" }, take: 5, orderBy: { createdAt: "desc" }, select: { id: true, name: true, createdAt: true } }).then((r) => ({ result: r, label: "", ms: 0 })),
+    runTimed ? withTiming("recentReports", () => prisma.report.findMany({ take: 5, orderBy: { createdAt: "desc" }, include: { reporter: { select: { name: true } }, reportedUser: { select: { name: true } } } })) : prisma.report.findMany({ take: 5, orderBy: { createdAt: "desc" }, include: { reporter: { select: { name: true } }, reportedUser: { select: { name: true } } } }).then((r) => ({ result: r, label: "", ms: 0 })),
+    runTimed ? withTiming("recentUnlocks", () => prisma.requestContactUnlock.findMany({ take: 5, orderBy: { createdAt: "desc" }, include: { handyman: { select: { name: true } }, request: { select: { category: true, city: true } } } })) : prisma.requestContactUnlock.findMany({ take: 5, orderBy: { createdAt: "desc" }, include: { handyman: { select: { name: true } }, request: { select: { category: true, city: true } } } }).then((r) => ({ result: r, label: "", ms: 0 })),
+    runTimed ? withTiming("recentAudits", () => prisma.auditLog.findMany({ take: 5, orderBy: { createdAt: "desc" } })) : prisma.auditLog.findMany({ take: 5, orderBy: { createdAt: "desc" } }).then((r) => ({ result: r, label: "", ms: 0 })),
+    ...dayRanges.map(({ start, end, label }, i) =>
+      runTimed
+        ? withTiming(`requestsDay${i}`, () => prisma.request.count({ where: { createdAt: { gte: start, lt: end } } })).then((t) => ({ ...t, result: { label, count: t.result } }))
+        : prisma.request.count({ where: { createdAt: { gte: start, lt: end } } }).then((count) => ({ result: { label, count }, label: "", ms: 0 }))
+    ),
+    ...dayRanges.map(({ start, end, label }, i) =>
+      runTimed
+        ? withTiming(`offersDay${i}`, () => prisma.offer.count({ where: { createdAt: { gte: start, lt: end } } })).then((t) => ({ ...t, result: { label, count: t.result } }))
+        : prisma.offer.count({ where: { createdAt: { gte: start, lt: end } } }).then((count) => ({ result: { label, count }, label: "", ms: 0 }))
+    ),
+    runTimed ? withTiming("topCategories", () => prisma.request.groupBy({ by: ["category"], _count: { category: true }, orderBy: { _count: { category: "desc" } }, take: 5 })) : prisma.request.groupBy({ by: ["category"], _count: { category: true }, orderBy: { _count: { category: "desc" } }, take: 5 }).then((r) => ({ result: r, label: "", ms: 0 })),
+    runTimed ? withTiming("topCities", () => prisma.request.groupBy({ by: ["city"], _count: { city: true }, orderBy: { _count: { city: "desc" } }, take: 5 })) : prisma.request.groupBy({ by: ["city"], _count: { city: true }, orderBy: { _count: { city: "desc" } }, take: 5 }).then((r) => ({ result: r, label: "", ms: 0 })),
+  ]);
+
+  const getResult = (i: number): unknown => ("result" in all[i] ? (all[i] as { result: unknown }).result : all[i]);
+  const requestsToday = getResult(0) as number;
+  const requestsWeek = getResult(1) as number;
+  const handymenToday = getResult(2) as number;
+  const handymenActive = getResult(3) as number;
+  const offersCount = getResult(4) as number;
+  const contactUnlocksCount = getResult(5) as number;
+  const reportsPending = getResult(6) as number;
+  const creditsToday = getResult(7) as number;
+  const creditsWeek = getResult(8) as number;
+  const creditsMonth = getResult(9) as number;
+  const recentRequests = getResult(10) as Awaited<ReturnType<typeof prisma.request.findMany>>;
+  const recentHandymen = getResult(11) as Awaited<ReturnType<typeof prisma.user.findMany>>;
+  const recentReports = getResult(12) as Array<{ id: string; type: string; reporter: { name: string }; reportedUser: { name: string } }>;
+  const recentUnlocks = getResult(13) as Array<{ id: string; createdAt: Date; handyman: { name: string }; request: { category: string; city: string } }>;
+  const requestsByDay = dayRanges.map((_, i) => getResult(15 + i) as { label: string; count: number });
+  const offersByDay = dayRanges.map((_, i) => getResult(22 + i) as { label: string; count: number });
+  const topCategories = getResult(29) as Awaited<ReturnType<typeof prisma.request.groupBy>>;
+  const topCities = getResult(30) as Awaited<ReturnType<typeof prisma.request.groupBy>>;
+
+  if (runTimed && "ms" in all[0]) {
+    const timings = all.slice(0, 31).filter((x) => typeof (x as { ms?: number }).ms === "number") as { result: unknown; label: string; ms: number }[];
+    const slowest = timings.length ? timings.reduce((a, b) => (a.ms >= b.ms ? a : b)) : null;
+    console.info("[AdminDashboard] Query batch total (wall) ms:", Date.now() - (typeof (global as unknown as { __adminDashboardStart?: number }).__adminDashboardStart === "number" ? (global as unknown as { __adminDashboardStart: number }).__adminDashboardStart : 0));
+    if (slowest) console.info("[AdminDashboard] Slowest query:", slowest.label, slowest.ms, "ms");
+  }
+
+  return {
+    requestsToday,
+    requestsWeek,
+    handymenToday,
+    handymenActive,
+    offersCount,
+    contactUnlocksCount,
+    reportsPending,
+    creditsToday,
+    creditsWeek,
+    creditsMonth,
+    recentRequests,
+    recentHandymen,
+    recentReports,
+    recentUnlocks,
+    recentAudits: getResult(14) as Awaited<ReturnType<typeof prisma.auditLog.findMany>>,
+    requestsByDay,
+    offersByDay,
+    topCategories,
+    topCities,
+  };
+}
+
+export default async function AdminDashboardPage() {
+  const t0 = Date.now();
+  await requireAdminPermission("dashboard");
+  const tAuth = Date.now() - t0;
+  if (process.env.NODE_ENV === "development" || process.env.ADMIN_DASHBOARD_TIMING === "1") {
+    (global as unknown as { __adminDashboardStart: number }).__adminDashboardStart = Date.now();
+    console.info("[AdminDashboard] Auth/session check ms:", tAuth);
+  }
+
+  const getCached = unstable_cache(
+    async () => loadDashboardData(),
+    ["admin-dashboard-stats"],
+    { revalidate: DASHBOARD_CACHE_SECONDS }
+  );
+  const data = await getCached();
+
+  const totalPage = Date.now() - t0;
+  if (process.env.NODE_ENV === "development" || process.env.ADMIN_DASHBOARD_TIMING === "1") {
+    console.info("[AdminDashboard] Total page load ms:", totalPage);
+  }
+
+  const {
     requestsToday,
     requestsWeek,
     handymenToday,
@@ -32,97 +151,11 @@ export default async function AdminDashboardPage() {
     recentReports,
     recentUnlocks,
     recentAudits,
-  ] = await Promise.all([
-    prisma.request.count({ where: { createdAt: { gte: todayStart } } }),
-    prisma.request.count({ where: { createdAt: { gte: weekStart } } }),
-    prisma.handymanProfile.count({ where: { createdAt: { gte: todayStart } } }),
-    prisma.handymanProfile.count(),
-    prisma.offer.count(),
-    prisma.requestContactUnlock.count(),
-    prisma.report.count({ where: { status: "PENDING" } }),
-    prisma.creditTransaction.count({
-      where: { createdAt: { gte: todayStart }, amount: { lt: 0 }, type: "CONTACT_UNLOCK" },
-    }),
-    prisma.creditTransaction.count({
-      where: { createdAt: { gte: weekStart }, amount: { lt: 0 } },
-    }),
-    prisma.creditTransaction.count({
-      where: { createdAt: { gte: monthStart }, amount: { lt: 0 } },
-    }),
-    prisma.request.findMany({
-      take: 5,
-      orderBy: { createdAt: "desc" },
-      include: { user: { select: { name: true } } },
-    }),
-    prisma.user.findMany({
-      where: { role: "HANDYMAN" },
-      take: 5,
-      orderBy: { createdAt: "desc" },
-      select: { id: true, name: true, createdAt: true },
-    }),
-    prisma.report.findMany({
-      take: 5,
-      orderBy: { createdAt: "desc" },
-      include: {
-        reporter: { select: { name: true } },
-        reportedUser: { select: { name: true } },
-      },
-    }),
-    prisma.requestContactUnlock.findMany({
-      take: 5,
-      orderBy: { createdAt: "desc" },
-      include: {
-        handyman: { select: { name: true } },
-        request: { select: { category: true, city: true } },
-      },
-    }),
-    prisma.auditLog.findMany({
-      take: 5,
-      orderBy: { createdAt: "desc" },
-    }),
-  ]);
-
-  const requestsByDay = await Promise.all(
-    [6, 5, 4, 3, 2, 1, 0].map(async (d) => {
-      const start = new Date(now);
-      start.setDate(start.getDate() - d);
-      start.setHours(0, 0, 0, 0);
-      const end = new Date(start);
-      end.setDate(end.getDate() + 1);
-      const count = await prisma.request.count({
-        where: { createdAt: { gte: start, lt: end } },
-      });
-      return { label: start.toLocaleDateString("sr", { weekday: "short" }), count };
-    })
-  );
-
-  const offersByDay = await Promise.all(
-    [6, 5, 4, 3, 2, 1, 0].map(async (d) => {
-      const start = new Date(now);
-      start.setDate(start.getDate() - d);
-      start.setHours(0, 0, 0, 0);
-      const end = new Date(start);
-      end.setDate(end.getDate() + 1);
-      const count = await prisma.offer.count({
-        where: { createdAt: { gte: start, lt: end } },
-      });
-      return { label: start.toLocaleDateString("sr", { weekday: "short" }), count };
-    })
-  );
-
-  const topCategories = await prisma.request.groupBy({
-    by: ["category"],
-    _count: { category: true },
-    orderBy: { _count: { category: "desc" } },
-    take: 5,
-  });
-
-  const topCities = await prisma.request.groupBy({
-    by: ["city"],
-    _count: { city: true },
-    orderBy: { _count: { city: "desc" } },
-    take: 5,
-  });
+    requestsByDay,
+    offersByDay,
+    topCategories,
+    topCities,
+  } = data;
 
   const maxBar = Math.max(1, ...requestsByDay.map((d) => d.count));
   const maxOffers = Math.max(1, ...offersByDay.map((d) => d.count));
@@ -222,7 +255,7 @@ export default async function AdminDashboardPage() {
               {topCategories.map((c) => (
                 <li key={c.category} className="flex justify-between text-sm">
                   <span>{c.category}</span>
-                  <span className="font-medium">{c._count.category}</span>
+                  <span className="font-medium">{(c as { _count: { category: number } })._count.category}</span>
                 </li>
               ))}
               {topCategories.length === 0 && <p className="text-sm text-[#64748B]">Nema podataka</p>}
@@ -239,7 +272,7 @@ export default async function AdminDashboardPage() {
               {topCities.map((c) => (
                 <li key={c.city} className="flex justify-between text-sm">
                   <span>{c.city}</span>
-                  <span className="font-medium">{c._count.city}</span>
+                  <span className="font-medium">{(c as { _count: { city: number } })._count.city}</span>
                 </li>
               ))}
               {topCities.length === 0 && <p className="text-sm text-[#64748B]">Nema podataka</p>}

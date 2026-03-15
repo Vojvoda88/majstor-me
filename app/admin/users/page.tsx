@@ -5,18 +5,32 @@ import { Badge } from "@/components/ui/badge";
 
 export const dynamic = "force-dynamic";
 
-export default async function AdminUsersPage() {
+const PAGE_SIZE = 25;
+
+export default async function AdminUsersPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string }>;
+}) {
   await requireAdminPermission("users");
   const { prisma } = await import("@/lib/db");
+  const params = await searchParams;
+  const page = Math.max(1, parseInt(String(params.page ?? "1"), 10) || 1);
+  const skip = (page - 1) * PAGE_SIZE;
 
-  const users = await prisma.user.findMany({
-    where: { role: "USER" },
-    include: {
-      _count: { select: { requests: true } },
-    },
-    orderBy: { createdAt: "desc" },
-    take: 100,
-  });
+  const [users, total] = await Promise.all([
+    prisma.user.findMany({
+      where: { role: "USER" },
+      include: {
+        _count: { select: { requests: true } },
+      },
+      orderBy: { createdAt: "desc" },
+      skip,
+      take: PAGE_SIZE,
+    }),
+    prisma.user.count({ where: { role: "USER" } }),
+  ]);
+  const totalPages = Math.ceil(total / PAGE_SIZE) || 1;
 
   return (
     <div className="space-y-6">
@@ -27,7 +41,7 @@ export default async function AdminUsersPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Lista korisnika ({users.length})</CardTitle>
+          <CardTitle>Lista korisnika ({total})</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="overflow-x-auto">
@@ -77,6 +91,23 @@ export default async function AdminUsersPage() {
             </table>
           </div>
           {users.length === 0 && <p className="py-8 text-center text-[#64748B]">Nema korisnika</p>}
+          {totalPages > 1 && (
+            <div className="mt-4 flex items-center justify-center gap-2">
+              {page > 1 && (
+                <Link href={`/admin/users?page=${page - 1}`} className="rounded border px-3 py-1 text-sm hover:bg-slate-100">
+                  ← Prethodna
+                </Link>
+              )}
+              <span className="text-sm text-[#64748B]">
+                Strana {page} / {totalPages}
+              </span>
+              {page < totalPages && (
+                <Link href={`/admin/users?page=${page + 1}`} className="rounded border px-3 py-1 text-sm hover:bg-slate-100">
+                  Sljedeća →
+                </Link>
+              )}
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>
