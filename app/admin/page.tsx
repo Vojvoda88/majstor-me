@@ -155,7 +155,9 @@ export default async function AdminDashboardPage() {
     topCities,
   } = data;
 
-  const safeArray = <T>(x: T[] | undefined | null): T[] => (Array.isArray(x) ? x : []);
+  function safeArray<T>(x: T[] | undefined | null): T[] {
+    return Array.isArray(x) ? x : [];
+  }
   const recentRequestsSafe = safeArray(recentRequests);
   const recentHandymenSafe = safeArray(recentHandymen);
   const recentReportsSafe = safeArray(recentReports);
