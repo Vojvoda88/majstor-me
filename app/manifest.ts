@@ -1,13 +1,11 @@
 import type { MetadataRoute } from "next";
-import { getSiteUrl } from "@/lib/site-url";
 
 export default function manifest(): MetadataRoute.Manifest {
-  const base = getSiteUrl();
   return {
     name: "Majstor.me - Pronađite majstora",
     short_name: "Majstor.me",
     description: "Marketplace za majstore u Crnoj Gori. Brzo pošaljite zahtjev, majstori vam šalju ponude.",
-    start_url: base + "/",
+    start_url: "/",
     display: "standalone",
     background_color: "#ffffff",
     theme_color: "#2563EB",

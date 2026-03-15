@@ -10,8 +10,7 @@ import { hasPermission, type Permission } from "./permissions";
 export async function requireAdmin() {
   const session = await auth();
   if (!session?.user?.id) redirect("/login?callbackUrl=/admin");
-
-  if (session.user.role !== "ADMIN") redirect("/");
+  if (session.user?.role !== "ADMIN") redirect("/");
 
   const { prisma } = await import("@/lib/db");
   const adminProfile = await prisma.adminProfile.findUnique({

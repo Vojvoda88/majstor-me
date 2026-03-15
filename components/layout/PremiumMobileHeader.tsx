@@ -19,12 +19,12 @@ export function PremiumMobileHeader() {
         </Link>
 
         <nav className="hidden items-center gap-10 md:flex">
-          <a href="/categories" className="text-[15px] font-medium text-slate-600 transition hover:text-[#1d4ed8]">
+          <Link href="/categories" className="text-[15px] font-medium text-slate-600 transition hover:text-[#1d4ed8]">
             Kategorije
-          </a>
-          <a href="/#kako-radi" className="text-[15px] font-medium text-slate-600 transition hover:text-[#1d4ed8]">
+          </Link>
+          <Link href="/#kako-radi" className="text-[15px] font-medium text-slate-600 transition hover:text-[#1d4ed8]">
             Kako radi
-          </a>
+          </Link>
           {session?.user?.role === "ADMIN" && (
             <Link
               href="/admin"
@@ -75,12 +75,12 @@ export function PremiumMobileHeader() {
       {menuOpen && (
         <div className="border-t border-slate-100 bg-white px-6 py-5 md:hidden">
           <nav className="flex flex-col gap-1">
-            <a href="/categories" className="py-3 text-[16px] font-medium text-slate-700" onClick={() => setMenuOpen(false)}>
+            <Link href="/categories" className="py-3 text-[16px] font-medium text-slate-700" onClick={() => setMenuOpen(false)}>
               Kategorije
-            </a>
-            <a href="/#kako-radi" className="py-3 text-[16px] font-medium text-slate-700" onClick={() => setMenuOpen(false)}>
+            </Link>
+            <Link href="/#kako-radi" className="py-3 text-[16px] font-medium text-slate-700" onClick={() => setMenuOpen(false)}>
               Kako radi
-            </a>
+            </Link>
             {session?.user?.role === "ADMIN" && (
               <Link
                 href="/admin"
@@ -91,7 +91,26 @@ export function PremiumMobileHeader() {
                 Admin panel
               </Link>
             )}
-            {!session && (
+            {session ? (
+              <div className="mt-4 flex flex-col gap-2 border-t border-slate-100 pt-4">
+                <Link
+                  href={session.user?.role === "HANDYMAN" ? "/dashboard/handyman" : session.user?.role === "ADMIN" ? "/admin" : "/dashboard/user"}
+                  className="py-3 text-center text-[16px] font-medium text-slate-700"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  Moj dashboard
+                </Link>
+                <form action="/api/auth/signout" method="POST" className="w-full">
+                  <button
+                    type="submit"
+                    className="w-full py-3 text-center text-[16px] font-medium text-red-600 hover:underline"
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    Odjavi se
+                  </button>
+                </form>
+              </div>
+            ) : (
               <div className="mt-4 flex flex-col gap-2 border-t border-slate-100 pt-4">
                 <Link href="/login" className="py-3 text-center text-[16px] font-medium text-slate-700" onClick={() => setMenuOpen(false)}>
                   Prijava

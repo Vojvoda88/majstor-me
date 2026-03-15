@@ -114,9 +114,12 @@ async function loadDashboardData() {
 export default async function AdminDashboardPage() {
   try {
     await requireAdminPermission("dashboard");
-  } catch (authErr) {
-    console.error("[AdminDashboard] Auth error:", authErr);
-    console.error("[AdminDashboard] Auth stack:", authErr instanceof Error ? authErr.stack : "no stack");
+  } catch (authErr: unknown) {
+    const err = authErr as { digest?: string };
+    if (typeof err?.digest !== "string" || !err.digest.startsWith("NEXT_REDIRECT")) {
+      console.error("[AdminDashboard] Auth error:", authErr);
+      console.error("[AdminDashboard] Auth stack:", authErr instanceof Error ? authErr.stack : "no stack");
+    }
     throw authErr;
   }
 
@@ -152,8 +155,19 @@ export default async function AdminDashboardPage() {
     topCities,
   } = data;
 
-  const maxBar = Math.max(1, ...requestsByDay.map((d) => d.count));
-  const maxOffers = Math.max(1, ...offersByDay.map((d) => d.count));
+  const safeArray = <T>(x: T[] | undefined | null): T[] => (Array.isArray(x) ? x : []);
+  const recentRequestsSafe = safeArray(recentRequests);
+  const recentHandymenSafe = safeArray(recentHandymen);
+  const recentReportsSafe = safeArray(recentReports);
+  const recentUnlocksSafe = safeArray(recentUnlocks);
+  const recentAuditsSafe = safeArray(recentAudits);
+  const requestsByDaySafe = safeArray(requestsByDay);
+  const offersByDaySafe = safeArray(offersByDay);
+  const topCategoriesSafe = safeArray(topCategories);
+  const topCitiesSafe = safeArray(topCities);
+
+  const maxBar = Math.max(1, ...requestsByDaySafe.map((d) => d.count));
+  const maxOffers = Math.max(1, ...offersByDaySafe.map((d) => d.count));
 
   const statCards = [
     { label: "Novi zahtjevi danas", value: requestsToday, href: "/admin/requests" },
@@ -205,7 +219,7 @@ export default async function AdminDashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="flex h-24 items-end justify-between gap-2">
-              {requestsByDay.map((d) => (
+              {requestsByDaySafe.map((d) => (
                 <div key={d.label} className="flex flex-1 flex-col items-center gap-1">
                   <div
                     className="w-full max-w-12 rounded-t bg-[#2563EB]"
@@ -225,7 +239,7 @@ export default async function AdminDashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="flex h-24 items-end justify-between gap-2">
-              {offersByDay.map((d) => (
+              {offersByDaySafe.map((d) => (
                 <div key={d.label} className="flex flex-1 flex-col items-center gap-1">
                   <div
                     className="w-full max-w-12 rounded-t bg-[#16A34A]"
@@ -247,13 +261,13 @@ export default async function AdminDashboardPage() {
           </CardHeader>
           <CardContent>
             <ul className="space-y-2">
-              {topCategories.map((c) => (
+              {topCategoriesSafe.map((c) => (
                 <li key={c.category} className="flex justify-between text-sm">
                   <span>{c.category}</span>
                   <span className="font-medium">{(c as { _count: { category: number } })._count.category}</span>
                 </li>
               ))}
-              {topCategories.length === 0 && <p className="text-sm text-[#64748B]">Nema podataka</p>}
+              {topCategoriesSafe.length === 0 && <p className="text-sm text-[#64748B]">Nema podataka</p>}
             </ul>
           </CardContent>
         </Card>
@@ -264,13 +278,13 @@ export default async function AdminDashboardPage() {
           </CardHeader>
           <CardContent>
             <ul className="space-y-2">
-              {topCities.map((c) => (
+              {topCitiesSafe.map((c) => (
                 <li key={c.city} className="flex justify-between text-sm">
                   <span>{c.city}</span>
                   <span className="font-medium">{(c as { _count: { city: number } })._count.city}</span>
                 </li>
               ))}
-              {topCities.length === 0 && <p className="text-sm text-[#64748B]">Nema podataka</p>}
+              {topCitiesSafe.length === 0 && <p className="text-sm text-[#64748B]">Nema podataka</p>}
             </ul>
           </CardContent>
         </Card>
@@ -286,7 +300,7 @@ export default async function AdminDashboardPage() {
             <div>
               <h4 className="mb-2 text-sm font-medium">Novi zahtjevi</h4>
               <ul className="space-y-1 text-sm">
-                {recentRequests.map((r) => (
+                {recentRequestsSafe.map((r) => (
                   <li key={r.id}>
                     <Link href={`/admin/requests/${r.id}`} className="hover:underline">
                       {r.category} – {r.city}
@@ -294,13 +308,13 @@ export default async function AdminDashboardPage() {
                     <span className="ml-2 text-[#94A3B8]">{new Date(r.createdAt).toLocaleDateString("sr")}</span>
                   </li>
                 ))}
-                {recentRequests.length === 0 && <p className="text-[#94A3B8]">Nema</p>}
+                {recentRequestsSafe.length === 0 && <p className="text-[#94A3B8]">Nema</p>}
               </ul>
             </div>
             <div>
               <h4 className="mb-2 text-sm font-medium">Novi majstori</h4>
               <ul className="space-y-1 text-sm">
-                {recentHandymen.map((u) => (
+                {recentHandymenSafe.map((u) => (
                   <li key={u.id}>
                     <Link href={`/admin/handymen/${u.id}`} className="hover:underline">
                       {u.name}
@@ -308,13 +322,13 @@ export default async function AdminDashboardPage() {
                     <span className="ml-2 text-[#94A3B8]">{new Date(u.createdAt).toLocaleDateString("sr")}</span>
                   </li>
                 ))}
-                {recentHandymen.length === 0 && <p className="text-[#94A3B8]">Nema</p>}
+                {recentHandymenSafe.length === 0 && <p className="text-[#94A3B8]">Nema</p>}
               </ul>
             </div>
             <div>
               <h4 className="mb-2 text-sm font-medium">Nove prijave</h4>
               <ul className="space-y-1 text-sm">
-                {recentReports.map((r) => (
+                {recentReportsSafe.map((r) => (
                   <li key={r.id}>
                     <Link href="/admin/moderation" className="hover:underline">
                       {r.reporter.name} → {r.reportedUser.name}
@@ -322,32 +336,32 @@ export default async function AdminDashboardPage() {
                     <span className="ml-2 text-[#94A3B8]">{r.type}</span>
                   </li>
                 ))}
-                {recentReports.length === 0 && <p className="text-[#94A3B8]">Nema</p>}
+                {recentReportsSafe.length === 0 && <p className="text-[#94A3B8]">Nema</p>}
               </ul>
             </div>
           </div>
           <div className="mt-6 border-t pt-4">
             <h4 className="mb-2 text-sm font-medium">Otključanja kontakta</h4>
             <ul className="space-y-1 text-sm">
-              {recentUnlocks.map((u) => (
+              {recentUnlocksSafe.map((u) => (
                 <li key={u.id}>
                   {u.handyman.name} – {u.request.category} ({u.request.city})
                   <span className="ml-2 text-[#94A3B8]">{new Date(u.createdAt).toLocaleDateString("sr")}</span>
                 </li>
               ))}
-              {recentUnlocks.length === 0 && <p className="text-[#94A3B8]">Nema</p>}
+              {recentUnlocksSafe.length === 0 && <p className="text-[#94A3B8]">Nema</p>}
             </ul>
           </div>
           <div className="mt-6 border-t pt-4">
             <h4 className="mb-2 text-sm font-medium">Admin akcije</h4>
             <ul className="space-y-1 text-sm">
-              {recentAudits.map((a) => (
+              {recentAuditsSafe.map((a) => (
                 <li key={a.id}>
                   <span className="font-medium">{a.actionType}</span> {a.entityType} {a.entityId ?? ""}
                   <span className="ml-2 text-[#94A3B8]">{new Date(a.createdAt).toLocaleString("sr")}</span>
                 </li>
               ))}
-              {recentAudits.length === 0 && <p className="text-[#94A3B8]">Nema</p>}
+              {recentAuditsSafe.length === 0 && <p className="text-[#94A3B8]">Nema</p>}
             </ul>
           </div>
         </CardContent>
