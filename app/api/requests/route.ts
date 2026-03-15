@@ -137,10 +137,10 @@ export async function POST(request: Request) {
       const reqSpam = await prisma.request.create({
         data: {
           userId: isGuest ? null : session!.user!.id,
-          requesterName: isGuest ? requesterName : undefined,
-          requesterPhone: requesterPhone,
-          requesterEmail: isGuest ? (requesterEmail?.trim() || undefined) : undefined,
-          title: title ?? undefined,
+          requesterName: isGuest ? parsed.data.requesterName : undefined,
+          requesterPhone: parsed.data.requesterPhone,
+          requesterEmail: isGuest ? (parsed.data.requesterEmail?.trim() || undefined) : undefined,
+          title: parsed.data.title ?? undefined,
           category: parsed.data.category,
           subcategory: parsed.data.subcategory,
           description: descTrimmed,

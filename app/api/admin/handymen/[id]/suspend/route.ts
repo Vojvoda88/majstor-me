@@ -18,18 +18,18 @@ export async function POST(_req: Request, { params }: { params: Promise<{ id: st
     });
     if (!user) return NextResponse.json({ success: false, error: "Nije pronađen" }, { status: 404 });
 
-    await prisma.$transaction([
-      prisma.user.update({
+    await prisma.$transaction(async (tx) => {
+      await tx.user.update({
         where: { id },
         data: { suspendedAt: new Date() },
-      }),
-      user.handymanProfile
-        ? prisma.handymanProfile.update({
-            where: { userId: id },
-            data: { workerStatus: "SUSPENDED" },
-          })
-        : Promise.resolve(),
-    ]);
+      });
+      if (user.handymanProfile) {
+        await tx.handymanProfile.update({
+          where: { userId: id },
+          data: { workerStatus: "SUSPENDED" },
+        });
+      }
+    });
 
     await createAuditLog(prisma, {
       adminId: auth.session.user.id,

@@ -17,18 +17,18 @@ export async function POST(_req: Request, { params }: { params: Promise<{ id: st
       include: { handymanProfile: true },
     });
 
-    await prisma.$transaction([
-      prisma.user.update({
+    await prisma.$transaction(async (tx) => {
+      await tx.user.update({
         where: { id },
         data: { suspendedAt: null },
-      }),
-      user?.handymanProfile
-        ? prisma.handymanProfile.update({
-            where: { userId: id },
-            data: { workerStatus: "ACTIVE" },
-          })
-        : Promise.resolve(),
-    ]);
+      });
+      if (user?.handymanProfile) {
+        await tx.handymanProfile.update({
+          where: { userId: id },
+          data: { workerStatus: "ACTIVE" },
+        });
+      }
+    });
 
     await createAuditLog(prisma, {
       adminId: auth.session.user.id,
