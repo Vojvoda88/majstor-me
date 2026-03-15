@@ -8,6 +8,7 @@ const inter = Inter({
   subsets: ["latin", "latin-ext"],
   variable: "--font-inter",
   display: "swap",
+  preload: false,
 });
 
 const dmSans = DM_Sans({
@@ -22,6 +23,7 @@ const outfit = Outfit({
   variable: "--font-outfit",
   weight: ["500", "600", "700", "800"],
   display: "swap",
+  preload: false,
 });
 
 export const metadata: Metadata = {
