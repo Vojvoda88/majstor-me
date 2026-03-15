@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Shield } from "lucide-react";
 import { useState } from "react";
 import { useSession } from "next-auth/react";
 
@@ -28,26 +28,46 @@ export function HomeHeader() {
         </nav>
 
         <div className="hidden items-center gap-3 md:flex">
-          <Link
-            href="/login"
-            className="rounded-[14px] px-4 py-2.5 text-[13px] font-medium text-[#475569] transition hover:bg-white/80 hover:text-[#0F172A]"
-          >
-            Prijava
-          </Link>
-          <Link
-            href="/register"
-            className="rounded-[14px] bg-gradient-to-br from-[#60A5FA] to-[#2563EB] px-4 py-2.5 text-[13px] font-semibold text-white shadow-[0_4px_14px_rgba(37,99,235,0.35)] transition hover:opacity-95"
-          >
-            Registracija
-          </Link>
+          {session?.user?.role === "ADMIN" && (
+            <Link
+              href="/admin"
+              className="flex items-center gap-2 rounded-[14px] bg-amber-100 px-4 py-2.5 text-[13px] font-semibold text-amber-800 transition hover:bg-amber-200"
+            >
+              <Shield className="h-4 w-4" />
+              Admin
+            </Link>
+          )}
+          {!session && (
+            <>
+              <Link
+                href="/login"
+                className="rounded-[14px] px-4 py-2.5 text-[13px] font-medium text-[#475569] transition hover:bg-white/80 hover:text-[#0F172A]"
+              >
+                Prijava
+              </Link>
+              <Link
+                href="/register"
+                className="rounded-[14px] bg-gradient-to-br from-[#60A5FA] to-[#2563EB] px-4 py-2.5 text-[13px] font-semibold text-white shadow-[0_4px_14px_rgba(37,99,235,0.35)] transition hover:opacity-95"
+              >
+                Registracija
+              </Link>
+            </>
+          )}
         </div>
 
-        {session?.user?.image ? (
+        {session?.user && (session.user.image && (session.user.image.startsWith("http") || session.user.image.startsWith("/"))) ? (
           <Link
-            href={session.user.role === "HANDYMAN" ? "/dashboard/handyman" : "/dashboard/user"}
+            href={session.user.role === "HANDYMAN" ? "/dashboard/handyman" : session.user.role === "ADMIN" ? "/admin" : "/dashboard/user"}
             className="flex min-h-[40px] min-w-[40px] items-center justify-center md:hidden"
           >
             <Image src={session.user.image} alt="" width={36} height={36} className="rounded-full object-cover" />
+          </Link>
+        ) : session?.user ? (
+          <Link
+            href={session.user.role === "ADMIN" ? "/admin" : session.user.role === "HANDYMAN" ? "/dashboard/handyman" : "/dashboard/user"}
+            className="flex min-h-[40px] min-w-[40px] items-center justify-center rounded-full bg-slate-100 text-sm font-semibold text-slate-600 md:hidden"
+          >
+            {session.user.name?.charAt(0) ?? "?"}
           </Link>
         ) : (
           <button
@@ -77,6 +97,16 @@ export function HomeHeader() {
             >
               Kako radi
             </a>
+            {session?.user?.role === "ADMIN" && (
+              <Link
+                href="/admin"
+                className="flex items-center gap-2 rounded-xl px-4 py-3.5 text-[15px] font-semibold text-amber-700 transition hover:bg-amber-50"
+                onClick={() => setMenuOpen(false)}
+              >
+                <Shield className="h-4 w-4" />
+                Admin panel
+              </Link>
+            )}
             <div className="mt-3 flex flex-col gap-2 border-t border-[#E2E8F0] pt-3">
               <Link
                 href="/login"

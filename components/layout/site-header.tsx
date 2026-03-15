@@ -20,6 +20,13 @@ export function SiteHeader() {
             <span className="h-9 w-20 animate-pulse rounded-xl bg-[#F1F5F9]" />
           ) : session ? (
             <>
+              {session.user.role === "ADMIN" && (
+                <Link href="/admin">
+                  <Button variant="secondary" size="sm" className="bg-amber-100 text-amber-800 hover:bg-amber-200">
+                    Admin panel
+                  </Button>
+                </Link>
+              )}
               {session.user.role === "USER" && (
                 <Link href="/dashboard/user">
                   <Button variant="ghost" size="sm">Moji zahtjevi</Button>

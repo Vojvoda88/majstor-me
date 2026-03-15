@@ -58,6 +58,9 @@ export const authOptions: NextAuthOptions = {
           select: { role: true },
         });
         (session.user as { role?: string }).role = dbUser?.role ?? (token.role as string);
+        const img = (session.user as { image?: string | null }).image;
+        (session.user as { image?: string | null }).image =
+          typeof img === "string" && (img.startsWith("http") || img.startsWith("/")) ? img : null;
       }
       return session;
     },

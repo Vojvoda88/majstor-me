@@ -13,6 +13,13 @@ export function MobileNav() {
 
   const navItems = session ? (
     <>
+      {session.user.role === "ADMIN" && (
+        <Link href="/admin" onClick={() => setOpen(false)}>
+          <Button variant="secondary" className="h-14 min-h-[48px] w-full justify-start gap-2 text-base bg-amber-100 text-amber-800 hover:bg-amber-200">
+            Admin panel
+          </Button>
+        </Link>
+      )}
       {session.user.role === "USER" && (
         <Link href="/dashboard/user" onClick={() => setOpen(false)}>
           <Button variant="ghost" className="h-14 min-h-[48px] w-full justify-start text-base">

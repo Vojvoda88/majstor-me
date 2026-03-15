@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Shield } from "lucide-react";
 import { useState } from "react";
 import { useSession } from "next-auth/react";
 
@@ -25,12 +25,21 @@ export function PremiumMobileHeader() {
           <a href="/#kako-radi" className="text-[15px] font-medium text-slate-600 transition hover:text-[#1d4ed8]">
             Kako radi
           </a>
+          {session?.user?.role === "ADMIN" && (
+            <Link
+              href="/admin"
+              className="flex items-center gap-2 rounded-xl bg-amber-100 px-4 py-2.5 text-[15px] font-semibold text-amber-800 transition hover:bg-amber-200"
+            >
+              <Shield className="h-4 w-4" />
+              Admin
+            </Link>
+          )}
           {session ? (
             <Link
-              href={session.user?.role === "HANDYMAN" ? "/dashboard/handyman" : "/dashboard/user"}
+              href={session.user?.role === "HANDYMAN" ? "/dashboard/handyman" : session.user?.role === "ADMIN" ? "/admin" : "/dashboard/user"}
               className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-xl bg-slate-100 transition hover:bg-slate-200"
             >
-              {session.user?.image ? (
+              {session.user?.image && (session.user.image.startsWith("http") || session.user.image.startsWith("/")) ? (
                 <Image src={session.user.image} alt="" width={40} height={40} className="object-cover" />
               ) : (
                 <span className="text-sm font-semibold text-slate-600">
@@ -72,6 +81,16 @@ export function PremiumMobileHeader() {
             <a href="/#kako-radi" className="py-3 text-[16px] font-medium text-slate-700" onClick={() => setMenuOpen(false)}>
               Kako radi
             </a>
+            {session?.user?.role === "ADMIN" && (
+              <Link
+                href="/admin"
+                className="flex items-center gap-2 py-3 text-[16px] font-semibold text-amber-700"
+                onClick={() => setMenuOpen(false)}
+              >
+                <Shield className="h-4 w-4" />
+                Admin panel
+              </Link>
+            )}
             {!session && (
               <div className="mt-4 flex flex-col gap-2 border-t border-slate-100 pt-4">
                 <Link href="/login" className="py-3 text-center text-[16px] font-medium text-slate-700" onClick={() => setMenuOpen(false)}>
