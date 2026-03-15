@@ -1,11 +1,8 @@
-import { unstable_cache } from "next/cache";
 import { requireAdminPermission } from "@/lib/admin/auth";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";
-
-const DASHBOARD_CACHE_SECONDS = 20;
 
 async function withTiming<T>(label: string, fn: () => Promise<T>): Promise<{ result: T; label: string; ms: number }> {
   const start = Date.now();
@@ -115,24 +112,22 @@ async function loadDashboardData() {
 }
 
 export default async function AdminDashboardPage() {
-  const t0 = Date.now();
-  await requireAdminPermission("dashboard");
-  const tAuth = Date.now() - t0;
-  if (process.env.NODE_ENV === "development" || process.env.ADMIN_DASHBOARD_TIMING === "1") {
-    (global as unknown as { __adminDashboardStart: number }).__adminDashboardStart = Date.now();
-    console.info("[AdminDashboard] Auth/session check ms:", tAuth);
+  try {
+    await requireAdminPermission("dashboard");
+  } catch (authErr) {
+    console.error("[AdminDashboard] Auth error:", authErr);
+    console.error("[AdminDashboard] Auth stack:", authErr instanceof Error ? authErr.stack : "no stack");
+    throw authErr;
   }
 
-  const getCached = unstable_cache(
-    async () => loadDashboardData(),
-    ["admin-dashboard-stats"],
-    { revalidate: DASHBOARD_CACHE_SECONDS }
-  );
-  const data = await getCached();
-
-  const totalPage = Date.now() - t0;
-  if (process.env.NODE_ENV === "development" || process.env.ADMIN_DASHBOARD_TIMING === "1") {
-    console.info("[AdminDashboard] Total page load ms:", totalPage);
+  let data: Awaited<ReturnType<typeof loadDashboardData>>;
+  try {
+    data = await loadDashboardData();
+  } catch (dataErr) {
+    console.error("[AdminDashboard] Data load error:", dataErr);
+    console.error("[AdminDashboard] Data stack:", dataErr instanceof Error ? dataErr.stack : "no stack");
+    console.error("[AdminDashboard] Data message:", dataErr instanceof Error ? dataErr.message : String(dataErr));
+    throw dataErr;
   }
 
   const {

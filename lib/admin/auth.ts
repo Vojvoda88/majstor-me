@@ -1,15 +1,13 @@
 /**
  * Admin auth - provjera sesije i role.
- * cache() osigurava da u istom requestu (layout + page) auth i adminProfile rade samo jednom.
  */
 
-import { cache } from "react";
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import type { AdminRole } from "./permissions";
 import { hasPermission, type Permission } from "./permissions";
 
-export const requireAdmin = cache(async () => {
+export async function requireAdmin() {
   const session = await auth();
   if (!session?.user?.id) redirect("/login?callbackUrl=/admin");
 
@@ -23,7 +21,7 @@ export const requireAdmin = cache(async () => {
 
   const adminRole = (adminProfile?.adminRole ?? "SUPER_ADMIN") as AdminRole;
   return { session, adminRole };
-});
+}
 
 export async function requireAdminPermission(permission: Permission) {
   const { session, adminRole } = await requireAdmin();
