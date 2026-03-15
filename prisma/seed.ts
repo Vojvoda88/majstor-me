@@ -25,11 +25,11 @@ const CATEGORIES = [
 async function main() {
   const password = await hash("Test123!", 12);
 
-  // Admin
+  // Admin – upsert: ako nalog sa ovim emailom već postoji, postavi ga na ADMIN
   const adminEmail = process.env.ADMIN_EMAIL ?? "admin@majstor.me";
   const admin = await prisma.user.upsert({
     where: { email: adminEmail },
-    update: {},
+    update: { role: "ADMIN", name: "Admin Korisnik" },
     create: {
       email: adminEmail,
       name: "Admin Korisnik",
@@ -38,6 +38,7 @@ async function main() {
       city: "Nikšić",
     },
   });
+  await prisma.handymanProfile.deleteMany({ where: { userId: admin.id } });
   await prisma.adminProfile.upsert({
     where: { userId: admin.id },
     update: { adminRole: "SUPER_ADMIN" },

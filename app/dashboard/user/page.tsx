@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { MapPin, Calendar, MessageSquare } from "lucide-react";
+import { DeleteMyAccount } from "@/components/account/delete-my-account";
 
 export const dynamic = "force-dynamic";
 
@@ -141,6 +142,9 @@ export default async function UserDashboardPage() {
           })}
         </div>
       )}
+      <div className="mt-10">
+        <DeleteMyAccount />
+      </div>
     </div>
     <StickyBottomCTA href="/request/create" label="Objavi zahtjev" />
     </div>

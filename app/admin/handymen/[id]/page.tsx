@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { AdminHandymanActions } from "./admin-handyman-actions";
+import { DeleteUserButton } from "./delete-user-button";
 
 export const dynamic = "force-dynamic";
 
@@ -41,14 +42,17 @@ export default async function AdminHandymanDetailPage({ params }: { params: Prom
           <h1 className="text-2xl font-bold text-[#0F172A]">{user.name}</h1>
           <p className="mt-1 text-sm text-[#64748B]">{user.email}</p>
         </div>
-        <AdminHandymanActions
-          handymanId={id}
-          adminRole={adminRole}
-          verifiedStatus={hp.verifiedStatus}
-          workerStatus={hp.workerStatus}
-          suspendedAt={user.suspendedAt}
-          bannedAt={user.bannedAt}
-        />
+        <div className="flex flex-wrap items-center gap-2">
+          <AdminHandymanActions
+            handymanId={id}
+            adminRole={adminRole}
+            verifiedStatus={hp.verifiedStatus}
+            workerStatus={hp.workerStatus}
+            suspendedAt={user.suspendedAt}
+            bannedAt={user.bannedAt}
+          />
+          <DeleteUserButton userId={id} label="Obriši nalog (majstora)" />
+        </div>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">

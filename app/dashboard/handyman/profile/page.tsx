@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { HandymanProfileForm } from "./handyman-profile-form";
 import { calcProfileCompletion } from "@/lib/handyman-onboarding";
 import { OnboardingBanner } from "@/components/handyman/onboarding-banner";
+import { DeleteMyAccount } from "@/components/account/delete-my-account";
 
 export const dynamic = "force-dynamic";
 
@@ -43,6 +44,9 @@ export default async function HandymanProfilePage() {
         <OnboardingBanner percent={onboarding.percent} steps={onboarding.steps} className="mb-6" />
       )}
       <HandymanProfileForm profile={profileData} userName={session.user.name} />
+      <div className="mt-10">
+        <DeleteMyAccount />
+      </div>
     </div>
   );
 }
