@@ -38,8 +38,23 @@ export async function GET(req: NextRequest) {
 
     const profileExt = (p: unknown) => p as { averageResponseMinutes?: number | null; completedJobsCount?: number; isPromoted?: boolean };
 
+    type HandymanProfileShape = {
+      ratingAvg: number;
+      reviewCount: number;
+      verifiedStatus: string;
+      avatarUrl?: string | null;
+      availabilityStatus?: string | null;
+      workerCategories?: { category: { name: string } }[];
+    };
+    type UserWithProfile = {
+      id: string;
+      name: string | null;
+      city: string | null;
+      handymanProfile: HandymanProfileShape;
+    };
+
     const useDbPagination = !city && (sortBy === "rating" || sortBy === "reviews");
-    let items: Awaited<ReturnType<typeof prisma.user.findMany>>;
+    let items: UserWithProfile[];
     let total: number;
 
     if (useDbPagination) {
@@ -60,7 +75,7 @@ export async function GET(req: NextRequest) {
           where: baseWhere,
         }),
       ]);
-      items = users.filter((u) => u.handymanProfile);
+      items = users.filter((u) => !!u.handymanProfile) as UserWithProfile[];
       total = count;
     } else {
       const handymen = await prisma.user.findMany({
@@ -73,7 +88,7 @@ export async function GET(req: NextRequest) {
         take: MAX_HANDYMEN_LOAD,
       });
 
-      const filtered = handymen.filter((u) => u.handymanProfile);
+      const filtered = handymen.filter((u): u is typeof handymen[number] & { handymanProfile: NonNullable<typeof handymen[number]["handymanProfile"]> } => !!u.handymanProfile);
       const withScore = filtered.map((u) => {
         const prof = u.handymanProfile!;
         return {
@@ -97,12 +112,11 @@ export async function GET(req: NextRequest) {
       withScore.sort((a, b) => b._score - a._score);
       total = withScore.length;
       const offset = (page - 1) * limit;
-      items = withScore.slice(offset, offset + limit) as typeof handymen;
+      items = withScore.slice(offset, offset + limit) as UserWithProfile[];
     }
 
     const totalPages = Math.ceil(total / limit) || 1;
 
-    type UserWithProfile = { id: string; name: string | null; city: string | null; handymanProfile: NonNullable<Awaited<ReturnType<typeof prisma.user.findMany>>[number]["handymanProfile"]> & { workerCategories?: { category: { name: string } }[] } };
     const mapItem = (u: UserWithProfile) => {
       const prof = u.handymanProfile;
       const ext = profileExt(prof);
