@@ -45,27 +45,27 @@ export async function POST(
       data: { adminStatus: "DISTRIBUTED" },
     });
 
-    const { handymenNotified } = await distributeRequestToHandymen({
-      prisma,
-      requestId: id,
-      category: request.category,
-      city: request.city,
-      title: request.title,
-      description: request.description,
-    });
-
     await createAuditLog(prisma, {
       adminId: auth.session.user.id,
       adminRole: auth.adminRole,
       actionType: "APPROVE_REQUEST",
       entityType: "request",
       entityId: id,
-      newValue: { adminStatus: "DISTRIBUTED", handymenNotified },
+      newValue: { adminStatus: "DISTRIBUTED", distribution: "async" },
     });
+
+    distributeRequestToHandymen({
+      prisma,
+      requestId: id,
+      category: request.category,
+      city: request.city,
+      title: request.title,
+      description: request.description,
+    }).catch((err) => console.error("Background distribution error:", err));
 
     return NextResponse.json({
       success: true,
-      data: { adminStatus: "DISTRIBUTED", handymenNotified },
+      data: { adminStatus: "DISTRIBUTED", handymenNotified: "in_progress" },
     });
   } catch (error) {
     console.error("Approve request error:", error);

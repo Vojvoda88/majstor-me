@@ -1,3 +1,5 @@
+import { AppProviders } from "@/app/app-providers";
+import { Providers } from "@/app/providers";
 import { PremiumMobileHeader } from "@/components/layout/PremiumMobileHeader";
 
 export default function DashboardLayout({
@@ -6,9 +8,13 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen bg-[#F3F4F6] pt-16">
-      <PremiumMobileHeader />
-      {children}
-    </div>
+    <Providers>
+      <AppProviders>
+        <div className="min-h-screen bg-[#F3F4F6] pt-16">
+          <PremiumMobileHeader />
+          {children}
+        </div>
+      </AppProviders>
+    </Providers>
   );
 }

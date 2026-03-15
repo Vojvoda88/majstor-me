@@ -1,5 +1,3 @@
-"use client";
-
 import Link from "next/link";
 import { FileText, MessageSquare, CheckCircle, ArrowRight, ArrowDown } from "lucide-react";
 

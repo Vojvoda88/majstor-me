@@ -1,17 +1,46 @@
-import { PremiumMobileHeader } from "@/components/layout/PremiumMobileHeader";
+import nextDynamic from "next/dynamic";
+import { PublicHeader } from "@/components/layout/PublicHeader";
 import { Hero } from "@/components/home-page/Hero";
 import { FloatingStatsCard } from "@/components/home-page/FloatingStatsCard";
 import { WhyMajstorSection } from "@/components/home-page/WhyMajstorSection";
 import { CategoriesGrid } from "@/components/home-page/CategoriesGrid";
-import { ReviewCardsSection } from "@/components/home-page/ReviewCardsSection";
 import { HowItWorks } from "@/components/home-page/HowItWorks";
-import { FAQ } from "@/components/home-page/FAQ";
 import { CTAForMasters } from "@/components/home-page/CTAForMasters";
-import { StickyBottomCTA } from "@/components/layout/StickyBottomCTA";
 import { organizationJsonLd, faqPageJsonLd } from "@/lib/json-ld";
 import { FAQ_ITEMS } from "@/lib/faq-data";
+import { getPlatformStats, getTopHandymenForHome } from "@/lib/home-data";
 
-export default function HomePage() {
+export const revalidate = 60;
+
+const FAQ = nextDynamic(
+  () => import("@/components/home-page/FAQ").then((m) => m.FAQ),
+  { loading: () => <div className="min-h-[280px] animate-pulse rounded-2xl bg-slate-100" /> }
+);
+
+const StickyBottomCTA = nextDynamic(
+  () => import("@/components/layout/StickyBottomCTA").then((m) => m.StickyBottomCTA),
+  { loading: () => <div className="h-0" /> }
+);
+
+const ReviewCardsSection = nextDynamic(
+  () => import("@/components/home-page/ReviewCardsSection").then((m) => m.ReviewCardsSection),
+  { loading: () => <div className="min-h-[320px] animate-pulse rounded-2xl bg-slate-100" /> }
+);
+
+async function getHomeData() {
+  try {
+    const [stats, handymen] = await Promise.all([
+      getPlatformStats(),
+      getTopHandymenForHome(3),
+    ]);
+    return { stats, handymen };
+  } catch {
+    return { stats: null, handymen: [] };
+  }
+}
+
+export default async function HomePage() {
+  const { stats, handymen } = await getHomeData();
   const orgJson = organizationJsonLd();
   const faqJson = faqPageJsonLd(FAQ_ITEMS);
   return (
@@ -24,10 +53,10 @@ export default function HomePage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJson) }}
       />
-      <PremiumMobileHeader />
+      <PublicHeader />
       <div className="pt-16">
         <Hero />
-        <FloatingStatsCard />
+        <FloatingStatsCard initialStats={stats} />
       </div>
 
       <div className="mx-auto max-w-6xl px-6 py-16">
@@ -38,7 +67,7 @@ export default function HomePage() {
           <CategoriesGrid />
         </div>
         <div className="animate-fade-up" style={{ animationDelay: "0.15s", animationFillMode: "both" }}>
-          <ReviewCardsSection />
+          <ReviewCardsSection initialHandymen={handymen} />
         </div>
         <div className="animate-fade-up" style={{ animationDelay: "0.2s", animationFillMode: "both" }}>
           <HowItWorks />

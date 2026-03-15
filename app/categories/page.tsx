@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { PremiumMobileHeader } from "@/components/layout/PremiumMobileHeader";
+import { PublicHeader } from "@/components/layout/PublicHeader";
 import { CATEGORY_CONFIG } from "@/lib/categories";
 import { ArrowRight } from "lucide-react";
 
@@ -11,7 +11,7 @@ export const metadata = {
 export default function CategoriesPage() {
   return (
     <div className="min-h-screen bg-[#FAFBFC] pb-28 pt-16">
-      <PremiumMobileHeader />
+      <PublicHeader />
       <div className="mx-auto max-w-4xl px-6 py-12">
         <h1 className="font-display mb-2 text-3xl font-bold tracking-tight text-slate-900 md:text-4xl">
           Sve kategorije

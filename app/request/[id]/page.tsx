@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { auth } from "@/lib/auth";
 import Link from "next/link";
+import Image from "next/image";
 
 export const dynamic = "force-dynamic";
 import { Badge } from "@/components/ui/badge";
@@ -168,8 +169,8 @@ export default async function RequestDetailPage({
               <h3 className="text-sm font-medium text-[#475569]">Slike</h3>
               <div className="mt-2 flex flex-wrap gap-2">
                 {req.photos.map((url) => (
-                  <a key={url} href={url} target="_blank" rel="noreferrer" className="block">
-                    <img src={url} alt="" className="h-24 w-24 rounded-lg object-cover" />
+                  <a key={url} href={url} target="_blank" rel="noreferrer" className="block relative h-24 w-24">
+                    <Image src={url} alt="" width={96} height={96} className="rounded-lg object-cover" />
                   </a>
                 ))}
               </div>

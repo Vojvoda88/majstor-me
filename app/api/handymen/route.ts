@@ -6,6 +6,9 @@ import { getDistanceBetweenCities } from "@/lib/distance";
 import { calcHandymanScore } from "@/lib/handyman-score";
 
 export const dynamic = "force-dynamic";
+export const revalidate = 60;
+
+const MAX_HANDYMEN_LOAD = 500;
 
 export async function GET(req: NextRequest) {
   try {
@@ -17,25 +20,28 @@ export async function GET(req: NextRequest) {
     const page = Math.max(1, parseInt(searchParams.get("page") ?? "1", 10));
     const limit = Math.min(50, Math.max(1, parseInt(searchParams.get("limit") ?? String(DEFAULT_PAGE_SIZE), 10)));
 
-    // Resolve category: slug/displayName -> internal category
     const category = categoryParam ? (getInternalCategory(categoryParam) ?? categoryParam) : null;
 
     const handymen = await prisma.user.findMany({
       where: {
         role: "HANDYMAN",
-        ...(category && {
-          handymanProfile: {
+        bannedAt: null,
+        suspendedAt: null,
+        handymanProfile: {
+          workerStatus: "ACTIVE",
+          ...(category && {
             workerCategories: {
               some: { category: { name: category } },
             },
-          },
-        }),
+          }),
+        },
       },
       include: {
         handymanProfile: {
           include: { workerCategories: { include: { category: true } } },
         },
       },
+      take: MAX_HANDYMEN_LOAD,
     });
 
     let filtered = handymen.filter((u) => u.handymanProfile);

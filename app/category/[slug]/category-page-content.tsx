@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { PremiumMobileHeader } from "@/components/layout/PremiumMobileHeader";
+import { PublicHeader } from "@/components/layout/PublicHeader";
 import { StickyBottomCTA } from "@/components/layout/StickyBottomCTA";
 import { MobileFilterSheet } from "@/components/category/MobileFilterSheet";
 import { CategoryHandymanCard } from "@/components/lists/CategoryHandymanCard";
@@ -81,7 +81,7 @@ export function CategoryPageContent({
 
   return (
     <main className="min-h-screen bg-[#F3F4F6] pb-28 pt-16 text-[#0F172A] md:pb-10 md:pt-20">
-      <PremiumMobileHeader />
+      <PublicHeader />
 
       <div className="mx-auto max-w-[430px] px-4 md:max-w-4xl md:px-6 lg:max-w-[1400px] lg:px-8">
         <div className="py-6 lg:py-10">

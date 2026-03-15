@@ -1,5 +1,3 @@
-"use client";
-
 import { ShieldCheck, Zap, CreditCard } from "lucide-react";
 
 const ITEMS = [

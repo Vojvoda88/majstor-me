@@ -3,19 +3,23 @@
 import { useEffect, useState } from "react";
 import { Users, Briefcase, Star, MapPin } from "lucide-react";
 
-export function FloatingStatsCard() {
-  const [stats, setStats] = useState<{
-    handymanCount: number | null;
-    avgRating: number | null;
-    citiesCount: number;
-  } | null>(null);
+type PlatformStats = {
+  handymanCount: number | null;
+  avgRating: number | null;
+  citiesCount: number;
+};
+
+export function FloatingStatsCard({ initialStats = null }: { initialStats?: PlatformStats | null }) {
+  const [clientStats, setClientStats] = useState<PlatformStats | null>(null);
+  const stats = initialStats ?? clientStats;
 
   useEffect(() => {
+    if (initialStats != null) return;
     fetch("/api/stats/platform")
       .then((res) => res.json())
-      .then(setStats)
-      .catch(() => setStats(null));
-  }, []);
+      .then(setClientStats)
+      .catch(() => setClientStats(null));
+  }, [initialStats]);
 
   const items = [
     {

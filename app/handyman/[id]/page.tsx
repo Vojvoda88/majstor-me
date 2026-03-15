@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import { auth } from "@/lib/auth";
 import Link from "next/link";
-import { PremiumMobileHeader } from "@/components/layout/PremiumMobileHeader";
+import { PublicHeader } from "@/components/layout/PublicHeader";
 import {
   CheckCircle2,
   Star,
@@ -122,7 +122,7 @@ export default async function HandymanProfilePage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <PremiumMobileHeader />
+      <PublicHeader />
       <div className="pt-16">
         <Link
           href={backHref}

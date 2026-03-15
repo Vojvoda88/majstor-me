@@ -3,7 +3,6 @@ import { Inter, DM_Sans, Outfit } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { getSiteUrl } from "@/lib/site-url";
 import "./globals.css";
-import { Providers } from "./providers";
 
 const inter = Inter({
   subsets: ["latin", "latin-ext"],
@@ -53,7 +52,7 @@ export default function RootLayout({
   return (
     <html lang="sr" className={`${inter.variable} ${dmSans.variable} ${outfit.variable}`}>
       <body className="font-[family-name:var(--font-dm-sans)] antialiased bg-[#FAFBFC] text-[#0F172A]">
-        <Providers>{children}</Providers>
+        {children}
         <Analytics />
       </body>
     </html>

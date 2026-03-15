@@ -6,7 +6,7 @@ import Image from "next/image";
 import { Star, CheckCircle2, ArrowRight } from "lucide-react";
 import { HERO_IMAGE } from "@/lib/homepage-data";
 
-type Handyman = {
+export type Handyman = {
   id: string;
   name: string | null;
   city: string | null;
@@ -23,15 +23,17 @@ const SAMPLE_TEXTS = [
   "Kvalitetna keramika i precizan rad su moj moto. Zadovoljni klijenti govore umjesto mene.",
 ];
 
-export function ReviewCardsSection() {
-  const [handymen, setHandymen] = useState<Handyman[]>([]);
+export function ReviewCardsSection({ initialHandymen = [] }: { initialHandymen?: Handyman[] }) {
+  const [clientHandymen, setClientHandymen] = useState<Handyman[]>(initialHandymen);
+  const handymen = initialHandymen.length > 0 ? initialHandymen : clientHandymen;
 
   useEffect(() => {
+    if (initialHandymen.length > 0) return;
     fetch("/api/handymen?limit=3&sort=rating")
       .then((res) => res.json())
-      .then((data) => setHandymen(data.items ?? data.handymen ?? []))
+      .then((data) => setClientHandymen(data.items ?? data.handymen ?? []))
       .catch(() => {});
-  }, []);
+  }, [initialHandymen]);
 
   if (handymen.length === 0) return null;
 

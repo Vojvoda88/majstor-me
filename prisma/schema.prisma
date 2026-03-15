@@ -118,6 +118,7 @@ model User {
   pushSubscriptions  PushSubscription[]
   adminProfile       AdminProfile?
 
+  @@index([role])
   @@map("users")
 }
 
@@ -267,6 +268,8 @@ model HandymanProfile {
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@index([workerStatus])
+  @@index([verifiedStatus])
   @@map("handyman_profiles")
 }
 
@@ -319,6 +322,8 @@ model Request {
   contactUnlocks    RequestContactUnlock[]
 
   @@index([status])
+  @@index([adminStatus])
+  @@index([userId])
   @@index([city])
   @@index([category])
   @@index([createdAt])
@@ -359,6 +364,7 @@ model Offer {
   @@index([requestId])
   @@index([handymanId])
   @@index([status])
+  @@index([createdAt])
   @@map("offers")
 }
 

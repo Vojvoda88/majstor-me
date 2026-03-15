@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { HomeHeader } from "@/components/home-page/home-header";
+import { PublicHeader } from "@/components/layout/PublicHeader";
 import { Wrench, ChevronLeft, ChevronRight } from "lucide-react";
 import { HandymanCard } from "@/components/lists/handyman-card";
 import { POPULAR_CATEGORIES } from "@/lib/categories";
@@ -54,7 +54,7 @@ export function GradPageContent({
   return (
     <main className="min-h-screen bg-slate-100 text-slate-900">
       <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8">
-        <HomeHeader />
+        <PublicHeader />
 
         <div className="py-8">
           <nav className="mb-6 text-sm text-slate-500">

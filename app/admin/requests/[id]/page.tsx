@@ -2,6 +2,7 @@ import { requireAdminPermission } from "@/lib/admin/auth";
 import { notFound } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
+import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { RequestDetailActions } from "./request-detail-actions";
 import { RestoreRequestButton } from "./restore-button";
@@ -99,8 +100,8 @@ export default async function AdminRequestDetailPage({ params }: { params: Promi
           <CardContent>
             <div className="flex flex-wrap gap-2">
               {req.photos.map((url) => (
-                <a key={url} href={url} target="_blank" rel="noreferrer">
-                  <img src={url} alt="" className="h-24 w-24 rounded object-cover" />
+                <a key={url} href={url} target="_blank" rel="noreferrer" className="block relative h-24 w-24">
+                  <Image src={url} alt="" width={96} height={96} className="rounded object-cover" />
                 </a>
               ))}
             </div>
