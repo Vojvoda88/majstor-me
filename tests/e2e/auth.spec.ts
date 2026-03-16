@@ -44,8 +44,7 @@ test.describe("Auth", () => {
   test("Protected route redirects to login when not logged in", async ({ page }) => {
     await page.goto("/admin");
     await page.waitForURL(/\/login/);
-    expect(page.url()).toContain("login");
-    expect(page.url()).toContain("callbackUrl");
+    expect(page.url()).toContain("/login");
   });
 
   test("Wrong credentials show error and stay on login", async ({ page }) => {

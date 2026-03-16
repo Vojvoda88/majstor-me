@@ -9,7 +9,9 @@ import { hasPermission, type Permission } from "./permissions";
 
 export async function requireAdmin() {
   const session = await auth();
-  if (!session?.user?.id) redirect("/login?callbackUrl=/admin");
+  // Gost ide na čistu login stranicu bez callbackUrl,
+  // admin panel otvara ručno nakon prijave.
+  if (!session?.user?.id) redirect("/login");
   if (session.user?.role !== "ADMIN") redirect("/");
 
   const { prisma } = await import("@/lib/db");
