@@ -86,6 +86,8 @@ export default async function HandymanProfilePage({
   const avatarUrl = profileExt.avatarUrl;
   const galleryImages = profileExt.galleryImages ?? [];
   const heroImage = galleryImages[0] ?? avatarUrl ?? AVATAR_IMAGE_FALLBACK;
+  const yearsOfExperience = profileExt.yearsOfExperience ?? null;
+  const completedJobsCount = profileExt.completedJobsCount ?? 0;
   const isVerified = profile.verifiedStatus === "VERIFIED";
   const AVAILABILITY_LABELS: Record<string, string> = {
     AVAILABLE: "Dostupan",
@@ -162,12 +164,31 @@ export default async function HandymanProfilePage({
                   <div className="mt-2 flex flex-wrap items-center gap-3 text-sm text-white/90">
                     <span className="flex items-center gap-1">
                       <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
-                      {profile.ratingAvg.toFixed(1)} ({profile.reviewCount} recenzija)
+                      {profile.reviewCount > 0 ? (
+                        <>
+                          {profile.ratingAvg.toFixed(1)} ({profile.reviewCount} recenzija)
+                        </>
+                      ) : (
+                        <>Još nema recenzija</>
+                      )}
                     </span>
                     {user.city && (
                       <span className="flex items-center gap-1">
                         <MapPin className="h-4 w-4" />
                         {user.city}
+                      </span>
+                    )}
+                  </div>
+                  <div className="mt-1 flex flex-wrap gap-2 text-xs text-white/90 md:text-[13px]">
+                    {yearsOfExperience != null && yearsOfExperience > 0 && (
+                      <span className="inline-flex items-center gap-1 rounded-full bg-black/30 px-2.5 py-0.5 font-medium">
+                        <Briefcase className="h-3.5 w-3.5" />
+                        {yearsOfExperience}+ godina iskustva
+                      </span>
+                    )}
+                    {completedJobsCount > 0 && (
+                      <span className="inline-flex items-center gap-1 rounded-full bg-black/25 px-2.5 py-0.5 font-medium">
+                        {completedJobsCount} završenih poslova preko Majstor.me
                       </span>
                     )}
                   </div>
@@ -255,7 +276,13 @@ export default async function HandymanProfilePage({
                   ))}
                 </div>
               ) : (
-                <p className="text-sm text-[#64748B]">Nema slika u galeriji.</p>
+                <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-[#CBD5E1] bg-[#F8FAFC] px-4 py-8 text-center">
+                  <ImageIcon className="mb-3 h-8 w-8 text-[#94A3B8]" />
+                  <p className="text-sm font-medium text-[#475569]">Još nema slika u galeriji.</p>
+                  <p className="mt-1 max-w-sm text-xs text-[#64748B]">
+                    Kada majstor doda slike svojih radova, ovdje ćete moći da vidite završene projekte.
+                  </p>
+                </div>
               )}
             </div>
 

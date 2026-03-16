@@ -54,6 +54,8 @@ function HandymanCardComponent({
     .toUpperCase()
     .slice(0, 2) ?? "?";
 
+  const hasReviews = reviewCount > 0;
+
   const badges = (
     <div className="mt-2 flex flex-wrap gap-2">
       {isVerified && (
@@ -62,7 +64,14 @@ function HandymanCardComponent({
         </span>
       )}
       <span className="inline-flex items-center gap-1 rounded-lg bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-700">
-        <Star className="h-3.5 w-3.5 fill-amber-500" /> {ratingAvg.toFixed(1)} ({reviewCount})
+        <Star className="h-3.5 w-3.5 fill-amber-500" />
+        {hasReviews ? (
+          <>
+            {ratingAvg.toFixed(1)} ({reviewCount})
+          </>
+        ) : (
+          <>Još nema recenzija</>
+        )}
       </span>
       {averageResponseMinutes != null && (
         <span className="inline-flex items-center gap-1 rounded-lg bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-700">
