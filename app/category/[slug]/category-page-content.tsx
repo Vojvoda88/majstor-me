@@ -61,6 +61,10 @@ export function CategoryPageContent({
 
   useEffect(() => {
     let cancelled = false;
+    const controller = new AbortController();
+    const timeoutId = window.setTimeout(() => {
+      controller.abort();
+    }, 15000);
 
     async function fetchHandymen() {
       setLoading(true);
@@ -72,7 +76,7 @@ export function CategoryPageContent({
         params.set("sort", sortBy);
         params.set("page", String(page));
         params.set("limit", String(DEFAULT_PAGE_SIZE));
-        const res = await fetch(`/api/handymen?${params}`);
+        const res = await fetch(`/api/handymen?${params}`, { signal: controller.signal });
         if (!res.ok) {
           throw new Error(`Failed to load handymen: ${res.status}`);
         }
@@ -84,13 +88,19 @@ export function CategoryPageContent({
         setTotal(data.total ?? items.length);
       } catch (e) {
         if (cancelled) return;
-        console.error("Greška pri učitavanju majstora za kategoriju:", e);
-        setError("Došlo je do greške pri učitavanju majstora. Pokušajte ponovo.");
+        if ((e as DOMException).name === "AbortError") {
+          console.warn("Učitavanje majstora za kategoriju je isteklo (timeout).");
+          setError("Učitavanje traje duže nego obično. Pokušajte ponovo.");
+        } else {
+          console.error("Greška pri učitavanju majstora za kategoriju:", e);
+          setError("Došlo je do greške pri učitavanju majstora. Pokušajte ponovo.");
+        }
         setHandymen([]);
         setTotalPages(1);
         setTotal(0);
       } finally {
         if (!cancelled) {
+          window.clearTimeout(timeoutId);
           setLoading(false);
         }
       }
@@ -100,6 +110,8 @@ export function CategoryPageContent({
 
     return () => {
       cancelled = true;
+      controller.abort();
+      window.clearTimeout(timeoutId);
     };
   }, [internalCategory, cityFilter, sortBy, page, reloadToken]);
 

@@ -40,6 +40,10 @@ export function GradPageContent({
 
   useEffect(() => {
     let cancelled = false;
+    const controller = new AbortController();
+    const timeoutId = window.setTimeout(() => {
+      controller.abort();
+    }, 15000);
 
     async function fetchHandymen() {
       setLoading(true);
@@ -49,7 +53,7 @@ export function GradPageContent({
         params.set("city", cityName);
         params.set("page", String(page));
         params.set("limit", String(DEFAULT_PAGE_SIZE));
-        const res = await fetch(`/api/handymen?${params}`);
+        const res = await fetch(`/api/handymen?${params}`, { signal: controller.signal });
         if (!res.ok) {
           throw new Error(`Failed to load handymen: ${res.status}`);
         }
@@ -61,13 +65,19 @@ export function GradPageContent({
         setTotal(data.total ?? items.length);
       } catch (e) {
         if (cancelled) return;
-        console.error("Greška pri učitavanju majstora za grad:", e);
-        setError("Došlo je do greške pri učitavanju majstora. Pokušajte ponovo.");
+        if ((e as DOMException).name === "AbortError") {
+          console.warn("Učitavanje majstora za grad je isteklo (timeout).");
+          setError("Učitavanje traje duže nego obično. Pokušajte ponovo.");
+        } else {
+          console.error("Greška pri učitavanju majstora za grad:", e);
+          setError("Došlo je do greške pri učitavanju majstora. Pokušajte ponovo.");
+        }
         setHandymen([]);
         setTotalPages(1);
         setTotal(0);
       } finally {
         if (!cancelled) {
+          window.clearTimeout(timeoutId);
           setLoading(false);
         }
       }
@@ -77,6 +87,8 @@ export function GradPageContent({
 
     return () => {
       cancelled = true;
+      controller.abort();
+      window.clearTimeout(timeoutId);
     };
   }, [cityName, page, reloadToken]);
 
