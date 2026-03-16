@@ -15,7 +15,9 @@ export const dynamic = "force-dynamic";
 
 export default async function LoginPage() {
   const session = await auth();
-  if (session) redirect("/");
+  if (session?.user?.role === "ADMIN") redirect("/admin");
+  if (session?.user?.role === "HANDYMAN") redirect("/dashboard/handyman");
+  if (session?.user?.role === "USER") redirect("/dashboard/user");
 
   return (
     <div className="min-h-screen bg-[#F8FAFC]">
