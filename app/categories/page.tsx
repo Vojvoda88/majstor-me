@@ -1,11 +1,26 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { PublicHeader } from "@/components/layout/PublicHeader";
 import { CATEGORY_CONFIG } from "@/lib/categories";
 import { ArrowRight } from "lucide-react";
+import { getSiteUrl } from "@/lib/site-url";
 
-export const metadata = {
-  title: "Sve kategorije | Majstor.me",
-  description: "Pregledajte sve kategorije usluga — vodoinstalater, električar, keramičar i više. Pronađite majstora za svaki posao.",
+const baseUrl = getSiteUrl();
+
+export const metadata: Metadata = {
+  title: "Sve kategorije majstora | Majstor.me",
+  description:
+    "Pregledajte sve kategorije usluga u Crnoj Gori – vodoinstalater, električar, klima servis, keramičar i druge. Brzo pronađite pravog majstora za svaki posao.",
+  alternates: {
+    canonical: `${baseUrl}/categories`,
+  },
+  openGraph: {
+    title: "Sve kategorije majstora | Majstor.me",
+    description:
+      "Pregledajte sve kategorije usluga u Crnoj Gori i pronađite provjerenog majstora – od vodoinstalatera i električara do selidbi i čišćenja.",
+    url: `${baseUrl}/categories`,
+    type: "website",
+  },
 };
 
 export default function CategoriesPage() {

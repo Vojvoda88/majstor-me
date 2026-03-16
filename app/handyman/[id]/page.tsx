@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import Image from "next/image";
+import type { Metadata } from "next";
 import { auth } from "@/lib/auth";
 import Link from "next/link";
 import { PublicHeader } from "@/components/layout/PublicHeader";
@@ -26,7 +27,7 @@ export async function generateMetadata({
   params,
 }: {
   params: Promise<{ id: string }>;
-}) {
+}): Promise<Metadata> {
   const { id } = await params;
   const { prisma } = await import("@/lib/db");
   const user = await prisma.user.findUnique({
@@ -35,15 +36,35 @@ export async function generateMetadata({
       handymanProfile: { include: { workerCategories: { include: { category: true } } } },
     },
   });
-  if (!user?.handymanProfile) return { title: "Majstor | Majstor.me" };
+  if (!user?.handymanProfile) {
+    return {
+      title: "Majstor | Majstor.me",
+      description: "Profil majstora na Majstor.me platformi.",
+    };
+  }
   const categories = user.handymanProfile.workerCategories.map((wc) => wc.category.name);
   const cat = categories[0] || "Majstor";
   const city = user.city || "";
   const base = getSiteUrl();
+  const title = `${user.name} – ${cat}${city ? `, ${city}` : ""} | Majstor.me`.trim();
+  const description =
+    user.handymanProfile.bio ||
+    `Profil majstora ${user.name} za usluge kategorije ${cat}${city ? ` u ${city}` : ""} na Majstor.me.`;
+  const imageUrl =
+    (user.handymanProfile as { avatarUrl?: string | null }).avatarUrl ??
+    AVATAR_IMAGE_FALLBACK;
+
   return {
-    title: `${user.name} - ${cat} ${city ? city : ""} | Majstor.me`.trim(),
-    description: user.handymanProfile.bio || `Profil majstora ${user.name}`,
+    title,
+    description,
     alternates: { canonical: `${base}/handyman/${id}` },
+    openGraph: {
+      title,
+      description,
+      url: `${base}/handyman/${id}`,
+      type: "profile",
+      images: imageUrl ? [{ url: imageUrl }] : undefined,
+    },
   };
 }
 

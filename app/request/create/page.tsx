@@ -3,10 +3,24 @@ import { CreateRequestForm } from "@/components/forms/create-request-form";
 import { PremiumMobileHeader } from "@/components/layout/PremiumMobileHeader";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { ShieldCheck, Star, Zap } from "lucide-react";
+import { getSiteUrl } from "@/lib/site-url";
+
+const baseUrl = getSiteUrl();
 
 export const metadata: Metadata = {
-  title: "Novi zahtjev | Majstor.me",
-  description: "Objavite zahtjev za majstora – vodoinstalater, električar, klima servis i druge usluge u Crnoj Gori.",
+  title: "Objavite novi zahtjev | Majstor.me",
+  description:
+    "Objavite besplatan zahtjev za majstora u Crnoj Gori – vodoinstalater, električar, klima servis i druge usluge. Primite brze ponude od provjerenih majstora.",
+  alternates: {
+    canonical: `${baseUrl}/request/create`,
+  },
+  openGraph: {
+    title: "Objavite novi zahtjev | Majstor.me",
+    description:
+      "Jednim zahtjevom dobijate više ponuda od provjerenih majstora u Crnoj Gori. Objavite posao besplatno i izaberite ponudu koja vam najviše odgovara.",
+    url: `${baseUrl}/request/create`,
+    type: "website",
+  },
 };
 
 export const dynamic = "force-dynamic";

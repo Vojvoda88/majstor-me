@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getCategoryBySlug } from "@/lib/categories";
 
@@ -10,15 +11,29 @@ export async function generateMetadata({
   params,
 }: {
   params: Promise<{ slug: string }>;
-}) {
+}): Promise<Metadata> {
   const { slug } = await params;
   const config = getCategoryBySlug(slug);
-  if (!config) return { title: "Kategorija | Majstor.me" };
+  if (!config) {
+    return {
+      title: "Kategorija | Majstor.me",
+      description: "Pregled kategorija majstora na Majstor.me platformi.",
+    };
+  }
   const base = getSiteUrl();
+  const title = `${config.displayName} majstori u Crnoj Gori | Majstor.me`;
+  const description = `Pregled majstora za kategoriju ${config.displayName.toLowerCase()} širom Crne Gore. Pronađite provjerenog majstora ili objavite besplatan zahtjev i dobijte ponude.`;
+
   return {
-    title: `${config.displayName} | Majstor.me`,
-    description: `Pronađite ${config.displayName.toLowerCase()} u Crnoj Gori. Provjereni majstori, brze ponude.`,
+    title,
+    description,
     alternates: { canonical: `${base}/category/${slug}` },
+    openGraph: {
+      title,
+      description,
+      url: `${base}/category/${slug}`,
+      type: "website",
+    },
   };
 }
 
