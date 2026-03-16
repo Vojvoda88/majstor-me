@@ -42,21 +42,37 @@ async function loadDashboardData() {
     runTimed ? withTiming("creditsToday", () => prisma.creditTransaction.count({ where: { createdAt: { gte: todayStart }, amount: { lt: 0 }, type: "CONTACT_UNLOCK" } })) : prisma.creditTransaction.count({ where: { createdAt: { gte: todayStart }, amount: { lt: 0 }, type: "CONTACT_UNLOCK" } }).then((r) => ({ result: r, label: "", ms: 0 })),
     runTimed ? withTiming("creditsWeek", () => prisma.creditTransaction.count({ where: { createdAt: { gte: weekStart }, amount: { lt: 0 } } })) : prisma.creditTransaction.count({ where: { createdAt: { gte: weekStart }, amount: { lt: 0 } } }).then((r) => ({ result: r, label: "", ms: 0 })),
     runTimed ? withTiming("creditsMonth", () => prisma.creditTransaction.count({ where: { createdAt: { gte: monthStart }, amount: { lt: 0 } } })) : prisma.creditTransaction.count({ where: { createdAt: { gte: monthStart }, amount: { lt: 0 } } }).then((r) => ({ result: r, label: "", ms: 0 })),
-    runTimed ? withTiming("recentRequests", () => prisma.request.findMany({ take: 5, orderBy: { createdAt: "desc" }, include: { user: { select: { name: true } } } })) : prisma.request.findMany({ take: 5, orderBy: { createdAt: "desc" }, include: { user: { select: { name: true } } } }).then((r) => ({ result: r, label: "", ms: 0 })),
-    runTimed ? withTiming("recentHandymen", () => prisma.user.findMany({ where: { role: "HANDYMAN" }, take: 5, orderBy: { createdAt: "desc" }, select: { id: true, name: true, createdAt: true } })) : prisma.user.findMany({ where: { role: "HANDYMAN" }, take: 5, orderBy: { createdAt: "desc" }, select: { id: true, name: true, createdAt: true } }).then((r) => ({ result: r, label: "", ms: 0 })),
-    runTimed ? withTiming("recentReports", () => prisma.report.findMany({ take: 5, orderBy: { createdAt: "desc" }, include: { reporter: { select: { name: true } }, reportedUser: { select: { name: true } } } })) : prisma.report.findMany({ take: 5, orderBy: { createdAt: "desc" }, include: { reporter: { select: { name: true } }, reportedUser: { select: { name: true } } } }).then((r) => ({ result: r, label: "", ms: 0 })),
-    runTimed ? withTiming("recentUnlocks", () => prisma.requestContactUnlock.findMany({ take: 5, orderBy: { createdAt: "desc" }, include: { handyman: { select: { name: true } }, request: { select: { category: true, city: true } } } })) : prisma.requestContactUnlock.findMany({ take: 5, orderBy: { createdAt: "desc" }, include: { handyman: { select: { name: true } }, request: { select: { category: true, city: true } } } }).then((r) => ({ result: r, label: "", ms: 0 })),
-    runTimed ? withTiming("recentAudits", () => prisma.auditLog.findMany({ take: 5, orderBy: { createdAt: "desc" } })) : prisma.auditLog.findMany({ take: 5, orderBy: { createdAt: "desc" } }).then((r) => ({ result: r, label: "", ms: 0 })),
-    ...dayRanges.map(({ start, end, label }, i) =>
-      runTimed
-        ? withTiming(`requestsDay${i}`, () => prisma.request.count({ where: { createdAt: { gte: start, lt: end } } })).then((t) => ({ ...t, result: { label, count: t.result } }))
-        : prisma.request.count({ where: { createdAt: { gte: start, lt: end } } }).then((count) => ({ result: { label, count }, label: "", ms: 0 }))
-    ),
-    ...dayRanges.map(({ start, end, label }, i) =>
-      runTimed
-        ? withTiming(`offersDay${i}`, () => prisma.offer.count({ where: { createdAt: { gte: start, lt: end } } })).then((t) => ({ ...t, result: { label, count: t.result } }))
-        : prisma.offer.count({ where: { createdAt: { gte: start, lt: end } } }).then((count) => ({ result: { label, count }, label: "", ms: 0 }))
-    ),
+    runTimed ? withTiming("recentRequests", () => prisma.request.findMany({ take: 3, orderBy: { createdAt: "desc" }, include: { user: { select: { name: true } } } })) : prisma.request.findMany({ take: 3, orderBy: { createdAt: "desc" }, include: { user: { select: { name: true } } } }).then((r) => ({ result: r, label: "", ms: 0 })),
+    runTimed ? withTiming("recentHandymen", () => prisma.user.findMany({ where: { role: "HANDYMAN" }, take: 3, orderBy: { createdAt: "desc" }, select: { id: true, name: true, createdAt: true } })) : prisma.user.findMany({ where: { role: "HANDYMAN" }, take: 3, orderBy: { createdAt: "desc" }, select: { id: true, name: true, createdAt: true } }).then((r) => ({ result: r, label: "", ms: 0 })),
+    runTimed ? withTiming("recentReports", () => prisma.report.findMany({ take: 3, orderBy: { createdAt: "desc" }, include: { reporter: { select: { name: true } }, reportedUser: { select: { name: true } } } })) : prisma.report.findMany({ take: 3, orderBy: { createdAt: "desc" }, include: { reporter: { select: { name: true } }, reportedUser: { select: { name: true } } } }).then((r) => ({ result: r, label: "", ms: 0 })),
+    runTimed ? withTiming("recentUnlocks", () => prisma.requestContactUnlock.findMany({ take: 3, orderBy: { createdAt: "desc" }, include: { handyman: { select: { name: true } }, request: { select: { category: true, city: true } } } })) : prisma.requestContactUnlock.findMany({ take: 3, orderBy: { createdAt: "desc" }, include: { handyman: { select: { name: true } }, request: { select: { category: true, city: true } } } }).then((r) => ({ result: r, label: "", ms: 0 })),
+    runTimed ? withTiming("recentAudits", () => prisma.auditLog.findMany({ take: 3, orderBy: { createdAt: "desc" } })) : prisma.auditLog.findMany({ take: 3, orderBy: { createdAt: "desc" } }).then((r) => ({ result: r, label: "", ms: 0 })),
+    runTimed
+      ? withTiming("requestsLast7Days", () =>
+          prisma.request.findMany({
+            where: { createdAt: { gte: dayRanges[0].start } },
+            select: { createdAt: true },
+          })
+        )
+      : prisma.request
+          .findMany({
+            where: { createdAt: { gte: dayRanges[0].start } },
+            select: { createdAt: true },
+          })
+          .then((r) => ({ result: r, label: "", ms: 0 })),
+    runTimed
+      ? withTiming("offersLast7Days", () =>
+          prisma.offer.findMany({
+            where: { createdAt: { gte: dayRanges[0].start } },
+            select: { createdAt: true },
+          })
+        )
+      : prisma.offer
+          .findMany({
+            where: { createdAt: { gte: dayRanges[0].start } },
+            select: { createdAt: true },
+          })
+          .then((r) => ({ result: r, label: "", ms: 0 })),
     runTimed ? withTiming("topCategories", () => prisma.request.groupBy({ by: ["category"], _count: { category: true }, orderBy: { _count: { category: "desc" } }, take: 5 })) : prisma.request.groupBy({ by: ["category"], _count: { category: true }, orderBy: { _count: { category: "desc" } }, take: 5 }).then((r) => ({ result: r, label: "", ms: 0 })),
     runTimed ? withTiming("topCities", () => prisma.request.groupBy({ by: ["city"], _count: { city: true }, orderBy: { _count: { city: "desc" } }, take: 5 })) : prisma.request.groupBy({ by: ["city"], _count: { city: true }, orderBy: { _count: { city: "desc" } }, take: 5 }).then((r) => ({ result: r, label: "", ms: 0 })),
   ]);
@@ -76,13 +92,21 @@ async function loadDashboardData() {
   const recentHandymen = getResult(11) as Awaited<ReturnType<typeof prisma.user.findMany>>;
   const recentReports = getResult(12) as Array<{ id: string; type: string; reporter: { name: string }; reportedUser: { name: string } }>;
   const recentUnlocks = getResult(13) as Array<{ id: string; createdAt: Date; handyman: { name: string }; request: { category: string; city: string } }>;
-  const requestsByDay = dayRanges.map((_, i) => getResult(15 + i) as { label: string; count: number });
-  const offersByDay = dayRanges.map((_, i) => getResult(22 + i) as { label: string; count: number });
-  const topCategories = getResult(29) as Awaited<ReturnType<typeof prisma.request.groupBy>>;
-  const topCities = getResult(30) as Awaited<ReturnType<typeof prisma.request.groupBy>>;
+  const requestsLast7 = getResult(15) as Array<{ createdAt: Date }>;
+  const offersLast7 = getResult(16) as Array<{ createdAt: Date }>;
+  const requestsByDay = dayRanges.map(({ start, end, label }) => ({
+    label,
+    count: requestsLast7.filter((r) => r.createdAt >= start && r.createdAt < end).length,
+  }));
+  const offersByDay = dayRanges.map(({ start, end, label }) => ({
+    label,
+    count: offersLast7.filter((o) => o.createdAt >= start && o.createdAt < end).length,
+  }));
+  const topCategories = getResult(17) as Awaited<ReturnType<typeof prisma.request.groupBy>>;
+  const topCities = getResult(18) as Awaited<ReturnType<typeof prisma.request.groupBy>>;
 
   if (runTimed && "ms" in all[0]) {
-    const timings = all.slice(0, 31).filter((x) => typeof (x as { ms?: number }).ms === "number") as { result: unknown; label: string; ms: number }[];
+    const timings = all.slice(0, 19).filter((x) => typeof (x as { ms?: number }).ms === "number") as { result: unknown; label: string; ms: number }[];
     const slowest = timings.length ? timings.reduce((a, b) => (a.ms >= b.ms ? a : b)) : null;
     console.info("[AdminDashboard] Query batch total (wall) ms:", Date.now() - (typeof (global as unknown as { __adminDashboardStart?: number }).__adminDashboardStart === "number" ? (global as unknown as { __adminDashboardStart: number }).__adminDashboardStart : 0));
     if (slowest) console.info("[AdminDashboard] Slowest query:", slowest.label, slowest.ms, "ms");
@@ -112,17 +136,6 @@ async function loadDashboardData() {
 }
 
 export default async function AdminDashboardPage() {
-  try {
-    await requireAdminPermission("dashboard");
-  } catch (authErr: unknown) {
-    const err = authErr as { digest?: string };
-    if (typeof err?.digest !== "string" || !err.digest.startsWith("NEXT_REDIRECT")) {
-      console.error("[AdminDashboard] Auth error:", authErr);
-      console.error("[AdminDashboard] Auth stack:", authErr instanceof Error ? authErr.stack : "no stack");
-    }
-    throw authErr;
-  }
-
   const emptyData: Awaited<ReturnType<typeof loadDashboardData>> = {
     requestsToday: 0,
     requestsWeek: 0,
@@ -212,22 +225,22 @@ export default async function AdminDashboardPage() {
   ];
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 sm:space-y-8">
       <div>
-        <h1 className="text-2xl font-bold text-[#0F172A]">Dashboard</h1>
-        <p className="mt-1 text-sm text-[#64748B]">Pregled platforme i ključnih metrika</p>
+        <h1 className="text-xl font-bold text-[#0F172A] sm:text-2xl">Dashboard</h1>
+        <p className="mt-1 text-xs text-[#64748B] sm:text-sm">Pregled platforme i ključnih metrika</p>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {statCards.map((stat) => {
           const card = (
             <Card className="h-full transition-shadow hover:shadow-md">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-[#64748B]">{stat.label}</CardTitle>
+              <CardHeader className="pb-1 sm:pb-2">
+                <CardTitle className="text-xs font-medium text-[#64748B] sm:text-sm">{stat.label}</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-2xl font-bold text-[#0F172A]">{stat.value}</p>
-                {stat.sub && <p className="mt-0.5 text-xs text-[#94A3B8]">{stat.sub}</p>}
+                <p className="text-xl font-bold text-[#0F172A] sm:text-2xl">{stat.value}</p>
+                {stat.sub && <p className="mt-0.5 text-[11px] text-[#94A3B8] sm:text-xs">{stat.sub}</p>}
               </CardContent>
             </Card>
           );
@@ -241,13 +254,13 @@ export default async function AdminDashboardPage() {
         })}
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="grid gap-4 lg:grid-cols-2">
         <Card>
           <CardHeader>
             <CardTitle>Zahtjevi po danu (7 dana)</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="flex h-24 items-end justify-between gap-2">
+            <div className="flex h-24 items-end justify-between gap-1 sm:gap-2">
               {requestsByDaySafe.map((d) => (
                 <div key={d.label} className="flex flex-1 flex-col items-center gap-1">
                   <div
@@ -283,13 +296,13 @@ export default async function AdminDashboardPage() {
         </Card>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="grid gap-4 lg:grid-cols-2">
         <Card>
           <CardHeader>
             <CardTitle>Najtraženije kategorije</CardTitle>
           </CardHeader>
           <CardContent>
-            <ul className="space-y-2">
+            <ul className="space-y-1.5 sm:space-y-2">
               {topCategoriesSafe.map((c) => (
                 <li key={c.category} className="flex justify-between text-sm">
                   <span>{c.category}</span>
@@ -306,7 +319,7 @@ export default async function AdminDashboardPage() {
             <CardTitle>Gradovi sa najviše aktivnosti</CardTitle>
           </CardHeader>
           <CardContent>
-            <ul className="space-y-2">
+            <ul className="space-y-1.5 sm:space-y-2">
               {topCitiesSafe.map((c) => (
                 <li key={c.city} className="flex justify-between text-sm">
                   <span>{c.city}</span>
@@ -319,13 +332,13 @@ export default async function AdminDashboardPage() {
         </Card>
       </div>
 
-      <Card>
+      <Card className="overflow-hidden">
         <CardHeader>
           <CardTitle>Recent Activity</CardTitle>
           <CardDescription>Zadnje aktivnosti na platformi</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             <div>
               <h4 className="mb-2 text-sm font-medium">Novi zahtjevi</h4>
               <ul className="space-y-1 text-sm">
@@ -369,7 +382,7 @@ export default async function AdminDashboardPage() {
               </ul>
             </div>
           </div>
-          <div className="mt-6 border-t pt-4">
+          <div className="mt-5 border-t pt-4">
             <h4 className="mb-2 text-sm font-medium">Otključanja kontakta</h4>
             <ul className="space-y-1 text-sm">
               {recentUnlocksSafe.map((u) => (
@@ -381,7 +394,7 @@ export default async function AdminDashboardPage() {
               {recentUnlocksSafe.length === 0 && <p className="text-[#94A3B8]">Nema</p>}
             </ul>
           </div>
-          <div className="mt-6 border-t pt-4">
+          <div className="mt-5 border-t pt-4">
             <h4 className="mb-2 text-sm font-medium">Admin akcije</h4>
             <ul className="space-y-1 text-sm">
               {recentAuditsSafe.map((a) => (

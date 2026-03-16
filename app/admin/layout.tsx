@@ -16,10 +16,10 @@ export default async function AdminLayout({
   return (
     <Providers>
       <AppProviders>
-        <div className="min-h-screen bg-[#F1F5F9]">
+        <div className="min-h-screen bg-[#F1F5F9] lg:flex">
           <AdminSidebar adminRole={adminRole} />
-          <div className="pl-64">
-            <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-[#E2E8F0] bg-white px-6">
+          <div className="w-full lg:pl-64">
+            <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-[#E2E8F0] bg-white px-4 sm:px-6">
               <span className="text-sm text-[#64748B]">
                 Prijavljeni ste kao <strong>{session.user.name}</strong> ({adminRole.replace("_", " ")})
               </span>
@@ -41,7 +41,7 @@ export default async function AdminLayout({
                 </form>
               </div>
             </header>
-            <main className="p-6">{children}</main>
+            <main className="p-4 sm:p-6">{children}</main>
           </div>
         </div>
       </AppProviders>
