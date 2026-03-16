@@ -4,6 +4,33 @@ import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 
+type DashboardData = {
+  requestsToday: number;
+  requestsWeek: number;
+  handymenToday: number;
+  handymenActive: number;
+  offersCount: number;
+  contactUnlocksCount: number;
+  reportsPending: number;
+  creditsToday: number;
+  creditsWeek: number;
+  creditsMonth: number;
+  recentRequests: Awaited<ReturnType<typeof import("@/lib/db")>> extends { prisma: infer P }
+    ? Awaited<ReturnType<(P & { request: { findMany: any } })["request"]["findMany"]>>
+    : unknown[];
+  recentHandymen: Awaited<ReturnType<typeof import("@/lib/db")>> extends { prisma: infer P }
+    ? Awaited<ReturnType<(P & { user: { findMany: any } })["user"]["findMany"]>>
+    : unknown[];
+  recentReports: Array<{ id: string; type: string; reporter: { name: string }; reportedUser: { name: string } }>;
+  recentUnlocks: Array<{ id: string; createdAt: Date; handyman: { name: string }; request: { category: string; city: string } }>;
+  requestsByDay: Array<{ label: string; count: number }>;
+  topCategories: Awaited<ReturnType<Awaited<ReturnType<typeof import("@/lib/db")>>["prisma"]["request"]["groupBy"]>>;
+};
+
+let dashboardCache: DashboardData | null = null;
+let dashboardCacheTimestamp = 0;
+const DASHBOARD_CACHE_TTL_MS = 60_000;
+
 async function withTiming<T>(label: string, fn: () => Promise<T>): Promise<{ result: T; label: string; ms: number }> {
   const start = Date.now();
   const result = await fn();
@@ -12,6 +39,10 @@ async function withTiming<T>(label: string, fn: () => Promise<T>): Promise<{ res
 
 async function loadDashboardData() {
   const { prisma } = await import("@/lib/db");
+
+  if (dashboardCache && Date.now() - dashboardCacheTimestamp < DASHBOARD_CACHE_TTL_MS) {
+    return dashboardCache;
+  }
   const now = new Date();
   const todayStart = new Date(now);
   todayStart.setHours(0, 0, 0, 0);
@@ -91,7 +122,7 @@ async function loadDashboardData() {
     if (slowest) console.info("[AdminDashboard] Slowest query:", slowest.label, slowest.ms, "ms");
   }
 
-  return {
+  const data: DashboardData = {
     requestsToday,
     requestsWeek,
     handymenToday,
@@ -109,6 +140,11 @@ async function loadDashboardData() {
     requestsByDay,
     topCategories,
   };
+
+  dashboardCache = data;
+  dashboardCacheTimestamp = Date.now();
+
+  return data;
 }
 
 export default async function AdminDashboardPage() {
