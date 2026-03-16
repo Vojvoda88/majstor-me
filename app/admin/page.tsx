@@ -46,7 +46,6 @@ async function loadDashboardData() {
     runTimed ? withTiming("recentHandymen", () => prisma.user.findMany({ where: { role: "HANDYMAN" }, take: 3, orderBy: { createdAt: "desc" }, select: { id: true, name: true, createdAt: true } })) : prisma.user.findMany({ where: { role: "HANDYMAN" }, take: 3, orderBy: { createdAt: "desc" }, select: { id: true, name: true, createdAt: true } }).then((r) => ({ result: r, label: "", ms: 0 })),
     runTimed ? withTiming("recentReports", () => prisma.report.findMany({ take: 3, orderBy: { createdAt: "desc" }, include: { reporter: { select: { name: true } }, reportedUser: { select: { name: true } } } })) : prisma.report.findMany({ take: 3, orderBy: { createdAt: "desc" }, include: { reporter: { select: { name: true } }, reportedUser: { select: { name: true } } } }).then((r) => ({ result: r, label: "", ms: 0 })),
     runTimed ? withTiming("recentUnlocks", () => prisma.requestContactUnlock.findMany({ take: 3, orderBy: { createdAt: "desc" }, include: { handyman: { select: { name: true } }, request: { select: { category: true, city: true } } } })) : prisma.requestContactUnlock.findMany({ take: 3, orderBy: { createdAt: "desc" }, include: { handyman: { select: { name: true } }, request: { select: { category: true, city: true } } } }).then((r) => ({ result: r, label: "", ms: 0 })),
-    runTimed ? withTiming("recentAudits", () => prisma.auditLog.findMany({ take: 3, orderBy: { createdAt: "desc" } })) : prisma.auditLog.findMany({ take: 3, orderBy: { createdAt: "desc" } }).then((r) => ({ result: r, label: "", ms: 0 })),
     runTimed
       ? withTiming("requestsLast7Days", () =>
           prisma.request.findMany({
@@ -60,21 +59,7 @@ async function loadDashboardData() {
             select: { createdAt: true },
           })
           .then((r) => ({ result: r, label: "", ms: 0 })),
-    runTimed
-      ? withTiming("offersLast7Days", () =>
-          prisma.offer.findMany({
-            where: { createdAt: { gte: dayRanges[0].start } },
-            select: { createdAt: true },
-          })
-        )
-      : prisma.offer
-          .findMany({
-            where: { createdAt: { gte: dayRanges[0].start } },
-            select: { createdAt: true },
-          })
-          .then((r) => ({ result: r, label: "", ms: 0 })),
     runTimed ? withTiming("topCategories", () => prisma.request.groupBy({ by: ["category"], _count: { category: true }, orderBy: { _count: { category: "desc" } }, take: 5 })) : prisma.request.groupBy({ by: ["category"], _count: { category: true }, orderBy: { _count: { category: "desc" } }, take: 5 }).then((r) => ({ result: r, label: "", ms: 0 })),
-    runTimed ? withTiming("topCities", () => prisma.request.groupBy({ by: ["city"], _count: { city: true }, orderBy: { _count: { city: "desc" } }, take: 5 })) : prisma.request.groupBy({ by: ["city"], _count: { city: true }, orderBy: { _count: { city: "desc" } }, take: 5 }).then((r) => ({ result: r, label: "", ms: 0 })),
   ]);
 
   const getResult = (i: number): unknown => ("result" in all[i] ? (all[i] as { result: unknown }).result : all[i]);
@@ -92,21 +77,15 @@ async function loadDashboardData() {
   const recentHandymen = getResult(11) as Awaited<ReturnType<typeof prisma.user.findMany>>;
   const recentReports = getResult(12) as Array<{ id: string; type: string; reporter: { name: string }; reportedUser: { name: string } }>;
   const recentUnlocks = getResult(13) as Array<{ id: string; createdAt: Date; handyman: { name: string }; request: { category: string; city: string } }>;
-  const requestsLast7 = getResult(15) as Array<{ createdAt: Date }>;
-  const offersLast7 = getResult(16) as Array<{ createdAt: Date }>;
+  const requestsLast7 = getResult(14) as Array<{ createdAt: Date }>;
   const requestsByDay = dayRanges.map(({ start, end, label }) => ({
     label,
     count: requestsLast7.filter((r) => r.createdAt >= start && r.createdAt < end).length,
   }));
-  const offersByDay = dayRanges.map(({ start, end, label }) => ({
-    label,
-    count: offersLast7.filter((o) => o.createdAt >= start && o.createdAt < end).length,
-  }));
-  const topCategories = getResult(17) as Awaited<ReturnType<typeof prisma.request.groupBy>>;
-  const topCities = getResult(18) as Awaited<ReturnType<typeof prisma.request.groupBy>>;
+  const topCategories = getResult(15) as Awaited<ReturnType<typeof prisma.request.groupBy>>;
 
   if (runTimed && "ms" in all[0]) {
-    const timings = all.slice(0, 19).filter((x) => typeof (x as { ms?: number }).ms === "number") as { result: unknown; label: string; ms: number }[];
+    const timings = all.slice(0, 16).filter((x) => typeof (x as { ms?: number }).ms === "number") as { result: unknown; label: string; ms: number }[];
     const slowest = timings.length ? timings.reduce((a, b) => (a.ms >= b.ms ? a : b)) : null;
     console.info("[AdminDashboard] Query batch total (wall) ms:", Date.now() - (typeof (global as unknown as { __adminDashboardStart?: number }).__adminDashboardStart === "number" ? (global as unknown as { __adminDashboardStart: number }).__adminDashboardStart : 0));
     if (slowest) console.info("[AdminDashboard] Slowest query:", slowest.label, slowest.ms, "ms");
@@ -127,11 +106,8 @@ async function loadDashboardData() {
     recentHandymen,
     recentReports,
     recentUnlocks,
-    recentAudits: getResult(14) as Awaited<ReturnType<typeof prisma.auditLog.findMany>>,
     requestsByDay,
-    offersByDay,
     topCategories,
-    topCities,
   };
 }
 
@@ -151,11 +127,8 @@ export default async function AdminDashboardPage() {
     recentHandymen: [],
     recentReports: [],
     recentUnlocks: [],
-    recentAudits: [],
     requestsByDay: [],
-    offersByDay: [],
     topCategories: [],
-    topCities: [],
   };
 
   let data: Awaited<ReturnType<typeof loadDashboardData>> = emptyData;
@@ -188,11 +161,8 @@ export default async function AdminDashboardPage() {
     recentHandymen,
     recentReports,
     recentUnlocks,
-    recentAudits,
     requestsByDay,
-    offersByDay,
     topCategories,
-    topCities,
   } = data;
 
   function safeArray<T>(x: T[] | undefined | null): T[] {
@@ -202,14 +172,10 @@ export default async function AdminDashboardPage() {
   const recentHandymenSafe = safeArray(recentHandymen);
   const recentReportsSafe = safeArray(recentReports);
   const recentUnlocksSafe = safeArray(recentUnlocks);
-  const recentAuditsSafe = safeArray(recentAudits);
   const requestsByDaySafe = safeArray(requestsByDay);
-  const offersByDaySafe = safeArray(offersByDay);
   const topCategoriesSafe = safeArray(topCategories);
-  const topCitiesSafe = safeArray(topCities);
 
   const maxBar = Math.max(1, ...requestsByDaySafe.map((d) => d.count));
-  const maxOffers = Math.max(1, ...offersByDaySafe.map((d) => d.count));
 
   const statCards = [
     { label: "Novi zahtjevi danas", value: requestsToday, href: "/admin/requests" },
@@ -254,7 +220,7 @@ export default async function AdminDashboardPage() {
         })}
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-2">
+      <div className="grid gap-4 lg:grid-cols-1">
         <Card>
           <CardHeader>
             <CardTitle>Zahtjevi po danu (7 dana)</CardTitle>
@@ -274,29 +240,9 @@ export default async function AdminDashboardPage() {
             </div>
           </CardContent>
         </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Ponude po danu (7 dana)</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex h-24 items-end justify-between gap-2">
-              {offersByDaySafe.map((d) => (
-                <div key={d.label} className="flex flex-1 flex-col items-center gap-1">
-                  <div
-                    className="w-full max-w-12 rounded-t bg-[#16A34A]"
-                    style={{ height: `${(d.count / maxOffers) * 80}%`, minHeight: d.count > 0 ? 4 : 0 }}
-                  />
-                  <span className="text-xs text-[#64748B]">{d.label}</span>
-                  <span className="text-xs font-medium">{d.count}</span>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-2">
+      <div className="grid gap-4 lg:grid-cols-1">
         <Card>
           <CardHeader>
             <CardTitle>Najtraženije kategorije</CardTitle>
@@ -310,23 +256,6 @@ export default async function AdminDashboardPage() {
                 </li>
               ))}
               {topCategoriesSafe.length === 0 && <p className="text-sm text-[#64748B]">Nema podataka</p>}
-            </ul>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Gradovi sa najviše aktivnosti</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ul className="space-y-1.5 sm:space-y-2">
-              {topCitiesSafe.map((c) => (
-                <li key={c.city} className="flex justify-between text-sm">
-                  <span>{c.city}</span>
-                  <span className="font-medium">{(c as { _count: { city: number } })._count.city}</span>
-                </li>
-              ))}
-              {topCitiesSafe.length === 0 && <p className="text-sm text-[#64748B]">Nema podataka</p>}
             </ul>
           </CardContent>
         </Card>
@@ -392,18 +321,6 @@ export default async function AdminDashboardPage() {
                 </li>
               ))}
               {recentUnlocksSafe.length === 0 && <p className="text-[13px] text-[#94A3B8]">Nema</p>}
-            </ul>
-          </div>
-          <div className="mt-5 border-t pt-4">
-            <h4 className="mb-2 text-sm font-medium">Admin akcije</h4>
-            <ul className="space-y-1.5 text-[13px] sm:text-sm">
-              {recentAuditsSafe.map((a) => (
-                <li key={a.id}>
-                  <span className="font-medium">{a.actionType}</span> {a.entityType} {a.entityId ?? ""}
-                  <span className="ml-2 text-[#94A3B8]">{new Date(a.createdAt).toLocaleString("sr")}</span>
-                </li>
-              ))}
-              {recentAuditsSafe.length === 0 && <p className="text-[#94A3B8]">Nema</p>}
             </ul>
           </div>
         </CardContent>
