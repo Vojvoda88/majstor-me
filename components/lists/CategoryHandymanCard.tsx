@@ -150,7 +150,7 @@ export function CategoryHandymanCard({
           <div className="mt-4 flex items-center justify-between gap-4">
             <div className="inline-flex items-center gap-1.5 rounded-full bg-[#FEF3C7] px-3 py-1.5 text-sm font-semibold text-[#92400E]">
               <Star className="h-4 w-4 fill-current" />
-              {ratingAvg.toFixed(1)}
+              {hasReviews ? ratingAvg.toFixed(1) : "—"}
             </div>
             <span className="flex h-12 flex-1 items-center justify-center rounded-2xl bg-[#2563EB] text-base font-semibold text-white shadow-sm">
               Pogledaj profil

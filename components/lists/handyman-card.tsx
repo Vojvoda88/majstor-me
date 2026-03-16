@@ -109,7 +109,7 @@ function HandymanCardComponent({
           <div className="flex flex-wrap items-center gap-2">
             <h3 className="text-base font-semibold text-gray-900 sm:text-lg">{name || "Majstor"}</h3>
             <span className="flex items-center gap-1 text-amber-600">
-              <Star className="h-4 w-4 fill-amber-500" /> {ratingAvg.toFixed(1)}
+              <Star className="h-4 w-4 fill-amber-500" /> {hasReviews ? ratingAvg.toFixed(1) : "—"}
             </span>
           </div>
           <p className="mt-0.5 text-sm text-gray-600">
@@ -138,7 +138,7 @@ function HandymanCardComponent({
           <div className="flex items-start justify-between gap-2">
             <h3 className="text-xl font-semibold text-[#0F172A]">{name || "Majstor"}</h3>
             <span className="shrink-0 rounded-full bg-amber-100 px-2.5 py-1 text-sm font-semibold text-amber-800">
-              ⭐ {ratingAvg.toFixed(1)}
+              ⭐ {hasReviews ? ratingAvg.toFixed(1) : "—"}
             </span>
           </div>
           <p className="mt-0.5 text-sm text-[#475569]">
