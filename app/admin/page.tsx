@@ -15,16 +15,12 @@ type DashboardData = {
   creditsToday: number;
   creditsWeek: number;
   creditsMonth: number;
-  recentRequests: Awaited<ReturnType<typeof import("@/lib/db")>> extends { prisma: infer P }
-    ? Awaited<ReturnType<(P & { request: { findMany: any } })["request"]["findMany"]>>
-    : unknown[];
-  recentHandymen: Awaited<ReturnType<typeof import("@/lib/db")>> extends { prisma: infer P }
-    ? Awaited<ReturnType<(P & { user: { findMany: any } })["user"]["findMany"]>>
-    : unknown[];
+  recentRequests: Array<{ id: string; category: string; city: string; createdAt: Date }>;
+  recentHandymen: Array<{ id: string; name: string | null; createdAt: Date }>;
   recentReports: Array<{ id: string; type: string; reporter: { name: string }; reportedUser: { name: string } }>;
   recentUnlocks: Array<{ id: string; createdAt: Date; handyman: { name: string }; request: { category: string; city: string } }>;
   requestsByDay: Array<{ label: string; count: number }>;
-  topCategories: Awaited<ReturnType<Awaited<ReturnType<typeof import("@/lib/db")>>["prisma"]["request"]["groupBy"]>>;
+  topCategories: Array<{ category: string; _count: { category: number } }>;
 };
 
 let dashboardCache: DashboardData | null = null;
