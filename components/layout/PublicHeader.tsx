@@ -33,20 +33,22 @@ export function PublicHeader() {
           <Link href="/#kako-radi" className="text-[15px] font-medium text-slate-600 transition hover:text-[#1d4ed8]" data-testid="nav-kako-radi" {...linkProps}>
             Kako radi
           </Link>
-          <a
-            href="/register"
+          <Link
+            href="/register?type=majstor"
             className="text-[15px] font-medium text-slate-600 transition hover:text-[#1d4ed8]"
             data-testid="nav-registracija-majstor"
+            {...linkProps}
           >
             Registruj se kao majstor
-          </a>
-          <a
+          </Link>
+          <Link
             href="/login"
             className="rounded-xl bg-[#1d4ed8] px-5 py-2.5 text-[15px] font-bold text-white transition hover:bg-[#1e40af]"
             data-testid="nav-prijava"
+            {...linkProps}
           >
             Prijava
-          </a>
+          </Link>
         </nav>
 
         <button
@@ -71,16 +73,34 @@ export function PublicHeader() {
             <Link href="/#kako-radi" className="py-3 text-[16px] font-medium text-slate-700" onClick={() => setMenuOpen(false)} data-testid="nav-kako-radi" {...linkProps}>
               Kako radi
             </Link>
-            <a href="/register" className="py-3 text-[16px] font-medium text-slate-700" onClick={() => setMenuOpen(false)} data-testid="nav-registracija-majstor">
+            <Link
+              href="/register?type=majstor"
+              className="py-3 text-[16px] font-medium text-slate-700"
+              onClick={() => setMenuOpen(false)}
+              data-testid="nav-registracija-majstor"
+              {...linkProps}
+            >
               Registruj se kao majstor
-            </a>
+            </Link>
             <div className="mt-4 flex flex-col gap-2 border-t border-slate-100 pt-4">
-              <a href="/login" className="py-3 text-center text-[16px] font-medium text-slate-700" onClick={() => setMenuOpen(false)} data-testid="nav-prijava">
+              <Link
+                href="/login"
+                className="py-3 text-center text-[16px] font-medium text-slate-700"
+                onClick={() => setMenuOpen(false)}
+                data-testid="nav-prijava"
+                {...linkProps}
+              >
                 Prijava
-              </a>
-              <a href="/register" className="rounded-xl bg-[#1d4ed8] py-3.5 text-center text-[16px] font-bold text-white" onClick={() => setMenuOpen(false)} data-testid="nav-registracija">
+              </Link>
+              <Link
+                href="/register"
+                className="rounded-xl bg-[#1d4ed8] py-3.5 text-center text-[16px] font-bold text-white"
+                onClick={() => setMenuOpen(false)}
+                data-testid="nav-registracija"
+                {...linkProps}
+              >
                 Registracija
-              </a>
+              </Link>
             </div>
           </nav>
         </div>

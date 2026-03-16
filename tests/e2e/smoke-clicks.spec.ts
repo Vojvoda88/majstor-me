@@ -15,7 +15,7 @@ test.describe("Smoke – main clicks", () => {
     await expect(page).toHaveURL(/\/categories/);
     await assertNoServerComponentError(page);
     await page.getByTestId("nav-registracija-majstor").click();
-    await expect(page).toHaveURL(/\/register/);
+    await expect(page).toHaveURL(/\/register\?type=majstor/);
     await page.getByTestId("nav-prijava").click();
     await expect(page).toHaveURL(/\/login/);
     await assertNoServerComponentError(page);
