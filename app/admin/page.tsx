@@ -20,7 +20,7 @@ type DashboardData = {
   recentReports: Array<{ id: string; type: string; reporter: { name: string }; reportedUser: { name: string } }>;
   recentUnlocks: Array<{ id: string; createdAt: Date; handyman: { name: string }; request: { category: string; city: string } }>;
   requestsByDay: Array<{ label: string; count: number }>;
-  topCategories: Array<{ category: string; _count: { category: number } }>;
+  topCategories: any[];
 };
 
 let dashboardCache: DashboardData | null = null;
