@@ -40,6 +40,7 @@ export function CategoriesGrid() {
                 fill
                 className="object-cover transition duration-500 ease-out group-hover:scale-105"
                 sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                unoptimized
               />
               <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/20 to-transparent transition duration-300 group-hover:from-slate-900/90" />
               <div className="absolute inset-0 flex flex-col justify-end p-6">
