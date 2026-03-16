@@ -112,10 +112,15 @@ export function GradPageContent({
           )}
 
           {!cityImage && (
-            <h1 className="mb-6 text-2xl font-black tracking-tight text-slate-950 sm:text-3xl">
+            <h1 className="mb-2 text-2xl font-black tracking-tight text-slate-950 sm:text-3xl">
               Majstori u {cityNameLocative}
             </h1>
           )}
+
+          <p className="mb-6 max-w-2xl text-sm text-slate-600 sm:text-base">
+            Pregled provjerenih majstora koji rade u gradu <span className="font-medium text-slate-900">{cityName}</span>.
+            Ako ne pronađete odgovarajućeg majstora, uvijek možete objaviti besplatan zahtjev i dobiti nove ponude.
+          </p>
 
           <h2 className="mb-4 text-lg font-bold text-slate-900">
             Majstori u ovom gradu
@@ -140,13 +145,14 @@ export function GradPageContent({
             <div className="mb-12 rounded-2xl border border-white bg-white p-12 text-center shadow-sm">
               <Wrench className="mx-auto mb-4 h-12 w-12 text-slate-300" />
               <p className="text-slate-600">
-                Trenutno nema majstora registrovanih za {cityName}.
+                Trenutno nema majstora registrovanih za {cityName}. Možete objaviti besplatan zahtjev i obavijestićemo
+                dostupne majstore iz ovog i okolnih gradova.
               </p>
               <Link
-                href="/request/create"
+                href={`/request/create?city=${encodeURIComponent(cityName)}`}
                 className="mt-4 inline-block font-medium text-blue-600 hover:underline"
               >
-                Objavi zahtjev
+                Objavi zahtjev za {cityName}
               </Link>
             </div>
           ) : (

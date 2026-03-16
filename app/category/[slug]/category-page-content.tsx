@@ -123,10 +123,15 @@ export function CategoryPageContent({
           {/* Header zone */}
           <header className="mb-8">
             <h1 className="text-4xl font-bold tracking-tight text-[#0F172A] md:text-5xl">
-              {displayName}
+              {displayName} u Crnoj Gori
             </h1>
-            <p className="mt-3 text-lg text-[#64748B]">
-              Provjereni majstori širom Crne Gore
+            <p className="mt-3 max-w-2xl text-sm text-[#64748B] md:text-base">
+              Pregled majstora za kategoriju <span className="font-medium text-[#0F172A]">{displayName.toLowerCase()}</span>
+              {cityFilter ? (
+                <> u gradu <span className="font-medium text-[#0F172A]">{cityFilter}</span>. Filtrirajte listu ili objavite zahtjev ako ne nalazite idealnog majstora.</>
+              ) : (
+                <> širom Crne Gore. Pronađite majstora ili objavite zahtjev i dobijte ponude.</>
+              )}
             </p>
           </header>
 
@@ -215,7 +220,7 @@ export function CategoryPageContent({
               ) : (
                 <>
                   <p className="mb-4 text-sm text-[#64748B]">
-                    {total} majstor(a)
+                    {total} majstor(a){cityFilter ? <> u gradu {cityFilter}</> : " u Crnoj Gori"}
                   </p>
 
                   {viewMode === "map" ? (
