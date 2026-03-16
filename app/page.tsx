@@ -1,5 +1,6 @@
 import nextDynamic from "next/dynamic";
-import { PublicHeader } from "@/components/layout/PublicHeader";
+import { Providers } from "@/app/providers";
+import { SiteHeader } from "@/components/layout/site-header";
 import { Hero } from "@/components/home-page/Hero";
 import { FloatingStatsCard } from "@/components/home-page/FloatingStatsCard";
 import { WhyMajstorSection } from "@/components/home-page/WhyMajstorSection";
@@ -44,43 +45,45 @@ export default async function HomePage() {
   const orgJson = organizationJsonLd();
   const faqJson = faqPageJsonLd(FAQ_ITEMS);
   return (
-    <main className="relative min-h-screen bg-[#FAFBFC] pb-28 md:pb-16 before:absolute before:inset-0 before:content-[''] before:bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(37,99,235,0.08),transparent)] before:pointer-events-none isolate">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJson) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJson) }}
-      />
-      <PublicHeader />
-      <div className="pt-16">
-        <Hero />
-        <FloatingStatsCard initialStats={stats} />
-      </div>
+    <Providers>
+      <main className="relative min-h-screen bg-[#FAFBFC] pb-28 md:pb-16 before:absolute before:inset-0 before:content-[''] before:bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(37,99,235,0.08),transparent)] before:pointer-events-none isolate">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJson) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJson) }}
+        />
+        <SiteHeader />
+        <div className="pt-4 md:pt-8">
+          <Hero />
+          <FloatingStatsCard initialStats={stats} />
+        </div>
 
-      <div className="mx-auto max-w-6xl px-6 py-16">
-        <div className="animate-fade-up" style={{ animationDelay: "0.05s", animationFillMode: "both" }}>
-          <WhyMajstorSection />
+        <div className="mx-auto max-w-6xl px-6 py-16">
+          <div className="animate-fade-up" style={{ animationDelay: "0.05s", animationFillMode: "both" }}>
+            <WhyMajstorSection />
+          </div>
+          <div className="animate-fade-up" style={{ animationDelay: "0.1s", animationFillMode: "both" }}>
+            <CategoriesGrid />
+          </div>
+          <div className="animate-fade-up" style={{ animationDelay: "0.15s", animationFillMode: "both" }}>
+            <ReviewCardsSection initialHandymen={handymen} />
+          </div>
+          <div className="animate-fade-up" style={{ animationDelay: "0.2s", animationFillMode: "both" }}>
+            <HowItWorks />
+          </div>
+          <div className="animate-fade-up" style={{ animationDelay: "0.25s", animationFillMode: "both" }}>
+            <FAQ />
+          </div>
+          <div className="animate-fade-up" style={{ animationDelay: "0.3s", animationFillMode: "both" }}>
+            <CTAForMasters />
+          </div>
         </div>
-        <div className="animate-fade-up" style={{ animationDelay: "0.1s", animationFillMode: "both" }}>
-          <CategoriesGrid />
-        </div>
-        <div className="animate-fade-up" style={{ animationDelay: "0.15s", animationFillMode: "both" }}>
-          <ReviewCardsSection initialHandymen={handymen} />
-        </div>
-        <div className="animate-fade-up" style={{ animationDelay: "0.2s", animationFillMode: "both" }}>
-          <HowItWorks />
-        </div>
-        <div className="animate-fade-up" style={{ animationDelay: "0.25s", animationFillMode: "both" }}>
-          <FAQ />
-        </div>
-        <div className="animate-fade-up" style={{ animationDelay: "0.3s", animationFillMode: "both" }}>
-          <CTAForMasters />
-        </div>
-      </div>
 
-      <StickyBottomCTA href="/request/create" label="Objavi zahtjev" />
-    </main>
+        <StickyBottomCTA href="/request/create" label="Objavi zahtjev" />
+      </main>
+    </Providers>
   );
 }
