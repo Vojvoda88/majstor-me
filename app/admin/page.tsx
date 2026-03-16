@@ -123,14 +123,41 @@ export default async function AdminDashboardPage() {
     throw authErr;
   }
 
-  let data: Awaited<ReturnType<typeof loadDashboardData>>;
+  const emptyData: Awaited<ReturnType<typeof loadDashboardData>> = {
+    requestsToday: 0,
+    requestsWeek: 0,
+    handymenToday: 0,
+    handymenActive: 0,
+    offersCount: 0,
+    contactUnlocksCount: 0,
+    reportsPending: 0,
+    creditsToday: 0,
+    creditsWeek: 0,
+    creditsMonth: 0,
+    recentRequests: [],
+    recentHandymen: [],
+    recentReports: [],
+    recentUnlocks: [],
+    recentAudits: [],
+    requestsByDay: [],
+    offersByDay: [],
+    topCategories: [],
+    topCities: [],
+  };
+
+  let data: Awaited<ReturnType<typeof loadDashboardData>> = emptyData;
   try {
     data = await loadDashboardData();
   } catch (dataErr) {
     console.error("[AdminDashboard] Data load error:", dataErr);
     console.error("[AdminDashboard] Data stack:", dataErr instanceof Error ? dataErr.stack : "no stack");
     console.error("[AdminDashboard] Data message:", dataErr instanceof Error ? dataErr.message : String(dataErr));
-    throw dataErr;
+    // U produkciji ne rušimo cijeli dashboard – prikažemo prazan state umjesto toga.
+    if (process.env.NODE_ENV !== "development") {
+      console.error("[AdminDashboard] Falling back to empty dashboard data in production.");
+    } else {
+      throw dataErr;
+    }
   }
 
   const {
