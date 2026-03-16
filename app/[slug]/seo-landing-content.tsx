@@ -6,6 +6,7 @@ import { PublicHeader } from "@/components/layout/PublicHeader";
 import { Wrench, ChevronLeft, ChevronRight, MapPin } from "lucide-react";
 import { HandymanCard } from "@/components/lists/handyman-card";
 import { DEFAULT_PAGE_SIZE } from "@/lib/constants";
+import { cityLocative } from "@/lib/slugs";
 
 type Handyman = {
   id: string;
@@ -33,30 +34,58 @@ export function SeoLandingContent({
   const [totalPages, setTotalPages] = useState(1);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [reloadToken, setReloadToken] = useState(0);
+
+  const cityNameLocative = cityLocative(cityName);
 
   useEffect(() => {
     setPage(1);
   }, [internalCategory, cityName, sortBy]);
 
   useEffect(() => {
+    let cancelled = false;
+
     async function fetchHandymen() {
       setLoading(true);
-      const params = new URLSearchParams();
-      params.set("category", internalCategory);
-      params.set("city", cityName);
-      params.set("sort", sortBy);
-      params.set("page", String(page));
-      params.set("limit", String(DEFAULT_PAGE_SIZE));
-      const res = await fetch(`/api/handymen?${params}`);
-      const data = await res.json();
-      const items = data.items ?? data.handymen ?? [];
-      setHandymen(items);
-      setTotalPages(data.totalPages ?? 1);
-      setTotal(data.total ?? items.length);
-      setLoading(false);
+      setError(null);
+      try {
+        const params = new URLSearchParams();
+        params.set("category", internalCategory);
+        params.set("city", cityName);
+        params.set("sort", sortBy);
+        params.set("page", String(page));
+        params.set("limit", String(DEFAULT_PAGE_SIZE));
+        const res = await fetch(`/api/handymen?${params}`);
+        if (!res.ok) {
+          throw new Error(`Failed to load handymen: ${res.status}`);
+        }
+        const data = await res.json();
+        const items = data.items ?? data.handymen ?? [];
+        if (cancelled) return;
+        setHandymen(items);
+        setTotalPages(data.totalPages ?? 1);
+        setTotal(data.total ?? items.length);
+      } catch (e) {
+        if (cancelled) return;
+        console.error("Greška pri učitavanju majstora za SEO landing:", e);
+        setError("Došlo je do greške pri učitavanju majstora. Pokušajte ponovo.");
+        setHandymen([]);
+        setTotalPages(1);
+        setTotal(0);
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
+      }
     }
+
     fetchHandymen();
-  }, [internalCategory, cityName, sortBy, page]);
+
+    return () => {
+      cancelled = true;
+    };
+  }, [internalCategory, cityName, sortBy, page, reloadToken]);
 
   return (
     <main className="min-h-screen bg-slate-100 text-slate-900">
@@ -80,7 +109,7 @@ export function SeoLandingContent({
             {displayName} {cityName}
           </h1>
           <p className="mb-6 text-slate-600">
-            Pronađite provjerene {displayName.toLowerCase()}e u {cityName}. Brze ponude, lako usporedite majstore.
+            Pronađite provjerene {displayName.toLowerCase()}e u {cityNameLocative}. Brze ponude, lako uporedite majstore.
           </p>
 
           <div className="mb-6 flex flex-wrap gap-4">
@@ -96,6 +125,19 @@ export function SeoLandingContent({
 
           {loading ? (
             <p className="py-12 text-center text-slate-500">Učitavanje...</p>
+          ) : error ? (
+            <div className="rounded-2xl border border-red-100 bg-red-50 p-12 text-center shadow-sm">
+              <p className="text-sm font-medium text-red-800">
+                {error}
+              </p>
+              <button
+                type="button"
+                onClick={() => setReloadToken((t) => t + 1)}
+                className="mt-4 inline-flex h-10 items-center justify-center rounded-lg bg-red-600 px-4 text-sm font-semibold text-white shadow-sm transition hover:bg-red-700 active:scale-[0.98]"
+              >
+                Pokušaj ponovo
+              </button>
+            </div>
           ) : handymen.length === 0 ? (
             <div className="rounded-2xl border border-white bg-white p-12 text-center shadow-sm">
               <Wrench className="mx-auto mb-4 h-12 w-12 text-slate-300" />
@@ -113,7 +155,7 @@ export function SeoLandingContent({
             <>
               <div className="mb-4 flex items-center gap-2 text-sm text-slate-500">
                 <MapPin className="h-4 w-4" />
-                {total} majstor(a) u {cityName}
+                {total} majstor(a) u {cityNameLocative}
               </div>
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {handymen.map((h) => (

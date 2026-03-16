@@ -213,7 +213,7 @@ async function main() {
     {
       userId: users[0].id,
       category: "Električar",
-      description: "Treba ugraditi novu bravu u dnevni boravak. Kucamo zid.",
+      description: "Prekidač i utičnice ne rade ispravno u dnevnoj sobi. Potrebna provjera instalacija i popravka.",
       city: "Nikšić",
       address: "Trg oslobođenja 5",
       urgency: "U_NAREDNA_2_DANA" as const,

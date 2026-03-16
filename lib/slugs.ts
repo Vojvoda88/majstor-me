@@ -44,6 +44,38 @@ export const CITY_SLUGS: Record<string, string> = {
   "tuzi": "Tuzi",
 };
 
+// Gradovi - nomativ -> lokativ (za ispravan prikaz "u Podgorici", "u Nikšiću" itd.)
+const CITY_LOCATIVE_MAP: Record<string, string> = {
+  "Podgorica": "Podgorici",
+  "Nikšić": "Nikšiću",
+  "Budva": "Budvi",
+  "Kotor": "Kotoru",
+  "Herceg Novi": "Herceg Novom",
+  "Bar": "Baru",
+  "Ulcinj": "Ulcinju",
+  "Tivat": "Tivtu",
+  "Cetinje": "Cetinju",
+  "Danilovgrad": "Danilovgradu",
+  "Bijelo Polje": "Bijelom Polju",
+  "Pljevlja": "Pljevljima",
+  "Berane": "Beranama",
+  "Rožaje": "Rožajama",
+  "Kolašin": "Kolašinu",
+  "Mojkovac": "Mojkovcu",
+  "Žabljak": "Žabljaku",
+  "Plav": "Plavu",
+  "Gusinje": "Gusinju",
+  "Tuzi": "Tuzima",
+  // Gradovi koji postoje u CITIES, ali ne nužno u CITY_SLUGS mapi
+  "Šavnik": "Šavniku",
+  "Andrijevica": "Andrijevici",
+  "Petnjica": "Petnjici",
+};
+
+export function cityLocative(name: string): string {
+  return CITY_LOCATIVE_MAP[name] ?? name;
+}
+
 export function categoryToSlug(name: string): string {
   const entry = CATEGORY_CONFIG.find(
     (c) => c.displayName.toLowerCase() === name.toLowerCase()

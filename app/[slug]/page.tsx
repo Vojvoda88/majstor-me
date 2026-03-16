@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
-import { parseCategoryCitySlug } from "@/lib/slugs";
+import { parseCategoryCitySlug, cityLocative } from "@/lib/slugs";
 import { getSiteUrl } from "@/lib/site-url";
 import { SeoLandingContent } from "./seo-landing-content";
 
@@ -13,8 +13,9 @@ export async function generateMetadata({
   const parsed = parseCategoryCitySlug(slug);
   if (!parsed) return { title: "Majstor.me" };
   const base = getSiteUrl();
+  const cityLoc = cityLocative(parsed.cityDisplayName);
   const title = `${parsed.categoryDisplayName} ${parsed.cityDisplayName} | Majstor.me`;
-  const description = `Pronađite ${parsed.categoryDisplayName.toLowerCase()}e u ${parsed.cityDisplayName}. Provjereni majstori, brze ponude.`;
+  const description = `Pronađite ${parsed.categoryDisplayName.toLowerCase()}e u ${cityLoc}. Provjereni majstori, brze ponude.`;
   return {
     title,
     description,

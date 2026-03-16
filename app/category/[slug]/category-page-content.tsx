@@ -48,6 +48,8 @@ export function CategoryPageContent({
   const [loading, setLoading] = useState(true);
   const [viewMode, setViewMode] = useState<"list" | "map">("list");
   const [filterSheetOpen, setFilterSheetOpen] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [reloadToken, setReloadToken] = useState(0);
 
   useEffect(() => {
     setCityFilter(cityFromUrl);
@@ -58,24 +60,48 @@ export function CategoryPageContent({
   }, [internalCategory, cityFilter, sortBy]);
 
   useEffect(() => {
+    let cancelled = false;
+
     async function fetchHandymen() {
       setLoading(true);
-      const params = new URLSearchParams();
-      params.set("category", internalCategory);
-      if (cityFilter) params.set("city", cityFilter);
-      params.set("sort", sortBy);
-      params.set("page", String(page));
-      params.set("limit", String(DEFAULT_PAGE_SIZE));
-      const res = await fetch(`/api/handymen?${params}`);
-      const data = await res.json();
-      const items = data.items ?? data.handymen ?? [];
-      setHandymen(items);
-      setTotalPages(data.totalPages ?? 1);
-      setTotal(data.total ?? items.length);
-      setLoading(false);
+      setError(null);
+      try {
+        const params = new URLSearchParams();
+        params.set("category", internalCategory);
+        if (cityFilter) params.set("city", cityFilter);
+        params.set("sort", sortBy);
+        params.set("page", String(page));
+        params.set("limit", String(DEFAULT_PAGE_SIZE));
+        const res = await fetch(`/api/handymen?${params}`);
+        if (!res.ok) {
+          throw new Error(`Failed to load handymen: ${res.status}`);
+        }
+        const data = await res.json();
+        const items = data.items ?? data.handymen ?? [];
+        if (cancelled) return;
+        setHandymen(items);
+        setTotalPages(data.totalPages ?? 1);
+        setTotal(data.total ?? items.length);
+      } catch (e) {
+        if (cancelled) return;
+        console.error("Greška pri učitavanju majstora za kategoriju:", e);
+        setError("Došlo je do greške pri učitavanju majstora. Pokušajte ponovo.");
+        setHandymen([]);
+        setTotalPages(1);
+        setTotal(0);
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
+      }
     }
+
     fetchHandymen();
-  }, [internalCategory, cityFilter, sortBy, page]);
+
+    return () => {
+      cancelled = true;
+    };
+  }, [internalCategory, cityFilter, sortBy, page, reloadToken]);
 
   const sortLabel = sortBy === "rating" ? "Po ocjeni" : "Po broju recenzija";
 
@@ -159,6 +185,19 @@ export function CategoryPageContent({
               {loading ? (
                 <div className="flex min-h-[300px] items-center justify-center rounded-xl border border-[#E5E7EB] bg-white">
                   <p className="text-[#64748B]">Učitavanje...</p>
+                </div>
+              ) : error ? (
+                <div className="overflow-hidden rounded-xl border border-red-100 bg-red-50 p-8 text-center shadow-sm">
+                  <p className="text-sm font-medium text-red-800">
+                    {error}
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => setReloadToken((t) => t + 1)}
+                    className="mt-4 inline-flex h-10 items-center justify-center rounded-lg bg-red-600 px-4 text-sm font-semibold text-white shadow-sm transition hover:bg-red-700 active:scale-[0.98]"
+                  >
+                    Pokušaj ponovo
+                  </button>
                 </div>
               ) : handymen.length === 0 ? (
                 <div className="overflow-hidden rounded-xl border border-[#E5E7EB] bg-white p-12 text-center shadow-sm">

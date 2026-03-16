@@ -35,11 +35,16 @@ const createRequestSchema = z.object({
 
 type CreateRequestFormData = z.infer<typeof createRequestSchema>;
 
-export function CreateRequestForm() {
+type CreateRequestFormProps = {
+  initialCategory?: string;
+  initialCity?: string;
+};
+
+export function CreateRequestForm({ initialCategory, initialCity }: CreateRequestFormProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const urlCategory = searchParams.get("category") ?? "";
-  const urlCity = searchParams.get("city") ?? "";
+  const urlCategory = searchParams.get("category") ?? initialCategory ?? "";
+  const urlCity = searchParams.get("city") ?? initialCity ?? "";
 
   const {
     register,
@@ -62,12 +67,13 @@ export function CreateRequestForm() {
   const photos = watch("photos") ?? [];
 
   useEffect(() => {
+    // Kada se promijene URL parametri ili inicijalne vrijednosti, sinhronizuj formu
     if (urlCategory || urlCity) {
-      reset({
+      reset((prev) => ({
+        ...prev,
         city: urlCity || "",
-        urgency: "NIJE_HITNO",
         category: urlCategory,
-      });
+      }));
     }
   }, [urlCategory, urlCity, reset]);
 

@@ -8,6 +8,7 @@ import { Wrench, ChevronLeft, ChevronRight } from "lucide-react";
 import { HandymanCard } from "@/components/lists/handyman-card";
 import { POPULAR_CATEGORIES } from "@/lib/categories";
 import { DEFAULT_PAGE_SIZE } from "@/lib/constants";
+import { cityLocative } from "@/lib/slugs";
 
 type Handyman = {
   id: string;
@@ -32,24 +33,52 @@ export function GradPageContent({
   const [totalPages, setTotalPages] = useState(1);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [reloadToken, setReloadToken] = useState(0);
+
+  const cityNameLocative = cityLocative(cityName);
 
   useEffect(() => {
+    let cancelled = false;
+
     async function fetchHandymen() {
       setLoading(true);
-      const params = new URLSearchParams();
-      params.set("city", cityName);
-      params.set("page", String(page));
-      params.set("limit", String(DEFAULT_PAGE_SIZE));
-      const res = await fetch(`/api/handymen?${params}`);
-      const data = await res.json();
-      const items = data.items ?? data.handymen ?? [];
-      setHandymen(items);
-      setTotalPages(data.totalPages ?? 1);
-      setTotal(data.total ?? items.length);
-      setLoading(false);
+      setError(null);
+      try {
+        const params = new URLSearchParams();
+        params.set("city", cityName);
+        params.set("page", String(page));
+        params.set("limit", String(DEFAULT_PAGE_SIZE));
+        const res = await fetch(`/api/handymen?${params}`);
+        if (!res.ok) {
+          throw new Error(`Failed to load handymen: ${res.status}`);
+        }
+        const data = await res.json();
+        const items = data.items ?? data.handymen ?? [];
+        if (cancelled) return;
+        setHandymen(items);
+        setTotalPages(data.totalPages ?? 1);
+        setTotal(data.total ?? items.length);
+      } catch (e) {
+        if (cancelled) return;
+        console.error("Greška pri učitavanju majstora za grad:", e);
+        setError("Došlo je do greške pri učitavanju majstora. Pokušajte ponovo.");
+        setHandymen([]);
+        setTotalPages(1);
+        setTotal(0);
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
+      }
     }
+
     fetchHandymen();
-  }, [cityName, page]);
+
+    return () => {
+      cancelled = true;
+    };
+  }, [cityName, page, reloadToken]);
 
   return (
     <main className="min-h-screen bg-slate-100 text-slate-900">
@@ -77,14 +106,14 @@ export function GradPageContent({
               />
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 to-transparent" />
               <h1 className="absolute bottom-4 left-4 text-3xl font-black text-white">
-                Majstori u {cityName}
+                Majstori u {cityNameLocative}
               </h1>
             </div>
           )}
 
           {!cityImage && (
             <h1 className="mb-6 text-2xl font-black tracking-tight text-slate-950 sm:text-3xl">
-              Majstori u {cityName}
+              Majstori u {cityNameLocative}
             </h1>
           )}
 
@@ -94,6 +123,19 @@ export function GradPageContent({
 
           {loading ? (
             <p className="py-12 text-center text-slate-500">Učitavanje...</p>
+          ) : error ? (
+            <div className="mb-12 rounded-2xl border border-red-100 bg-red-50 p-8 text-center shadow-sm">
+              <p className="text-sm font-medium text-red-800">
+                {error}
+              </p>
+              <button
+                type="button"
+                onClick={() => setReloadToken((t) => t + 1)}
+                className="mt-4 inline-flex h-10 items-center justify-center rounded-lg bg-red-600 px-4 text-sm font-semibold text-white shadow-sm transition hover:bg-red-700 active:scale-[0.98]"
+              >
+                Pokušaj ponovo
+              </button>
+            </div>
           ) : handymen.length === 0 ? (
             <div className="mb-12 rounded-2xl border border-white bg-white p-12 text-center shadow-sm">
               <Wrench className="mx-auto mb-4 h-12 w-12 text-slate-300" />
