@@ -33,10 +33,12 @@ export function CategoryHandymanCard({
   const isVerified = verifiedStatus === "VERIFIED";
   const imgSrc = avatarUrl ?? AVATAR_IMAGE_FALLBACK;
   const primaryCategory = categories[0] || "Majstor";
+  const hasReviews = reviewCount > 0;
 
   const badges = [
     isVerified && { label: "Verifikovan", style: "bg-[#ECFDF5] text-[#047857] border-[#A7F3D0]" },
-    reviewCount > 0 && { label: `${reviewCount} recenzija`, style: "bg-[#F8FAFC] text-[#334155] border-[#E2E8F0]" },
+    hasReviews && { label: `${reviewCount} recenzija`, style: "bg-[#F8FAFC] text-[#334155] border-[#E2E8F0]" },
+    !hasReviews && { label: "Još nema recenzija", style: "bg-[#F8FAFC] text-[#64748B] border-[#E2E8F0]" },
     averageResponseMinutes != null && { label: `~${averageResponseMinutes} min`, style: "bg-[#EFF6FF] text-[#1D4ED8] border-[#BFDBFE]" },
     completedJobsCount != null && completedJobsCount > 0 && { label: `${completedJobsCount} poslova`, style: "bg-[#FFF7ED] text-[#C2410C] border-[#FED7AA]" },
   ].filter(Boolean) as { label: string; style: string }[];
@@ -96,13 +98,13 @@ export function CategoryHandymanCard({
           <div>
             <div className="inline-flex items-center gap-2 rounded-full bg-[#FEF3C7] px-4 py-2 text-[#92400E]">
               <Star className="h-5 w-5 fill-current" />
-              <span className="text-[28px] font-bold">{ratingAvg.toFixed(1)}</span>
+              <span className="text-[28px] font-bold">
+                {hasReviews ? ratingAvg.toFixed(1) : "—"}
+              </span>
             </div>
-            {reviewCount > 0 && (
-              <p className="mt-2 text-sm text-[#64748B]">
-                {reviewCount} {reviewCount === 1 ? "recenzija" : "recenzija"}
-              </p>
-            )}
+            <p className="mt-2 text-sm text-[#64748B]">
+              {hasReviews ? `${reviewCount} recenzija` : "Još nema recenzija"}
+            </p>
           </div>
           <span className="mt-6 flex h-14 w-full items-center justify-center rounded-2xl bg-[#2563EB] text-[18px] font-semibold text-white shadow-sm transition hover:opacity-95 active:scale-[0.98]">
             Pogledaj profil

@@ -85,7 +85,9 @@ export function CreateRequestForm({ initialCategory, initialCity }: CreateReques
         body: JSON.stringify(data),
       });
       const json = await res.json();
-      if (!json.success) throw new Error(json.error ?? "Greška");
+      if (!json.success) {
+        throw new Error(json.error ?? "Došlo je do greške prilikom slanja zahtjeva. Pokušajte ponovo.");
+      }
       return json.data;
     },
     onSuccess: (data) => {
@@ -112,7 +114,11 @@ export function CreateRequestForm({ initialCategory, initialCity }: CreateReques
           className="space-y-5"
           data-testid="create-request-form"
         >
-          {mutation.error && <div className="form-error">{mutation.error.message}</div>}
+          {mutation.error && (
+            <div className="form-error text-sm text-[#B91C1C]">
+              {(mutation.error as Error).message || "Došlo je do greške prilikom slanja zahtjeva. Pokušajte ponovo."}
+            </div>
+          )}
           <div className="space-y-3">
             <Label htmlFor="requesterName">Ime *</Label>
             <Input

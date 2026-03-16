@@ -295,7 +295,10 @@ export default async function HandymanProfilePage({
               {profile.bio ? (
                 <p className="text-[16px] leading-7 text-[#475569]">{profile.bio}</p>
               ) : (
-                <p className="text-sm text-[#64748B]">Nema opisa.</p>
+                <p className="text-sm text-[#64748B]">
+                  Majstor još nije dodao detaljniji opis profila. Možete poslati zahtjev ili ga kontaktirati za više
+                  informacija o uslugama.
+                </p>
               )}
               {profile.cities.length > 0 && (
                 <div className="mt-6">

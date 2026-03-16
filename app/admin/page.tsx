@@ -341,7 +341,7 @@ export default async function AdminDashboardPage() {
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             <div>
               <h4 className="mb-2 text-sm font-medium">Novi zahtjevi</h4>
-              <ul className="space-y-1 text-sm">
+              <ul className="space-y-1.5 text-[13px] sm:text-sm">
                 {recentRequestsSafe.map((r) => (
                   <li key={r.id}>
                     <Link href={`/admin/requests/${r.id}`} className="hover:underline">
@@ -350,12 +350,12 @@ export default async function AdminDashboardPage() {
                     <span className="ml-2 text-[#94A3B8]">{new Date(r.createdAt).toLocaleDateString("sr")}</span>
                   </li>
                 ))}
-                {recentRequestsSafe.length === 0 && <p className="text-[#94A3B8]">Nema</p>}
+                {recentRequestsSafe.length === 0 && <p className="text-[13px] text-[#94A3B8]">Nema</p>}
               </ul>
             </div>
             <div>
               <h4 className="mb-2 text-sm font-medium">Novi majstori</h4>
-              <ul className="space-y-1 text-sm">
+              <ul className="space-y-1.5 text-[13px] sm:text-sm">
                 {recentHandymenSafe.map((u) => (
                   <li key={u.id}>
                     <Link href={`/admin/handymen/${u.id}`} className="hover:underline">
@@ -364,12 +364,12 @@ export default async function AdminDashboardPage() {
                     <span className="ml-2 text-[#94A3B8]">{new Date(u.createdAt).toLocaleDateString("sr")}</span>
                   </li>
                 ))}
-                {recentHandymenSafe.length === 0 && <p className="text-[#94A3B8]">Nema</p>}
+                {recentHandymenSafe.length === 0 && <p className="text-[13px] text-[#94A3B8]">Nema</p>}
               </ul>
             </div>
             <div>
               <h4 className="mb-2 text-sm font-medium">Nove prijave</h4>
-              <ul className="space-y-1 text-sm">
+              <ul className="space-y-1.5 text-[13px] sm:text-sm">
                 {recentReportsSafe.map((r) => (
                   <li key={r.id}>
                     <Link href="/admin/moderation" className="hover:underline">
@@ -378,25 +378,25 @@ export default async function AdminDashboardPage() {
                     <span className="ml-2 text-[#94A3B8]">{r.type}</span>
                   </li>
                 ))}
-                {recentReportsSafe.length === 0 && <p className="text-[#94A3B8]">Nema</p>}
+                {recentReportsSafe.length === 0 && <p className="text-[13px] text-[#94A3B8]">Nema</p>}
               </ul>
             </div>
           </div>
           <div className="mt-5 border-t pt-4">
             <h4 className="mb-2 text-sm font-medium">Otključanja kontakta</h4>
-            <ul className="space-y-1 text-sm">
+            <ul className="space-y-1.5 text-[13px] sm:text-sm">
               {recentUnlocksSafe.map((u) => (
                 <li key={u.id}>
                   {u.handyman.name} – {u.request.category} ({u.request.city})
                   <span className="ml-2 text-[#94A3B8]">{new Date(u.createdAt).toLocaleDateString("sr")}</span>
                 </li>
               ))}
-              {recentUnlocksSafe.length === 0 && <p className="text-[#94A3B8]">Nema</p>}
+              {recentUnlocksSafe.length === 0 && <p className="text-[13px] text-[#94A3B8]">Nema</p>}
             </ul>
           </div>
           <div className="mt-5 border-t pt-4">
             <h4 className="mb-2 text-sm font-medium">Admin akcije</h4>
-            <ul className="space-y-1 text-sm">
+            <ul className="space-y-1.5 text-[13px] sm:text-sm">
               {recentAuditsSafe.map((a) => (
                 <li key={a.id}>
                   <span className="font-medium">{a.actionType}</span> {a.entityType} {a.entityId ?? ""}
