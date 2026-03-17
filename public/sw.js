@@ -1,10 +1,27 @@
 // Majstor.me - PWA Service Worker
+const CACHE_NAME = "majstor-me-v1";
+const START_URL = "/";
+
 self.addEventListener("install", (event) => {
-  self.skipWaiting();
+  event.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => cache.add(START_URL)).catch(() => {}).then(() => self.skipWaiting())
+  );
 });
 
 self.addEventListener("activate", (event) => {
-  event.waitUntil(self.clients.claim());
+  event.waitUntil(
+    caches.keys().then((names) => Promise.all(names.filter((n) => n !== CACHE_NAME).map((n) => caches.delete(n)))).then(() => self.clients.claim())
+  );
+});
+
+self.addEventListener("fetch", (event) => {
+  if (event.request.mode !== "navigate") return;
+  if (new URL(event.request.url).origin !== self.location.origin) return;
+  event.respondWith(
+    fetch(event.request)
+      .catch(() => caches.match(START_URL))
+      .then((r) => r || caches.match("/"))
+  );
 });
 
 self.addEventListener("push", (event) => {

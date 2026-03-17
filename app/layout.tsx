@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Inter, DM_Sans, Outfit } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { Providers } from "@/app/providers";
+import { ServiceWorkerRegister } from "@/components/pwa/service-worker-register";
 import { getSiteUrl } from "@/lib/site-url";
 import "./globals.css";
 
@@ -62,6 +63,7 @@ export default function RootLayout({
         <Providers>
           {children}
           <Analytics />
+          <ServiceWorkerRegister />
         </Providers>
       </body>
     </html>
