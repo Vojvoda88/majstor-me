@@ -15,15 +15,15 @@ export function Hero() {
         src={HERO_IMAGE_FALLBACK}
         alt="Majstor na poslu"
         fill
-        className="object-cover"
+        className="object-cover pointer-events-none"
         priority
         sizes="100vw"
       />
       <div
-        className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black/75"
+        className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black/75 pointer-events-none"
         aria-hidden
       />
-      <div className="relative z-10 w-full max-w-4xl text-center">
+      <div className="relative z-10 w-full max-w-4xl text-center pointer-events-auto">
         <h1 className="font-display mb-5 text-4xl font-extrabold tracking-tight text-white md:text-5xl lg:text-[3.5rem] lg:leading-[1.1] xl:text-[4rem]">
           Majstori za cijelu Crnu Goru,
           <br />

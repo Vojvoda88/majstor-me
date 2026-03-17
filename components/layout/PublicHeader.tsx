@@ -3,17 +3,68 @@
 import Link from "next/link";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
+import { useSession, signOut } from "next-auth/react";
+import { Button } from "@/components/ui/button";
 
 /**
- * Lagani public header – bez useSession.
- * Samo statična navigacija: Početna, Kategorije, Kako radi, Registracija (majstor), Prijava.
- * Koristi se na homepage-u i javnim stranicama da se ne učitava session.
- * Linkovi koriste prefetch={false} da se izbjegne full reload na nekim okruženjima.
+ * Public header – statična navigacija za goste; za prijavljene: dashboard/admin + odjava.
+ * Koristi useSession da prijavljeni korisnici ne vide Prijava/Registracija (koji bi ih redirectali).
  */
 export function PublicHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const { data: session, status } = useSession();
 
   const linkProps = { prefetch: false as const };
+
+  const desktopGuestNav = (
+    <>
+      <Link
+        href="/register?type=majstor"
+        className="text-[15px] font-medium text-slate-600 transition hover:text-[#1d4ed8]"
+        data-testid="nav-registracija-majstor"
+        {...linkProps}
+      >
+        Registruj se kao majstor
+      </Link>
+      <Link
+        href="/login"
+        className="rounded-xl bg-[#1d4ed8] px-5 py-2.5 text-[15px] font-bold text-white transition hover:bg-[#1e40af]"
+        data-testid="nav-prijava"
+        {...linkProps}
+      >
+        Prijava
+      </Link>
+    </>
+  );
+
+  const desktopAuthNav = (
+    <>
+      {session?.user?.role === "ADMIN" && (
+        <Link href="/admin" {...linkProps}>
+          <Button variant="secondary" size="sm" className="bg-amber-100 text-amber-800 hover:bg-amber-200">
+            Admin panel
+          </Button>
+        </Link>
+      )}
+      {session?.user?.role === "USER" && (
+        <Link href="/dashboard/user" {...linkProps}>
+          <Button variant="ghost" size="sm">Moji zahtjevi</Button>
+        </Link>
+      )}
+      {session?.user?.role === "HANDYMAN" && (
+        <Link href="/dashboard/handyman" {...linkProps}>
+          <Button variant="ghost" size="sm">Dashboard</Button>
+        </Link>
+      )}
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={() => signOut({ callbackUrl: "/" })}
+      >
+        Odjava
+      </Button>
+    </>
+  );
 
   return (
     <header className="fixed left-0 right-0 top-0 z-[100] border-b border-slate-200/80 bg-white/95 backdrop-blur-md" data-testid="public-header" style={{ pointerEvents: "auto" }}>
@@ -33,22 +84,13 @@ export function PublicHeader() {
           <Link href="/#kako-radi" className="text-[15px] font-medium text-slate-600 transition hover:text-[#1d4ed8]" data-testid="nav-kako-radi" {...linkProps}>
             Kako radi
           </Link>
-          <Link
-            href="/register?type=majstor"
-            className="text-[15px] font-medium text-slate-600 transition hover:text-[#1d4ed8]"
-            data-testid="nav-registracija-majstor"
-            {...linkProps}
-          >
-            Registruj se kao majstor
-          </Link>
-          <Link
-            href="/login"
-            className="rounded-xl bg-[#1d4ed8] px-5 py-2.5 text-[15px] font-bold text-white transition hover:bg-[#1e40af]"
-            data-testid="nav-prijava"
-            {...linkProps}
-          >
-            Prijava
-          </Link>
+          {status === "loading" ? (
+            desktopGuestNav
+          ) : session ? (
+            desktopAuthNav
+          ) : (
+            desktopGuestNav
+          )}
         </nav>
 
         <button
@@ -73,35 +115,67 @@ export function PublicHeader() {
             <Link href="/#kako-radi" className="py-3 text-[16px] font-medium text-slate-700" onClick={() => setMenuOpen(false)} data-testid="nav-kako-radi" {...linkProps}>
               Kako radi
             </Link>
-            <Link
-              href="/register?type=majstor"
-              className="py-3 text-[16px] font-medium text-slate-700"
-              onClick={() => setMenuOpen(false)}
-              data-testid="nav-registracija-majstor"
-              {...linkProps}
-            >
-              Registruj se kao majstor
-            </Link>
-            <div className="mt-4 flex flex-col gap-2 border-t border-slate-100 pt-4">
-              <Link
-                href="/login"
-                className="py-3 text-center text-[16px] font-medium text-slate-700"
-                onClick={() => setMenuOpen(false)}
-                data-testid="nav-prijava"
-                {...linkProps}
-              >
-                Prijava
-              </Link>
-              <Link
-                href="/register"
-                className="rounded-xl bg-[#1d4ed8] py-3.5 text-center text-[16px] font-bold text-white"
-                onClick={() => setMenuOpen(false)}
-                data-testid="nav-registracija"
-                {...linkProps}
-              >
-                Registracija
-              </Link>
-            </div>
+            {session ? (
+              <div className="mt-4 flex flex-col gap-2 border-t border-slate-100 pt-4">
+                {session.user?.role === "ADMIN" && (
+                  <Link href="/admin" className="py-3 text-[16px] font-semibold text-amber-700" onClick={() => setMenuOpen(false)} {...linkProps}>
+                    Admin panel
+                  </Link>
+                )}
+                {session.user?.role === "HANDYMAN" && (
+                  <Link href="/dashboard/handyman" className="py-3 text-[16px] font-medium text-slate-700" onClick={() => setMenuOpen(false)} {...linkProps}>
+                    Dashboard
+                  </Link>
+                )}
+                {session.user?.role === "USER" && (
+                  <Link href="/dashboard/user" className="py-3 text-[16px] font-medium text-slate-700" onClick={() => setMenuOpen(false)} {...linkProps}>
+                    Moji zahtjevi
+                  </Link>
+                )}
+                <button
+                  type="button"
+                  className="py-3 text-left text-[16px] font-medium text-red-600 hover:underline"
+                  onClick={() => {
+                    setMenuOpen(false);
+                    signOut({ callbackUrl: "/" });
+                  }}
+                >
+                  Odjavi se
+                </button>
+              </div>
+            ) : (
+              <>
+                <Link
+                  href="/register?type=majstor"
+                  className="py-3 text-[16px] font-medium text-slate-700"
+                  onClick={() => setMenuOpen(false)}
+                  data-testid="nav-registracija-majstor"
+                  {...linkProps}
+                >
+                  Registruj se kao majstor
+                </Link>
+                <div className="mt-4 flex flex-col gap-2 border-t border-slate-100 pt-4">
+                  <Link
+                    href="/login"
+                    className="py-3 text-center text-[16px] font-medium text-slate-700"
+                    onClick={() => setMenuOpen(false)}
+                    data-testid="nav-prijava"
+                    {...linkProps}
+                  >
+                    Prijava
+                  </Link>
+                  <Link
+                    href="/register"
+                    className="rounded-xl bg-[#1d4ed8] py-3.5 text-center text-[16px] font-bold text-white"
+                    onClick={() => setMenuOpen(false)}
+                    data-testid="nav-registracija"
+                    {...linkProps}
+                  >
+                    Registracija
+                  </Link>
+                </div>
+              </>
+            )}
           </nav>
         </div>
       )}
