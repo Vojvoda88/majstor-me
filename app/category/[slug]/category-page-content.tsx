@@ -222,11 +222,14 @@ export function CategoryPageContent({
                   <p className="text-lg text-[#64748B]">
                     Nema majstora za ovu kategoriju u izabranom gradu.
                   </p>
+                  <p className="mt-2 text-sm text-[#94A3B8]">
+                    Objavite besplatan zahtjev – dobijate ponude od više majstora, bez obaveze.
+                  </p>
                   <Link
                     href={`/request/create?category=${encodeURIComponent(internalCategory)}${cityFilter ? `&city=${encodeURIComponent(cityFilter)}` : ""}`}
                     className="mt-6 inline-flex h-14 items-center justify-center rounded-2xl bg-[#2563EB] px-8 text-lg font-semibold text-white shadow-[0_12px_24px_rgba(37,99,235,0.25)] transition hover:opacity-95"
                   >
-                    Objavi zahtjev
+                    Objavi besplatan zahtjev
                   </Link>
                 </div>
               ) : (

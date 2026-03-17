@@ -157,14 +157,16 @@ export function GradPageContent({
             <div className="mb-12 rounded-2xl border border-white bg-white p-12 text-center shadow-sm">
               <Wrench className="mx-auto mb-4 h-12 w-12 text-slate-300" />
               <p className="text-slate-600">
-                Trenutno nema majstora registrovanih za {cityName}. Možete objaviti besplatan zahtjev i obavijestićemo
-                dostupne majstore iz ovog i okolnih gradova.
+                Trenutno nema majstora registrovanih za {cityName}.
+              </p>
+              <p className="mt-2 text-sm text-slate-500">
+                Objavite besplatan zahtjev – dobijate ponude od više majstora iz ovog i okolnih gradova, bez obaveze.
               </p>
               <Link
                 href={`/request/create?city=${encodeURIComponent(cityName)}`}
-                className="mt-4 inline-block font-medium text-blue-600 hover:underline"
+                className="mt-6 inline-flex h-14 items-center justify-center rounded-2xl bg-[#2563EB] px-8 text-lg font-semibold text-white shadow-[0_12px_24px_rgba(37,99,235,0.25)] transition hover:opacity-95"
               >
-                Objavi zahtjev za {cityName}
+                Objavi besplatan zahtjev za {cityName}
               </Link>
             </div>
           ) : (
