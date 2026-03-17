@@ -104,7 +104,7 @@ export function CreateRequestForm({ initialCategory, initialCity }: CreateReques
       <CardHeader className="px-4 sm:px-6">
         <CardTitle className="text-xl sm:text-2xl">Novi zahtjev</CardTitle>
         <CardDescription className="text-sm sm:text-base">
-          Opisite problem ili potrebu. Majstori će vam poslati ponude.
+          Vaš zahtjev je besplatan. Nakon slanja dobijate ponude od više majstora, a vi sami odlučujete da li i koga ćete angažovati.
         </CardDescription>
       </CardHeader>
       <CardContent className="px-4 sm:px-6">
@@ -241,13 +241,16 @@ export function CreateRequestForm({ initialCategory, initialCity }: CreateReques
               ))}
             </select>
           </div>
+          <p className="text-xs text-slate-500">
+            Poslije slanja, ponude stižu uskoro. Vi sami odlučujete da li ćete nekoga angažovati – bez obaveze.
+          </p>
           <button
             type="submit"
             disabled={mutation.isPending}
             className="btn-primary mt-2 hidden w-full items-center justify-center disabled:opacity-50 md:flex"
             data-testid="create-request-submit"
           >
-            {mutation.isPending ? "Objavljivanje..." : "Objavi zahtjev"}
+            {mutation.isPending ? "Šaljem majstorima..." : "Objavi zahtjev"}
           </button>
         </form>
       </CardContent>
@@ -260,7 +263,7 @@ export function CreateRequestForm({ initialCategory, initialCity }: CreateReques
         className="flex h-14 w-full items-center justify-center rounded-[16px] bg-gradient-to-br from-[#60A5FA] to-[#2563EB] text-lg font-bold text-white shadow-[0_10px_25px_rgba(37,99,235,0.35)] transition active:scale-[0.98] disabled:opacity-60"
         data-testid="create-request-submit"
       >
-        {mutation.isPending ? "Objavljivanje..." : "Objavi zahtjev"}
+        {mutation.isPending ? "Šaljem majstorima..." : "Objavi zahtjev"}
       </button>
     </div>
   </>
