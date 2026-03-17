@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, DM_Sans, Outfit } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
+import { Providers } from "@/app/providers";
 import { getSiteUrl } from "@/lib/site-url";
 import "./globals.css";
 
@@ -58,8 +59,10 @@ export default function RootLayout({
   return (
     <html lang="sr" className={`${inter.variable} ${dmSans.variable} ${outfit.variable}`}>
       <body className="font-[family-name:var(--font-dm-sans)] antialiased bg-[#FAFBFC] text-[#0F172A]">
-        {children}
-        <Analytics />
+        <Providers>
+          {children}
+          <Analytics />
+        </Providers>
       </body>
     </html>
   );

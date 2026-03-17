@@ -1,5 +1,4 @@
 import nextDynamic from "next/dynamic";
-import { Providers } from "@/app/providers";
 import { PublicHeader } from "@/components/layout/PublicHeader";
 import { Hero } from "@/components/home-page/Hero";
 import { FloatingStatsCard } from "@/components/home-page/FloatingStatsCard";
@@ -45,8 +44,7 @@ export default async function HomePage() {
   const orgJson = organizationJsonLd();
   const faqJson = faqPageJsonLd(FAQ_ITEMS);
   return (
-    <Providers>
-      <main className="relative min-h-screen bg-[#FAFBFC] pb-28 md:pb-16 before:absolute before:inset-0 before:content-[''] before:bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(37,99,235,0.08),transparent)] before:pointer-events-none isolate">
+    <main className="relative min-h-screen bg-[#FAFBFC] pb-28 md:pb-16 before:absolute before:inset-0 before:content-[''] before:bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(37,99,235,0.08),transparent)] before:pointer-events-none isolate">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJson) }}
@@ -84,6 +82,5 @@ export default async function HomePage() {
 
         <StickyBottomCTA href="/request/create" label="Objavi zahtjev" />
       </main>
-    </Providers>
   );
 }
