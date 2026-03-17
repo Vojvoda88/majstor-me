@@ -259,12 +259,15 @@ export default async function HandymanProfilePage({
             </div>
           )}
           {session?.user?.role === "USER" && (
-            <Link href={`/request/create?${createParams}`} className="mb-8 block w-full md:mb-10">
-              <span className="flex h-14 w-full items-center justify-center gap-2 rounded-xl bg-[#2563EB] font-semibold text-white transition hover:bg-[#1D4ED8]">
-                <MessageSquare className="h-5 w-5" />
-                Pošalji zahtjev
-              </span>
-            </Link>
+            <div className="mb-8 md:mb-10">
+              <p className="mb-2 text-xs text-[#64748B]">Besplatno. Bez obaveze.</p>
+              <Link href={`/request/create?${createParams}`} className="block w-full">
+                <span className="flex h-14 w-full items-center justify-center gap-2 rounded-xl bg-[#2563EB] font-semibold text-white transition hover:bg-[#1D4ED8]">
+                  <MessageSquare className="h-5 w-5" />
+                  Pošalji zahtjev
+                </span>
+              </Link>
+            </div>
           )}
           {!session && (
             <p className="mb-8 text-sm text-[#475569]">
