@@ -10,7 +10,7 @@ export function SiteHeaderSimple() {
           Majstor.me
         </Link>
         <nav className="hidden items-center gap-2 md:flex">
-          <Link href="/login">
+          <Link href="/login" data-testid="nav-prijava">
             <Button variant="ghost" size="sm">Prijava</Button>
           </Link>
           <Link href="/register">

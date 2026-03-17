@@ -1,6 +1,6 @@
 import nextDynamic from "next/dynamic";
 import { Providers } from "@/app/providers";
-import { SiteHeader } from "@/components/layout/site-header";
+import { PublicHeader } from "@/components/layout/PublicHeader";
 import { Hero } from "@/components/home-page/Hero";
 import { FloatingStatsCard } from "@/components/home-page/FloatingStatsCard";
 import { WhyMajstorSection } from "@/components/home-page/WhyMajstorSection";
@@ -55,7 +55,7 @@ export default async function HomePage() {
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJson) }}
         />
-        <SiteHeader />
+        <PublicHeader />
         <div className="pt-4 md:pt-8">
           <Hero />
           <FloatingStatsCard initialStats={stats} />
