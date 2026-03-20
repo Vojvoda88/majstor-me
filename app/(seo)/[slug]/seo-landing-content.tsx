@@ -6,7 +6,7 @@ import { PublicHeader } from "@/components/layout/PublicHeader";
 import { Wrench, ChevronLeft, ChevronRight, MapPin, ArrowRight } from "lucide-react";
 import { HandymanCard } from "@/components/lists/handyman-card";
 import { DEFAULT_PAGE_SIZE } from "@/lib/constants";
-import { cityLocative } from "@/lib/slugs";
+import { cityGenitive, cityLocative } from "@/lib/slugs";
 
 type Handyman = {
   id: string;
@@ -17,9 +17,9 @@ type Handyman = {
   reviewCount: number;
 };
 
-function buildIntroParagraph(displayName: string, cityLoc: string, cityName: string): string {
+function buildIntroParagraph(displayName: string, cityLoc: string, cityGen: string): string {
   const service = displayName.toLowerCase();
-  return `Tražite pouzdanog ${service}a u ${cityLoc}? Na BrziMajstor.ME možete brzo pronaći provjerene majstore koji dolaze na vašu adresu. Bez obzira da li vam treba hitna intervencija ili planirani radovi, jednim zahtjevom dobijate ponude od stručnjaka iz ${cityName} i okolice. Platforma štedi vrijeme: ne morate zvati redom niti tražiti preporuke — opišite posao, odaberite grad i uporedite ocjene i recenzije. Majstori koji su aktivni u vašoj zoni mogu vam se javiti u kratkom roku. Svi profili su povezani sa iskustvima stvarnih korisnika, što olakšava odluku. Pošaljite zahtjev besplatno i izaberite ponudu koja vam najviše odgovara.`;
+  return `Tražite pouzdanog ${service}a u ${cityLoc}? Na BrziMajstor.ME možete brzo pronaći provjerene majstore koji dolaze na vašu adresu. Bez obzira da li vam treba hitna intervencija ili planirani radovi, jednim zahtjevom dobijate ponude od stručnjaka iz ${cityGen} i okolice. Platforma štedi vrijeme: ne morate zvati redom niti tražiti preporuke — opišite posao, odaberite grad i uporedite ocjene i recenzije. Majstori koji su aktivni u vašoj zoni mogu vam se javiti u kratkom roku. Svi profili su povezani sa iskustvima stvarnih korisnika, što olakšava odluku. Pošaljite zahtjev besplatno i izaberite ponudu koja vam najviše odgovara.`;
 }
 
 export function SeoLandingContent({
@@ -43,7 +43,8 @@ export function SeoLandingContent({
   const [reloadToken, setReloadToken] = useState(0);
 
   const cityNameLocative = cityLocative(cityName);
-  const intro = buildIntroParagraph(displayName, cityNameLocative, cityName);
+  const cityGen = cityGenitive(cityName);
+  const intro = buildIntroParagraph(displayName, cityNameLocative, cityGen);
 
   useEffect(() => {
     setPage(1);
@@ -151,7 +152,7 @@ export function SeoLandingContent({
             <div className="rounded-2xl border border-white bg-white p-12 text-center shadow-sm">
               <Wrench className="mx-auto mb-4 h-12 w-12 text-slate-300" />
               <p className="text-slate-600">
-                Trenutno nema {displayName.toLowerCase()}a u {cityName}.
+                Trenutno nema {displayName.toLowerCase()}a u {cityNameLocative}.
               </p>
               <Link
                 href={createUrl}

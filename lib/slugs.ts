@@ -72,8 +72,40 @@ const CITY_LOCATIVE_MAP: Record<string, string> = {
   "Petnjica": "Petnjici",
 };
 
+/** Genitiv za „iz grada“: iz Podgorice, iz Nikšića, iz Budve… */
+const CITY_GENITIVE_MAP: Record<string, string> = {
+  Podgorica: "Podgorice",
+  Nikšić: "Nikšića",
+  Budva: "Budve",
+  Kotor: "Kotora",
+  "Herceg Novi": "Herceg Novog",
+  Bar: "Bara",
+  Ulcinj: "Ulcinja",
+  Tivat: "Tivta",
+  Cetinje: "Cetinja",
+  Danilovgrad: "Danilovgrada",
+  "Bijelo Polje": "Bijelog Polja",
+  Pljevlja: "Pljevlja",
+  Berane: "Berana",
+  Rožaje: "Rožaja",
+  Kolašin: "Kolašina",
+  Mojkovac: "Mojkovca",
+  Žabljak: "Žabljaka",
+  Plav: "Plava",
+  Gusinje: "Gusinja",
+  Tuzi: "Tuzija",
+  Šavnik: "Šavnika",
+  Andrijevica: "Andrijevice",
+  Petnjica: "Petnjice",
+};
+
 export function cityLocative(name: string): string {
   return CITY_LOCATIVE_MAP[name] ?? name;
+}
+
+/** Genitiv imena grada (npr. „iz Podgorice“, „iz Nikšića“) */
+export function cityGenitive(name: string): string {
+  return CITY_GENITIVE_MAP[name] ?? name;
 }
 
 export function categoryToSlug(name: string): string {
