@@ -1,22 +1,32 @@
 "use client";
 
 import { useEffect } from "react";
+import { trackFunnel } from "@/lib/track-funnel";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
-import { Unlock } from "lucide-react";
+import { Unlock, Coins, CheckCircle2, Phone, Mail, MapPin } from "lucide-react";
 
 export function UnlockContactButton({
   requestId,
   alreadyUnlocked,
   creditsRequired,
+  insufficientCredits = false,
   onUnlocked,
 }: {
   requestId: string;
   alreadyUnlocked?: boolean;
   creditsRequired?: number;
-  onUnlocked?: (data: { phone: string; address?: string | null }) => void;
+  insufficientCredits?: boolean;
+  onUnlocked?: (data: {
+    phone: string;
+    address?: string | null;
+    requesterName?: string | null;
+    email?: string | null;
+    isVerified?: boolean;
+    creditsSpent?: number;
+  }) => void;
 }) {
   const router = useRouter();
   const { data: fetchedContact, refetch } = useQuery({
@@ -57,16 +67,68 @@ export function UnlockContactButton({
 
   if (contactData) {
     return (
-      <div className="rounded-lg bg-emerald-50 p-4">
-        <p className="text-sm font-medium text-emerald-800">Kontakt</p>
-        <p className="mt-1">
-          <a href={`tel:${contactData.phone}`} className="font-medium text-emerald-900 hover:underline">
-            {contactData.phone}
-          </a>
+      <div className="rounded-xl border border-emerald-200 bg-emerald-50/80 p-4">
+        <div className="flex items-center gap-2">
+          <CheckCircle2 className="h-5 w-5 text-emerald-600" />
+          <p className="font-semibold text-emerald-900">Lead otključan</p>
+        </div>
+        <p className="mt-1 text-sm text-emerald-700">
+          Kontakt podaci su sada dostupni. Možete poslati ponudu.
         </p>
-        {contactData.address && (
-          <p className="mt-1 text-sm text-emerald-700">{contactData.address}</p>
-        )}
+
+        <div className="mt-4 space-y-2 rounded-lg bg-white/70 p-3 text-sm">
+          {contactData.requesterName && (
+            <p className="font-medium text-slate-800">{contactData.requesterName}</p>
+          )}
+          <div className="flex items-center gap-2 text-slate-700">
+            <Phone className="h-4 w-4 shrink-0 text-slate-500" />
+            <a href={`tel:${contactData.phone}`} className="font-medium text-emerald-800 hover:underline">
+              {contactData.phone}
+            </a>
+          </div>
+          {contactData.email && (
+            <div className="flex items-center gap-2 text-slate-700">
+              <Mail className="h-4 w-4 shrink-0 text-slate-500" />
+              <a href={`mailto:${contactData.email}`} className="text-emerald-800 hover:underline">
+                {contactData.email}
+              </a>
+            </div>
+          )}
+          {contactData.address && (
+            <div className="flex items-start gap-2 text-slate-700">
+              <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-slate-500" />
+              <span>{contactData.address}</span>
+            </div>
+          )}
+          {contactData.isVerified && (
+            <p className="text-xs text-emerald-700">Verifikovan korisnik</p>
+          )}
+          {contactData.creditsSpent != null && contactData.creditsSpent > 0 && (
+            <p className="text-xs text-slate-500">
+              Potrošeno: {contactData.creditsSpent} kredita
+            </p>
+          )}
+        </div>
+
+        <p className="mt-4 text-xs text-slate-600">
+          Kontakt je sada otključan samo za vas kroz Majstor.me kreditni sistem.
+        </p>
+      </div>
+    );
+  }
+
+  if (insufficientCredits) {
+    return (
+      <div className="rounded-lg border border-amber-200 bg-amber-50/80 p-3">
+        <p className="text-sm font-medium text-amber-800">
+          Nemate dovoljno kredita za ovaj lead.
+        </p>
+        <Link href="/dashboard/handyman/credits" className="mt-2 inline-block">
+          <Button variant="outline" size="sm" className="gap-2 border-amber-300 bg-white hover:bg-amber-50">
+            <Coins className="h-4 w-4" />
+            Dopuni kredite
+          </Button>
+        </Link>
       </div>
     );
   }
@@ -79,8 +141,8 @@ export function UnlockContactButton({
           {(mutation.error as Error & { needsCredits?: boolean }).needsCredits && (
             <>
               {" "}
-              <Link href="/dashboard/handyman#credits" className="font-medium underline">
-                Kupi kredite
+              <Link href="/dashboard/handyman/credits" className="font-medium underline">
+                Dopuni kredite
               </Link>
             </>
           )}
@@ -88,7 +150,10 @@ export function UnlockContactButton({
       )}
       <Button
         variant="outline"
-        onClick={() => mutation.mutate()}
+        onClick={() => {
+          trackFunnel("unlock_clicked", { requestId, creditsRequired });
+          mutation.mutate();
+        }}
         disabled={mutation.isPending}
         className="gap-2"
       >

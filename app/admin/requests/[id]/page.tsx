@@ -6,6 +6,7 @@ import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { RequestDetailActions } from "./request-detail-actions";
 import { RestoreRequestButton } from "./restore-button";
+import { MarkAsBypassAttemptButton } from "@/components/admin/mark-as-bypass-button";
 
 export const dynamic = "force-dynamic";
 
@@ -91,6 +92,20 @@ export default async function AdminRequestDetailPage({ params }: { params: Promi
           <p className="whitespace-pre-wrap">{req.description}</p>
         </CardContent>
       </Card>
+
+      {req.adminStatus !== "SPAM" && req.adminStatus !== "DELETED" && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Anti-bypass</CardTitle>
+            <p className="text-sm text-[#64748B]">
+              Ako zahtjev sadrži kontakt u slikama ili opisu (zaobilazi unlock), označite ga.
+            </p>
+          </CardHeader>
+          <CardContent>
+            <MarkAsBypassAttemptButton requestId={req.id} canMark={true} />
+          </CardContent>
+        </Card>
+      )}
 
       {req.photos.length > 0 && (
         <Card>

@@ -151,6 +151,9 @@ export function RequestPhotosEditor({ photos, onChange }: RequestPhotosEditorPro
       <p className="text-xs text-slate-500">
         {photos.length} / {MAX_IMAGES_PER_REQUEST} slika (opciono). Pomažu majstorima da bolje procijene.
       </p>
+      <p className="text-xs text-amber-700">
+        Ne postavljajte slike koje sadrže broj telefona, email, adresu ili profile na društvenim mrežama.
+      </p>
     </div>
   );
 }

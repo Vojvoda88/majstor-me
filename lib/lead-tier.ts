@@ -53,3 +53,57 @@ export function getCreditsForLead(input: LeadInput): { credits: number; tier: Le
 
   return { credits, tier };
 }
+
+export type CreditBreakdownItem = {
+  label: string;
+  amount: number;
+};
+
+export type CreditBreakdown = {
+  base: number;
+  baseLabel: string;
+  items: CreditBreakdownItem[];
+  total: number;
+};
+
+export function getCreditsBreakdown(input: LeadInput): CreditBreakdown {
+  let base: number;
+  let baseLabel: string;
+  if (input.urgency === "HITNO_DANAS") {
+    base = BASE_PREMIUM;
+    baseLabel = "Hitno danas";
+  } else if (input.urgency === "U_NAREDNA_2_DANA") {
+    base = BASE_URGENT;
+    baseLabel = "Hitno u naredna 2 dana";
+  } else {
+    base = BASE_STANDARD;
+    baseLabel = "Standard";
+  }
+
+  const items: CreditBreakdownItem[] = [];
+
+  if (input.photos && input.photos.length > 0) {
+    items.push({ label: "Slike", amount: PREMIUM_PHOTO_BONUS });
+  }
+  if (input.description && input.description.length >= PREMIUM_DESC_LENGTH) {
+    items.push({ label: "Dug opis", amount: 5 });
+  }
+  let verifiedBonus = 0;
+  if (input.emailVerified) verifiedBonus += EMAIL_VERIFIED_BONUS;
+  if (input.phoneVerified) verifiedBonus += PHONE_VERIFIED_BONUS;
+  const verifiedTotal = Math.min(verifiedBonus, MAX_VERIFIED_BONUS);
+  if (verifiedTotal > 0) {
+    if (input.emailVerified && input.phoneVerified) {
+      items.push({ label: "Email + telefon verifikovani", amount: verifiedTotal });
+    } else if (input.emailVerified) {
+      items.push({ label: "Email verifikovan", amount: EMAIL_VERIFIED_BONUS });
+    } else {
+      items.push({ label: "Telefon verifikovan", amount: PHONE_VERIFIED_BONUS });
+    }
+  }
+
+  const bonusSum = items.reduce((s, i) => s + i.amount, 0);
+  const total = Math.min(base + bonusSum, 70);
+
+  return { base, baseLabel, items, total };
+}

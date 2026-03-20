@@ -6,6 +6,8 @@ import { auth } from "@/lib/auth";
 import { REQUEST_CATEGORIES, MAX_REQUESTS_PER_DAY, DEFAULT_PAGE_SIZE } from "@/lib/constants";
 import { logError } from "@/lib/logger";
 import { zodErrorToString } from "@/lib/api-response";
+import { validateRequestTextFields } from "@/lib/contact-sanitization";
+import { trackFunnelEvent } from "@/lib/funnel-events";
 
 const createRequestSchema = z.object({
   requesterName: z.string().min(2, "Unesite ime"),
@@ -109,6 +111,16 @@ export async function POST(request: Request) {
     }
 
     const descTrimmed = parsed.data.description.trim();
+    const titleTrimmed = (parsed.data.title ?? "").trim();
+
+    const textValidation = validateRequestTextFields(titleTrimmed, descTrimmed);
+    if (!textValidation.ok) {
+      return NextResponse.json(
+        { success: false, error: textValidation.reason },
+        { status: 400 }
+      );
+    }
+
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
     const duplicate = isGuest
@@ -175,6 +187,8 @@ export async function POST(request: Request) {
         adminStatus: "PENDING_REVIEW",
       },
     });
+
+    void trackFunnelEvent(prisma, "request_created", { requestId: req.id }, session?.user?.id ?? null);
 
     // Distribucija se NE pokreće ovdje – samo kada admin odobri (adminStatus = DISTRIBUTED)
     return NextResponse.json({

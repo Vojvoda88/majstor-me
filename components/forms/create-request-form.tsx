@@ -19,19 +19,38 @@ import {
 } from "@/components/ui/card";
 import { REQUEST_CATEGORIES, URGENCY_OPTIONS, CITIES } from "@/lib/constants";
 import { RequestPhotosEditor } from "./request-photos-editor";
+import { containsContactBypass } from "@/lib/contact-sanitization";
 
-const createRequestSchema = z.object({
-  requesterName: z.string().min(2, "Unesite ime"),
-  category: z.string().min(1, "Odaberite kategoriju"),
-  title: z.string().min(3, "Naslov mora imati najmanje 3 karaktera"),
-  description: z.string().min(10, "Opis mora imati najmanje 10 karaktera").max(2000),
-  city: z.string().min(1, "Unesite grad"),
-  requesterPhone: z.string().min(6, "Unesite broj telefona"),
-  address: z.string().optional(),
-  requesterEmail: z.union([z.string().email("Neispravan email"), z.literal("")]).optional(),
-  urgency: z.enum(["HITNO_DANAS", "U_NAREDNA_2_DANA", "NIJE_HITNO"]),
-  photos: z.array(z.string().url()).max(5).optional().default([]),
-});
+const createRequestSchema = z
+  .object({
+    requesterName: z.string().min(2, "Unesite ime"),
+    category: z.string().min(1, "Odaberite kategoriju"),
+    title: z.string().min(3, "Naslov mora imati najmanje 3 karaktera"),
+    description: z.string().min(10, "Opis mora imati najmanje 10 karaktera").max(2000),
+    city: z.string().min(1, "Unesite grad"),
+    requesterPhone: z.string().min(6, "Unesite broj telefona"),
+    address: z.string().optional(),
+    requesterEmail: z.union([z.string().email("Neispravan email"), z.literal("")]).optional(),
+    urgency: z.enum(["HITNO_DANAS", "U_NAREDNA_2_DANA", "NIJE_HITNO"]),
+    photos: z.array(z.string().url()).max(5).optional().default([]),
+  })
+  .refine(
+    (data) => {
+      const t = containsContactBypass(data.title ?? "");
+      return t.ok;
+    },
+    { message: "Ne ostavljajte kontakt podatke u naslovu. Koristite posebna polja.", path: ["title"] }
+  )
+  .refine(
+    (data) => {
+      const d = containsContactBypass(data.description ?? "");
+      return d.ok;
+    },
+    {
+      message: "Ne ostavljajte telefon, email, Instagram, Viber, WhatsApp ili adresu u opisu. Koristite posebna polja.",
+      path: ["description"],
+    }
+  );
 
 type CreateRequestFormData = z.infer<typeof createRequestSchema>;
 
@@ -180,6 +199,9 @@ export function CreateRequestForm({ initialCategory, initialCity }: CreateReques
               className="min-h-[120px] text-base"
               {...register("description")}
             />
+            <p className="text-xs text-slate-500">
+              Telefon, email i adresu unesite u posebna polja ispod – ne u opis.
+            </p>
             {errors.description && (
               <p className="text-sm text-destructive">{errors.description.message}</p>
             )}

@@ -22,3 +22,10 @@ export const CREDIT_PACKAGES: CreditPackage[] = [
 export function getPackageById(id: string): CreditPackage | undefined {
   return CREDIT_PACKAGES.find((p) => p.id === id);
 }
+
+/** Standardni lead ≈ 25 kredita. Koristi se za procjenu "oko X leadova". */
+export const STANDARD_LEAD_CREDITS = 25;
+
+export function getLeadsEstimate(credits: number): number {
+  return Math.floor(credits / STANDARD_LEAD_CREDITS);
+}

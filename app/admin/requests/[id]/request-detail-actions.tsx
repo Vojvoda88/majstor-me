@@ -29,8 +29,19 @@ export function RequestDetailActions({
         body: "{}",
       });
       const data = await res.json();
-      if (data.success) router.refresh();
-      else alert(data.error ?? "Greška");
+      if (data.success) {
+        if (path === "/spam" && data.data) {
+          const r = data.data;
+          if (r.refundCount > 0) {
+            alert(`Zahtjev označen kao spam. Refundirano: ${r.refundCount} majstor(a), ukupno ${r.totalCreditsRefunded} kredita.`);
+          } else if (r.alreadyRefunded) {
+            alert("Zahtjev označen kao spam. (Refund je već bio izvršen ranije.)");
+          }
+        }
+        router.refresh();
+      } else {
+        alert(data.error ?? "Greška");
+      }
     } catch {
       alert("Greška");
     } finally {

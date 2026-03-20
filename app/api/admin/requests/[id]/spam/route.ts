@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { requireAdminApi } from "@/lib/admin/api-auth";
 import { createAuditLog } from "@/lib/admin/audit";
+import { refundCreditsForSpamRequest } from "@/lib/credits";
 
 export const dynamic = "force-dynamic";
 
@@ -22,6 +23,12 @@ export async function POST(
       return NextResponse.json({ success: false, error: "Zahtjev nije pronađen" }, { status: 404 });
     }
 
+    const refundResult = await refundCreditsForSpamRequest(
+      prisma,
+      id,
+      auth.session.user.id
+    );
+
     await prisma.request.update({
       where: { id },
       data: { adminStatus: "SPAM" },
@@ -38,10 +45,23 @@ export async function POST(
       actionType: "MARK_SPAM",
       entityType: "request",
       entityId: id,
-      newValue: { adminStatus: "SPAM" },
+      newValue: {
+        adminStatus: "SPAM",
+        refundCount: refundResult.refundCount,
+        totalCreditsRefunded: refundResult.totalCreditsRefunded,
+        alreadyRefunded: refundResult.alreadyRefunded,
+      },
     });
 
-    return NextResponse.json({ success: true, data: { adminStatus: "SPAM" } });
+    return NextResponse.json({
+      success: true,
+      data: {
+        adminStatus: "SPAM",
+        refundCount: refundResult.refundCount,
+        totalCreditsRefunded: refundResult.totalCreditsRefunded,
+        alreadyRefunded: refundResult.alreadyRefunded,
+      },
+    });
   } catch (error) {
     console.error("Mark spam error:", error);
     return NextResponse.json(

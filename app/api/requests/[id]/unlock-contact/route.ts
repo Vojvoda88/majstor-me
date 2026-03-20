@@ -7,6 +7,7 @@ import {
   spendCreditsForContactUnlock,
   getCreditsRequiredForLead,
 } from "@/lib/credits";
+import { trackFunnelEvent } from "@/lib/funnel-events";
 
 export const dynamic = "force-dynamic";
 
@@ -36,7 +37,7 @@ export async function POST(
     const req = await prisma.request.findUnique({
       where: { id: requestId },
       include: {
-        user: { select: { phone: true, emailVerified: true } },
+        user: { select: { name: true, phone: true, email: true, emailVerified: true, phoneVerified: true } },
         contactUnlocks: { where: { handymanId: session.user.id } },
       },
     });
@@ -49,11 +50,30 @@ export async function POST(
     }
 
     const alreadyUnlocked = req.contactUnlocks.length > 0;
+    const requesterName = req.requesterName ?? req.user?.name ?? null;
+    const phone = req.requesterPhone ?? req.user?.phone ?? null;
+    const email = req.requesterEmail ?? req.user?.email ?? null;
+    const isVerified = !!(req.user?.emailVerified != null || req.user?.phoneVerified != null);
+
     if (alreadyUnlocked) {
-      const phone = req.requesterPhone ?? req.user?.phone ?? null;
+      const creditsRequired = getCreditsRequiredForLead({
+        urgency: req.urgency,
+        photos: req.photos,
+        description: req.description,
+        emailVerified: req.user?.emailVerified != null,
+        phoneVerified: req.user?.phoneVerified != null,
+      });
       return NextResponse.json({
         success: true,
-        data: { phone, address: req.address, alreadyUnlocked: true },
+        data: {
+          phone,
+          address: req.address,
+          requesterName,
+          email,
+          isVerified,
+          creditsSpent: isCreditsRequired() ? creditsRequired : 0,
+          alreadyUnlocked: true,
+        },
       });
     }
 
@@ -84,7 +104,6 @@ export async function POST(
       }
     }
 
-    const phone = req.requesterPhone ?? req.user?.phone ?? null;
     if (!phone) {
       return NextResponse.json(
         { success: false, error: "Korisnik nije unio broj telefona" },
@@ -114,9 +133,23 @@ export async function POST(
       },
     });
 
+    void trackFunnelEvent(
+      prisma,
+      "unlock_success",
+      { requestId, creditsSpent: creditsRequired },
+      session.user.id
+    );
+
     return NextResponse.json({
       success: true,
-      data: { phone, address: req.address },
+      data: {
+        phone,
+        address: req.address,
+        requesterName,
+        email,
+        isVerified,
+        creditsSpent: isCreditsRequired() ? creditsRequired : 0,
+      },
     });
   } catch (error) {
     logError("Unlock contact error", error);

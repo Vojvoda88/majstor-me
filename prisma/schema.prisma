@@ -513,3 +513,16 @@ model DistributionJob {
   @@index([createdAt])
   @@map("distribution_jobs")
 }
+
+model FunnelEvent {
+  id        String   @id @default(cuid())
+  event     String   // request_created, lead_viewed_by_handyman, unlock_clicked, ...
+  metadata  Json?    // requestId, packageId, creditsRequired, etc.
+  userId    String?  @map("user_id")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([event])
+  @@index([userId])
+  @@index([createdAt])
+  @@map("funnel_events")
+}

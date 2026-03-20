@@ -7,6 +7,7 @@ import { isRateLimited, getRetryAfterSeconds } from "@/lib/rate-limit";
 import { sendNewOfferEmail } from "@/lib/email";
 import { createNotification } from "@/lib/notifications";
 import { logError } from "@/lib/logger";
+import { trackFunnelEvent } from "@/lib/funnel-events";
 import { zodErrorToString } from "@/lib/api-response";
 
 const createOfferSchema = z
@@ -153,6 +154,15 @@ export async function POST(request: Request) {
         proposedArrival: body.proposedArrival ?? undefined,
       },
     });
+
+    if (hasUnlocked) {
+      void trackFunnelEvent(
+        prisma,
+        "offer_sent_after_unlock",
+        { requestId, handymanId: session.user.id },
+        session.user.id
+      );
+    }
 
     sendNewOfferEmail(
       req.userId ?? null,

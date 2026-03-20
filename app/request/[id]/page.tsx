@@ -2,7 +2,13 @@ import { notFound } from "next/navigation";
 import { auth } from "@/lib/auth";
 import Link from "next/link";
 import Image from "next/image";
-import { getCreditsRequiredForLead } from "@/lib/credits";
+import {
+  getCreditsRequiredForLead,
+  isCreditsRequired,
+  hasEnoughCreditsForUnlock,
+} from "@/lib/credits";
+import { getCreditsBreakdown } from "@/lib/lead-tier";
+import { trackFunnelEvent } from "@/lib/funnel-events";
 
 export const dynamic = "force-dynamic";
 
@@ -21,6 +27,7 @@ import { RequestSuccessBanner } from "@/components/request/request-success-banne
 import { RequestChatPanel } from "@/components/chat/request-chat-panel";
 import { InviteHandymanForm } from "@/components/invite/invite-handyman-form";
 import { UnlockContactButton } from "@/components/request/unlock-contact-button";
+import { LeadPriceBreakdown } from "@/components/request/lead-price-breakdown";
 import { SiteHeader } from "@/components/layout/site-header";
 import { MapPin, Calendar, User } from "lucide-react";
 
@@ -101,14 +108,42 @@ export default async function RequestDetailPage({
   const handymanUnlocked = session?.user?.role === "HANDYMAN" && req.contactUnlocks.some((u) => u.handymanId === session.user.id);
   const requesterName = isOwner || handymanUnlocked ? fullRequesterName : getFirstName(fullRequesterName);
   const isRequesterVerified = (req.user?.emailVerified != null) || (req.user?.phoneVerified != null);
-  const creditsRequired = getCreditsRequiredForLead({
+  const leadInput = {
     urgency: req.urgency,
     photos: req.photos,
     description: req.description,
     emailVerified: req.user?.emailVerified != null,
     phoneVerified: req.user?.phoneVerified != null,
-  });
+  };
+  const creditsRequired = getCreditsRequiredForLead(leadInput);
+  const creditsBreakdown = getCreditsBreakdown(leadInput);
   const acceptedOffer = req.offers.find((o) => o.status === "ACCEPTED");
+
+  let insufficientCredits = false;
+  if (
+    session?.user?.role === "HANDYMAN" &&
+    !handymanUnlocked &&
+    isCreditsRequired()
+  ) {
+    const { ok } = await hasEnoughCreditsForUnlock(
+      prisma,
+      session.user.id,
+      creditsRequired
+    );
+    insufficientCredits = !ok;
+  }
+
+  if (session?.user?.role === "HANDYMAN" && !isOwner) {
+    void trackFunnelEvent(prisma, "lead_viewed_by_handyman", { requestId: id }, session.user.id);
+  }
+  if (insufficientCredits) {
+    void trackFunnelEvent(
+      prisma,
+      "insufficient_credits_seen",
+      { requestId: id, creditsRequired },
+      session?.user?.id ?? null
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#F6F8FB]">
@@ -206,13 +241,17 @@ export default async function RequestDetailPage({
             <div className="rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] p-4">
               <h3 className="text-sm font-medium text-[#475569]">Otključaj lead</h3>
               <p className="mt-1 text-sm text-[#64748B]">
-                Da biste vidjeli broj telefona, adresu i poslali ponudu, otključajte lead. Troši {creditsRequired} kredita.
+                Da biste vidjeli broj telefona, adresu i poslali ponudu, otključajte lead.
               </p>
-              <UnlockContactButton
-                requestId={req.id}
-                alreadyUnlocked={handymanUnlocked}
-                creditsRequired={creditsRequired}
-              />
+              <LeadPriceBreakdown breakdown={creditsBreakdown} />
+              <div className="mt-3">
+                <UnlockContactButton
+                  requestId={req.id}
+                  alreadyUnlocked={handymanUnlocked}
+                  creditsRequired={creditsRequired}
+                  insufficientCredits={insufficientCredits}
+                />
+              </div>
             </div>
           )}
           {isOwner && session && (req.status === "OPEN" || req.status === "IN_PROGRESS") && (

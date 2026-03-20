@@ -25,8 +25,17 @@ export function RequestModerationActions({
         body: method === "POST" ? "{}" : undefined,
       });
       const data = await res.json();
-      if (data.success) router.refresh();
-      else alert(data.error ?? "Greška");
+      if (data.success) {
+        if (path === "/spam" && data.data) {
+          const r = data.data;
+          if (r.refundCount > 0) {
+            alert(`Spam. Refundirano: ${r.refundCount} majstor(a), ${r.totalCreditsRefunded} kredita.`);
+          }
+        }
+        router.refresh();
+      } else {
+        alert(data.error ?? "Greška");
+      }
     } catch {
       alert("Greška");
     } finally {

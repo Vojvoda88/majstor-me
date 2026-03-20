@@ -9,7 +9,7 @@ import { HandymanRequestList } from "./handyman-request-list";
 import { OnboardingBanner } from "@/components/handyman/onboarding-banner";
 import { StickyBottomCTA } from "@/components/layout/StickyBottomCTA";
 import { calcProfileCompletion } from "@/lib/handyman-onboarding";
-import { isCreditsRequired } from "@/lib/credits";
+import { isCreditsRequired, LOW_CREDITS_THRESHOLD } from "@/lib/credits";
 import { CREDIT_PACKAGES } from "@/lib/credit-packages";
 import { isPaymentConfigured } from "@/lib/payment";
 
@@ -168,6 +168,13 @@ export default async function HandymanDashboardPage({
           <div id="credits" className="rounded-xl bg-white p-6 shadow-sm transition hover:shadow-md scroll-mt-24">
             <p className="text-sm font-medium text-[#64748B]">Krediti</p>
             <p className="mt-1 text-2xl font-bold text-[#0F172A]">{(profile as { creditsBalance?: number }).creditsBalance ?? 0}</p>
+            {(profile as { creditsBalance?: number }).creditsBalance !== undefined &&
+              ((profile as { creditsBalance?: number }).creditsBalance ?? 0) < LOW_CREDITS_THRESHOLD &&
+              ((profile as { creditsBalance?: number }).creditsBalance ?? 0) > 0 && (
+              <p className="mt-1 text-xs font-medium text-amber-600">
+                Preostalo vam je još {(profile as { creditsBalance }).creditsBalance} kredita.
+              </p>
+            )}
             {isPaymentConfigured() ? (
               <Link href="/dashboard/handyman/credits" className="mt-2 inline-block text-sm font-medium text-blue-600 hover:underline">
                 Kupi kredite →
