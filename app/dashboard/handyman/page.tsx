@@ -19,6 +19,12 @@ const URGENCY_LABELS: Record<string, string> = {
   NIJE_HITNO: "Nije hitno",
 };
 
+function isRequesterVerifiedUser(
+  user: { emailVerified?: Date | null; phoneVerified?: Date | null } | null | undefined
+): boolean {
+  return (user?.emailVerified != null) || (user?.phoneVerified != null);
+}
+
 export const metadata: Metadata = {
   title: "Dashboard majstora | Majstor.me",
   description: "Pregled otvorenih zahtjeva i slanje ponuda",
@@ -124,7 +130,9 @@ export default async function HandymanDashboardPage({
   const requests = sorted.slice(skip, skip + limit).map(({ _distance, ...r }) => ({
     ...r,
     requesterDisplayName: getFirstName(r.requesterName ?? r.user?.name),
-    isRequesterVerified: (r.user?.emailVerified != null) || (r.user?.phoneVerified != null),
+    isRequesterVerified: isRequesterVerifiedUser(
+      r.user as { emailVerified?: Date | null; phoneVerified?: Date | null } | null
+    ),
   }));
   const totalDisplayed = sorted.length;
 
