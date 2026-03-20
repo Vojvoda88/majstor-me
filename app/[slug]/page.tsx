@@ -11,19 +11,20 @@ export async function generateMetadata({
 }) {
   const { slug } = await params;
   const parsed = parseCategoryCitySlug(slug);
-  if (!parsed) return { title: "Majstor.me" };
+  if (!parsed) return { title: { absolute: "BrziMajstor.ME" } };
   const base = getSiteUrl();
   const cityLoc = cityLocative(parsed.cityDisplayName);
-  const title = `${parsed.categoryDisplayName} ${parsed.cityDisplayName} | Majstor.me`;
+  const title = `${parsed.categoryDisplayName} ${parsed.cityDisplayName}`;
   const description = `Pronađite ${parsed.categoryDisplayName.toLowerCase()}e u ${cityLoc}. Provjereni majstori, brze ponude.`;
   return {
     title,
     description,
     alternates: { canonical: `${base}/${slug}` },
     openGraph: {
-      title,
+      title: `${title} | BrziMajstor.ME`,
       description,
       url: `${base}/${slug}`,
+      siteName: "BrziMajstor.ME",
     },
   };
 }

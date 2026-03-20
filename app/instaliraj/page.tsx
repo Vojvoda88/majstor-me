@@ -4,8 +4,8 @@ import { PublicHeader } from "@/components/layout/PublicHeader";
 import { InstallHints } from "@/components/pwa/install-hints";
 
 export const metadata: Metadata = {
-  title: "Instaliraj aplikaciju | Majstor.me",
-  description: "Dodaj Majstor.me na početni ekran telefona — brži pristup kao aplikacija.",
+  title: "Instaliraj aplikaciju",
+  description: "Dodaj BrziMajstor.ME na početni ekran telefona — brži pristup kao aplikacija.",
 };
 
 export default function InstalirajPage() {
@@ -15,7 +15,7 @@ export default function InstalirajPage() {
       <div className="mx-auto max-w-lg px-4 py-10 pb-24 sm:px-6 md:py-14">
         <p className="text-xs font-bold uppercase tracking-[0.2em] text-blue-700">PWA</p>
         <h1 className="font-display mt-2 text-2xl font-bold tracking-tight text-brand-navy md:text-3xl">
-          Instaliraj Majstor.me
+          Instaliraj BrziMajstor.ME
         </h1>
         <p className="mt-3 text-base leading-relaxed text-slate-600">
           Aplikacija nije u App Store / Play Store — radi kao <strong>web aplikacija</strong> koju možeš dodati na početni ekran.

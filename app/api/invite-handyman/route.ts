@@ -72,7 +72,7 @@ export async function POST(request: Request) {
       success: true,
       data: {
         inviteId: invite.id,
-        inviteLink: `${process.env.NEXTAUTH_URL ?? "https://majstor.me"}/register?invite=${token}`,
+        inviteLink: `${process.env.NEXTAUTH_URL ?? "https://brzimajstor.me"}/register?invite=${token}`,
         message: parsed.data.email
           ? "Pozivnica će biti poslata kada email servis bude konfigurisan."
           : "Pozivnica je kreirana. Pošaljite majstoru link za registraciju.",

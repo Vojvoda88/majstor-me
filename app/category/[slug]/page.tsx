@@ -15,22 +15,24 @@ export async function generateMetadata({
   const config = getCategoryBySlug(slug);
   if (!config) {
     return {
-      title: "Kategorija | Majstor.me",
-      description: "Pregled kategorija majstora na Majstor.me platformi.",
+      title: "Kategorija",
+      description: "Pregled kategorija majstora na BrziMajstor.ME platformi.",
     };
   }
   const base = getSiteUrl();
-  const title = `${config.displayName} majstori u Crnoj Gori | Majstor.me`;
+  const title = `${config.displayName} majstori u Crnoj Gori`;
   const description = `Pregled majstora za kategoriju ${config.displayName.toLowerCase()} širom Crne Gore. Pronađite provjerenog majstora ili objavite besplatan zahtjev i dobijte ponude.`;
 
+  const ogTitle = `${title} | BrziMajstor.ME`;
   return {
     title,
     description,
     alternates: { canonical: `${base}/category/${slug}` },
     openGraph: {
-      title,
+      title: ogTitle,
       description,
       url: `${base}/category/${slug}`,
+      siteName: "BrziMajstor.ME",
       type: "website",
     },
   };

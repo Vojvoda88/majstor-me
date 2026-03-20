@@ -72,7 +72,7 @@ export function InviteHandymanForm({ requestId }: { requestId?: string }) {
           Pozovi majstora
         </CardTitle>
         <CardDescription>
-          Pošaljite link majstoru da se registruje na Majstor.me. Ako unesete email, možemo ga obavijestiti (kada je email servis spreman).
+          Pošaljite link majstoru da se registruje na BrziMajstor.ME. Ako unesete email, možemo ga obavijestiti (kada je email servis spreman).
         </CardDescription>
       </CardHeader>
       <CardContent>

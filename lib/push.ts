@@ -11,7 +11,7 @@ function ensureVapid() {
   const publicKey = process.env.VAPID_PUBLIC_KEY;
   const privateKey = process.env.VAPID_PRIVATE_KEY;
   if (publicKey && privateKey) {
-    webpush.setVapidDetails("mailto:support@majstor.me", publicKey, privateKey);
+    webpush.setVapidDetails("mailto:support@brzimajstor.me", publicKey, privateKey);
     vapidConfigured = true;
   }
 }
@@ -31,7 +31,7 @@ export async function sendPushNotification(
   if (!vapidConfigured) return false;
 
   try {
-    const base = process.env.NEXTAUTH_URL ?? process.env.NEXT_PUBLIC_SITE_URL ?? "https://majstor.me";
+    const base = process.env.NEXTAUTH_URL ?? process.env.NEXT_PUBLIC_SITE_URL ?? "https://brzimajstor.me";
     const link = payload.link?.startsWith("/") ? `${base}${payload.link}` : payload.link ?? base;
 
     await webpush.sendNotification(

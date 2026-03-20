@@ -29,21 +29,44 @@ const outfit = Outfit({
   preload: false,
 });
 
+const siteUrl = getSiteUrl();
+
 export const metadata: Metadata = {
-  metadataBase: new URL(getSiteUrl()),
-  title: "Majstor.me | Pronađite majstora u Crnoj Gori",
-  description: "Platforma za pronalaženje provjerenih majstora i servisera u Crnoj Gori.",
-  keywords: "majstor, Crna Gora, Podgorica, vodoinstalater, električar, klima servis",
+  metadataBase: new URL(siteUrl),
+  title: {
+    default: "BrziMajstor.ME – Pronađi majstora brzo i lako u Crnoj Gori",
+    template: "%s | BrziMajstor.ME",
+  },
+  description:
+    "BrziMajstor.ME je platforma gdje brzo nalaziš provjerene majstore u Crnoj Gori. Vodoinstalateri, električari, majstori – sve na jednom mjestu.",
+  keywords: [
+    "majstori Crna Gora",
+    "vodoinstalater Podgorica",
+    "električar Nikšić",
+    "majstor hitno",
+    "BrziMajstor",
+  ],
   alternates: { canonical: "/" },
   icons: {
     icon: "/icon-192.png",
     apple: "/icon-192.png",
   },
   openGraph: {
-    title: "Majstor.me | Pronađite majstora u Crnoj Gori",
-    description: "Platforma za pronalaženje provjerenih majstora i servisera u Crnoj Gori.",
-    type: "website",
+    title: "BrziMajstor.ME",
+    description: "Nađi majstora za 2 minute.",
+    url: siteUrl,
+    siteName: "BrziMajstor.ME",
     locale: "sr_ME",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "BrziMajstor.ME",
+    description: "Nađi majstora za 2 minute.",
+  },
+  robots: {
+    index: true,
+    follow: true,
   },
 };
 

@@ -56,7 +56,7 @@ export function InstallHints() {
       <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
         <h2 className="font-display text-lg font-bold text-brand-navy">iPhone / iPad (Safari)</h2>
         <ol className="mt-3 list-decimal space-y-2 pl-5 text-sm leading-relaxed text-slate-700">
-          <li>Otvori majstor.me u <strong>Safari</strong> (ne u Chrome/Facebook in-app browseru ako možeš).</li>
+          <li>Otvori brzimajstor.me u <strong>Safari</strong> (ne u Chrome/Facebook in-app browseru ako možeš).</li>
           <li>Pritisni dugme <strong>Dijeli</strong> (kvadrat sa strelicom).</li>
           <li>Izaberi <strong>Dodaj na početni ekran</strong> (Add to Home Screen).</li>
           <li>Potvrdi naziv i pritisni <strong>Dodaj</strong>.</li>

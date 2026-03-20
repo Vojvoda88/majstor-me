@@ -28,7 +28,7 @@ export function TrustSection() {
     <section className="py-12 sm:py-16 lg:py-20">
       <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-0">
         <h2 className="mb-3 text-center text-2xl font-semibold text-slate-900 sm:text-3xl">
-          Zašto korisnici vjeruju Majstor.me
+          Zašto korisnici vjeruju BrziMajstor.ME
         </h2>
         <p className="mx-auto mb-10 max-w-2xl text-center text-sm text-slate-500 sm:text-base">
           Sve je prilagođeno realnim poslovima u Crnoj Gori – od provjere majstora do načina na koji dobijate ponude.

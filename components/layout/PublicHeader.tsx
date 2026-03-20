@@ -140,8 +140,8 @@ export function PublicHeader() {
     >
       <div className="relative z-[100] mx-auto flex min-h-14 max-w-6xl items-center justify-between px-4 sm:px-6">
         <Link href="/" className="font-display text-xl font-bold tracking-tight md:text-2xl" data-testid="header-home" {...linkProps}>
-          <span className="text-[#1d4ed8]">Majstor</span>
-          <span className="text-slate-800">.me</span>
+          <span className="text-[#1d4ed8]">BrziMajstor</span>
+          <span className="text-slate-800">.ME</span>
         </Link>
 
         <nav className="relative z-[100] hidden items-center gap-x-8 md:flex" aria-label="Glavna navigacija">

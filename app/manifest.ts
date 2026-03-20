@@ -2,8 +2,8 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Majstor.me - Pronađite majstora",
-    short_name: "Majstor.me",
+    name: "BrziMajstor.ME – Pronađi majstora",
+    short_name: "BrziMajstor.ME",
     description: "Marketplace za majstore u Crnoj Gori. Brzo pošaljite zahtjev, majstori vam šalju ponude.",
     start_url: "/",
     display: "standalone",

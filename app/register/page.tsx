@@ -7,8 +7,8 @@ import { Button } from "@/components/ui/button";
 import { SiteHeaderSimple } from "@/components/layout/site-header-simple";
 
 export const metadata: Metadata = {
-  title: "Registracija | Majstor.me",
-  description: "Registrujte se kao korisnik ili majstor na Majstor.me",
+  title: "Registracija",
+  description: "Registrujte se kao korisnik ili majstor na BrziMajstor.ME",
 };
 
 export const dynamic = "force-dynamic";

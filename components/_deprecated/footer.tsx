@@ -23,7 +23,7 @@ export function Footer() {
               Privatnost
             </Link>
           </div>
-          <p className="text-[#475569] text-sm">© {new Date().getFullYear()} Majstor.me</p>
+          <p className="text-[#475569] text-sm">© {new Date().getFullYear()} BrziMajstor.ME</p>
         </div>
       </div>
     </footer>

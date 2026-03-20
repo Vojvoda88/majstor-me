@@ -16,13 +16,13 @@ export async function generateMetadata({
   const name = CITY_SLUGS[slug];
   if (!name) {
     return {
-      title: "Grad | Majstor.me",
+      title: "Grad",
       description: "Pregled majstora po gradovima u Crnoj Gori.",
     };
   }
   const nameLocative = cityLocative(name);
   const base = getSiteUrl();
-  const title = `Majstori u ${nameLocative} | Majstor.me`;
+  const title = `Majstori u ${nameLocative}`;
   const description = `Pronađite provjerene majstore u ${nameLocative} – vodoinstalater, električar, klima servis i druge usluge u ${name}. Pregledajte ponude ili objavite besplatan zahtjev.`;
 
   return {
@@ -30,9 +30,10 @@ export async function generateMetadata({
     description,
     alternates: { canonical: `${base}/grad/${slug}` },
     openGraph: {
-      title,
+      title: `${title} | BrziMajstor.ME`,
       description,
       url: `${base}/grad/${slug}`,
+      siteName: "BrziMajstor.ME",
       type: "website",
     },
   };

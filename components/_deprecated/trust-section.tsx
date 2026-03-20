@@ -12,7 +12,7 @@ export function TrustSection() {
     <section className="py-12 lg:py-16 bg-white">
       <div className="max-w-7xl mx-auto px-4">
         <h2 className="text-2xl lg:text-3xl font-bold text-center text-[#0F172A] mb-8">
-          Zašto odabrati Majstor.me?
+          Zašto odabrati BrziMajstor.ME?
         </h2>
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {TRUST_ITEMS.map(({ icon: Icon, title, description }) => (

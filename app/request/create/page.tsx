@@ -8,17 +8,18 @@ import { getSiteUrl } from "@/lib/site-url";
 const baseUrl = getSiteUrl();
 
 export const metadata: Metadata = {
-  title: "Objavite novi zahtjev | Majstor.me",
+  title: "Pošalji zahtjev majstoru",
   description:
     "Objavite besplatan zahtjev za majstora u Crnoj Gori – vodoinstalater, električar, klima servis i druge usluge. Primite brze ponude od provjerenih majstora.",
   alternates: {
     canonical: `${baseUrl}/request/create`,
   },
   openGraph: {
-    title: "Objavite novi zahtjev | Majstor.me",
+    title: "Pošalji zahtjev majstoru | BrziMajstor.ME",
     description:
       "Jednim zahtjevom dobijate više ponuda od provjerenih majstora u Crnoj Gori. Objavite posao besplatno i izaberite ponudu koja vam najviše odgovara.",
     url: `${baseUrl}/request/create`,
+    siteName: "BrziMajstor.ME",
     type: "website",
   },
 };

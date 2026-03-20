@@ -111,7 +111,7 @@ export function UnlockContactButton({
         </div>
 
         <p className="mt-4 text-xs text-slate-600">
-          Kontakt je sada otključan samo za vas kroz Majstor.me kreditni sistem.
+          Kontakt je sada otključan samo za vas kroz BrziMajstor.ME kreditni sistem.
         </p>
       </div>
     );

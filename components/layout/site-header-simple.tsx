@@ -7,7 +7,7 @@ export function SiteHeaderSimple() {
     <header className="sticky top-0 z-50 border-b border-[#E2E8F0] bg-white/95 backdrop-blur">
       <div className="container mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
         <Link href="/" className="text-xl font-bold text-[#0F172A] hover:text-[#2563EB] transition-colors">
-          Majstor.me
+          BrziMajstor.ME
         </Link>
         <nav className="hidden items-center gap-2 md:flex">
           <Link href="/login" data-testid="nav-prijava">

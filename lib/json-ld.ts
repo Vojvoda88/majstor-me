@@ -9,7 +9,7 @@ export function organizationJsonLd() {
   return {
     "@context": "https://schema.org",
     "@type": "Organization",
-    name: "Majstor.me",
+    name: "BrziMajstor.ME",
     url: getSiteUrl(),
     description: "Platforma za pronalaženje provjerenih majstora i servisera u Crnoj Gori.",
     areaServed: { "@type": "Country", name: "Crna Gora" },

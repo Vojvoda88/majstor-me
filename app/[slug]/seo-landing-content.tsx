@@ -209,7 +209,7 @@ export function SeoLandingContent({
               <div>
                 <h3 className="font-semibold text-slate-800">Da li su majstori provjereni?</h3>
                 <p>
-                  Majstori na Majstor.me imaju recenzije od stvarnih korisnika. Verifikovani majstori imaju dodatnu provjeru.
+                  Majstori na BrziMajstor.ME imaju recenzije od stvarnih korisnika. Verifikovani majstori imaju dodatnu provjeru.
                 </p>
               </div>
             </div>

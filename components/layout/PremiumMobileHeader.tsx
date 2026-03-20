@@ -14,8 +14,8 @@ export function PremiumMobileHeader() {
     <header className="fixed left-0 right-0 top-0 z-50 border-b border-slate-200/80 bg-white/95 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
         <Link href="/" className="font-display text-xl font-bold tracking-tight md:text-2xl">
-          <span className="text-[#1d4ed8]">Majstor</span>
-          <span className="text-slate-800">.me</span>
+          <span className="text-[#1d4ed8]">BrziMajstor</span>
+          <span className="text-slate-800">.ME</span>
         </Link>
 
         <nav className="hidden items-center gap-10 md:flex">

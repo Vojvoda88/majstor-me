@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import nextDynamic from "next/dynamic";
 import { PublicHeader } from "@/components/layout/PublicHeader";
 import { Hero } from "@/components/home-page/Hero";
@@ -8,6 +9,12 @@ import { HowItWorks } from "@/components/home-page/HowItWorks";
 import { CTAForMasters } from "@/components/home-page/CTAForMasters";
 import { organizationJsonLd, faqPageJsonLd } from "@/lib/json-ld";
 import { FAQ_ITEMS } from "@/lib/faq-data";
+
+export const metadata: Metadata = {
+  title: {
+    absolute: "BrziMajstor.ME – Nađi majstora brzo",
+  },
+};
 
 export const revalidate = 60;
 

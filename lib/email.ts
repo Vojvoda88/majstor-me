@@ -6,7 +6,7 @@ function getResend() {
   return new Resend(key);
 }
 
-const from = process.env.EMAIL_FROM ?? "Majstor.me <onboarding@resend.dev>";
+const from = process.env.EMAIL_FROM ?? "BrziMajstor.ME <onboarding@resend.dev>";
 
 async function getUserEmail(userId: string): Promise<string | null> {
   const { prisma } = await import("@/lib/db");
@@ -28,7 +28,7 @@ export async function sendNewRequestEmail(
   const to = await getUserEmail(handymanId);
   if (!to) return;
 
-  const baseUrl = process.env.NEXTAUTH_URL ?? "https://majstor.me";
+  const baseUrl = process.env.NEXTAUTH_URL ?? "https://brzimajstor.me";
   const link = `${baseUrl}/request/${requestId}`;
 
   try {
@@ -40,7 +40,7 @@ export async function sendNewRequestEmail(
         <p>Zdravo,</p>
         <p>Novi zahtjev za <strong>${requestCategory}</strong> u <strong>${requestCity}</strong>.</p>
         <p><a href="${link}">Pogledaj zahtjev i pošalji ponudu →</a></p>
-        <p>— Majstor.me</p>
+        <p>— BrziMajstor.ME</p>
       `,
     });
   } catch {
@@ -66,7 +66,7 @@ export async function sendNewOfferEmail(
     : requesterEmail?.trim() || null;
   if (!to) return;
 
-  const baseUrl = process.env.NEXTAUTH_URL ?? "https://majstor.me";
+  const baseUrl = process.env.NEXTAUTH_URL ?? "https://brzimajstor.me";
   const link = `${baseUrl}/request`;
 
   try {
@@ -79,7 +79,7 @@ export async function sendNewOfferEmail(
         <p><strong>${handymanName}</strong> vam je poslao ponudu na zahtjev za <strong>${requestCategory}</strong>.</p>
         <p>Pogledajte ponude i prihvatite onu koja vam najviše odgovara.</p>
         <p><a href="${link}">Pregledaj ponude →</a></p>
-        <p>— Majstor.me</p>
+        <p>— BrziMajstor.ME</p>
       `,
     });
   } catch {
@@ -107,7 +107,7 @@ export async function sendOfferAcceptedEmail(
         <p><strong>${userName}</strong> je prihvatio vašu ponudu za <strong>${requestCategory}</strong>.</p>
         <p>Kontaktirajte korisnika i zaključite posao.</p>
         <p><a href="${process.env.NEXTAUTH_URL}/dashboard/handyman">Dashboard →</a></p>
-        <p>— Majstor.me</p>
+        <p>— BrziMajstor.ME</p>
       `,
     });
   } catch {
@@ -132,8 +132,8 @@ export async function sendJobCompletedEmail(
       html: `
         <p>Zdravo,</p>
         <p>Korisnik je označio posao <strong>${requestCategory}</strong> kao završen.</p>
-        <p>Hvala što ste koristili Majstor.me!</p>
-        <p>— Majstor.me</p>
+        <p>Hvala što ste koristili BrziMajstor.ME!</p>
+        <p>— BrziMajstor.ME</p>
       `,
     });
   } catch {
@@ -160,7 +160,7 @@ export async function sendNewReviewEmail(
         <p>Zdravo,</p>
         <p>Dobili ste novu recenziju (${rating}/5) za posao <strong>${requestCategory}</strong>.</p>
         <p><a href="${process.env.NEXTAUTH_URL}/dashboard/handyman">Pogledaj profil →</a></p>
-        <p>— Majstor.me</p>
+        <p>— BrziMajstor.ME</p>
       `,
     });
   } catch {

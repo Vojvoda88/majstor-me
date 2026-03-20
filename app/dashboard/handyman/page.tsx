@@ -26,7 +26,7 @@ function isRequesterVerifiedUser(
 }
 
 export const metadata: Metadata = {
-  title: "Dashboard majstora | Majstor.me",
+  title: "Dashboard majstora",
   description: "Pregled otvorenih zahtjeva i slanje ponuda",
 };
 

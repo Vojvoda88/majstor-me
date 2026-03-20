@@ -7,8 +7,8 @@ import { Button } from "@/components/ui/button";
 import { SiteHeaderSimple } from "@/components/layout/site-header-simple";
 
 export const metadata: Metadata = {
-  title: "Prijava | Majstor.me",
-  description: "Prijavite se na Majstor.me nalog",
+  title: "Prijava",
+  description: "Prijavite se na BrziMajstor.ME nalog",
 };
 
 export const dynamic = "force-dynamic";

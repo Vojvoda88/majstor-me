@@ -33,7 +33,7 @@ export function WhyMajstorSection() {
           <div className="pointer-events-none absolute -bottom-24 -left-12 h-56 w-56 rounded-full bg-amber-500/10 blur-3xl" />
           <p className="relative text-[11px] font-bold uppercase tracking-[0.28em] text-blue-200/90">ZAŠTO MARKETPLACE</p>
           <h2 className="relative mt-4 font-display text-3xl font-bold leading-tight tracking-tight md:text-4xl lg:text-[2.5rem]">
-            Zašto Majstor.me?
+            Zašto BrziMajstor.ME?
           </h2>
           <p className="relative mt-6 max-w-lg text-[15px] leading-relaxed text-slate-100/95 md:text-base">
             Platforma je građena za stvarne poslove u Crnoj Gori — od curenja i klima servisa do selidbi i renoviranja. Jedan
@@ -82,7 +82,7 @@ export function WhyMajstorSection() {
       <div className="mt-12 flex items-start gap-4 rounded-2xl border border-emerald-200/80 bg-gradient-to-r from-emerald-50 to-white px-6 py-5 text-emerald-950 shadow-sm md:mt-14 md:items-center md:px-8 md:py-6">
         <ShieldCheck className="mt-0.5 h-6 w-6 shrink-0 text-emerald-600 md:mt-0" />
         <p className="text-sm font-semibold leading-relaxed md:text-base">
-          Sve ponude stižu direktno od majstora — Majstor.me ne uzima proviziju od korisnika.
+          Sve ponude stižu direktno od majstora — BrziMajstor.ME ne uzima proviziju od korisnika.
         </p>
       </div>
     </section>

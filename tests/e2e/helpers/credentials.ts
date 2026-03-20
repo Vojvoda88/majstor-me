@@ -6,7 +6,7 @@ export const TEST_PASSWORD = process.env.E2E_PASSWORD ?? process.env.ADMIN_PASSW
 
 export const CREDS = {
   admin: {
-    email: process.env.E2E_ADMIN_EMAIL ?? process.env.ADMIN_EMAIL ?? "admin@majstor.me",
+    email: process.env.E2E_ADMIN_EMAIL ?? process.env.ADMIN_EMAIL ?? "admin@brzimajstor.me",
     password: TEST_PASSWORD,
   },
   user: {

@@ -1,5 +1,5 @@
 /**
- * Majstor.me - Demo seed data for Nikšić
+ * BrziMajstor.ME - Demo seed data for Nikšić
  * Run: npm run db:seed  OR  npx prisma db seed
  *
  * SAFETY: Does NOT delete existing data. Adds demo users (upsert by email),
@@ -26,7 +26,7 @@ async function main() {
   const password = await hash("Test123!", 12);
 
   // Admin – upsert: ako nalog sa ovim emailom već postoji, postavi ga na ADMIN
-  const adminEmail = process.env.ADMIN_EMAIL ?? "admin@majstor.me";
+  const adminEmail = process.env.ADMIN_EMAIL ?? "admin@brzimajstor.me";
   const admin = await prisma.user.upsert({
     where: { email: adminEmail },
     update: { role: "ADMIN", name: "Admin Korisnik" },

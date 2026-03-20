@@ -19,7 +19,7 @@ export function PremiumNavbar() {
     <header className="sticky top-0 z-50 border-b border-[#E2E8F0] bg-white/95 backdrop-blur">
       <div className="container mx-auto flex h-18 max-w-7xl items-center justify-between px-4 py-4 md:h-20 md:px-6">
         <Link href="/" className="text-xl font-bold tracking-tight text-[#0F172A] md:text-2xl hover:text-[#2563EB] transition-colors">
-          Majstor.me
+          BrziMajstor.ME
         </Link>
 
         <nav className="hidden items-center gap-8 md:flex">

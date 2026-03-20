@@ -38,18 +38,18 @@ export async function generateMetadata({
   });
   if (!user?.handymanProfile) {
     return {
-      title: "Majstor | Majstor.me",
-      description: "Profil majstora na Majstor.me platformi.",
+      title: "Majstor",
+      description: "Profil majstora na BrziMajstor.ME platformi.",
     };
   }
   const categories = user.handymanProfile.workerCategories.map((wc) => wc.category.name);
   const cat = categories[0] || "Majstor";
   const city = user.city || "";
   const base = getSiteUrl();
-  const title = `${user.name} – ${cat}${city ? `, ${city}` : ""} | Majstor.me`.trim();
+  const title = `${user.name} – ${cat}${city ? `, ${city}` : ""}`.trim();
   const description =
     user.handymanProfile.bio ||
-    `Profil majstora ${user.name} za usluge kategorije ${cat}${city ? ` u ${city}` : ""} na Majstor.me.`;
+    `Profil majstora ${user.name} za usluge kategorije ${cat}${city ? ` u ${city}` : ""} na BrziMajstor.ME.`;
   const imageUrl =
     (user.handymanProfile as { avatarUrl?: string | null }).avatarUrl ??
     AVATAR_IMAGE_FALLBACK;
@@ -59,9 +59,10 @@ export async function generateMetadata({
     description,
     alternates: { canonical: `${base}/handyman/${id}` },
     openGraph: {
-      title,
+      title: `${title} | BrziMajstor.ME`,
       description,
       url: `${base}/handyman/${id}`,
+      siteName: "BrziMajstor.ME",
       type: "profile",
       images: imageUrl ? [{ url: imageUrl }] : undefined,
     },
@@ -209,7 +210,7 @@ export default async function HandymanProfilePage({
                     )}
                     {completedJobsCount > 0 && (
                       <span className="inline-flex items-center gap-1 rounded-full bg-black/25 px-2.5 py-0.5 font-medium">
-                        {completedJobsCount} završenih poslova preko Majstor.me
+                        {completedJobsCount} završenih poslova preko BrziMajstor.ME
                       </span>
                     )}
                   </div>

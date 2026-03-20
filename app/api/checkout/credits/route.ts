@@ -38,7 +38,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const baseUrl = process.env.NEXTAUTH_URL ?? "https://majstor.me";
+    const baseUrl = process.env.NEXTAUTH_URL ?? "https://brzimajstor.me";
     const result = await createCreditsCheckout({
       handymanId: session.user.id,
       packageId: pkg.id,

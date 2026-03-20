@@ -1,4 +1,4 @@
-# Majstor.me – Marketplace za majstore (MVP)
+# BrziMajstor.ME – Marketplace za majstore (MVP)
 
 Digitalna platforma koja povezuje korisnike sa majstorima i zanatlijama u Crnoj Gori.
 

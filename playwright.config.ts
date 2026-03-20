@@ -1,7 +1,7 @@
 import { defineConfig, devices } from "@playwright/test";
 
 /**
- * E2E config – Majstor.me
+ * E2E config – BrziMajstor.ME
  * BaseURL: lokalni dev server (npm run dev).
  * Admin tests use shared storage state from global setup (no per-test login).
  */

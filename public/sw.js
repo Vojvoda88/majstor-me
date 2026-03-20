@@ -1,4 +1,4 @@
-// Majstor.me - PWA Service Worker
+// BrziMajstor.ME - PWA Service Worker
 const CACHE_NAME = "majstor-me-v2";
 const START_URL = "/";
 
@@ -25,7 +25,7 @@ self.addEventListener("fetch", (event) => {
 });
 
 self.addEventListener("push", (event) => {
-  let data = { title: "Majstor.me", body: "", link: "/" };
+  let data = { title: "BrziMajstor.ME", body: "", link: "/" };
   if (event.data) {
     try {
       data = { ...data, ...event.data.json() };
