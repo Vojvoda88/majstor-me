@@ -1,7 +1,5 @@
 import { requireAdminPermission } from "@/lib/admin/auth";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import Link from "next/link";
-import { Badge } from "@/components/ui/badge";
+import { resolveModerationTab } from "@/lib/admin/moderation-tab";
 import { ModerationTabs } from "./moderation-tabs";
 import { PendingRequestsList } from "./pending-requests-list";
 import { PendingWorkersList } from "./pending-workers-list";
@@ -13,11 +11,12 @@ export const dynamic = "force-dynamic";
 export default async function ModerationPage({
   searchParams,
 }: {
-  searchParams: Promise<{ tab?: string }>;
+  searchParams:
+    | Promise<Record<string, string | string[] | undefined>>
+    | Record<string, string | string[] | undefined>;
 }) {
   await requireAdminPermission("moderation");
-  const params = await searchParams;
-  const tab = params.tab ?? "requests";
+  const tab = await resolveModerationTab(searchParams);
 
   return (
     <div className="space-y-6">

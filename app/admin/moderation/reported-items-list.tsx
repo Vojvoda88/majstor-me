@@ -51,18 +51,28 @@ export async function ReportedItemsList() {
                 <tr key={r.id} className="border-b last:border-0">
                   <td className="py-3 pr-4">{r.type}</td>
                   <td className="py-3 pr-4">
-                    <Link href={`/admin/users/${r.reporterId}`} className="hover:underline">
-                      {r.reporter.name}
-                    </Link>
+                    {r.reporter ? (
+                      <Link href={`/admin/users/${r.reporterId}`} className="hover:underline">
+                        {r.reporter.name}
+                      </Link>
+                    ) : (
+                      <span className="text-[#64748B]">— (ID: {r.reporterId.slice(0, 8)}…)</span>
+                    )}
                   </td>
                   <td className="py-3 pr-4">
-                    <Link href={`/admin/users/${r.reportedUserId}`} className="hover:underline">
-                      {r.reportedUser.name}
-                    </Link>
-                    {r.reportedUser.role === "HANDYMAN" && (
-                      <Link href={`/admin/handymen/${r.reportedUserId}`} className="ml-1 text-[#2563EB]">
-                        (majstor)
-                      </Link>
+                    {r.reportedUser ? (
+                      <>
+                        <Link href={`/admin/users/${r.reportedUserId}`} className="hover:underline">
+                          {r.reportedUser.name}
+                        </Link>
+                        {r.reportedUser.role === "HANDYMAN" && (
+                          <Link href={`/admin/handymen/${r.reportedUserId}`} className="ml-1 text-[#2563EB]">
+                            (majstor)
+                          </Link>
+                        )}
+                      </>
+                    ) : (
+                      <span className="text-[#64748B]">—</span>
                     )}
                   </td>
                   <td className="max-w-[200px] truncate py-3 pr-4">{r.description ?? "-"}</td>
@@ -79,7 +89,14 @@ export async function ReportedItemsList() {
                     {new Date(r.createdAt).toLocaleDateString("sr")}
                   </td>
                   <td className="py-3">
-                    <Link href={`/admin/moderation/${r.id}`} className="text-[#2563EB] hover:underline">
+                    <Link
+                      href={
+                        r.request?.id
+                          ? `/admin/requests/${r.request.id}`
+                          : `/admin/users/${r.reportedUserId}`
+                      }
+                      className="text-[#2563EB] hover:underline"
+                    >
                       Detalji
                     </Link>
                   </td>
