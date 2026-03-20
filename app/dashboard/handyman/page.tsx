@@ -93,7 +93,7 @@ export default async function HandymanDashboardPage({
     prisma.request.findMany({
       where,
       include: {
-        user: { select: { name: true, emailVerified: true } },
+        user: { select: { name: true, emailVerified: true, phoneVerified: true } },
         offers: { select: { id: true } },
       },
       orderBy: { createdAt: "desc" },
