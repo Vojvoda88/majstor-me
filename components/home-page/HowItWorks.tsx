@@ -1,25 +1,30 @@
 import Link from "next/link";
-import { Fragment } from "react";
-import { FileText, MessageSquare, CheckCircle2, ChevronRight } from "lucide-react";
+import { FileText, Eye, MessageSquare, CheckCircle2, ChevronRight } from "lucide-react";
 
 const STEPS = [
   {
     n: 1,
     icon: FileText,
-    title: "Opišite šta vam treba",
-    desc: "Napišite koji posao treba da se uradi, dodajte grad i po želji fotografije. Što je zahtjev jasniji, ponude će biti preciznije.",
+    title: "Opišite posao",
+    desc: "Šta treba uraditi, koji grad, po želji fotografije. Što je jasnije, majstori lakše procjenjuju da li im posao odgovara.",
   },
   {
     n: 2,
-    icon: MessageSquare,
-    title: "Majstori vam šalju ponude",
-    desc: "Provjereni majstori pregledaju vaš zahtjev i javljaju se ako im posao odgovara. Vi dobijate više ponuda na jednom mjestu.",
+    icon: Eye,
+    title: "Majstori pregledaju zahtjev",
+    desc: "Na osnovu opisa vide šta tražite — javljaju se oni kojima posao ima smisla. Vi ne morate zvati redom.",
   },
   {
     n: 3,
+    icon: MessageSquare,
+    title: "Dobijate ponude",
+    desc: "Ponude i poruke na jednom mjestu. Uporedite cijene i ocjene prije nego što odlučite.",
+  },
+  {
+    n: 4,
     icon: CheckCircle2,
-    title: "Uporedite i izaberite",
-    desc: "Pregledajte ocjene, iskustvo i cijene, pa izaberite majstora koji vam najviše odgovara. Bez obaveze da prihvatite ponudu.",
+    title: "Izaberite majstora",
+    desc: "Odaberite ponudu koja vam najviše odgovara. Bez obaveze da odmah prihvatite.",
   },
 ] as const;
 
@@ -31,81 +36,70 @@ export function HowItWorks() {
           Kako radi BrziMajstor.ME
         </h2>
         <p className="mx-auto mt-4 max-w-2xl text-base font-medium leading-relaxed text-slate-600 md:text-lg">
-          Pošaljite jedan zahtjev i dobijte ponude od majstora iz svog grada — brzo, jednostavno i bez zvanja redom.
+          Četiri koraka: od opisa posla do izbora majstora — jednostavno, pregledno, bez zvanja redom.
         </p>
       </div>
 
-      {/* Premium wrapper */}
-      <div className="mt-12 rounded-[1.75rem] border border-slate-200/90 bg-white p-4 shadow-[0_20px_50px_-24px_rgba(10,22,40,0.14)] sm:p-6 md:mt-14 md:p-8 lg:p-10">
-        {/* Desktop: 3 kartice + konektori */}
-        <div className="hidden items-stretch gap-2 md:flex lg:gap-3">
-          {STEPS.map((step, idx) => (
-            <Fragment key={step.n}>
-              <div className="flex min-w-0 flex-1 flex-col rounded-3xl border border-slate-200/80 bg-slate-50/50 p-6 shadow-[0_8px_30px_-18px_rgba(10,22,40,0.1)] md:p-7 lg:p-8">
-                <div className="flex items-start justify-between gap-3">
-                  <span
-                    className="inline-flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white text-brand-navy shadow-[0_4px_14px_-4px_rgba(10,22,40,0.12)] ring-1 ring-slate-200/80"
-                    aria-hidden
-                  >
-                    <step.icon className="h-7 w-7" strokeWidth={2} />
-                  </span>
-                  <span className="inline-flex min-h-[2rem] min-w-[2rem] items-center justify-center rounded-full bg-brand-navy px-3 text-sm font-bold tabular-nums text-white shadow-sm">
-                    {step.n}
-                  </span>
-                </div>
-                <h3 className="mt-5 font-display text-lg font-bold leading-snug text-brand-navy lg:text-xl">
-                  {step.title}
-                </h3>
-                <p className="mt-3 text-sm leading-relaxed text-slate-600 lg:text-[15px]">{step.desc}</p>
-              </div>
-              {idx < STEPS.length - 1 && (
-                <div
-                  className="flex w-7 shrink-0 items-center justify-center self-center text-slate-400 lg:w-9"
+      <div className="mt-12 rounded-[1.75rem] border border-slate-200/90 bg-gradient-to-b from-white to-slate-50/90 p-4 shadow-[0_24px_56px_-28px_rgba(10,22,40,0.16)] sm:p-6 md:mt-14 md:p-8 lg:p-10">
+        {/* Desktop / tablet: grid */}
+        <div className="hidden gap-4 md:grid md:grid-cols-2 md:gap-5 lg:grid-cols-4 lg:gap-4">
+          {STEPS.map((step) => (
+            <div
+              key={step.n}
+              className="flex min-h-full flex-col rounded-3xl border border-slate-200/90 bg-white p-6 shadow-[0_10px_36px_-20px_rgba(10,22,40,0.12)] lg:p-7"
+            >
+              <div className="flex items-start justify-between gap-2">
+                <span
+                  className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-brand-navy/5 text-brand-navy ring-1 ring-brand-navy/10"
                   aria-hidden
                 >
-                  <ChevronRight className="h-6 w-6 lg:h-7 lg:w-7" strokeWidth={2} />
-                </div>
-              )}
-            </Fragment>
+                  <step.icon className="h-6 w-6" strokeWidth={2} />
+                </span>
+                <span className="inline-flex min-h-[1.75rem] min-w-[1.75rem] items-center justify-center rounded-full bg-brand-navy px-2.5 text-xs font-bold tabular-nums text-white shadow-sm">
+                  {step.n}
+                </span>
+              </div>
+              <h3 className="mt-4 font-display text-base font-bold leading-snug text-brand-navy lg:text-[17px]">{step.title}</h3>
+              <p className="mt-2 flex-1 text-sm leading-relaxed text-slate-600">{step.desc}</p>
+            </div>
           ))}
         </div>
 
-        {/* Mobile: stacked, više vazduha */}
-        <div className="relative space-y-8 md:hidden">
+        {/* Mobile: stack + connector */}
+        <div className="space-y-6 md:hidden">
           {STEPS.map((step, idx) => (
-            <Fragment key={step.n}>
-              <div className="relative rounded-3xl border border-slate-200/80 bg-slate-50/50 p-6 shadow-[0_8px_30px_-18px_rgba(10,22,40,0.1)]">
+            <div key={step.n}>
+              <div className="rounded-3xl border border-slate-200/90 bg-white p-6 shadow-[0_10px_36px_-20px_rgba(10,22,40,0.12)]">
                 <div className="flex items-start gap-4">
                   <span
-                    className="inline-flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white text-brand-navy shadow-[0_4px_14px_-4px_rgba(10,22,40,0.12)] ring-1 ring-slate-200/80"
+                    className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-brand-navy/5 text-brand-navy ring-1 ring-brand-navy/10"
                     aria-hidden
                   >
-                    <step.icon className="h-7 w-7" strokeWidth={2} />
+                    <step.icon className="h-6 w-6" strokeWidth={2} />
                   </span>
                   <div className="min-w-0 flex-1">
-                    <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-start justify-between gap-2">
                       <h3 className="font-display text-lg font-bold leading-snug text-brand-navy">{step.title}</h3>
-                      <span className="inline-flex min-h-[2rem] min-w-[2rem] shrink-0 items-center justify-center rounded-full bg-brand-navy px-3 text-sm font-bold tabular-nums text-white shadow-sm">
+                      <span className="inline-flex min-h-[1.75rem] min-w-[1.75rem] shrink-0 items-center justify-center rounded-full bg-brand-navy px-2.5 text-xs font-bold tabular-nums text-white shadow-sm">
                         {step.n}
                       </span>
                     </div>
-                    <p className="mt-3 text-[15px] leading-relaxed text-slate-600">{step.desc}</p>
+                    <p className="mt-2 text-[15px] leading-relaxed text-slate-600">{step.desc}</p>
                   </div>
                 </div>
               </div>
               {idx < STEPS.length - 1 && (
-                <div className="flex justify-center py-0" aria-hidden>
-                  <div className="flex h-8 w-8 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-400 shadow-sm">
+                <div className="flex justify-center py-3" aria-hidden>
+                  <div className="flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-400 shadow-sm">
                     <ChevronRight className="h-4 w-4 rotate-90" strokeWidth={2.5} />
                   </div>
                 </div>
               )}
-            </Fragment>
+            </div>
           ))}
         </div>
       </div>
 
-      {/* Glavni CTA + sekundarni link */}
       <div className="mt-12 flex flex-col items-stretch gap-4 sm:mt-14 sm:flex-row sm:items-center sm:justify-center sm:gap-5">
         <Link
           href="/request/create"

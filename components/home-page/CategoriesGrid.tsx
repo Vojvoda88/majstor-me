@@ -64,7 +64,7 @@ export function CategoriesGrid() {
             Popularne kategorije
           </h2>
           <p className="mt-3 text-base font-medium leading-relaxed text-slate-700 md:text-lg">
-            Birajte uslugu — majstori iz Crne Gore vam šalju ponude; vi uporedite i odlučujete.
+            Odaberite vrstu posla — zatim objavite zahtjev i neka vam se jave majstori koji to rade u vašem gradu.
           </p>
         </div>
         <Link

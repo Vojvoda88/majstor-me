@@ -36,8 +36,8 @@ export function WhyMajstorSection() {
             Zašto BrziMajstor.ME?
           </h2>
           <p className="relative mt-6 max-w-lg text-[15px] leading-relaxed text-slate-100/95 md:text-base">
-            Jedan zahtjev, više ponuda na jednom mjestu. Uporedite cijene, ocjene i iskustvo — od popravki do renoviranja, širom
-            Crne Gore.
+            Marketplace povezuje vas sa majstorima u Crnoj Gori: jedan zahtjev, više ponuda, sve na jednom mjestu — od sitnih popravki
+            do većih radova.
           </p>
           <div className="relative mt-10 grid gap-3 border-t border-white/10 pt-10 sm:grid-cols-2">
             <div className="rounded-2xl border border-white/10 bg-white/[0.07] px-4 py-4 backdrop-blur-sm">

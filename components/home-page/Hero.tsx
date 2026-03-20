@@ -7,9 +7,9 @@ import { HeroSearch } from "./hero-search";
 import { HERO_IMAGE } from "@/lib/homepage-data";
 
 const TRUST = [
-  { icon: ShieldCheck, label: "Provjereni profili" },
-  { icon: Zap, label: "Ponude za kratko" },
   { icon: Sparkles, label: "Besplatno za korisnike" },
+  { icon: Zap, label: "Jedan zahtjev, više ponuda" },
+  { icon: ShieldCheck, label: "Bez zvanja redom" },
 ];
 
 export function Hero() {
@@ -46,7 +46,7 @@ export function Hero() {
           </span>
         </h1>
         <p className="mx-auto mb-10 max-w-xl text-base font-medium leading-relaxed text-slate-200/95 md:text-lg md:leading-relaxed">
-          Pošaljite zahtjev jednom — dobijte više ponuda od majstora iz vašeg grada. Bez zvanja redom, bez provizije za vas.
+          Opišite posao jednom — javljaju se majstori kojima odgovara vaš zahtjev. Bez zvanja redom, bez naknade za korisnike.
         </p>
 
         <div className="mx-auto max-w-2xl">

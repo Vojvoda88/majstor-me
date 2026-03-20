@@ -3,6 +3,7 @@ import nextDynamic from "next/dynamic";
 import { PublicHeader } from "@/components/layout/PublicHeader";
 import { Hero } from "@/components/home-page/Hero";
 import { StatsStrip } from "@/components/home-page/StatsStrip";
+import { HomeConversionBand } from "@/components/home-page/HomeConversionBand";
 import { WhyMajstorSection } from "@/components/home-page/WhyMajstorSection";
 import { CategoriesGrid } from "@/components/home-page/CategoriesGrid";
 import { HowItWorks } from "@/components/home-page/HowItWorks";
@@ -40,9 +41,12 @@ export default function HomePage() {
       <div className="pt-4 md:pt-8">
         <Hero />
         <StatsStrip />
+        <div className="mt-8 md:mt-10">
+          <HomeConversionBand />
+        </div>
       </div>
 
-      <div className="mx-auto max-w-6xl px-4 py-12 sm:px-5 md:px-6 md:py-20">
+      <div className="mx-auto max-w-6xl px-4 py-10 sm:px-5 md:px-6 md:py-16">
         <div className="animate-fade-up" style={{ animationDelay: "0.05s", animationFillMode: "both" }}>
           <CategoriesGrid />
         </div>
