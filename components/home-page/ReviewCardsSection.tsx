@@ -44,7 +44,7 @@ export function ReviewCardsSection() {
           Istaknuti majstori
         </h2>
         <p className="mt-3 max-w-2xl text-base font-medium leading-relaxed text-slate-700 md:text-lg">
-          Provjereni stručnjaci sa odličnim ocjenama i iskustvom iz različitih gradova.
+          Primjeri dobrih ocjena i iskustva — tako znate šta možete očekivati kad birate majstora.
         </p>
       </div>
 

@@ -5,19 +5,19 @@ const BENEFITS = [
   {
     id: "01",
     title: "Provjereni majstori iz CG",
-    body: "Aktivni profili, ocjene klijenata i jasna verifikacija — birate sigurnije.",
+    body: "Ocjene i iskustva stvarnih korisnika — lakše je uporediti i izabrati pravog čovjeka za posao.",
     icon: ShieldCheck,
   },
   {
     id: "02",
     title: "Majstori iz vašeg grada",
-    body: "Filtri po gradu i vrsti posla — manje zvanja, više konkretnih ponuda.",
+    body: "Ne tražite redom po telefonu — javljaju se oni kojima posao odgovara, iz vaše okoline.",
     icon: MapPin,
   },
   {
     id: "03",
-    title: "Besplatno i bez obaveze",
-    body: "Objava zahtjeva je besplatna; ponude pregledate u miru i odlučujete sami.",
+    title: "Besplatno za vas",
+    body: "Zahtjev objavljujete bez naknade; ponude gledate kad vama odgovara, bez obaveze prihvatanja.",
     icon: Sparkles,
   },
 ];
@@ -36,8 +36,8 @@ export function WhyMajstorSection() {
             Zašto BrziMajstor.ME?
           </h2>
           <p className="relative mt-6 max-w-lg text-[15px] leading-relaxed text-slate-100/95 md:text-base">
-            Platforma je građena za stvarne poslove u Crnoj Gori — od curenja i klima servisa do selidbi i renoviranja. Jedan
-            zahtjev, više ponuda, jasna komunikacija.
+            Jedan zahtjev, više ponuda na jednom mjestu. Uporedite cijene, ocjene i iskustvo — od popravki do renoviranja, širom
+            Crne Gore.
           </p>
           <div className="relative mt-10 grid gap-3 border-t border-white/10 pt-10 sm:grid-cols-2">
             <div className="rounded-2xl border border-white/10 bg-white/[0.07] px-4 py-4 backdrop-blur-sm">

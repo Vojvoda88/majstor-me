@@ -19,7 +19,7 @@ export function Hero() {
         src={HERO_IMAGE}
         alt="Majstor na poslu"
         fill
-        className="pointer-events-none object-cover object-[center_35%] md:object-[center_25%]"
+        className="pointer-events-none origin-center object-cover object-[center_30%] md:object-[center_26%] scale-[0.88] sm:scale-[0.9] md:scale-[0.93]"
         priority
         sizes="100vw"
       />
@@ -46,7 +46,7 @@ export function Hero() {
           </span>
         </h1>
         <p className="mx-auto mb-10 max-w-xl text-base font-medium leading-relaxed text-slate-200/95 md:text-lg md:leading-relaxed">
-          Opišite posao jednom — dobijte ponude od provjerenih majstora iz vašeg grada. Bez zvanja redom.
+          Pošaljite zahtjev jednom — dobijte više ponuda od majstora iz vašeg grada. Bez zvanja redom, bez provizije za vas.
         </p>
 
         <div className="mx-auto max-w-2xl">

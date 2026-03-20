@@ -64,7 +64,7 @@ export function CategoriesGrid() {
             Popularne kategorije
           </h2>
           <p className="mt-3 text-base font-medium leading-relaxed text-slate-700 md:text-lg">
-            Najtraženije usluge širom Crne Gore — od hitnih popravki do renoviranja.
+            Birajte uslugu — majstori iz Crne Gore vam šalju ponude; vi uporedite i odlučujete.
           </p>
         </div>
         <Link
