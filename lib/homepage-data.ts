@@ -1,11 +1,13 @@
 // Homepage display data - cities, images
 // Kategorije su u lib/categories.ts (centralni source of truth)
 
-export const HERO_IMAGE = "/images/hero/hero-handyman.jpg";
-// Majstor na poslu - vodoinstalater/električar, NE laptop. Koristi se u Hero kada postoji local file.
-export const HERO_IMAGE_FALLBACK = "https://images.unsplash.com/photo-1504148455328-c376907d081c?w=1920&q=85";
-// Fallback za avatare/kartice kada local /images/ nije dostupan (izbjegava 404).
-export const AVATAR_IMAGE_FALLBACK = HERO_IMAGE_FALLBACK;
+/** Hero pozadina (portret, lokalno) — uključeno u repo */
+export const HERO_IMAGE = "/images/hero/hero-majstor-living-room.png";
+/** Stari Unsplash samo ako treba rezervni URL (nije u upotrebi u Hero) */
+export const HERO_IMAGE_FALLBACK = HERO_IMAGE;
+/** Neutralan placeholder za avatare — ne koristiti hero sliku */
+export const AVATAR_IMAGE_FALLBACK =
+  "https://images.unsplash.com/photo-1504148455328-c376907d081c?w=400&q=80";
 
 // Category name -> local image path (fallbacks for slug-based lookup)
 export const CATEGORY_IMAGES: Record<string, string> = {

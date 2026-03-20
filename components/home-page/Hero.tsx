@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ShieldCheck, Sparkles, Zap } from "lucide-react";
 import { HeroSearch } from "./hero-search";
-import { HERO_IMAGE_FALLBACK } from "@/lib/homepage-data";
+import { HERO_IMAGE } from "@/lib/homepage-data";
 
 const TRUST = [
   { icon: ShieldCheck, label: "Provjereni profili" },
@@ -14,15 +14,17 @@ const TRUST = [
 
 export function Hero() {
   return (
-    <section className="relative flex min-h-[min(100dvh,780px)] w-full items-center justify-center overflow-hidden px-4 pb-20 pt-[max(7rem,env(safe-area-inset-top)+5.5rem)] text-white sm:px-5 md:min-h-[720px] md:pb-24 md:pt-32">
+    <section className="relative flex min-h-[min(100dvh,820px)] w-full items-center justify-center overflow-hidden px-4 pb-20 pt-[max(7rem,env(safe-area-inset-top)+5.5rem)] text-white sm:px-5 md:min-h-[720px] md:pb-24 md:pt-32">
       <Image
-        src={HERO_IMAGE_FALLBACK}
+        src={HERO_IMAGE}
         alt="Majstor na poslu"
         fill
-        className="pointer-events-none object-cover"
+        className="pointer-events-none object-cover object-[center_18%] sm:object-[center_24%] md:object-[center_30%] lg:object-[center_40%]"
         priority
         sizes="100vw"
       />
+      {/* Dodatni dim na uskim ekranima (portretna slika + jači kontrast za tekst) */}
+      <div className="pointer-events-none absolute inset-0 bg-black/30 md:bg-transparent" aria-hidden />
       {/* Premium overlay: deep navy + vignette */}
       <div
         className="pointer-events-none absolute inset-0 bg-gradient-to-b from-brand-navy/95 via-brand-navy/75 to-brand-navy/92"

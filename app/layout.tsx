@@ -33,6 +33,13 @@ const siteUrl = getSiteUrl();
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
+  /** Ime PWA / „Dodaj na početni ekran“ (iOS koristi apple-mobile-web-app-title) */
+  applicationName: "BrziMajstor.ME",
+  appleWebApp: {
+    capable: true,
+    title: "BrziMajstor.ME",
+    statusBarStyle: "default",
+  },
   title: {
     default: "BrziMajstor.ME – Pronađi majstora brzo i lako u Crnoj Gori",
     template: "%s | BrziMajstor.ME",
