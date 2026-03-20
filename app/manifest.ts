@@ -7,7 +7,7 @@ export default function manifest(): MetadataRoute.Manifest {
     description: "Marketplace za majstore u Crnoj Gori. Brzo pošaljite zahtjev, majstori vam šalju ponude.",
     start_url: "/",
     display: "standalone",
-    background_color: "#ffffff",
+    background_color: "#2563EB",
     theme_color: "#2563EB",
     orientation: "portrait-primary",
     icons: [

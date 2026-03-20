@@ -1,32 +1,37 @@
 /**
  * Generate PWA icons: public/icon-192.png and public/icon-512.png
- * Run: node scripts/generate-pwa-icons.js
+ * from public/pwa-icon-source.png (replace source, then run).
+ * Run: npm run icons:generate
  */
 const sharp = require("sharp");
 const fs = require("fs");
 const path = require("path");
 
 const PUBLIC = path.join(__dirname, "..", "public");
-const THEME_COLOR = "#2563EB";
+const SOURCE = path.join(PUBLIC, "pwa-icon-source.png");
 
-async function createIcon(size) {
-  const half = size / 2;
-  const svg = `
-    <svg width="${size}" height="${size}" xmlns="http://www.w3.org/2000/svg">
-      <rect width="${size}" height="${size}" fill="${THEME_COLOR}" rx="${size * 0.12}"/>
-      <text x="50%" y="55%" font-family="Arial,sans-serif" font-size="${size * 0.4}" font-weight="bold" fill="white" text-anchor="middle" dominant-baseline="middle">M</text>
-    </svg>
-  `;
-  return sharp(Buffer.from(svg))
-    .png()
-    .toFile(path.join(PUBLIC, `icon-${size}.png`));
+async function resizeToIcon(size) {
+  const pipeline = sharp(SOURCE)
+    .resize(size, size, {
+      fit: "cover",
+      position: "centre",
+    })
+    .png();
+
+  await pipeline.toFile(path.join(PUBLIC, `icon-${size}.png`));
 }
 
 async function main() {
   if (!fs.existsSync(PUBLIC)) fs.mkdirSync(PUBLIC, { recursive: true });
-  await createIcon(192);
-  await createIcon(512);
-  console.log("Created public/icon-192.png and public/icon-512.png");
+  if (!fs.existsSync(SOURCE)) {
+    console.error(
+      "Missing public/pwa-icon-source.png — add a square PNG (1024×1024 recommended), then run again."
+    );
+    process.exit(1);
+  }
+  await resizeToIcon(192);
+  await resizeToIcon(512);
+  console.log("Created public/icon-192.png and public/icon-512.png from pwa-icon-source.png");
 }
 
 main().catch((err) => {
