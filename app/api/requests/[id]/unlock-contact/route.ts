@@ -5,7 +5,7 @@ import {
   isCreditsRequired,
   hasEnoughCreditsForUnlock,
   spendCreditsForContactUnlock,
-  CREDITS_PER_CONTACT_UNLOCK,
+  getCreditsRequiredForLead,
 } from "@/lib/credits";
 
 export const dynamic = "force-dynamic";
@@ -26,7 +26,7 @@ export async function POST(
 
     if (session.user.role !== "HANDYMAN") {
       return NextResponse.json(
-        { success: false, error: "Samo majstori mogu otključati kontakt" },
+        { success: false, error: "Samo majstori mogu otključati lead" },
         { status: 403 }
       );
     }
@@ -36,7 +36,7 @@ export async function POST(
     const req = await prisma.request.findUnique({
       where: { id: requestId },
       include: {
-        user: { select: { phone: true } },
+        user: { select: { phone: true, emailVerified: true } },
         contactUnlocks: { where: { handymanId: session.user.id } },
       },
     });
@@ -57,14 +57,27 @@ export async function POST(
       });
     }
 
+    const creditsRequired = getCreditsRequiredForLead({
+      urgency: req.urgency,
+      photos: req.photos,
+      description: req.description,
+      emailVerified: req.user?.emailVerified != null,
+      phoneVerified: req.user?.phoneVerified != null,
+    });
+
     if (isCreditsRequired()) {
-      const { ok, balance } = await hasEnoughCreditsForUnlock(prisma, session.user.id);
+      const { ok, balance } = await hasEnoughCreditsForUnlock(
+        prisma,
+        session.user.id,
+        creditsRequired
+      );
       if (!ok) {
         return NextResponse.json(
           {
             success: false,
-            error: `Nemate dovoljno kredita. Otključavanje kontakta troši ${CREDITS_PER_CONTACT_UNLOCK} kredit. Imate: ${balance}.`,
+            error: `Nemate dovoljno kredita. Ovaj lead košta ${creditsRequired} kredita. Imate: ${balance}.`,
             needsCredits: true,
+            creditsRequired,
           },
           { status: 402 }
         );
@@ -80,7 +93,12 @@ export async function POST(
     }
 
     if (isCreditsRequired()) {
-      const spent = await spendCreditsForContactUnlock(prisma, session.user.id, requestId);
+      const spent = await spendCreditsForContactUnlock(
+        prisma,
+        session.user.id,
+        requestId,
+        creditsRequired
+      );
       if (!spent.ok) {
         return NextResponse.json(
           { success: false, error: spent.error, needsCredits: true },
@@ -103,7 +121,7 @@ export async function POST(
   } catch (error) {
     logError("Unlock contact error", error);
     return NextResponse.json(
-      { success: false, error: "Greška pri otključavanju kontakta" },
+      { success: false, error: "Greška pri otključavanju leada" },
       { status: 500 }
     );
   }

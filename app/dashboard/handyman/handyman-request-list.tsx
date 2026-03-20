@@ -34,6 +34,8 @@ export function HandymanRequestList({
     createdAt: Date;
     user: { name: string } | null;
     requesterName?: string | null;
+    requesterDisplayName?: string;
+    isRequesterVerified?: boolean;
     offers: { id: string }[];
   }>;
   profileCategories: string[];
@@ -133,8 +135,13 @@ export function HandymanRequestList({
                       </span>
                       <span className="flex items-center gap-1 text-sm text-[#94A3B8]">
                         <User className="h-4 w-4" />
-                        {req.requesterName ?? req.user?.name ?? "-"}
+                        {req.requesterDisplayName ?? req.requesterName ?? req.user?.name ?? "-"}
                       </span>
+                      {req.isRequesterVerified && (
+                        <Badge variant="outline" className="border-emerald-300 bg-emerald-50 px-2 py-0 text-xs text-emerald-800">
+                          Verifikovan
+                        </Badge>
+                      )}
                     </div>
                   </div>
                   <Link href={`/request/${req.id}`} className="shrink-0">

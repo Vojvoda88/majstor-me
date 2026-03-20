@@ -12,7 +12,7 @@
 
 export type CreateCheckoutParams = {
   handymanId: string;
-  packageId: string; // e.g. "credits_5", "credits_10"
+  packageId: string; // e.g. "credits_100", "credits_275"
   successUrl: string;
   cancelUrl: string;
 };

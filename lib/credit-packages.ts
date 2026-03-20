@@ -1,6 +1,6 @@
 /**
- * Paketi kredita – spremno za Stripe integraciju.
- * ID se koristi kao Stripe price_id ili product reference.
+ * Paketi kredita – interna valuta platforme.
+ * Primjer: 10€ = 100 kredita. Jedan lead troši 20–60 kredita zavisno od kvaliteta.
  */
 
 export type CreditPackage = {
@@ -9,13 +9,14 @@ export type CreditPackage = {
   priceEur: number;
   label: string;
   popular?: boolean;
+  perCredit?: string; // npr. "1€ / 10 kredita"
 };
 
 export const CREDIT_PACKAGES: CreditPackage[] = [
-  { id: "credits_5", credits: 5, priceEur: 4.99, label: "5 kredita" },
-  { id: "credits_10", credits: 10, priceEur: 8.99, label: "10 kredita", popular: true },
-  { id: "credits_25", credits: 25, priceEur: 19.99, label: "25 kredita" },
-  { id: "credits_50", credits: 50, priceEur: 34.99, label: "50 kredita" },
+  { id: "credits_100", credits: 100, priceEur: 9.99, label: "100 kredita", perCredit: "~0.10€ / kredit" },
+  { id: "credits_275", credits: 275, priceEur: 24.99, label: "275 kredita", popular: true, perCredit: "~0.09€ / kredit" },
+  { id: "credits_600", credits: 600, priceEur: 49.99, label: "600 kredita", perCredit: "~0.08€ / kredit" },
+  { id: "credits_1300", credits: 1300, priceEur: 99.99, label: "1300 kredita", perCredit: "~0.08€ / kredit" },
 ];
 
 export function getPackageById(id: string): CreditPackage | undefined {

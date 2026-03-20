@@ -32,7 +32,7 @@ export default async function HandymanCreditsPage() {
         Kupovina kredita
       </h1>
       <p className="mt-2 text-slate-600">
-        Svaka ponuda troši 1 kredit. Kupite paket koji vam odgovara.
+        Otključavanje leada troši 20–60 kredita zavisno od kvaliteta zahtjeva. Kupite paket koji vam odgovara.
       </p>
 
       <div className="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-4">
@@ -52,7 +52,7 @@ export default async function HandymanCreditsPage() {
                 )}
                 <CardTitle>{pkg.label}</CardTitle>
                 <CardDescription>
-                  {pkg.priceEur.toFixed(2)} €
+                  {pkg.priceEur.toFixed(2)} € {pkg.perCredit && ` · ${pkg.perCredit}`}
                 </CardDescription>
               </CardHeader>
               <CardContent>

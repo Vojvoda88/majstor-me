@@ -93,7 +93,7 @@ export default async function HandymanDashboardPage({
     prisma.request.findMany({
       where,
       include: {
-        user: { select: { name: true } },
+        user: { select: { name: true, emailVerified: true } },
         offers: { select: { id: true } },
       },
       orderBy: { createdAt: "desc" },
@@ -107,6 +107,11 @@ export default async function HandymanDashboardPage({
     }),
   ]);
 
+  function getFirstName(full: string | null | undefined): string {
+    if (!full?.trim()) return "-";
+    return full.trim().split(/\s+/)[0] ?? full;
+  }
+
   // Sort by distance (closest first), then by createdAt
   let sorted = [...requestsRaw]
     .map((r) => ({
@@ -116,7 +121,11 @@ export default async function HandymanDashboardPage({
         : 9999,
     }))
     .sort((a, b) => a._distance - b._distance || new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-  const requests = sorted.slice(skip, skip + limit).map(({ _distance, ...r }) => r);
+  const requests = sorted.slice(skip, skip + limit).map(({ _distance, ...r }) => ({
+    ...r,
+    requesterDisplayName: getFirstName(r.requesterName ?? r.user?.name),
+    isRequesterVerified: (r.user?.emailVerified != null) || (r.user?.phoneVerified != null),
+  }));
   const totalDisplayed = sorted.length;
 
   const onboarding = calcProfileCompletion(profile, profile?.user);
@@ -164,7 +173,7 @@ export default async function HandymanDashboardPage({
                 Kupi kredite →
               </Link>
             ) : (
-              <p className="mt-1 text-xs text-[#94A3B8]">1 kredit = 1 ponuda</p>
+              <p className="mt-1 text-xs text-[#94A3B8]">20–60 kredita po leadu</p>
             )}
           </div>
         )}

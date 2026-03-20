@@ -97,6 +97,7 @@ model User {
   passwordHash  String   @map("password_hash")
   city          String?
   emailVerified DateTime? @map("email_verified")
+  phoneVerified DateTime? @map("phone_verified")
   suspendedAt   DateTime? @map("suspended_at")
   bannedAt      DateTime? @map("banned_at")
   createdAt     DateTime @default(now()) @map("created_at")

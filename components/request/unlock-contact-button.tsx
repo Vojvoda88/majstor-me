@@ -10,10 +10,12 @@ import { Unlock } from "lucide-react";
 export function UnlockContactButton({
   requestId,
   alreadyUnlocked,
+  creditsRequired,
   onUnlocked,
 }: {
   requestId: string;
   alreadyUnlocked?: boolean;
+  creditsRequired?: number;
   onUnlocked?: (data: { phone: string; address?: string | null }) => void;
 }) {
   const router = useRouter();
@@ -38,7 +40,11 @@ export function UnlockContactButton({
         method: "POST",
       });
       const json = await res.json();
-      if (!json.success) throw new Error(json.error ?? "Greška");
+      if (!json.success) {
+        const err = new Error(json.error ?? "Greška") as Error & { needsCredits?: boolean };
+        err.needsCredits = json.needsCredits === true;
+        throw err;
+      }
       return json.data;
     },
     onSuccess: (data) => {
@@ -87,7 +93,7 @@ export function UnlockContactButton({
         className="gap-2"
       >
         <Unlock className="h-4 w-4" />
-        {mutation.isPending ? "Otključavanje..." : "Otključaj kontakt"}
+        {mutation.isPending ? "Otključavanje..." : creditsRequired ? `Otključaj lead (${creditsRequired} kredita)` : "Otključaj lead"}
       </Button>
     </div>
   );

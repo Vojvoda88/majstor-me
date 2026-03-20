@@ -2,8 +2,14 @@ import { notFound } from "next/navigation";
 import { auth } from "@/lib/auth";
 import Link from "next/link";
 import Image from "next/image";
+import { getCreditsRequiredForLead } from "@/lib/credits";
 
 export const dynamic = "force-dynamic";
+
+function getFirstName(fullName: string | null | undefined): string {
+  if (!fullName?.trim()) return "-";
+  return fullName.trim().split(/\s+/)[0] ?? fullName;
+}
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -46,7 +52,7 @@ export default async function RequestDetailPage({
   const req = await prisma.request.findUnique({
     where: { id },
     include: {
-      user: { select: { id: true, name: true, city: true } },
+      user: { select: { id: true, name: true, city: true, emailVerified: true, phoneVerified: true } },
       contactUnlocks: { select: { handymanId: true } },
       offers: {
         include: {
@@ -91,8 +97,17 @@ export default async function RequestDetailPage({
   const isOwner =
     (req.userId && session?.user?.id === req.userId) ||
     (!req.userId && !!req.requesterToken && token === req.requesterToken);
-  const requesterName = req.user?.name ?? req.requesterName ?? "Korisnik";
+  const fullRequesterName = req.user?.name ?? req.requesterName ?? "Korisnik";
   const handymanUnlocked = session?.user?.role === "HANDYMAN" && req.contactUnlocks.some((u) => u.handymanId === session.user.id);
+  const requesterName = isOwner || handymanUnlocked ? fullRequesterName : getFirstName(fullRequesterName);
+  const isRequesterVerified = (req.user?.emailVerified != null) || (req.user?.phoneVerified != null);
+  const creditsRequired = getCreditsRequiredForLead({
+    urgency: req.urgency,
+    photos: req.photos,
+    description: req.description,
+    emailVerified: req.user?.emailVerified != null,
+    phoneVerified: req.user?.phoneVerified != null,
+  });
   const acceptedOffer = req.offers.find((o) => o.status === "ACCEPTED");
 
   return (
@@ -152,6 +167,11 @@ export default async function RequestDetailPage({
               <User className="h-4 w-4" />
               {requesterName}
             </span>
+            {isRequesterVerified && (
+              <Badge variant="outline" className="border-emerald-300 bg-emerald-50 text-emerald-800">
+                Verifikovan korisnik
+              </Badge>
+            )}
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -184,14 +204,15 @@ export default async function RequestDetailPage({
           )}
           {session?.user?.role === "HANDYMAN" && !isOwner && (
             <div className="rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] p-4">
-              <h3 className="text-sm font-medium text-[#475569]">Kontakt korisnika</h3>
+              <h3 className="text-sm font-medium text-[#475569]">Otključaj lead</h3>
               <p className="mt-1 text-sm text-[#64748B]">
-                Otključajte kontakt da biste vidjeli broj telefona i adresu. Troši 1 kredit.
+                Da biste vidjeli broj telefona, adresu i poslali ponudu, otključajte lead. Troši {creditsRequired} kredita.
               </p>
               <UnlockContactButton
-              requestId={req.id}
-              alreadyUnlocked={handymanUnlocked}
-            />
+                requestId={req.id}
+                alreadyUnlocked={handymanUnlocked}
+                creditsRequired={creditsRequired}
+              />
             </div>
           )}
           {isOwner && session && (req.status === "OPEN" || req.status === "IN_PROGRESS") && (
@@ -275,7 +296,7 @@ export default async function RequestDetailPage({
         </Card>
       )}
 
-      {session?.user?.role === "HANDYMAN" && req.status === "OPEN" && (
+      {session?.user?.role === "HANDYMAN" && req.status === "OPEN" && handymanUnlocked && (
         <div className="mt-6">
           <SendOfferForm requestId={req.id} />
         </div>

@@ -1,14 +1,12 @@
 /**
- * Krediti za majstore – slanje ponude troši 1 kredit.
- * Arhitektura spremna za payment gateway (Stripe, itd.).
+ * Krediti za majstore – interna valuta. Otključavanje leada troši 20–60 kredita.
+ * Slanje ponude je besplatno NAKON otključanja leada.
  *
- * CREDITS_REQUIRED=true u .env aktivira provjeru. Bez toga, ponude su besplatne.
+ * CREDITS_REQUIRED=true u .env aktivira provjeru. Bez toga, lead unlock je besplatan.
  */
 
 import type { Prisma } from "@prisma/client";
-
-export const CREDITS_PER_OFFER = 1; // Nije više korišten - ponude su besplatne
-export const CREDITS_PER_CONTACT_UNLOCK = 1;
+import { getCreditsForLead } from "@/lib/lead-tier";
 
 export function isCreditsRequired(): boolean {
   return process.env.CREDITS_REQUIRED === "true";
@@ -18,76 +16,43 @@ export type SpendCreditsResult =
   | { ok: true; balanceAfter: number }
   | { ok: false; error: string; balance: number };
 
-/**
- * Potroši kredite za slanje ponude. Vraća balanceAfter ili error.
- */
-export async function spendCreditsForOffer(
-  prisma: { handymanProfile: { findUnique: any; update: any }; creditTransaction: { create: any }; $transaction: any },
-  handymanId: string,
-  offerId: string
-): Promise<SpendCreditsResult> {
-  const profile = await prisma.handymanProfile.findUnique({
-    where: { userId: handymanId },
-    select: { creditsBalance: true },
-  });
+export type LeadInput = {
+  urgency: "HITNO_DANAS" | "U_NAREDNA_2_DANA" | "NIJE_HITNO";
+  photos?: string[];
+  description?: string;
+  emailVerified?: boolean;
+  phoneVerified?: boolean;
+};
 
-  if (!profile) {
-    return { ok: false, error: "Profil nije pronađen", balance: 0 };
-  }
-
-  const balance = (profile as { creditsBalance?: number }).creditsBalance ?? 0;
-
-  if (balance < CREDITS_PER_OFFER) {
-    return {
-      ok: false,
-      error: `Nemate dovoljno kredita. Potrebno: ${CREDITS_PER_OFFER}, imate: ${balance}. Kupite kredite da biste mogli slati ponude.`,
-      balance,
-    };
-  }
-
-  const balanceAfter = balance - CREDITS_PER_OFFER;
-
-  await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
-    await tx.handymanProfile.update({
-      where: { userId: handymanId },
-      data: { creditsBalance: balanceAfter },
-    });
-    await tx.creditTransaction.create({
-      data: {
-        handymanId,
-        amount: -CREDITS_PER_OFFER,
-        type: "OFFER_SENT",
-        referenceId: offerId,
-        balanceAfter,
-      },
-    });
-  });
-
-  return { ok: true, balanceAfter };
+/** Vrati broj kredita potreban za otključaj leada. */
+export function getCreditsRequiredForLead(input: LeadInput): number {
+  return getCreditsForLead(input).credits;
 }
 
 /**
- * Provjeri da li majstor ima dovoljno kredita.
+ * Provjeri da li majstor ima dovoljno kredita za otključaj leada.
  */
-export async function hasEnoughCredits(
+export async function hasEnoughCreditsForUnlock(
   prisma: { handymanProfile: { findUnique: any } },
-  handymanId: string
+  handymanId: string,
+  creditsRequired: number
 ): Promise<{ ok: boolean; balance: number }> {
   const profile = await prisma.handymanProfile.findUnique({
     where: { userId: handymanId },
     select: { creditsBalance: true },
   });
   const balance = (profile as { creditsBalance?: number } | null)?.creditsBalance ?? 0;
-  return { ok: balance >= CREDITS_PER_OFFER, balance };
+  return { ok: balance >= creditsRequired, balance };
 }
 
 /**
- * Potroši kredite za otključavanje kontakta korisnika. Vraća balanceAfter ili error.
+ * Potroši kredite za otključavanje leada (kontakt korisnika). Vraća balanceAfter ili error.
  */
 export async function spendCreditsForContactUnlock(
   prisma: { handymanProfile: { findUnique: any; update: any }; creditTransaction: { create: any }; $transaction: any },
   handymanId: string,
-  requestId: string
+  requestId: string,
+  creditsRequired: number
 ): Promise<SpendCreditsResult> {
   const profile = await prisma.handymanProfile.findUnique({
     where: { userId: handymanId },
@@ -100,15 +65,15 @@ export async function spendCreditsForContactUnlock(
 
   const balance = (profile as { creditsBalance?: number }).creditsBalance ?? 0;
 
-  if (balance < CREDITS_PER_CONTACT_UNLOCK) {
+  if (balance < creditsRequired) {
     return {
       ok: false,
-      error: `Nemate dovoljno kredita. Potrebno: ${CREDITS_PER_CONTACT_UNLOCK}, imate: ${balance}. Kupite kredite da biste mogli vidjeti broj telefona.`,
+      error: `Nemate dovoljno kredita. Potrebno: ${creditsRequired}, imate: ${balance}. Kupite kredite da biste mogli otključati lead.`,
       balance,
     };
   }
 
-  const balanceAfter = balance - CREDITS_PER_CONTACT_UNLOCK;
+  const balanceAfter = balance - creditsRequired;
 
   await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
     await tx.handymanProfile.update({
@@ -118,7 +83,7 @@ export async function spendCreditsForContactUnlock(
     await tx.creditTransaction.create({
       data: {
         handymanId,
-        amount: -CREDITS_PER_CONTACT_UNLOCK,
+        amount: -creditsRequired,
         type: "CONTACT_UNLOCK",
         referenceId: requestId,
         balanceAfter,
@@ -127,19 +92,4 @@ export async function spendCreditsForContactUnlock(
   });
 
   return { ok: true, balanceAfter };
-}
-
-/**
- * Provjeri da li majstor ima dovoljno kredita za otključaj kontakta.
- */
-export async function hasEnoughCreditsForUnlock(
-  prisma: { handymanProfile: { findUnique: any } },
-  handymanId: string
-): Promise<{ ok: boolean; balance: number }> {
-  const profile = await prisma.handymanProfile.findUnique({
-    where: { userId: handymanId },
-    select: { creditsBalance: true },
-  });
-  const balance = (profile as { creditsBalance?: number } | null)?.creditsBalance ?? 0;
-  return { ok: balance >= CREDITS_PER_CONTACT_UNLOCK, balance };
 }

@@ -64,13 +64,26 @@ export async function POST(request: Request) {
 
     const req = await prisma.request.findUnique({
       where: { id: requestId },
-      include: { offers: true },
+      include: { offers: true, contactUnlocks: { where: { handymanId: session.user.id } } },
     });
 
     if (!req) {
       return NextResponse.json(
         { success: false, error: "Zahtjev nije pronađen" },
         { status: 404 }
+      );
+    }
+
+    const { isCreditsRequired } = await import("@/lib/credits");
+    const hasUnlocked = req.contactUnlocks.length > 0;
+    if (isCreditsRequired() && !hasUnlocked) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Morate otključati lead prije slanja ponude. Otključajte lead da biste vidjeli kontakt i poslali ponudu.",
+          needsUnlock: true,
+        },
+        { status: 402 }
       );
     }
 
