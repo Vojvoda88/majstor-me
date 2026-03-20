@@ -1,66 +1,93 @@
+"use client";
+
 import Link from "next/link";
-import Image from "next/image";
-import { ArrowRight } from "lucide-react";
-import { CATEGORY_CONFIG } from "@/lib/categories";
+import { ArrowRight, Droplets, Zap, Grid3X3, Wind, PaintBucket, Sparkles } from "lucide-react";
+import { CategoryTile } from "./category-tile";
 
-const CATEGORY_IMAGES: Record<string, string> = {
-  Vodoinstalater: "https://images.unsplash.com/photo-1504148455328-c376907d081c?w=600&auto=format&fit=crop",
-  Električar: "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=600&auto=format&fit=crop",
-  Keramičar: "https://images.unsplash.com/photo-1581578731548-c64695ce6958?w=600&auto=format&fit=crop",
-  "Klima servis": "https://images.unsplash.com/photo-1595467793069-45069736f88d?w=600&auto=format&fit=crop",
-  Stolar: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=600&auto=format&fit=crop",
-  Čišćenje: "https://images.unsplash.com/photo-1581578731548-c64695ce6958?w=600&auto=format&fit=crop",
-};
-
-const TOP_6 = CATEGORY_CONFIG.filter((c) =>
-  ["Vodoinstalater", "Električar", "Keramičar", "Klima servis", "Stolar", "Čišćenje"].includes(c.displayName)
-);
+const CATEGORIES = [
+  {
+    slug: "vodoinstalater",
+    title: "Vodoinstalater",
+    subtitle: "Curenja, bojleri, slavine",
+    imageSrc:
+      "https://images.unsplash.com/photo-1504148455328-c376907d081c?w=800&q=80&auto=format&fit=crop",
+    Icon: Droplets,
+  },
+  {
+    slug: "elektricar",
+    title: "Električar",
+    subtitle: "Kvarovi, osigurači, instalacije",
+    imageSrc:
+      "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=800&q=80&auto=format&fit=crop",
+    Icon: Zap,
+  },
+  {
+    slug: "keramicar",
+    title: "Keramičar",
+    subtitle: "Kupatila, pločice, fugovanje",
+    imageSrc:
+      "https://images.unsplash.com/photo-1581578731548-c64695ce6958?w=800&q=80&auto=format&fit=crop",
+    Icon: Grid3X3,
+  },
+  {
+    slug: "klima-servis",
+    title: "Klima servis",
+    subtitle: "Montaža, servis, čišćenje",
+    imageSrc:
+      "https://images.unsplash.com/photo-1595467793069-45069736f88d?w=800&q=80&auto=format&fit=crop",
+    Icon: Wind,
+  },
+  {
+    slug: "gipsar",
+    title: "Molerski radovi",
+    subtitle: "Krečenje, gletovanje, osvježenje prostora",
+    imageSrc:
+      "https://images.unsplash.com/photo-1562259949-e8e7689d7828?w=800&q=80&auto=format&fit=crop",
+    Icon: PaintBucket,
+  },
+  {
+    slug: "ciscenje",
+    title: "Čišćenje",
+    subtitle: "Stanovi, lokali, dubinsko čišćenje",
+    imageSrc:
+      "https://images.unsplash.com/photo-1628177142898-93b36a82fde4?w=800&q=80&auto=format&fit=crop",
+    Icon: Sparkles,
+  },
+];
 
 export function CategoriesGrid() {
   return (
-    <section id="kategorije" className="py-24">
-      <h2 className="font-display mb-3 text-3xl font-bold tracking-tight text-slate-900 md:text-4xl">
-        Popularni poslovi
-      </h2>
-      <p className="mb-12 max-w-xl text-slate-500">
-        Od vodoinstalatera do keramičara — pronađite provjerene majstore za svaki posao
-      </p>
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {TOP_6.map((cat) => {
-          const imgSrc = CATEGORY_IMAGES[cat.displayName] ?? CATEGORY_IMAGES.Vodoinstalater;
-          return (
-            <Link
-              key={cat.slug}
-              href={`/category/${cat.slug}`}
-              className="group relative h-56 overflow-hidden rounded-2xl transition duration-300 hover:-translate-y-1 hover:shadow-premium md:h-64"
-            >
-              <Image
-                src={imgSrc}
-                alt={cat.displayName}
-                fill
-                className="object-cover transition duration-500 ease-out group-hover:scale-105"
-                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                unoptimized
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/20 to-transparent transition duration-300 group-hover:from-slate-900/90" />
-              <div className="absolute inset-0 flex flex-col justify-end p-6">
-                <span className="text-xl font-bold text-white drop-shadow-lg">{cat.displayName}</span>
-                <span className="mt-2 inline-flex items-center gap-1 text-sm font-medium text-white/90 opacity-0 transition group-hover:opacity-100">
-                  Pogledaj majstore
-                  <ArrowRight className="h-4 w-4" />
-                </span>
-              </div>
-            </Link>
-          );
-        })}
+    <section id="kategorije" className="py-20 md:py-28">
+      <div className="mb-10 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between md:mb-14">
+        <div className="max-w-2xl">
+          <h2 className="font-display text-3xl font-bold tracking-tight text-brand-navy md:text-4xl lg:text-[2.35rem]">
+            Popularne kategorije
+          </h2>
+          <p className="mt-3 text-base font-medium leading-relaxed text-slate-700 md:text-lg">
+            Najtraženije usluge širom Crne Gore — od hitnih popravki do renoviranja.
+          </p>
+        </div>
+        <Link
+          href="/categories"
+          className="inline-flex shrink-0 items-center gap-2 self-start text-sm font-bold text-brand-navy underline decoration-slate-300 underline-offset-[5px] transition hover:text-blue-800 hover:decoration-amber-500/80 md:pt-1 md:text-[15px]"
+        >
+          Sve kategorije (16)
+          <ArrowRight className="h-4 w-4" />
+        </Link>
       </div>
-      <Link
-        href="/categories"
-        className="mt-10 inline-flex items-center gap-2 text-[15px] font-semibold text-[#1d4ed8] transition hover:text-[#1e40af] hover:gap-3"
-      >
-        Vidi sve kategorije (16)
-        <ArrowRight className="h-4 w-4" />
-      </Link>
+
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
+        {CATEGORIES.map(({ slug, title, subtitle, imageSrc, Icon }) => (
+          <CategoryTile
+            key={slug}
+            href={`/category/${slug}`}
+            title={title}
+            subtitle={subtitle}
+            imageSrc={imageSrc}
+            FallbackIcon={Icon}
+          />
+        ))}
+      </div>
     </section>
   );
 }

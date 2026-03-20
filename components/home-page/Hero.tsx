@@ -2,65 +2,85 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { ShieldCheck, Sparkles, Zap } from "lucide-react";
 import { HeroSearch } from "./hero-search";
 import { HERO_IMAGE_FALLBACK } from "@/lib/homepage-data";
-import { POPULAR_CATEGORIES } from "@/lib/categories";
 
-const HERO_PILLS = POPULAR_CATEGORIES.slice(0, 6);
+const TRUST = [
+  { icon: ShieldCheck, label: "Provjereni profili" },
+  { icon: Zap, label: "Ponude za kratko" },
+  { icon: Sparkles, label: "Besplatno za korisnike" },
+];
 
 export function Hero() {
   return (
-    <section className="relative flex min-h-[640px] w-full items-center justify-center overflow-hidden px-4 py-24 text-white md:min-h-[720px] md:py-32">
+    <section className="relative flex min-h-[min(100svh,760px)] w-full items-center justify-center overflow-hidden px-4 pb-16 pt-28 text-white md:min-h-[720px] md:pb-24 md:pt-32">
       <Image
         src={HERO_IMAGE_FALLBACK}
         alt="Majstor na poslu"
         fill
-        className="object-cover pointer-events-none"
+        className="pointer-events-none object-cover"
         priority
         sizes="100vw"
       />
+      {/* Premium overlay: deep navy + vignette */}
       <div
-        className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black/75 pointer-events-none"
+        className="pointer-events-none absolute inset-0 bg-gradient-to-b from-brand-navy/95 via-brand-navy/75 to-brand-navy/92"
+        aria-hidden
+      />
+      <div
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_120%_80%_at_50%_-20%,rgba(245,158,11,0.12),transparent_55%)]"
         aria-hidden
       />
       <div className="relative z-10 w-full max-w-4xl text-center pointer-events-auto">
-        <h1 className="font-display mb-5 text-4xl font-extrabold tracking-tight text-white md:text-5xl lg:text-[3.5rem] lg:leading-[1.1] xl:text-[4rem]">
+        <p className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-amber-200/95 backdrop-blur-sm md:text-[13px]">
+          Marketplace za majstore u Crnoj Gori
+        </p>
+        <h1 className="font-display mb-5 text-[2rem] font-extrabold leading-[1.12] tracking-tight text-white md:text-5xl lg:text-[3.25rem] lg:leading-[1.08]">
           Majstori za cijelu Crnu Goru,
           <br />
-          <span className="text-white/90">na jednom mjestu.</span>
+          <span className="bg-gradient-to-r from-white to-white/85 bg-clip-text text-transparent">
+            na jednom mjestu.
+          </span>
         </h1>
-        <p className="mx-auto mb-8 max-w-xl text-lg font-medium leading-relaxed text-white/90 md:mb-10 md:text-xl">
-          Opisite posao koji treba da se uradi i za par minuta dobijate ponude od provjerenih majstora iz vašeg grada.
+        <p className="mx-auto mb-10 max-w-xl text-base font-medium leading-relaxed text-slate-200/95 md:text-lg md:leading-relaxed">
+          Opišite posao jednom — dobijte ponude od provjerenih majstora iz vašeg grada. Bez zvanja redom.
         </p>
 
         <div className="mx-auto max-w-2xl">
           <HeroSearch />
         </div>
 
-        <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+        <div className="mt-8 flex flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:justify-center">
           <Link
             href="/request/create"
-            className="inline-flex items-center justify-center rounded-full bg-white px-6 py-3 text-sm font-semibold text-slate-900 shadow-md transition hover:bg-slate-100 hover:shadow-lg md:text-base"
+            className="inline-flex h-14 min-h-[52px] items-center justify-center rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 px-8 text-base font-bold text-brand-navy shadow-lg shadow-amber-500/25 transition hover:brightness-105 active:scale-[0.98] md:h-[52px] md:px-10"
           >
             Objavi besplatan zahtjev
           </Link>
           <Link
             href="/categories"
-            className="inline-flex items-center justify-center rounded-full border border-white/40 bg-white/5 px-6 py-3 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/15 md:text-base"
+            className="inline-flex h-14 min-h-[52px] items-center justify-center rounded-2xl border border-white/25 bg-white/10 px-8 text-base font-semibold text-white backdrop-blur-md transition hover:bg-white/15 active:scale-[0.98]"
           >
-            Pregledaj kategorije majstora
+            Pregled kategorija
           </Link>
         </div>
 
-        <div className="mt-10 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-sm font-medium text-white/85">
-          <span className="flex items-center gap-2">✓ Verifikovani i ocijenjeni majstori</span>
-          <span className="flex items-center gap-2">✓ Besplatno za korisnike</span>
-          <span className="flex items-center gap-2">✓ Ponude za nekoliko minuta</span>
+        <div className="mt-10 flex flex-wrap items-center justify-center gap-3 md:gap-4">
+          {TRUST.map(({ icon: Icon, label }) => (
+            <span
+              key={label}
+              className="inline-flex items-center gap-2 rounded-2xl border border-white/20 bg-white/10 px-4 py-2.5 text-sm font-semibold text-white shadow-sm backdrop-blur-md"
+            >
+              <Icon className="h-4 w-4 shrink-0 text-amber-300" aria-hidden />
+              {label}
+            </span>
+          ))}
         </div>
-        <p className="mt-6">
+        <p className="relative z-30 mt-8">
           <Link
             href="/register?type=majstor"
-            className="text-sm font-semibold text-white/90 underline underline-offset-2 transition hover:text-white"
+            className="inline-block text-sm font-semibold text-amber-200/90 underline decoration-amber-400/50 underline-offset-4 transition hover:text-white"
           >
             Nudite usluge? Registrujte se kao majstor →
           </Link>

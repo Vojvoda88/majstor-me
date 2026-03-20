@@ -2,36 +2,62 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Reference design - clean premium web marketplace */
+/* Majstor.me – Tailwind + shadcn varijable (HSL komponente bez hsl() wrappera) */
 @layer base {
   :root {
-    --page-bg: #F3F4F6;
-    --page-bg-alt: #F5F7FA;
-    --section-alt: #F9FAFB;
-    --text-primary: #0F172A;
-    --text-secondary: #475569;
-    --text-muted: #64748B;
-    --border: #E5E7EB;
-    --primary: #2563EB;
-    --primary-hover: #1D4ED8;
-    --success: #10B981;
-    --warning: #F59E0B;
-    --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
-    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    --radius-lg: 12px;
-    --radius-xl: 16px;
-    --radius-btn: 12px;
+    /* shadcn/ui – OBAVEZNO: vrijednosti kao HSL komponente (ne hex u hsl(...)) */
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 221.2 83.2% 53.3%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 221.2 83.2% 53.3%;
+    --radius: 0.75rem;
+
+    /* Dodatni tokeni (hex) – ne koriste se u hsl() u tailwind.config */
+    --page-bg: #eef2f9;
+    --page-bg-alt: #f6f8fc;
+    --section-alt: #f0f4fb;
+    --text-primary: #0a1628;
+    --text-secondary: #334155;
+    --text-muted: #64748b;
+    --brand-navy: #0a1628;
+    --brand-navy-soft: #111f36;
+    --majstor-accent: #f59e0b;
+    --success: #059669;
+    --warning: #f59e0b;
+    --shadow-card: 0 4px 6px -1px rgba(10, 22, 40, 0.08), 0 2px 4px -2px rgba(10, 22, 40, 0.06);
+    --shadow-md: 0 12px 24px -8px rgba(10, 22, 40, 0.12);
+    --shadow-elevated: 0 24px 48px -12px rgba(10, 22, 40, 0.18), 0 0 0 1px rgba(15, 23, 42, 0.04);
+    --shadow-cta: 0 14px 32px -6px rgba(29, 78, 216, 0.45);
+    --radius-lg: 14px;
+    --radius-xl: 20px;
+    --radius-2xl: 24px;
+    --radius-btn: 14px;
   }
 }
 
 @layer base {
   * {
-    border-color: var(--border);
+    border-color: hsl(var(--border));
   }
   body {
     background-color: var(--page-bg);
     color: var(--text-primary);
-    font-sans: inherit;
+    font-family: var(--font-dm-sans), var(--font-inter), system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
@@ -39,45 +65,48 @@
 
 @layer components {
   .card-premium {
-    background: #FFFFFF;
-    border: 1px solid var(--border);
+    background: #ffffff;
+    border: 1px solid rgba(15, 23, 42, 0.06);
     border-radius: var(--radius-xl);
-    box-shadow: var(--shadow-card);
+    box-shadow: var(--shadow-elevated);
+  }
+  .public-page-shell {
+    @apply mx-auto max-w-6xl px-5 sm:px-6 lg:px-8;
   }
   .btn-primary {
     min-height: 48px;
     height: 56px;
     border-radius: var(--radius-btn);
-    background: var(--primary);
-    color: white;
+    background: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
     font-size: 16px;
     font-weight: 600;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
   }
   .btn-primary:hover {
-    background: var(--primary-hover);
+    filter: brightness(0.95);
   }
   .input-premium {
     min-height: 48px;
     height: 56px;
     border-radius: var(--radius-btn);
-    border: 1px solid var(--border);
-    background: #FFFFFF;
+    border: 1px solid hsl(var(--border));
+    background: #ffffff;
     padding-left: 14px;
     padding-right: 14px;
     font-size: 16px;
     color: var(--text-primary);
   }
   .input-premium::placeholder {
-    color: #9CA3AF;
+    color: #9ca3af;
   }
   .select-premium {
     min-height: 48px;
     height: 56px;
     width: 100%;
     border-radius: var(--radius-btn);
-    border: 1px solid var(--border);
-    background: #FFFFFF;
+    border: 1px solid hsl(var(--border));
+    background: #ffffff;
     padding: 0 14px;
     font-size: 16px;
     color: var(--text-primary);
@@ -109,6 +138,10 @@
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }

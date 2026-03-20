@@ -7,8 +7,11 @@ import { getDistanceBetweenCities } from "@/lib/distance";
 import { calcHandymanScore } from "@/lib/handyman-score";
 
 export type PlatformStats = {
+  /** Registrovani klijenti (role USER) */
+  userCount: number | null;
   handymanCount: number | null;
   avgRating: number | null;
+  /** Distinktni gradovi iz zahtjeva + majstora (realniji coverage od samo zahtjeva) */
   citiesCount: number;
 };
 
@@ -28,22 +31,36 @@ const MAX_HANDYMEN_FOR_HOMEPAGE = 50;
 export async function getPlatformStats(): Promise<PlatformStats> {
   try {
     const { prisma } = await import("@/lib/db");
-    const [handymanCount, completedCount, reviewAgg, citiesRows] = await Promise.all([
+    const [handymanCount, completedCount, reviewAgg, citiesRows, hmCitiesRows, userCount] = await Promise.all([
       prisma.handymanProfile.count(),
       prisma.request.count({ where: { status: "COMPLETED" } }),
       prisma.review.aggregate({ _avg: { rating: true }, _count: true }),
       prisma.request.findMany({ select: { city: true }, distinct: ["city"] }),
+      prisma.user.findMany({
+        where: { role: "HANDYMAN", city: { not: null } },
+        select: { city: true },
+        distinct: ["city"],
+      }),
+      prisma.user.count({ where: { role: "USER", bannedAt: null } }),
     ]);
     const avgRating = reviewAgg._avg.rating ?? 0;
     const reviewCount = reviewAgg._count;
     const hasEnoughData = handymanCount > 0 || completedCount > 0 || reviewCount > 0;
+    const citySet = new Set<string>();
+    for (const r of citiesRows) {
+      if (r.city) citySet.add(r.city);
+    }
+    for (const u of hmCitiesRows) {
+      if (u.city) citySet.add(u.city);
+    }
     return {
+      userCount: hasEnoughData ? userCount : null,
       handymanCount: hasEnoughData ? handymanCount : null,
       avgRating: hasEnoughData && reviewCount > 0 ? Math.round(avgRating * 10) / 10 : null,
-      citiesCount: citiesRows.length,
+      citiesCount: citySet.size,
     };
   } catch {
-    return { handymanCount: null, avgRating: null, citiesCount: 0 };
+    return { userCount: null, handymanCount: null, avgRating: null, citiesCount: 0 };
   }
 }
 

@@ -119,12 +119,12 @@ export function UnlockContactButton({
 
   if (insufficientCredits) {
     return (
-      <div className="rounded-lg border border-amber-200 bg-amber-50/80 p-3">
-        <p className="text-sm font-medium text-amber-800">
+      <div className="rounded-2xl border border-amber-300/80 bg-amber-50/90 p-4 shadow-sm">
+        <p className="text-sm font-semibold text-amber-950">
           Nemate dovoljno kredita za ovaj lead.
         </p>
-        <Link href="/dashboard/handyman/credits" className="mt-2 inline-block">
-          <Button variant="outline" size="sm" className="gap-2 border-amber-300 bg-white hover:bg-amber-50">
+        <Link href="/dashboard/handyman/credits" className="mt-3 inline-block">
+          <Button variant="outline" size="sm" className="gap-2 rounded-xl border-amber-400 bg-white font-semibold hover:bg-amber-50">
             <Coins className="h-4 w-4" />
             Dopuni kredite
           </Button>
@@ -136,12 +136,12 @@ export function UnlockContactButton({
   return (
     <div>
       {mutation.error && (
-        <p className="mb-2 text-sm text-destructive">
+        <p className="mb-3 text-sm font-medium text-red-700">
           {(mutation.error as Error).message}
           {(mutation.error as Error & { needsCredits?: boolean }).needsCredits && (
             <>
               {" "}
-              <Link href="/dashboard/handyman/credits" className="font-medium underline">
+              <Link href="/dashboard/handyman/credits" className="font-semibold underline underline-offset-2">
                 Dopuni kredite
               </Link>
             </>
@@ -149,16 +149,20 @@ export function UnlockContactButton({
         </p>
       )}
       <Button
-        variant="outline"
         onClick={() => {
           trackFunnel("unlock_clicked", { requestId, creditsRequired });
           mutation.mutate();
         }}
         disabled={mutation.isPending}
-        className="gap-2"
+        className="h-14 w-full gap-2 rounded-2xl bg-gradient-to-br from-[#2563eb] to-[#1d4ed8] text-base font-bold text-white shadow-btn-cta hover:brightness-105 disabled:opacity-60 md:h-12 md:w-auto md:px-8"
+        size="lg"
       >
-        <Unlock className="h-4 w-4" />
-        {mutation.isPending ? "Otključavanje..." : creditsRequired ? `Otključaj lead (${creditsRequired} kredita)` : "Otključaj lead"}
+        <Unlock className="h-5 w-5" />
+        {mutation.isPending
+          ? "Otključavanje..."
+          : creditsRequired
+            ? `Otključaj lead (${creditsRequired} kredita)`
+            : "Otključaj lead"}
       </Button>
     </div>
   );

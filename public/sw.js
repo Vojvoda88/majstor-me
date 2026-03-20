@@ -1,5 +1,5 @@
 // Majstor.me - PWA Service Worker
-const CACHE_NAME = "majstor-me-v1";
+const CACHE_NAME = "majstor-me-v2";
 const START_URL = "/";
 
 self.addEventListener("install", (event) => {

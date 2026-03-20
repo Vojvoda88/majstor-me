@@ -1,4 +1,3 @@
-import { Suspense } from "react";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getCategoryBySlug } from "@/lib/categories";
@@ -37,22 +36,32 @@ export async function generateMetadata({
   };
 }
 
+function parseCityParam(city: string | string[] | undefined): string {
+  if (typeof city === "string") return city;
+  if (Array.isArray(city) && city[0]) return city[0];
+  return "";
+}
+
 export default async function CategoryPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<{ city?: string | string[] }>;
 }) {
   const { slug } = await params;
+  const sp = await searchParams;
+  const initialCity = parseCityParam(sp.city);
+
   const config = getCategoryBySlug(slug);
   if (!config) notFound();
 
   return (
-    <Suspense fallback={<div className="min-h-screen bg-slate-100 p-8">Učitavanje...</div>}>
-      <CategoryPageContent
-        displayName={config.displayName}
-        internalCategory={config.internalCategory}
-        slug={slug}
-      />
-    </Suspense>
+    <CategoryPageContent
+      displayName={config.displayName}
+      internalCategory={config.internalCategory}
+      slug={slug}
+      initialCity={initialCity}
+    />
   );
 }

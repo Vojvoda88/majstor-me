@@ -119,14 +119,14 @@ export function CreateRequestForm({ initialCategory, initialCity }: CreateReques
 
   return (
   <>
-    <Card className="w-full rounded-[22px] border border-[#E7EDF5] bg-white shadow-[0_10px_30px_rgba(15,23,42,0.06)]">
-      <CardHeader className="px-4 sm:px-6">
-        <CardTitle className="text-xl sm:text-2xl">Novi zahtjev</CardTitle>
-        <CardDescription className="text-sm sm:text-base">
+    <Card className="w-full overflow-hidden rounded-[1.75rem] border border-slate-200/80 bg-white shadow-marketplace">
+      <CardHeader className="border-b border-slate-100/80 bg-gradient-to-r from-slate-50/80 to-white px-5 sm:px-8 sm:py-8">
+        <CardTitle className="font-display text-xl text-brand-navy sm:text-2xl">Detalji zahtjeva</CardTitle>
+        <CardDescription className="mt-2 text-sm leading-relaxed text-slate-600 sm:text-base">
           Vaš zahtjev je besplatan. Nakon slanja dobijate ponude od više majstora, a vi sami odlučujete da li i koga ćete angažovati.
         </CardDescription>
       </CardHeader>
-      <CardContent className="px-4 sm:px-6">
+      <CardContent className="px-5 pb-8 pt-6 sm:px-8">
         <form
           id="create-request-form"
           onSubmit={handleSubmit((data) => mutation.mutate(data))}

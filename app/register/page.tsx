@@ -19,19 +19,27 @@ export default async function RegisterPage({
   searchParams: Promise<{ type?: string }>;
 }) {
   const session = await auth();
-  if (session) redirect("/");
+  if (session) {
+    const role = (session.user as { role?: string }).role;
+    if (role === "HANDYMAN") redirect("/dashboard/handyman");
+    if (role === "ADMIN") redirect("/admin");
+    if (role === "USER") redirect("/dashboard/user");
+    redirect("/");
+  }
 
   const { type } = await searchParams;
   const defaultRole = type === "majstor" ? "HANDYMAN" : "USER";
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC]">
+    <div className="min-h-screen bg-brand-page">
       <SiteHeaderSimple />
       <div className="flex min-h-[calc(100vh-4rem)] flex-col items-center justify-center px-4 py-12">
-        <div className="w-full max-w-md">
+        <div className="w-full max-w-md rounded-[2rem] border border-slate-200/80 bg-white p-8 shadow-marketplace sm:p-10">
           <div className="mb-8 text-center">
-            <h1 className="text-2xl font-bold text-[#0F172A] sm:text-3xl">Kreirajte nalog</h1>
-            <p className="mt-2 text-[#64748B]">Korisnik ili majstor — izaberite kako želite da koristite platformu</p>
+            <h1 className="font-display text-2xl font-bold text-brand-navy sm:text-3xl">Kreirajte nalog</h1>
+            <p className="mt-3 text-slate-600">
+              Korisnik ili majstor — izaberite kako želite da koristite platformu
+            </p>
           </div>
           <RegisterForm defaultRole={defaultRole} />
           <p className="mt-6 text-center">

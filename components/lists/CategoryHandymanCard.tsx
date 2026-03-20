@@ -48,7 +48,7 @@ export function CategoryHandymanCard({
   return (
     <Link
       href={`/handyman/${id}`}
-      className="block overflow-hidden rounded-xl border border-[#E5E7EB] bg-white shadow-md transition hover:shadow-lg"
+      className="block overflow-hidden rounded-3xl border border-slate-200/80 bg-white shadow-marketplace-sm transition hover:-translate-y-0.5 hover:shadow-marketplace"
     >
       {/* Desktop: grid layout */}
       <div className="hidden lg:grid lg:grid-cols-[320px_minmax(0,1fr)_200px] lg:gap-0">

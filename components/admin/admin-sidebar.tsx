@@ -19,6 +19,7 @@ import {
   FileQuestion,
   Settings,
   ScrollText,
+  BarChart3,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { AdminRole } from "@/lib/admin/permissions";
@@ -37,6 +38,7 @@ const NAV_ITEMS: {
   { href: "/admin/requests", label: "Zahtjevi", icon: FileText, permission: "requests" },
   { href: "/admin/offers", label: "Ponude", icon: Tag, permission: "offers" },
   { href: "/admin/credits", label: "Krediti", icon: Coins, permission: "credits" },
+  { href: "/admin/funnel", label: "Funnel", icon: BarChart3, permission: "credits" },
   { href: "/admin/payments", label: "Plaćanja", icon: CreditCard, permission: "payments" },
   { href: "/admin/chat", label: "Chat", icon: MessageSquare, permission: "chat" },
   { href: "/admin/categories", label: "Kategorije", icon: FolderTree, permission: "categories" },

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { PublicHeader } from "@/components/layout/PublicHeader";
@@ -35,10 +35,12 @@ export function GradPageContent({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [reloadToken, setReloadToken] = useState(0);
+  const loadGenRef = useRef(0);
 
   const cityNameLocative = cityLocative(cityName);
 
   useEffect(() => {
+    const gen = ++loadGenRef.current;
     let cancelled = false;
     const controller = new AbortController();
     const timeoutId = window.setTimeout(() => {
@@ -59,12 +61,12 @@ export function GradPageContent({
         }
         const data = await res.json();
         const items = data.items ?? data.handymen ?? [];
-        if (cancelled) return;
+        if (cancelled || gen !== loadGenRef.current) return;
         setHandymen(items);
         setTotalPages(data.totalPages ?? 1);
         setTotal(data.total ?? items.length);
       } catch (e) {
-        if (cancelled) return;
+        if (cancelled || gen !== loadGenRef.current) return;
         if ((e as DOMException).name === "AbortError") {
           console.warn("Učitavanje majstora za grad je isteklo (timeout).");
           setError("Učitavanje traje duže nego obično. Pokušajte ponovo.");
@@ -76,8 +78,8 @@ export function GradPageContent({
         setTotalPages(1);
         setTotal(0);
       } finally {
-        if (!cancelled) {
-          window.clearTimeout(timeoutId);
+        window.clearTimeout(timeoutId);
+        if (!cancelled && gen === loadGenRef.current) {
           setLoading(false);
         }
       }
@@ -93,11 +95,11 @@ export function GradPageContent({
   }, [cityName, page, reloadToken]);
 
   return (
-    <main className="min-h-screen bg-slate-100 text-slate-900">
+    <main className="min-h-screen bg-brand-page text-brand-navy">
       <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8">
         <PublicHeader />
 
-        <div className="py-8">
+        <div className="py-8 md:py-10">
           <nav className="mb-6 text-sm text-slate-500">
             <Link href="/" className="hover:text-slate-700">
               Početna
@@ -139,32 +141,44 @@ export function GradPageContent({
           </h2>
 
           {loading ? (
-            <p className="py-12 text-center text-slate-500">Učitavanje...</p>
-          ) : error ? (
-            <div className="mb-12 rounded-2xl border border-red-100 bg-red-50 p-8 text-center shadow-sm">
-              <p className="text-sm font-medium text-red-800">
-                {error}
+            <div className="mb-12 min-h-[280px] space-y-4 rounded-3xl border border-slate-200/80 bg-white p-6 shadow-marketplace-sm">
+              <p className="flex items-center gap-2 text-sm font-semibold text-slate-500">
+                <span className="h-4 w-4 animate-pulse rounded-full bg-blue-200" />
+                Učitavanje majstora…
               </p>
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="animate-pulse rounded-2xl border border-slate-100 bg-slate-50 p-5">
+                    <div className="mx-auto mb-4 h-16 w-16 rounded-full bg-slate-200" />
+                    <div className="h-5 w-3/4 rounded bg-slate-200" />
+                    <div className="mt-2 h-4 w-1/2 rounded bg-slate-200" />
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : error ? (
+            <div className="mb-12 rounded-3xl border border-red-200/80 bg-gradient-to-br from-red-50 to-white p-10 text-center shadow-marketplace-sm">
+              <p className="font-semibold text-red-900">{error}</p>
               <button
                 type="button"
                 onClick={() => setReloadToken((t) => t + 1)}
-                className="mt-4 inline-flex h-10 items-center justify-center rounded-lg bg-red-600 px-4 text-sm font-semibold text-white shadow-sm transition hover:bg-red-700 active:scale-[0.98]"
+                className="mt-6 inline-flex h-12 items-center justify-center rounded-2xl bg-red-600 px-8 text-sm font-bold text-white shadow-lg transition hover:bg-red-700"
               >
                 Pokušaj ponovo
               </button>
             </div>
           ) : handymen.length === 0 ? (
-            <div className="mb-12 rounded-2xl border border-white bg-white p-12 text-center shadow-sm">
+            <div className="mb-12 rounded-3xl border border-slate-200/80 bg-white p-12 text-center shadow-marketplace-sm">
               <Wrench className="mx-auto mb-4 h-12 w-12 text-slate-300" />
-              <p className="text-slate-600">
+              <p className="text-lg font-semibold text-brand-navy">
                 Trenutno nema majstora registrovanih za {cityName}.
               </p>
-              <p className="mt-2 text-sm text-slate-500">
+              <p className="mt-2 text-sm leading-relaxed text-slate-600">
                 Objavite besplatan zahtjev – dobijate ponude od više majstora iz ovog i okolnih gradova, bez obaveze.
               </p>
               <Link
                 href={`/request/create?city=${encodeURIComponent(cityName)}`}
-                className="mt-6 inline-flex h-14 items-center justify-center rounded-2xl bg-[#2563EB] px-8 text-lg font-semibold text-white shadow-[0_12px_24px_rgba(37,99,235,0.25)] transition hover:opacity-95"
+                className="mt-8 inline-flex h-14 items-center justify-center rounded-2xl bg-gradient-to-br from-[#2563eb] to-[#1d4ed8] px-8 text-base font-bold text-white shadow-btn-cta transition hover:brightness-105"
               >
                 Objavi besplatan zahtjev za {cityName}
               </Link>

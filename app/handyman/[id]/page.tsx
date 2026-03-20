@@ -140,7 +140,7 @@ export default async function HandymanProfilePage({
   });
 
   return (
-    <div className="min-h-screen bg-[#F3F4F6] pb-28 md:pb-10">
+    <div className="min-h-screen bg-brand-page pb-28 md:pb-10">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -231,7 +231,7 @@ export default async function HandymanProfilePage({
           </div>
         </div>
 
-        <div className="mx-auto max-w-4xl px-4 py-6 md:px-6 md:py-8">
+        <div className="mx-auto max-w-4xl px-4 py-8 md:px-6 md:py-10">
           {(profileExt.viberPhone || profileExt.whatsappPhone) && (
             <div className="mb-8 flex flex-wrap gap-3 md:mb-10">
               {profileExt.viberPhone && (
@@ -262,7 +262,7 @@ export default async function HandymanProfilePage({
             <div className="mb-8 md:mb-10">
               <p className="mb-2 text-xs text-[#64748B]">Besplatno. Bez obaveze.</p>
               <Link href={`/request/create?${createParams}`} className="block w-full">
-                <span className="flex h-14 w-full items-center justify-center gap-2 rounded-xl bg-[#2563EB] font-semibold text-white transition hover:bg-[#1D4ED8]">
+                <span className="flex h-14 w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-br from-[#2563eb] to-[#1d4ed8] text-base font-bold text-white shadow-btn-cta transition hover:brightness-105">
                   <MessageSquare className="h-5 w-5" />
                   Pošalji zahtjev
                 </span>
@@ -280,9 +280,9 @@ export default async function HandymanProfilePage({
 
           <div className="space-y-8">
             {/* Galerija */}
-            <div className="overflow-hidden rounded-xl border border-[#E5E7EB] bg-white p-6 shadow-sm">
-              <h3 className="mb-4 flex items-center gap-2 text-lg font-semibold text-[#0F172A]">
-                <ImageIcon className="h-5 w-5 text-[#2563EB]" />
+            <div className="overflow-hidden rounded-3xl border border-slate-200/80 bg-white p-6 shadow-marketplace-sm md:p-8">
+              <h3 className="mb-5 flex items-center gap-2 font-display text-xl font-bold text-brand-navy">
+                <ImageIcon className="h-6 w-6 text-blue-600" />
                 Galerija radova
               </h3>
               {galleryImages.length > 0 ? (
@@ -311,9 +311,9 @@ export default async function HandymanProfilePage({
             </div>
 
             {/* O meni */}
-            <div className="overflow-hidden rounded-xl border border-[#E5E7EB] bg-white p-6 shadow-sm">
-              <h3 className="mb-4 flex items-center gap-2 text-lg font-semibold text-[#0F172A]">
-                <Briefcase className="h-5 w-5 text-[#2563EB]" />
+            <div className="overflow-hidden rounded-3xl border border-slate-200/80 bg-white p-6 shadow-marketplace-sm md:p-8">
+              <h3 className="mb-5 flex items-center gap-2 font-display text-xl font-bold text-brand-navy">
+                <Briefcase className="h-6 w-6 text-blue-600" />
                 O meni
               </h3>
               {profile.bio ? (
@@ -382,10 +382,10 @@ export default async function HandymanProfilePage({
       </div>
 
       {session?.user?.role === "USER" && (
-        <div className="fixed inset-x-0 bottom-0 z-[60] border-t border-[#E5E7EB] bg-white px-4 pt-3 pb-[calc(env(safe-area-inset-bottom,0px)+12px)] shadow-lg md:hidden">
+        <div className="fixed inset-x-0 bottom-0 z-[60] border-t border-slate-200/90 bg-white/95 px-4 pt-3 pb-[calc(env(safe-area-inset-bottom,0px)+12px)] shadow-[0_-12px_40px_rgba(10,22,40,0.12)] backdrop-blur-lg md:hidden">
           <Link
             href={`/request/create?${createParams}`}
-            className="flex h-14 w-full items-center justify-center rounded-xl bg-[#2563EB] text-lg font-semibold text-white transition hover:bg-[#1D4ED8]"
+            className="flex h-[52px] w-full items-center justify-center rounded-2xl bg-gradient-to-br from-[#2563eb] to-[#1d4ed8] text-lg font-bold text-white shadow-btn-cta transition hover:brightness-105"
           >
             Pošalji zahtjev
           </Link>

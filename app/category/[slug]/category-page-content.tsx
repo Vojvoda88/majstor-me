@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { PublicHeader } from "@/components/layout/PublicHeader";
 import { StickyBottomCTA } from "@/components/layout/StickyBottomCTA";
 import { MobileFilterSheet } from "@/components/category/MobileFilterSheet";
@@ -32,15 +32,18 @@ export function CategoryPageContent({
   displayName,
   internalCategory,
   slug,
+  initialCity,
 }: {
   displayName: string;
   internalCategory: string;
   slug: string;
+  /** Grad iz ?city= prosleđen sa servera – izbjegava useSearchParams + Suspense zaglavljivanje */
+  initialCity: string;
 }) {
-  const searchParams = useSearchParams();
-  const cityFromUrl = searchParams.get("city") ?? "";
+  const router = useRouter();
+  const pathname = usePathname();
   const [handymen, setHandymen] = useState<Handyman[]>([]);
-  const [cityFilter, setCityFilter] = useState<string>(cityFromUrl);
+  const [cityFilter, setCityFilter] = useState<string>(initialCity);
   const [sortBy, setSortBy] = useState<"rating" | "reviews">("rating");
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -50,16 +53,29 @@ export function CategoryPageContent({
   const [filterSheetOpen, setFilterSheetOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [reloadToken, setReloadToken] = useState(0);
+  const loadGenRef = useRef(0);
+
+  const setCityFilterAndUrl = useCallback(
+    (next: string) => {
+      setCityFilter(next);
+      const params = new URLSearchParams();
+      if (next) params.set("city", next);
+      const qs = params.toString();
+      router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
+    },
+    [pathname, router]
+  );
 
   useEffect(() => {
-    setCityFilter(cityFromUrl);
-  }, [cityFromUrl]);
+    setCityFilter(initialCity);
+  }, [initialCity]);
 
   useEffect(() => {
     setPage(1);
   }, [internalCategory, cityFilter, sortBy]);
 
   useEffect(() => {
+    const gen = ++loadGenRef.current;
     let cancelled = false;
     const controller = new AbortController();
     const timeoutId = window.setTimeout(() => {
@@ -82,12 +98,12 @@ export function CategoryPageContent({
         }
         const data = await res.json();
         const items = data.items ?? data.handymen ?? [];
-        if (cancelled) return;
+        if (cancelled || gen !== loadGenRef.current) return;
         setHandymen(items);
         setTotalPages(data.totalPages ?? 1);
         setTotal(data.total ?? items.length);
       } catch (e) {
-        if (cancelled) return;
+        if (cancelled || gen !== loadGenRef.current) return;
         if ((e as DOMException).name === "AbortError") {
           console.warn("Učitavanje majstora za kategoriju je isteklo (timeout).");
           setError("Učitavanje traje duže nego obično. Pokušajte ponovo.");
@@ -99,8 +115,8 @@ export function CategoryPageContent({
         setTotalPages(1);
         setTotal(0);
       } finally {
-        if (!cancelled) {
-          window.clearTimeout(timeoutId);
+        window.clearTimeout(timeoutId);
+        if (!cancelled && gen === loadGenRef.current) {
           setLoading(false);
         }
       }
@@ -118,26 +134,26 @@ export function CategoryPageContent({
   const sortLabel = sortBy === "rating" ? "Po ocjeni" : "Po broju recenzija";
 
   return (
-    <main className="min-h-screen bg-[#F3F4F6] pb-28 pt-16 text-[#0F172A] md:pb-10 md:pt-20">
+    <main className="min-h-screen bg-brand-page pb-28 pt-16 text-brand-navy md:pb-10 md:pt-20">
       <PublicHeader />
 
       <div className="mx-auto max-w-[430px] px-4 md:max-w-4xl md:px-6 lg:max-w-[1400px] lg:px-8">
-        <div className="py-6 lg:py-10">
+        <div className="py-8 lg:py-12">
           {/* Breadcrumb */}
-          <nav className="mb-4 text-sm text-[#64748B]">
-            <Link href="/" className="hover:text-[#2563EB] transition">
+          <nav className="mb-6 text-sm text-slate-500">
+            <Link href="/" className="font-medium transition hover:text-blue-700">
               Početna
             </Link>
-            <span className="mx-2">/</span>
-            <span className="font-medium text-[#0F172A]">{displayName}</span>
+            <span className="mx-2 text-slate-300">/</span>
+            <span className="font-semibold text-brand-navy">{displayName}</span>
           </nav>
 
           {/* Header zone */}
-          <header className="mb-8">
-            <h1 className="text-4xl font-bold tracking-tight text-[#0F172A] md:text-5xl">
+          <header className="mb-10">
+            <h1 className="font-display text-3xl font-bold tracking-tight text-brand-navy md:text-5xl">
               {displayName} u Crnoj Gori
             </h1>
-            <p className="mt-3 max-w-2xl text-sm text-[#64748B] md:text-base">
+            <p className="mt-4 max-w-2xl text-base leading-relaxed text-slate-600 md:text-lg">
               Pregled majstora za kategoriju <span className="font-medium text-[#0F172A]">{displayName.toLowerCase()}</span>
               {cityFilter ? (
                 <> u gradu <span className="font-medium text-[#0F172A]">{cityFilter}</span>. Filtrirajte listu ili objavite zahtjev ako ne nalazite idealnog majstora.</>
@@ -148,33 +164,33 @@ export function CategoryPageContent({
           </header>
 
           {/* Toolbar */}
-          <div className="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
+          <div className="mb-8 flex flex-wrap items-center justify-between gap-4 rounded-3xl border border-slate-200/80 bg-white/90 p-4 shadow-marketplace-sm lg:mb-10 lg:p-5">
             <div className="flex flex-wrap items-center gap-3">
-              <span className="flex h-12 items-center rounded-full border border-[#DCE6F2] bg-white px-5 text-[15px] font-medium text-[#0F172A] shadow-sm">
+              <span className="flex h-12 items-center rounded-2xl border border-slate-200 bg-slate-50 px-5 text-[15px] font-semibold text-brand-navy">
                 {cityFilter || "Svi gradovi"}
               </span>
               <button
                 type="button"
                 onClick={() => setFilterSheetOpen(true)}
-                className="flex h-12 items-center gap-2 rounded-full border border-[#DCE6F2] bg-white px-5 text-[15px] font-medium text-[#0F172A] shadow-sm transition active:scale-[0.98] lg:hidden"
+                className="flex h-12 items-center gap-2 rounded-2xl border border-slate-200 bg-white px-5 text-[15px] font-semibold text-brand-navy shadow-sm transition hover:bg-slate-50 active:scale-[0.98] lg:hidden"
               >
                 <SlidersHorizontal className="h-4 w-4" />
                 Filteri
               </button>
-              <span className="hidden h-12 items-center rounded-full border border-[#DCE6F2] bg-white px-5 text-[15px] font-medium text-[#0F172A] shadow-sm lg:flex">
+              <span className="hidden h-12 items-center rounded-2xl border border-slate-200 bg-slate-50 px-5 text-[15px] font-medium text-slate-700 lg:flex">
                 Sortiraj: {sortLabel}
               </span>
             </div>
 
             {/* Lista / Mapa segmented control */}
-            <div className="flex h-12 overflow-hidden rounded-full border border-[#DCE6F2] bg-white p-1 shadow-sm">
+            <div className="flex h-12 overflow-hidden rounded-2xl border border-slate-200 bg-slate-100/80 p-1 shadow-inner">
               <button
                 type="button"
                 onClick={() => setViewMode("list")}
-                className={`flex items-center gap-2 rounded-full px-5 py-2 text-[15px] font-medium transition ${
+                className={`flex items-center gap-2 rounded-xl px-5 py-2 text-[15px] font-semibold transition ${
                   viewMode === "list"
-                    ? "bg-[#2563EB] text-white shadow-sm"
-                    : "text-[#475569] hover:bg-[#F8FAFC]"
+                    ? "bg-white text-blue-700 shadow-sm"
+                    : "text-slate-600 hover:bg-white/60"
                 }`}
               >
                 <List className="h-4 w-4" />
@@ -183,10 +199,10 @@ export function CategoryPageContent({
               <button
                 type="button"
                 onClick={() => setViewMode("map")}
-                className={`flex items-center gap-2 rounded-full px-5 py-2 text-[15px] font-medium transition ${
+                className={`flex items-center gap-2 rounded-xl px-5 py-2 text-[15px] font-semibold transition ${
                   viewMode === "map"
-                    ? "bg-[#2563EB] text-white shadow-sm"
-                    : "text-[#475569] hover:bg-[#F8FAFC]"
+                    ? "bg-white text-blue-700 shadow-sm"
+                    : "text-slate-600 hover:bg-white/60"
                 }`}
               >
                 <MapPin className="h-4 w-4" />
@@ -200,34 +216,48 @@ export function CategoryPageContent({
             {/* List / Map content */}
             <div className="min-w-0">
               {loading ? (
-                <div className="flex min-h-[300px] items-center justify-center rounded-xl border border-[#E5E7EB] bg-white">
-                  <p className="text-[#64748B]">Učitavanje...</p>
+                <div className="min-h-[320px] space-y-5 rounded-3xl border border-slate-200/80 bg-white p-6 shadow-marketplace-sm">
+                  <div className="flex items-center gap-3 text-sm font-semibold text-slate-500">
+                    <span className="h-4 w-4 animate-pulse rounded-full bg-blue-200" />
+                    Učitavanje majstora…
+                  </div>
+                  {[1, 2, 3].map((i) => (
+                    <div
+                      key={i}
+                      className="animate-pulse overflow-hidden rounded-2xl border border-slate-100 bg-slate-50"
+                    >
+                      <div className="h-40 bg-slate-200/80 lg:h-48" />
+                      <div className="space-y-3 p-5">
+                        <div className="h-6 w-1/2 rounded-lg bg-slate-200" />
+                        <div className="h-4 w-1/3 rounded bg-slate-200" />
+                        <div className="h-10 w-full rounded-xl bg-slate-200" />
+                      </div>
+                    </div>
+                  ))}
                 </div>
               ) : error ? (
-                <div className="overflow-hidden rounded-xl border border-red-100 bg-red-50 p-8 text-center shadow-sm">
-                  <p className="text-sm font-medium text-red-800">
-                    {error}
-                  </p>
+                <div className="overflow-hidden rounded-3xl border border-red-200/80 bg-gradient-to-br from-red-50 to-white p-10 text-center shadow-marketplace-sm">
+                  <p className="text-base font-semibold text-red-900">{error}</p>
                   <button
                     type="button"
                     onClick={() => setReloadToken((t) => t + 1)}
-                    className="mt-4 inline-flex h-10 items-center justify-center rounded-lg bg-red-600 px-4 text-sm font-semibold text-white shadow-sm transition hover:bg-red-700 active:scale-[0.98]"
+                    className="mt-6 inline-flex h-12 items-center justify-center rounded-2xl bg-red-600 px-8 text-sm font-bold text-white shadow-lg transition hover:bg-red-700 active:scale-[0.98]"
                   >
                     Pokušaj ponovo
                   </button>
                 </div>
               ) : handymen.length === 0 ? (
-                <div className="overflow-hidden rounded-xl border border-[#E5E7EB] bg-white p-12 text-center shadow-sm">
-                  <Wrench className="mx-auto mb-4 h-14 w-14 text-[#94A3B8]" />
-                  <p className="text-lg text-[#64748B]">
+                <div className="overflow-hidden rounded-3xl border border-slate-200/80 bg-white p-10 text-center shadow-marketplace-sm md:p-14">
+                  <Wrench className="mx-auto mb-5 h-14 w-14 text-slate-300" />
+                  <p className="text-lg font-semibold text-brand-navy">
                     Nema majstora za ovu kategoriju u izabranom gradu.
                   </p>
-                  <p className="mt-2 text-sm text-[#94A3B8]">
+                  <p className="mt-3 text-sm leading-relaxed text-slate-600">
                     Objavite besplatan zahtjev – dobijate ponude od više majstora, bez obaveze.
                   </p>
                   <Link
                     href={`/request/create?category=${encodeURIComponent(internalCategory)}${cityFilter ? `&city=${encodeURIComponent(cityFilter)}` : ""}`}
-                    className="mt-6 inline-flex h-14 items-center justify-center rounded-2xl bg-[#2563EB] px-8 text-lg font-semibold text-white shadow-[0_12px_24px_rgba(37,99,235,0.25)] transition hover:opacity-95"
+                    className="mt-8 inline-flex h-14 min-h-[52px] items-center justify-center rounded-2xl bg-gradient-to-br from-[#2563eb] to-[#1d4ed8] px-10 text-base font-bold text-white shadow-btn-cta transition hover:brightness-105"
                   >
                     Objavi besplatan zahtjev
                   </Link>
@@ -285,14 +315,14 @@ export function CategoryPageContent({
 
             {/* Premium filter sidebar (desktop only) */}
             <aside className="hidden lg:block">
-              <div className="sticky top-24 space-y-7 overflow-hidden rounded-xl border border-[#E5E7EB] bg-white p-7 shadow-md">
+              <div className="sticky top-24 space-y-7 overflow-hidden rounded-3xl border border-slate-200/80 bg-white p-7 shadow-marketplace-sm">
                 <div>
                   <label className="mb-3 block text-[18px] font-semibold text-[#0F172A]">
                     Grad
                   </label>
                   <select
                     value={cityFilter}
-                    onChange={(e) => setCityFilter(e.target.value)}
+                    onChange={(e) => setCityFilterAndUrl(e.target.value)}
                     className="h-14 w-full rounded-2xl border border-[#DCE6F2] bg-[#F8FBFF] px-4 text-[16px] text-[#0F172A]"
                   >
                     <option value="">Svi gradovi</option>
@@ -381,7 +411,7 @@ export function CategoryPageContent({
         open={filterSheetOpen}
         onClose={() => setFilterSheetOpen(false)}
         cityFilter={cityFilter}
-        onCityChange={setCityFilter}
+        onCityChange={setCityFilterAndUrl}
         sortBy={sortBy}
         onSortChange={setSortBy}
         viewMode={viewMode}

@@ -146,9 +146,9 @@ export default async function RequestDetailPage({
   }
 
   return (
-    <div className="min-h-screen bg-[#F6F8FB]">
+    <div className="min-h-screen bg-brand-page">
       <SiteHeader />
-      <div className="mx-auto max-w-3xl px-4 py-6 sm:px-6 sm:py-8">
+      <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 sm:py-10">
         <Link
           href={session?.user?.role === "USER" ? "/dashboard/user" : session?.user?.role === "HANDYMAN" ? "/dashboard/handyman" : "/"}
           className="mb-6 inline-flex text-sm font-medium text-[#64748B] hover:text-[#0F172A]"
@@ -238,13 +238,18 @@ export default async function RequestDetailPage({
             </div>
           )}
           {session?.user?.role === "HANDYMAN" && !isOwner && (
-            <div className="rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] p-4">
-              <h3 className="text-sm font-medium text-[#475569]">Otključaj lead</h3>
-              <p className="mt-1 text-sm text-[#64748B]">
-                Da biste vidjeli broj telefona, adresu i poslali ponudu, otključajte lead.
+            <div className="rounded-3xl border border-amber-200/60 bg-gradient-to-br from-amber-50/90 via-white to-slate-50 p-6 shadow-inner md:p-7">
+              <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+                <h3 className="font-display text-lg font-bold text-brand-navy">Otključaj lead</h3>
+                <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-bold uppercase tracking-wide text-amber-900 ring-1 ring-amber-200/80">
+                  Premium lead
+                </span>
+              </div>
+              <p className="text-sm leading-relaxed text-slate-600">
+                Da biste vidjeli broj telefona, adresu i poslali ponudu, otključajte lead kreditima.
               </p>
               <LeadPriceBreakdown breakdown={creditsBreakdown} />
-              <div className="mt-3">
+              <div className="mt-5">
                 <UnlockContactButton
                   requestId={req.id}
                   alreadyUnlocked={handymanUnlocked}

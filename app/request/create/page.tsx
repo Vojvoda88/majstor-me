@@ -34,9 +34,9 @@ export default function CreateRequestPage(props: { searchParams?: CreateRequestS
   const params = props.searchParams ?? {};
 
   return (
-    <div className="min-h-screen bg-[#F3F4F6] pb-28 pt-16 md:pb-10 md:pt-20">
+    <div className="min-h-screen bg-brand-page pb-28 pt-16 md:pb-10 md:pt-20">
       <PremiumMobileHeader />
-      <div className="mx-auto max-w-[430px] px-4 py-6 md:max-w-2xl md:py-8">
+      <div className="mx-auto max-w-[430px] px-4 py-8 md:max-w-2xl md:py-10">
         <Breadcrumbs
           items={[
             { label: "Početna", href: "/" },
@@ -44,15 +44,16 @@ export default function CreateRequestPage(props: { searchParams?: CreateRequestS
           ]}
         />
 
-        <header className="mb-6 md:mb-8">
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900 md:text-3xl">
+        <header className="mb-8 md:mb-10">
+          <p className="mb-2 text-xs font-bold uppercase tracking-widest text-blue-700">Korak 1 od 1</p>
+          <h1 className="font-display text-2xl font-bold tracking-tight text-brand-navy md:text-4xl">
             Opis posla za majstora
           </h1>
-          <p className="mt-2 text-sm text-slate-600 md:text-base">
+          <p className="mt-4 text-base leading-relaxed text-slate-600 md:text-lg">
             Napišite šta vam treba – vodoinstalater, električar, klima servis ili druga usluga. Vaš zahtjev je
             besplatan, a ponude stižu direktno od provjerenih majstora.
           </p>
-          <div className="mt-4 grid gap-3 rounded-2xl border border-slate-100 bg-white/80 p-3 text-xs text-slate-700 md:grid-cols-3 md:gap-4 md:p-4 md:text-sm">
+          <div className="mt-6 grid gap-3 rounded-3xl border border-slate-200/80 bg-white p-4 text-xs text-slate-700 shadow-marketplace-sm md:grid-cols-3 md:gap-4 md:p-5 md:text-sm">
             <div className="flex items-start gap-2">
               <span className="mt-0.5 rounded-lg bg-emerald-50 p-1.5 text-emerald-700">
                 <ShieldCheck className="h-3.5 w-3.5" />

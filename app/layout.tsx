@@ -60,7 +60,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="sr" className={`${inter.variable} ${dmSans.variable} ${outfit.variable}`}>
-      <body className="font-[family-name:var(--font-dm-sans)] antialiased bg-[#FAFBFC] text-[#0F172A]">
+      <body className="font-sans antialiased bg-[#FAFBFC] text-[#0F172A]">
         <Providers>
           {children}
           <Analytics />
