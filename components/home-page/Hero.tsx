@@ -19,7 +19,7 @@ export function Hero() {
         src={HERO_IMAGE}
         alt="Majstor na poslu"
         fill
-        className="pointer-events-none origin-center object-cover object-[center_30%] md:object-[center_26%] scale-[0.88] sm:scale-[0.9] md:scale-[0.93]"
+        className="pointer-events-none origin-center object-cover object-[center_35%] scale-100 md:object-[center_26%] md:scale-[0.93]"
         priority
         sizes="100vw"
       />
