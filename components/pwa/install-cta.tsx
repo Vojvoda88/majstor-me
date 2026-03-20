@@ -1,9 +1,14 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
+import Link from "next/link";
+import { useSession } from "next-auth/react";
+import { Bell, Download, X } from "lucide-react";
 
-const DISMISS_KEY = "pwa-install-dismissed";
-const DISMISS_HOURS = 24;
+const DISMISS_KEY = "pwa-entry-modal-dismissed";
+/** Koliko dugo ne prikazuj ponovo nakon „Kasnije“ */
+const DISMISS_MS = 7 * 24 * 60 * 60 * 1000;
+const SHOW_DELAY_MS = 1600;
 
 function isStandalone(): boolean {
   if (typeof window === "undefined") return true;
@@ -22,7 +27,7 @@ function isDismissed(): boolean {
     if (!raw) return false;
     const ts = parseInt(raw, 10);
     if (isNaN(ts)) return false;
-    return Date.now() - ts < DISMISS_HOURS * 60 * 60 * 1000;
+    return Date.now() - ts < DISMISS_MS;
   } catch {
     return false;
   }
@@ -31,7 +36,9 @@ function isDismissed(): boolean {
 function setDismissed(): void {
   try {
     localStorage.setItem(DISMISS_KEY, String(Date.now()));
-  } catch {}
+  } catch {
+    /* ignore */
+  }
 }
 
 interface BeforeInstallPromptEvent extends Event {
@@ -39,95 +46,215 @@ interface BeforeInstallPromptEvent extends Event {
   userChoice: Promise<{ outcome: string }>;
 }
 
+function urlBase64ToUint8Array(base64: string): Uint8Array {
+  const padding = "=".repeat((4 - (base64.length % 4)) % 4);
+  const b64 = (base64 + padding).replace(/-/g, "+").replace(/_/g, "/");
+  const raw = window.atob(b64);
+  const arr = new Uint8Array(raw.length);
+  for (let i = 0; i < raw.length; i++) arr[i] = raw.charCodeAt(i);
+  return arr;
+}
+
+/**
+ * Mali prozor pri ulasku: preuzmi PWA + opcija obavještenja (push za prijavljene).
+ * iOS: nema beforeinstallprompt — i dalje se prikaže sa linkom na uputstva.
+ */
 export function InstallCTA() {
-  const [show, setShow] = useState(false);
-  const [isInstalling, setIsInstalling] = useState(false);
+  const { data: session, status } = useSession();
+  const [visible, setVisible] = useState(false);
+  const [installing, setInstalling] = useState(false);
+  const [notifBusy, setNotifBusy] = useState(false);
+  const [notifDone, setNotifDone] = useState(false);
+  const [installReady, setInstallReady] = useState(false);
   const deferredPrompt = useRef<BeforeInstallPromptEvent | null>(null);
+
+  const vapid = typeof process !== "undefined" ? process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY : undefined;
 
   useEffect(() => {
     if (typeof window === "undefined") return;
     if (isStandalone()) return;
     if (isDismissed()) return;
 
-    const handler = (e: Event) => {
+    const onBip = (e: Event) => {
       e.preventDefault();
       deferredPrompt.current = e as BeforeInstallPromptEvent;
-      setShow(true);
+      setInstallReady(true);
+      setVisible(true);
     };
+    window.addEventListener("beforeinstallprompt", onBip);
 
-    window.addEventListener("beforeinstallprompt", handler);
+    const t = window.setTimeout(() => {
+      setVisible(true);
+    }, SHOW_DELAY_MS);
 
     const onInstalled = () => {
       deferredPrompt.current = null;
-      setShow(false);
+      setInstallReady(false);
+      setVisible(false);
     };
     window.addEventListener("appinstalled", onInstalled);
 
     return () => {
-      window.removeEventListener("beforeinstallprompt", handler);
+      window.removeEventListener("beforeinstallprompt", onBip);
       window.removeEventListener("appinstalled", onInstalled);
+      window.clearTimeout(t);
     };
   }, []);
 
   const handleInstall = async () => {
     const prompt = deferredPrompt.current;
     if (!prompt) return;
-    setIsInstalling(true);
+    setInstalling(true);
     try {
       await prompt.prompt();
-      const { outcome } = await prompt.userChoice;
-      if (outcome === "accepted") {
-        setShow(false);
-        deferredPrompt.current = null;
-      }
+      await prompt.userChoice;
+      deferredPrompt.current = null;
+      setInstallReady(false);
     } catch {
-      // User cancelled or error
+      /* cancelled */
     } finally {
-      setIsInstalling(false);
+      setInstalling(false);
     }
   };
 
-  const handleDismiss = () => {
+  const handleNotifications = useCallback(async () => {
+    const uid = (session?.user as { id?: string } | undefined)?.id;
+    if (!uid) return;
+    if (!("Notification" in window) || !("serviceWorker" in navigator) || !("PushManager" in window)) {
+      return;
+    }
+    if (!vapid) return;
+
+    setNotifBusy(true);
+    try {
+      const perm = await Notification.requestPermission();
+      if (perm !== "granted") return;
+
+      const reg = await navigator.serviceWorker.ready;
+      let sub = await reg.pushManager.getSubscription();
+      if (!sub) {
+        sub = await reg.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: urlBase64ToUint8Array(vapid) as BufferSource,
+        });
+      }
+      const json = sub.toJSON();
+      const res = await fetch("/api/push/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          endpoint: json.endpoint,
+          keys: json.keys,
+        }),
+      });
+      if (res.ok) setNotifDone(true);
+    } catch {
+      /* denied or error */
+    } finally {
+      setNotifBusy(false);
+    }
+  }, [session?.user, vapid]);
+
+  const close = () => {
     setDismissed();
-    setShow(false);
+    setVisible(false);
   };
 
-  if (!show) return null;
+  if (!visible) return null;
+  if (isStandalone()) return null;
+
+  const showNotifRow = status !== "loading";
+  const loggedIn = !!(session?.user as { id?: string } | undefined)?.id;
+  const canPush = !!vapid && typeof window !== "undefined" && "PushManager" in window;
 
   return (
-    <div
-      className="fixed bottom-4 left-4 right-4 z-50 flex items-center justify-between gap-3 rounded-xl border border-[#E2E8F0] bg-white px-4 py-3 shadow-lg sm:left-auto sm:right-4 sm:w-auto sm:max-w-sm"
-      role="dialog"
-      aria-label="Instaliraj aplikaciju"
-    >
-      <div className="min-w-0 flex-1">
-        <p className="text-sm font-medium text-[#0F172A]">
-          Dodaj Majstor.me na početni ekran
-        </p>
-        <p className="mt-0.5 text-xs text-[#64748B]">
-          Brži pristup bez otvaranja browsera
-        </p>
-      </div>
-      <div className="flex shrink-0 items-center gap-2">
+    <>
+      <div className="fixed inset-0 z-[90] bg-black/35 backdrop-blur-[2px] md:bg-black/25" aria-hidden onClick={close} />
+      <div
+        className="fixed bottom-[max(0.75rem,env(safe-area-inset-bottom))] left-3 right-3 z-[95] mx-auto max-w-md rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xl sm:left-1/2 sm:right-auto sm:w-full sm:-translate-x-1/2"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="pwa-entry-title"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-start justify-between gap-2">
+          <div className="min-w-0">
+            <h2 id="pwa-entry-title" className="font-display text-lg font-bold tracking-tight text-brand-navy">
+              Preuzmi aplikaciju
+            </h2>
+            <p className="mt-1 text-sm leading-snug text-slate-600">
+              Brži pristup sa početnog ekrana i obavještenja o ponudama i zahtjevima.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={close}
+            className="shrink-0 rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
+            aria-label="Zatvori"
+          >
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+
+        <div className="mt-4 flex flex-col gap-2">
+          {installReady ? (
+            <button
+              type="button"
+              onClick={handleInstall}
+              disabled={installing}
+              className="flex min-h-[48px] w-full touch-manipulation items-center justify-center gap-2 rounded-xl bg-[#2563EB] px-4 py-3 text-[15px] font-bold text-white shadow-md transition hover:bg-[#1D4ED8] disabled:opacity-70"
+            >
+              <Download className="h-5 w-5 shrink-0" aria-hidden />
+              {installing ? "Čekaj…" : "Instaliraj aplikaciju"}
+            </button>
+          ) : (
+            <Link
+              href="/instaliraj"
+              onClick={() => setDismissed()}
+              className="flex min-h-[48px] w-full touch-manipulation items-center justify-center gap-2 rounded-xl border-2 border-slate-200 bg-slate-50 px-4 py-3 text-[15px] font-bold text-brand-navy transition hover:bg-slate-100"
+            >
+              <Download className="h-5 w-5 shrink-0" aria-hidden />
+              Kako instalirati (iPhone / Android)
+            </Link>
+          )}
+
+          {showNotifRow && (
+            <>
+              {loggedIn && canPush ? (
+                <button
+                  type="button"
+                  onClick={handleNotifications}
+                  disabled={notifBusy || notifDone}
+                  className="flex min-h-[48px] w-full touch-manipulation items-center justify-center gap-2 rounded-xl border border-amber-200/80 bg-amber-50 px-4 py-3 text-[15px] font-semibold text-amber-950 transition hover:bg-amber-100 disabled:opacity-80"
+                >
+                  <Bell className="h-5 w-5 shrink-0" aria-hidden />
+                  {notifDone ? "Obavještenja su uključena" : notifBusy ? "Čekaj…" : "Primaj obavještenja"}
+                </button>
+              ) : !loggedIn ? (
+                <Link
+                  href="/login?callbackUrl=/"
+                  className="flex min-h-[48px] w-full touch-manipulation items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-3 text-[15px] font-semibold text-slate-800 transition hover:bg-slate-50"
+                >
+                  <Bell className="h-5 w-5 shrink-0 text-amber-600" aria-hidden />
+                  Prijavi se za obavještenja
+                </Link>
+              ) : (
+                <p className="rounded-lg bg-slate-50 px-3 py-2 text-center text-xs text-slate-500">
+                  Push obavještenja trenutno nisu dostupna u ovom okruženju (konfiguracija).
+                </p>
+              )}
+            </>
+          )}
+        </div>
+
         <button
           type="button"
-          onClick={handleInstall}
-          disabled={isInstalling}
-          className="rounded-lg bg-[#2563EB] px-3 py-1.5 text-sm font-medium text-white transition hover:bg-[#1D4ED8] disabled:opacity-70"
+          onClick={close}
+          className="mt-3 w-full py-2 text-center text-sm font-medium text-slate-500 transition hover:text-slate-800"
         >
-          {isInstalling ? "..." : "Instaliraj"}
-        </button>
-        <button
-          type="button"
-          onClick={handleDismiss}
-          aria-label="Zatvori"
-          className="rounded p-1 text-[#94A3B8] transition hover:bg-[#F1F5F9] hover:text-[#64748B]"
-        >
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M18 6L6 18M6 6l12 12" />
-          </svg>
+          Kasnije
         </button>
       </div>
-    </div>
+    </>
   );
 }

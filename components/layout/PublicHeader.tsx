@@ -35,9 +35,19 @@ export function PublicHeader() {
     return () => window.removeEventListener("hashchange", syncHash);
   }, [pathname]);
 
-  const navLink = (active: boolean) =>
+  useEffect(() => {
+    if (!menuOpen) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [menuOpen]);
+
+  const navLink = (active: boolean, mobile = false) =>
     cn(
-      "text-[15px] font-medium text-gray-700 transition-colors hover:text-brand-navy",
+      "font-medium text-gray-700 transition-colors hover:text-brand-navy",
+      mobile ? "min-h-[44px] touch-manipulation items-center text-[16px] leading-snug" : "text-[15px]",
       active && "font-semibold text-brand-navy underline decoration-brand-navy/35 underline-offset-[6px]"
     );
 
@@ -47,6 +57,7 @@ export function PublicHeader() {
   const isKategorijeActive = pathname === "/categories";
   const isProfilActive = pathname?.startsWith("/dashboard/handyman") ?? false;
   const isUserDashActive = pathname?.startsWith("/dashboard/user") ?? false;
+  const isInstalirajActive = pathname === "/instaliraj";
 
   const desktopGuestNav = (
     <>
@@ -121,13 +132,13 @@ export function PublicHeader() {
     <header
       className={cn(
         "sticky top-0 z-[100] w-full border-b border-white/20 shadow-sm transition-[background-color] duration-300 ease-out",
-        "backdrop-blur-[12px] backdrop-saturate-[180%]",
+        "pt-[env(safe-area-inset-top)] backdrop-blur-[12px] backdrop-saturate-[180%]",
         scrolled ? "bg-white/80" : "bg-white/65"
       )}
       data-testid="public-header"
       style={{ pointerEvents: "auto", WebkitBackdropFilter: "blur(12px) saturate(180%)" }}
     >
-      <div className="relative z-[100] mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
+      <div className="relative z-[100] mx-auto flex min-h-14 max-w-6xl items-center justify-between px-4 sm:px-6">
         <Link href="/" className="font-display text-xl font-bold tracking-tight md:text-2xl" data-testid="header-home" {...linkProps}>
           <span className="text-[#1d4ed8]">Majstor</span>
           <span className="text-slate-800">.me</span>
@@ -143,6 +154,9 @@ export function PublicHeader() {
           <Link href="/#kako-radi" className={navLink(isKakoActive)} data-testid="nav-kako-radi" {...linkProps}>
             Kako radi
           </Link>
+          <Link href="/instaliraj" className={navLink(isInstalirajActive)} data-testid="nav-instaliraj" {...linkProps}>
+            Instaliraj aplikaciju
+          </Link>
           {status === "loading" ? (
             desktopGuestNav
           ) : session ? (
@@ -155,8 +169,9 @@ export function PublicHeader() {
         <button
           type="button"
           onClick={() => setMenuOpen(!menuOpen)}
-          className="flex h-10 w-10 items-center justify-center rounded-xl text-gray-700 transition hover:bg-white/50 md:hidden"
+          className="flex min-h-[44px] min-w-[44px] touch-manipulation items-center justify-center rounded-xl text-gray-700 transition hover:bg-white/50 md:hidden"
           aria-label="Meni"
+          aria-expanded={menuOpen}
         >
           {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
@@ -165,16 +180,16 @@ export function PublicHeader() {
       {menuOpen && (
         <div
           className={cn(
-            "relative z-[100] border-t border-white/20 px-6 py-5 backdrop-blur-[12px] backdrop-saturate-[180%] md:hidden",
-            "bg-white/75"
+            "relative z-[100] max-h-[min(70vh,calc(100dvh-5rem))] overflow-y-auto overscroll-contain border-t border-white/20 px-4 py-4 backdrop-blur-[12px] backdrop-saturate-[180%] sm:px-6 md:hidden",
+            "bg-white/75 pb-[max(1rem,env(safe-area-inset-bottom))]"
           )}
           data-testid="mobile-nav"
           style={{ WebkitBackdropFilter: "blur(12px) saturate(180%)" }}
         >
-          <nav className="flex flex-col gap-1">
+          <nav className="flex flex-col gap-0.5">
             <Link
               href="/"
-              className={cn("py-3 text-[16px]", navLink(isPocetnaActive))}
+              className={cn("flex rounded-lg py-2", navLink(isPocetnaActive, true))}
               onClick={() => setMenuOpen(false)}
               data-testid="nav-pocetna"
               {...linkProps}
@@ -183,7 +198,7 @@ export function PublicHeader() {
             </Link>
             <Link
               href="/categories"
-              className={cn("py-3 text-[16px]", navLink(isKategorijeActive))}
+              className={cn("flex rounded-lg py-2", navLink(isKategorijeActive, true))}
               onClick={() => setMenuOpen(false)}
               data-testid="nav-kategorije"
               {...linkProps}
@@ -192,19 +207,28 @@ export function PublicHeader() {
             </Link>
             <Link
               href="/#kako-radi"
-              className={cn("py-3 text-[16px]", navLink(isKakoActive))}
+              className={cn("flex rounded-lg py-2", navLink(isKakoActive, true))}
               onClick={() => setMenuOpen(false)}
               data-testid="nav-kako-radi"
               {...linkProps}
             >
               Kako radi
             </Link>
+            <Link
+              href="/instaliraj"
+              className={cn("flex rounded-lg py-2", navLink(isInstalirajActive, true))}
+              onClick={() => setMenuOpen(false)}
+              data-testid="nav-instaliraj-mobile"
+              {...linkProps}
+            >
+              Instaliraj aplikaciju
+            </Link>
             {session ? (
               <div className="mt-4 flex flex-col gap-2 border-t border-white/25 pt-4">
                 {session.user?.role === "ADMIN" && (
                   <Link
                     href="/admin"
-                    className="py-3 text-[16px] font-semibold text-amber-800"
+                    className="flex min-h-[44px] touch-manipulation items-center rounded-lg py-2 text-[16px] font-semibold text-amber-800"
                     onClick={() => setMenuOpen(false)}
                     {...linkProps}
                   >
@@ -214,7 +238,7 @@ export function PublicHeader() {
                 {session.user?.role === "HANDYMAN" && (
                   <Link
                     href="/dashboard/handyman"
-                    className={cn("py-3 text-[16px]", navLink(isProfilActive))}
+                    className={cn("flex rounded-lg py-2", navLink(isProfilActive, true))}
                     onClick={() => setMenuOpen(false)}
                     {...linkProps}
                   >
@@ -224,7 +248,7 @@ export function PublicHeader() {
                 {session.user?.role === "USER" && (
                   <Link
                     href="/dashboard/user"
-                    className={cn("py-3 text-[16px]", navLink(isUserDashActive))}
+                    className={cn("flex rounded-lg py-2", navLink(isUserDashActive, true))}
                     onClick={() => setMenuOpen(false)}
                     {...linkProps}
                   >
@@ -233,7 +257,7 @@ export function PublicHeader() {
                 )}
                 <button
                   type="button"
-                  className="mt-1 rounded-xl border border-slate-200/90 bg-white/80 py-3 text-left text-[16px] font-semibold text-gray-800 transition hover:bg-white"
+                  className="mt-1 min-h-[48px] w-full touch-manipulation rounded-xl border border-slate-200/90 bg-white/80 py-3 text-left text-[16px] font-semibold text-gray-800 transition hover:bg-white active:scale-[0.99]"
                   onClick={() => {
                     setMenuOpen(false);
                     signOut({ callbackUrl: "/" });
@@ -246,7 +270,7 @@ export function PublicHeader() {
               <>
                 <Link
                   href="/register?type=majstor"
-                  className="py-3 text-[16px] font-medium text-gray-700"
+                  className="flex min-h-[44px] touch-manipulation items-center rounded-lg py-2 text-[16px] font-medium text-gray-700"
                   onClick={() => setMenuOpen(false)}
                   data-testid="nav-registracija-majstor"
                   {...linkProps}
@@ -256,7 +280,7 @@ export function PublicHeader() {
                 <div className="mt-4 flex flex-col gap-2 border-t border-white/25 pt-4">
                   <Link
                     href="/login"
-                    className="py-3 text-center text-[16px] font-medium text-gray-700"
+                    className="flex min-h-[44px] touch-manipulation items-center justify-center rounded-lg py-2 text-center text-[16px] font-medium text-gray-700"
                     onClick={() => setMenuOpen(false)}
                     data-testid="nav-prijava"
                     {...linkProps}
@@ -265,7 +289,7 @@ export function PublicHeader() {
                   </Link>
                   <Link
                     href="/register"
-                    className="rounded-xl bg-[#1d4ed8] py-3.5 text-center text-[16px] font-bold text-white shadow-sm"
+                    className="min-h-[48px] touch-manipulation rounded-xl bg-[#1d4ed8] py-3.5 text-center text-[16px] font-bold text-white shadow-sm active:opacity-95"
                     onClick={() => setMenuOpen(false)}
                     data-testid="nav-registracija"
                     {...linkProps}

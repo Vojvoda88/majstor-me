@@ -34,7 +34,7 @@ export default function HomePage() {
         <StatsStrip />
       </div>
 
-      <div className="mx-auto max-w-6xl px-6 py-16 md:py-20">
+      <div className="mx-auto max-w-6xl px-4 py-12 sm:px-5 md:px-6 md:py-20">
         <div className="animate-fade-up" style={{ animationDelay: "0.05s", animationFillMode: "both" }}>
           <CategoriesGrid />
         </div>

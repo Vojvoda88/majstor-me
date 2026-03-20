@@ -14,7 +14,7 @@ const TRUST = [
 
 export function Hero() {
   return (
-    <section className="relative flex min-h-[min(100svh,760px)] w-full items-center justify-center overflow-hidden px-4 pb-16 pt-28 text-white md:min-h-[720px] md:pb-24 md:pt-32">
+    <section className="relative flex min-h-[min(100dvh,780px)] w-full items-center justify-center overflow-hidden px-4 pb-20 pt-[max(7rem,env(safe-area-inset-top)+5.5rem)] text-white sm:px-5 md:min-h-[720px] md:pb-24 md:pt-32">
       <Image
         src={HERO_IMAGE_FALLBACK}
         alt="Majstor na poslu"
@@ -80,7 +80,7 @@ export function Hero() {
         <p className="relative z-30 mt-8">
           <Link
             href="/register?type=majstor"
-            className="inline-block text-sm font-semibold text-amber-200/90 underline decoration-amber-400/50 underline-offset-4 transition hover:text-white"
+            className="inline-block min-h-[44px] touch-manipulation py-2 text-sm font-semibold text-amber-200/90 underline decoration-amber-400/50 underline-offset-4 transition hover:text-white active:opacity-90"
           >
             Nudite usluge? Registrujte se kao majstor →
           </Link>

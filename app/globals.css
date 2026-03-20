@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Mobile: spriječi horizontalni „pomak“ i naglo skaliranje teksta u Safari-ju */
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
 /* Majstor.me – Tailwind + shadcn varijable (HSL komponente bez hsl() wrappera) */
 @layer base {
   :root {

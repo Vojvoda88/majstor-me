@@ -51,6 +51,7 @@ export const viewport: Viewport = {
   themeColor: "#2563EB",
   width: "device-width",
   initialScale: 1,
+  viewportFit: "cover",
 };
 
 export default function RootLayout({
@@ -60,7 +61,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="sr" className={`${inter.variable} ${dmSans.variable} ${outfit.variable}`}>
-      <body className="font-sans antialiased bg-[#FAFBFC] text-[#0F172A]">
+      <body className="min-h-[100dvh] overflow-x-hidden font-sans antialiased bg-[#FAFBFC] text-[#0F172A] [padding-bottom:env(safe-area-inset-bottom)]">
         <Providers>
           {children}
           <Analytics />
