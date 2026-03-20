@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { trackFunnelEvent } from "@/lib/funnel-events";
-import type { FunnelEventType } from "@/lib/funnel-events";
+import type { FunnelEventType, FunnelMetadata } from "@/lib/funnel-events";
 
 export const dynamic = "force-dynamic";
 
@@ -23,7 +23,7 @@ export async function POST(request: Request) {
     const session = await auth();
     const body = await request.json().catch(() => ({}));
     const event = body?.event as string | undefined;
-    const metadata = body?.metadata as Record<string, unknown> | undefined;
+    const metadata = body?.metadata as FunnelMetadata | undefined;
 
     if (!event || !VALID_EVENTS.includes(event as FunnelEventType)) {
       return NextResponse.json({ success: false, error: "Invalid event" }, { status: 400 });
@@ -33,7 +33,7 @@ export async function POST(request: Request) {
     await trackFunnelEvent(
       prisma,
       event as FunnelEventType,
-      metadata ?? undefined,
+      metadata,
       session?.user?.id ?? undefined
     );
 
