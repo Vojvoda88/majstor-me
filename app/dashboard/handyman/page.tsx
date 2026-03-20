@@ -180,7 +180,7 @@ export default async function HandymanDashboardPage({
               ((profile as { creditsBalance?: number }).creditsBalance ?? 0) < LOW_CREDITS_THRESHOLD &&
               ((profile as { creditsBalance?: number }).creditsBalance ?? 0) > 0 && (
               <p className="mt-1 text-xs font-medium text-amber-600">
-                Preostalo vam je još {(profile as { creditsBalance }).creditsBalance} kredita.
+                Preostalo vam je još {(profile as { creditsBalance?: number }).creditsBalance ?? 0} kredita.
               </p>
             )}
             {isPaymentConfigured() ? (
