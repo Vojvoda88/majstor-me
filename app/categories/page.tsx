@@ -5,6 +5,8 @@ import { PublicHeader } from "@/components/layout/PublicHeader";
 import { CATEGORY_CONFIG } from "@/lib/categories";
 import { ArrowRight } from "lucide-react";
 import { getSiteUrl } from "@/lib/site-url";
+import { SEO_LANDING_CITIES } from "@/lib/seo-landing-config";
+import { CITY_SLUGS } from "@/lib/slugs";
 
 const baseUrl = getSiteUrl();
 
@@ -47,6 +49,45 @@ export default function CategoriesPage() {
             {CATEGORY_CONFIG.length} kategorija — pronađite majstora za svaki posao. Odaberite uslugu i pregledajte
             profile.
           </p>
+          <div className="mt-8 rounded-2xl border border-slate-200/90 bg-white/80 p-4 md:p-5">
+            <p className="text-xs font-bold uppercase tracking-wider text-slate-500">Gradovi</p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {SEO_LANDING_CITIES.map((citySlug) => {
+                const name = CITY_SLUGS[citySlug];
+                if (!name) return null;
+                return (
+                  <Link
+                    key={citySlug}
+                    href={`/grad/${citySlug}`}
+                    className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-sm font-medium text-slate-800 hover:border-blue-200 hover:bg-blue-50"
+                  >
+                    {name}
+                  </Link>
+                );
+              })}
+            </div>
+            <p className="mt-4 text-xs font-bold uppercase tracking-wider text-slate-500">SEO stranice (usluga + grad)</p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              <Link
+                href="/vodoinstalater-podgorica"
+                className="rounded-lg border border-blue-100 bg-blue-50/80 px-3 py-1.5 text-sm font-medium text-blue-900 hover:bg-blue-100"
+              >
+                Vodoinstalater Podgorica
+              </Link>
+              <Link
+                href="/elektricar-niksic"
+                className="rounded-lg border border-blue-100 bg-blue-50/80 px-3 py-1.5 text-sm font-medium text-blue-900 hover:bg-blue-100"
+              >
+                Električar Nikšić
+              </Link>
+              <Link
+                href="/klima-servis-budva"
+                className="rounded-lg border border-blue-100 bg-blue-50/80 px-3 py-1.5 text-sm font-medium text-blue-900 hover:bg-blue-100"
+              >
+                Klima Budva
+              </Link>
+            </div>
+          </div>
         </header>
         <ul className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
           {CATEGORY_CONFIG.map((cat) => {

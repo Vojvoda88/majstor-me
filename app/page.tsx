@@ -7,6 +7,7 @@ import { WhyMajstorSection } from "@/components/home-page/WhyMajstorSection";
 import { CategoriesGrid } from "@/components/home-page/CategoriesGrid";
 import { HowItWorks } from "@/components/home-page/HowItWorks";
 import { CTAForMasters } from "@/components/home-page/CTAForMasters";
+import { SeoLandingLinks } from "@/components/home-page/SeoLandingLinks";
 import { organizationJsonLd, faqPageJsonLd } from "@/lib/json-ld";
 import { FAQ_ITEMS } from "@/lib/faq-data";
 
@@ -56,6 +57,9 @@ export default function HomePage() {
         </div>
         <div className="animate-fade-up" style={{ animationDelay: "0.25s", animationFillMode: "both" }}>
           <FAQ />
+        </div>
+        <div className="animate-fade-up" style={{ animationDelay: "0.28s", animationFillMode: "both" }}>
+          <SeoLandingLinks />
         </div>
         <div className="animate-fade-up" style={{ animationDelay: "0.3s", animationFillMode: "both" }}>
           <CTAForMasters />

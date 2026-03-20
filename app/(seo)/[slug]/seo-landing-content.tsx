@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { PublicHeader } from "@/components/layout/PublicHeader";
-import { Wrench, ChevronLeft, ChevronRight, MapPin } from "lucide-react";
+import { Wrench, ChevronLeft, ChevronRight, MapPin, ArrowRight } from "lucide-react";
 import { HandymanCard } from "@/components/lists/handyman-card";
 import { DEFAULT_PAGE_SIZE } from "@/lib/constants";
 import { cityLocative } from "@/lib/slugs";
@@ -16,6 +16,11 @@ type Handyman = {
   ratingAvg: number;
   reviewCount: number;
 };
+
+function buildIntroParagraph(displayName: string, cityLoc: string, cityName: string): string {
+  const service = displayName.toLowerCase();
+  return `Tražite pouzdanog ${service}a u ${cityLoc}? Na BrziMajstor.ME možete brzo pronaći provjerene majstore koji dolaze na vašu adresu. Bez obzira da li vam treba hitna intervencija ili planirani radovi, jednim zahtjevom dobijate ponude od stručnjaka iz ${cityName} i okolice. Platforma štedi vrijeme: ne morate zvati redom niti tražiti preporuke — opišite posao, odaberite grad i uporedite ocjene i recenzije. Majstori koji su aktivni u vašoj zoni mogu vam se javiti u kratkom roku. Svi profili su povezani sa iskustvima stvarnih korisnika, što olakšava odluku. Pošaljite zahtjev besplatno i izaberite ponudu koja vam najviše odgovara.`;
+}
 
 export function SeoLandingContent({
   displayName,
@@ -38,6 +43,7 @@ export function SeoLandingContent({
   const [reloadToken, setReloadToken] = useState(0);
 
   const cityNameLocative = cityLocative(cityName);
+  const intro = buildIntroParagraph(displayName, cityNameLocative, cityName);
 
   useEffect(() => {
     setPage(1);
@@ -87,6 +93,8 @@ export function SeoLandingContent({
     };
   }, [internalCategory, cityName, sortBy, page, reloadToken]);
 
+  const createUrl = `/request/create?category=${encodeURIComponent(internalCategory)}&city=${encodeURIComponent(cityName)}`;
+
   return (
     <main className="min-h-screen bg-slate-100 text-slate-900">
       <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8">
@@ -102,15 +110,18 @@ export function SeoLandingContent({
               {cityName}
             </Link>
             <span className="mx-2">/</span>
+            <Link href="/categories" className="hover:text-slate-700">
+              Kategorije
+            </Link>
+            <span className="mx-2">/</span>
             <span className="font-medium text-slate-900">{displayName}</span>
           </nav>
 
-          <h1 className="mb-4 text-2xl font-black tracking-tight text-slate-950 sm:text-3xl">
-            {displayName} {cityName}
+          <h1 className="mb-5 text-2xl font-black leading-tight tracking-tight text-slate-950 sm:text-3xl md:text-4xl">
+            {displayName} u {cityNameLocative} – BrziMajstor.ME
           </h1>
-          <p className="mb-6 text-slate-600">
-            Pronađite provjerene {displayName.toLowerCase()}e u {cityNameLocative}. Brze ponude, lako uporedite majstore.
-          </p>
+
+          <p className="mb-8 max-w-3xl text-base leading-relaxed text-slate-700 sm:text-[1.05rem]">{intro}</p>
 
           <div className="mb-6 flex flex-wrap gap-4">
             <select
@@ -127,9 +138,7 @@ export function SeoLandingContent({
             <p className="py-12 text-center text-slate-500">Učitavanje...</p>
           ) : error ? (
             <div className="rounded-2xl border border-red-100 bg-red-50 p-12 text-center shadow-sm">
-              <p className="text-sm font-medium text-red-800">
-                {error}
-              </p>
+              <p className="text-sm font-medium text-red-800">{error}</p>
               <button
                 type="button"
                 onClick={() => setReloadToken((t) => t + 1)}
@@ -145,7 +154,7 @@ export function SeoLandingContent({
                 Trenutno nema {displayName.toLowerCase()}a u {cityName}.
               </p>
               <Link
-                href={`/request/create?category=${encodeURIComponent(internalCategory)}&city=${encodeURIComponent(cityName)}`}
+                href={createUrl}
                 className="mt-4 inline-block font-medium text-blue-600 hover:underline"
               >
                 Objavi zahtjev
@@ -188,28 +197,46 @@ export function SeoLandingContent({
             </>
           )}
 
-          {/* FAQ sekcija za SEO */}
-          <section className="mt-12 rounded-2xl border border-white bg-white p-6 shadow-sm">
-            <h2 className="mb-4 text-lg font-bold text-slate-900">
-              Često postavljana pitanja
-            </h2>
-            <div className="space-y-4 text-sm text-slate-600">
+          {/* CTA */}
+          <section className="mt-12 rounded-2xl border border-blue-100 bg-gradient-to-br from-blue-50 to-white p-6 shadow-sm sm:p-8">
+            <h2 className="text-lg font-bold text-slate-900 sm:text-xl">Pošaljite zahtjev</h2>
+            <p className="mt-2 max-w-2xl text-slate-600">
+              Pošaljite zahtjev i majstori će vam se javiti u roku od par minuta.
+            </p>
+            <Link
+              href={createUrl}
+              className="mt-5 inline-flex items-center gap-2 rounded-2xl bg-gradient-to-br from-[#2563eb] to-[#1d4ed8] px-6 py-3.5 text-base font-bold text-white shadow-btn-cta transition hover:brightness-105"
+            >
+              Objavi zahtjev
+              <ArrowRight className="h-5 w-5" />
+            </Link>
+          </section>
+
+          {/* FAQ za SEO */}
+          <section className="mt-10 rounded-2xl border border-white bg-white p-6 shadow-sm sm:p-8">
+            <h2 className="mb-4 text-lg font-bold text-slate-900">Često postavljana pitanja</h2>
+            <div className="space-y-5 text-sm leading-relaxed text-slate-600">
               <div>
-                <h3 className="font-semibold text-slate-800">Kako pronaći {displayName.toLowerCase()}a u {cityName}?</h3>
+                <h3 className="font-semibold text-slate-800">
+                  Koliko košta {displayName.toLowerCase()} u {cityNameLocative}?
+                </h3>
                 <p>
-                  Pregledajte listu majstora iznad, uporedite ocjene i recenzije, te pošaljite zahtjev onome koji vam najviše odgovara. Odmah ćete dobiti ponude.
+                  Cijena zavisi od vrste posla, materijala i hitnosti. Na BrziMajstor.ME dobijate više ponuda pa možete
+                  uporediti cijene prije nego što angažujete majstora.
                 </p>
               </div>
               <div>
-                <h3 className="font-semibold text-slate-800">Koliko košta {displayName.toLowerCase()} u {cityName}?</h3>
+                <h3 className="font-semibold text-slate-800">Koliko brzo dolazi majstor?</h3>
                 <p>
-                  Cijene variraju ovisno o obimu posla. Pošaljite zahtjev i dobićete konkretne ponude od majstora iz {cityName} i okolice.
+                  Zavisno od dostupnosti i hitnosti, mnogi majstori odgovaraju u roku od nekoliko minuta do nekoliko
+                  sati. U zahtjevu navedite kada vam odgovara dolazak.
                 </p>
               </div>
               <div>
                 <h3 className="font-semibold text-slate-800">Da li su majstori provjereni?</h3>
                 <p>
-                  Majstori na BrziMajstor.ME imaju recenzije od stvarnih korisnika. Verifikovani majstori imaju dodatnu provjeru.
+                  Majstori na BrziMajstor.ME imaju recenzije od stvarnih korisnika. Verifikovani majstori imaju dodatnu
+                  provjeru identiteta.
                 </p>
               </div>
             </div>
