@@ -8,18 +8,18 @@ export function FAQ() {
   const [open, setOpen] = useState<number | null>(0);
 
   return (
-    <section className="py-16 md:py-32">
-      <div className="mb-10 rounded-3xl border border-slate-200/80 bg-gradient-to-br from-slate-50 via-white to-slate-50/80 px-5 py-8 shadow-sm sm:px-6 md:mb-14 md:px-10 md:py-11">
+    <section id="faq" className="scroll-mt-20 py-12 md:scroll-mt-24 md:py-32">
+      <div className="mb-6 rounded-2xl border border-slate-200/80 bg-gradient-to-br from-slate-50 via-white to-slate-50/80 px-4 py-6 shadow-sm sm:px-5 sm:py-7 md:mb-14 md:rounded-3xl md:px-10 md:py-11">
         <p className="text-[11px] font-bold uppercase tracking-[0.28em] text-blue-800">PODRŠKA</p>
         <h2 className="font-display mt-3 text-3xl font-bold tracking-tight text-brand-navy md:text-4xl">
           Često postavljana pitanja
         </h2>
-        <p className="mt-4 max-w-2xl text-base font-medium leading-relaxed text-slate-700">
+        <p className="mt-3 max-w-2xl text-[15px] font-medium leading-relaxed text-slate-700 sm:mt-4 sm:text-base">
           Brzi odgovori prije nego što objavite zahtjev ili se registrujete kao majstor.
         </p>
       </div>
 
-      <div className="space-y-4">
+      <div className="space-y-3 md:space-y-4">
         {FAQ_ITEMS.map((faq, i) => {
           const isOpen = open === i;
           return (

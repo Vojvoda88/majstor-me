@@ -17,8 +17,8 @@ export function HomeConversionBand() {
       className="relative z-20 mx-auto max-w-6xl px-4 sm:px-5 md:px-6"
       aria-labelledby="home-value-heading"
     >
-      <div className="rounded-[1.5rem] border border-slate-200/95 bg-white p-6 shadow-[0_20px_50px_-28px_rgba(10,22,40,0.18)] sm:p-8 md:rounded-[1.75rem] md:p-10">
-        <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between lg:gap-12">
+      <div className="rounded-[1.35rem] border border-slate-200/95 bg-white p-5 shadow-[0_20px_50px_-28px_rgba(10,22,40,0.18)] sm:p-7 md:rounded-[1.75rem] md:p-10">
+        <div className="flex flex-col gap-6 md:gap-8 lg:flex-row lg:items-center lg:justify-between lg:gap-12">
           <div className="min-w-0 flex-1">
             <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-slate-500">Za korisnike</p>
             <h2
@@ -31,7 +31,7 @@ export function HomeConversionBand() {
               Opišite posao jednom. Majstori iz vaše okoline vide zahtjev i javljaju se s ponudama. Vi birate šta vam odgovara
               — brzo i pregledno.
             </p>
-            <ul className="mt-6 space-y-3">
+            <ul className="mt-5 space-y-2.5 md:mt-6 md:space-y-3">
               {POINTS.map((text) => (
                 <li key={text} className="flex gap-3 text-[15px] leading-snug text-slate-700 md:text-base">
                   <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200/80">

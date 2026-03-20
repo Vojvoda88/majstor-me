@@ -239,14 +239,15 @@ export default async function RequestDetailPage({
           )}
           {session?.user?.role === "HANDYMAN" && !isOwner && (
             <div className="rounded-3xl border border-amber-200/60 bg-gradient-to-br from-amber-50/90 via-white to-slate-50 p-6 shadow-inner md:p-7">
-              <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
-                <h3 className="font-display text-lg font-bold text-brand-navy">Otključaj lead</h3>
-                <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-bold uppercase tracking-wide text-amber-900 ring-1 ring-amber-200/80">
-                  Premium lead
-                </span>
-              </div>
-              <p className="text-sm leading-relaxed text-slate-600">
-                Da biste vidjeli broj telefona, adresu i poslali ponudu, otključajte lead kreditima.
+              <h3 className="font-display text-lg font-bold text-brand-navy">Uzmi kontakt korisnika</h3>
+              <p className="mt-3 text-sm leading-relaxed text-slate-600">
+                Prije toga vidite opis posla, grad, kategoriju i slike ako ih ima.{" "}
+                <strong className="font-semibold text-slate-800">Broj telefona i puni kontakt ne vidite odmah</strong> — to je namjerno,
+                da se dogovor ide preko platforme.
+              </p>
+              <p className="mt-2 text-sm leading-relaxed text-slate-600">
+                Kada vam posao odgovara, potvrdite dolje: <strong className="font-semibold text-slate-800">tek tada se skidaju krediti</strong>, a
+                dobijate kontakt da se javite i pošaljete ponudu.
               </p>
               <LeadPriceBreakdown breakdown={creditsBreakdown} />
               <div className="mt-5">

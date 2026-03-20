@@ -3,8 +3,8 @@ import { ArrowRight } from "lucide-react";
 
 export function CTAForMasters() {
   return (
-    <section className="py-20 md:py-28">
-      <div className="relative overflow-hidden rounded-[2rem] border border-blue-900/25 bg-gradient-to-br from-brand-navy via-[#0f2847] to-[#0a1628] p-10 shadow-[0_24px_64px_-20px_rgba(10,22,40,0.35)] md:p-14 lg:p-16">
+    <section className="py-12 md:py-28">
+      <div className="relative overflow-hidden rounded-[1.5rem] border border-blue-900/25 bg-gradient-to-br from-brand-navy via-[#0f2847] to-[#0a1628] p-7 shadow-[0_24px_64px_-20px_rgba(10,22,40,0.35)] sm:rounded-[1.75rem] sm:p-9 md:rounded-[2rem] md:p-14 lg:p-16">
         <div
           className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-amber-500/10 blur-3xl"
           aria-hidden
@@ -13,10 +13,10 @@ export function CTAForMasters() {
           className="pointer-events-none absolute -bottom-20 left-1/3 h-56 w-56 rounded-full bg-blue-500/10 blur-3xl"
           aria-hidden
         />
-        <div className="relative flex max-w-4xl flex-col gap-10 md:flex-row md:items-center md:justify-between md:gap-14">
+        <div className="relative flex max-w-4xl flex-col gap-7 md:flex-row md:items-center md:justify-between md:gap-14">
           <div>
-            <h3 className="font-display text-3xl font-bold tracking-tight text-white md:text-4xl">Vi ste majstor?</h3>
-            <p className="mt-5 max-w-xl text-base font-medium leading-relaxed text-slate-200 md:text-lg">
+            <h3 className="font-display text-2xl font-bold tracking-tight text-white sm:text-3xl md:text-4xl">Vi ste majstor?</h3>
+            <p className="mt-4 max-w-xl text-[15px] font-medium leading-relaxed text-slate-200 sm:mt-5 sm:text-base md:text-lg">
               Prijavite profil besplatno. Primajte zahtjeve od klijenata. Bez provizije na objavljivanje.
             </p>
           </div>

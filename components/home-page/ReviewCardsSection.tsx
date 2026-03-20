@@ -38,17 +38,17 @@ const FEATURED = [
 
 export function ReviewCardsSection() {
   return (
-    <section id="istaknuti-majstori" className="py-20 md:py-28">
-      <div className="mb-10 md:mb-12">
-        <h2 className="font-display text-3xl font-bold tracking-tight text-brand-navy md:text-4xl">
+    <section id="istaknuti-majstori" className="py-12 md:py-28">
+      <div className="mb-6 md:mb-12">
+        <h2 className="font-display text-[1.65rem] font-bold tracking-tight text-brand-navy sm:text-3xl md:text-4xl">
           Istaknuti majstori
         </h2>
-        <p className="mt-3 max-w-2xl text-base font-medium leading-relaxed text-slate-700 md:text-lg">
+        <p className="mt-2 max-w-2xl text-[15px] font-medium leading-relaxed text-slate-700 sm:mt-3 sm:text-base md:text-lg">
           Primjeri dobrih ocjena i iskustva — tako znate šta možete očekivati kad birate majstora.
         </p>
       </div>
 
-      <div className="grid grid-cols-1 gap-7 md:grid-cols-2 md:gap-8 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-5 md:grid-cols-2 md:gap-8 lg:grid-cols-3">
         {FEATURED.map((h) => (
           <article
             key={h.name}
@@ -82,7 +82,7 @@ export function ReviewCardsSection() {
               </div>
             </div>
 
-            <div className="flex flex-1 flex-col px-6 pb-7 pt-6 md:px-7">
+            <div className="flex flex-1 flex-col px-5 pb-6 pt-5 md:px-7 md:pb-7 md:pt-6">
               <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1 border-b border-slate-100 pb-5">
                 <div className="flex items-center gap-1.5">
                   <Star className="h-5 w-5 fill-amber-400 text-amber-500" aria-hidden />

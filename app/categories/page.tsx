@@ -2,22 +2,16 @@ import Link from "next/link";
 import Image from "next/image";
 import type { Metadata } from "next";
 import { PublicHeader } from "@/components/layout/PublicHeader";
+import { PublicFooter } from "@/components/layout/PublicFooter";
 import { CATEGORY_CONFIG } from "@/lib/categories";
+import { REQUEST_CATEGORY_FALLBACK } from "@/lib/constants";
+import { getCategoryImageUrl } from "@/lib/category-images";
 import { ArrowRight } from "lucide-react";
 import { getSiteUrl } from "@/lib/site-url";
 import { SEO_LANDING_CITIES } from "@/lib/seo-landing-config";
 import { CITY_SLUGS } from "@/lib/slugs";
 
 const baseUrl = getSiteUrl();
-
-const CATEGORY_IMAGES: Record<string, string> = {
-  Vodoinstalater: "https://images.unsplash.com/photo-1504148455328-c376907d081c?w=600&auto=format&fit=crop",
-  Električar: "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=600&auto=format&fit=crop",
-  Keramičar: "https://images.unsplash.com/photo-1581578731548-c64695ce6958?w=600&auto=format&fit=crop",
-  "Klima servis": "https://images.unsplash.com/photo-1595467793069-45069736f88d?w=600&auto=format&fit=crop",
-  Stolar: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=600&auto=format&fit=crop",
-  Čišćenje: "https://images.unsplash.com/photo-1581578731548-c64695ce6958?w=600&auto=format&fit=crop",
-};
 
 export const metadata: Metadata = {
   title: "Majstori po kategorijama",
@@ -48,6 +42,15 @@ export default function CategoriesPage() {
           <p className="mt-4 max-w-2xl text-base leading-relaxed text-slate-600 md:text-lg">
             {CATEGORY_CONFIG.length} kategorija — pronađite majstora za svaki posao. Odaberite uslugu i pregledajte
             profile.
+          </p>
+          <p className="mt-3 max-w-2xl text-sm text-slate-600">
+            <Link
+              href={`/request/create?category=${encodeURIComponent(REQUEST_CATEGORY_FALLBACK)}`}
+              className="font-semibold text-blue-700 underline-offset-2 hover:underline"
+            >
+              Ne vidiš svoju uslugu?
+            </Link>{" "}
+            Objavi zahtjev, opiši posao u opisu — ne mora tačno odgovarati nazivu kategorije.
           </p>
           <div className="mt-8 rounded-2xl border border-slate-200/90 bg-white/80 p-4 md:p-5">
             <p className="text-xs font-bold uppercase tracking-wider text-slate-500">Gradovi</p>
@@ -91,19 +94,19 @@ export default function CategoriesPage() {
         </header>
         <ul className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
           {CATEGORY_CONFIG.map((cat) => {
-            const imgSrc = CATEGORY_IMAGES[cat.displayName] ?? CATEGORY_IMAGES.Vodoinstalater;
+            const imgSrc = getCategoryImageUrl(cat.slug);
             return (
               <li key={cat.slug}>
                 <Link
                   href={`/category/${cat.slug}`}
-                  className="group relative flex min-h-[140px] overflow-hidden rounded-3xl border border-slate-200/80 bg-white shadow-marketplace-sm transition hover:-translate-y-1 hover:shadow-marketplace md:min-h-[160px]"
+                  className="group relative flex min-h-[140px] overflow-hidden rounded-3xl border border-slate-200/90 bg-white shadow-[0_8px_28px_-12px_rgba(10,22,40,0.14)] ring-1 ring-slate-900/[0.04] transition duration-300 hover:-translate-y-0.5 hover:border-slate-300/90 hover:shadow-[0_14px_36px_-12px_rgba(10,22,40,0.18)] md:min-h-[160px]"
                 >
-                  <div className="relative w-28 shrink-0 sm:w-32">
+                  <div className="relative w-28 shrink-0 bg-slate-100 sm:w-32">
                     <Image
                       src={imgSrc}
-                      alt=""
+                      alt={cat.displayName}
                       fill
-                      className="object-cover transition duration-500 group-hover:scale-105"
+                      className="object-cover object-center transition duration-500 ease-out group-hover:scale-[1.03]"
                       sizes="128px"
                       unoptimized
                     />
@@ -122,6 +125,7 @@ export default function CategoriesPage() {
           })}
         </ul>
       </div>
+      <PublicFooter />
     </div>
   );
 }

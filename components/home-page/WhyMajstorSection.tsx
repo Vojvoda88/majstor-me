@@ -24,7 +24,7 @@ const BENEFITS = [
 
 export function WhyMajstorSection() {
   return (
-    <section className="relative py-20 md:py-32">
+    <section className="relative py-12 md:py-32">
       <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent" />
 
       <div className="grid gap-10 lg:grid-cols-[minmax(0,1.08fr)_minmax(0,0.95fr)] lg:gap-12 xl:gap-16 lg:items-start">
@@ -35,11 +35,11 @@ export function WhyMajstorSection() {
           <h2 className="relative mt-4 font-display text-3xl font-bold leading-tight tracking-tight md:text-4xl lg:text-[2.5rem]">
             Zašto BrziMajstor.ME?
           </h2>
-          <p className="relative mt-6 max-w-lg text-[15px] leading-relaxed text-slate-100/95 md:text-base">
+          <p className="relative mt-4 max-w-lg text-[15px] leading-relaxed text-slate-100/95 sm:mt-6 md:text-base">
             Marketplace povezuje vas sa majstorima u Crnoj Gori: jedan zahtjev, više ponuda, sve na jednom mjestu — od sitnih popravki
             do većih radova.
           </p>
-          <div className="relative mt-10 grid gap-3 border-t border-white/10 pt-10 sm:grid-cols-2">
+          <div className="relative mt-8 grid gap-2.5 border-t border-white/10 pt-8 sm:grid-cols-2 sm:gap-3 md:mt-10 md:pt-10">
             <div className="rounded-2xl border border-white/10 bg-white/[0.07] px-4 py-4 backdrop-blur-sm">
               <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-amber-200/90">ZA KLIJENTE</p>
               <p className="mt-2 text-sm font-semibold leading-snug">Bez provizije na vašu stranu</p>
@@ -58,11 +58,11 @@ export function WhyMajstorSection() {
           </Link>
         </div>
 
-        <ul className="flex flex-col gap-5 md:gap-6">
+        <ul className="flex flex-col gap-3.5 md:gap-6">
           {BENEFITS.map(({ id, title, body, icon: Icon }) => (
             <li
               key={id}
-              className="rounded-2xl border border-slate-200/90 bg-white p-6 shadow-[0_8px_28px_-12px_rgba(10,22,40,0.12)] md:p-7 lg:p-8"
+              className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-[0_8px_28px_-12px_rgba(10,22,40,0.12)] md:p-7 lg:p-8"
             >
               <div className="flex gap-4 md:gap-5">
                 <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-brand-navy text-white shadow-md md:h-14 md:w-14 md:rounded-2xl">
@@ -79,7 +79,7 @@ export function WhyMajstorSection() {
         </ul>
       </div>
 
-      <div className="mt-12 flex items-start gap-4 rounded-2xl border border-emerald-200/80 bg-gradient-to-r from-emerald-50 to-white px-6 py-5 text-emerald-950 shadow-sm md:mt-14 md:items-center md:px-8 md:py-6">
+      <div className="mt-8 flex items-start gap-3 rounded-2xl border border-emerald-200/80 bg-gradient-to-r from-emerald-50 to-white px-5 py-4 text-emerald-950 shadow-sm md:mt-14 md:items-center md:gap-4 md:px-8 md:py-6">
         <ShieldCheck className="mt-0.5 h-6 w-6 shrink-0 text-emerald-600 md:mt-0" />
         <p className="text-sm font-semibold leading-relaxed md:text-base">
           Sve ponude stižu direktno od majstora — BrziMajstor.ME ne uzima proviziju od korisnika.

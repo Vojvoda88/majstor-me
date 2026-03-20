@@ -10,6 +10,7 @@ import { OnboardingBanner } from "@/components/handyman/onboarding-banner";
 import { StickyBottomCTA } from "@/components/layout/StickyBottomCTA";
 import { calcProfileCompletion } from "@/lib/handyman-onboarding";
 import { isCreditsRequired, LOW_CREDITS_THRESHOLD } from "@/lib/credits";
+import { REQUEST_CATEGORY_FALLBACK } from "@/lib/constants";
 import { CREDIT_PACKAGES } from "@/lib/credit-packages";
 import { isPaymentConfigured } from "@/lib/payment";
 
@@ -87,7 +88,10 @@ export default async function HandymanDashboardPage({
     if (category) {
       where.category = category;
     } else if (profile.categories.length > 0) {
-      where.category = { in: profile.categories };
+      where.OR = [
+        { category: { in: profile.categories } },
+        { category: REQUEST_CATEGORY_FALLBACK },
+      ];
     }
     if (city) where.city = city;
     // Bez city filtra: majstori vide sve zahtjeve; sa city: samo taj grad
@@ -188,11 +192,23 @@ export default async function HandymanDashboardPage({
                 Kupi kredite →
               </Link>
             ) : (
-              <p className="mt-1 text-xs text-[#94A3B8]">20–60 kredita po leadu</p>
+              <p className="mt-1 text-xs text-[#94A3B8]">20–60 kredita po kontaktu</p>
             )}
           </div>
         )}
       </div>
+
+      {isCreditsRequired() && (
+        <div className="mt-6 rounded-xl border border-slate-200 bg-slate-50/90 p-4 text-sm leading-relaxed text-slate-700">
+          <p className="font-semibold text-[#0F172A]">Kako funkcioniše za majstore</p>
+          <p className="mt-2">
+            Pregledate objavljene poslove bez plaćanja. Vidite opis, grad, kategoriju i slike ako ih ima —{" "}
+            <strong className="font-semibold text-[#0F172A]">broj telefona ne vidite odmah</strong>. Kada vam posao odgovara,
+            potvrdite kontakt: <strong className="font-semibold text-[#0F172A]">tek tada se skidaju krediti</strong>, pa dobijate kontakt i možete poslati ponudu.
+            Povrat kredita postoji samo ako admin označi spam ili zaobilaženje, ili zbog tehničke greške — ne ako se korisnik ne javi.
+          </p>
+        </div>
+      )}
 
       <HandymanRequestList
         requests={requests}

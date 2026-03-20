@@ -60,8 +60,19 @@ export default async function HandymanCreditsPage({
         Kupovina kredita
       </h1>
       <p className="mt-2 text-slate-600">
-        Otključavanje leada troši 20–60 kredita zavisno od kvaliteta zahtjeva. Kupite paket koji vam odgovara.
+        Krediti se troše tek kada uzmete kontakt korisnika (obično 20–60, zavisi od hitnosti, slika, detalja i potvrđenog kontakta). Kupite paket koji vam odgovara.
       </p>
+
+      <div className="mt-4 rounded-xl border border-slate-200 bg-white p-4 text-sm leading-relaxed text-slate-700 shadow-sm">
+        <p className="font-semibold text-slate-900">Kratko o plaćanju i povratu</p>
+        <ul className="mt-2 list-disc space-y-1 pl-5">
+          <li>Pregled posla je besplatan — krediti se skidaju tek kad potvrdite da želite kontakt.</li>
+          <li>
+            Povrat kredita postoji ako admin označi zahtjev kao spam ili pokušaj zaobilaženja, ili zbog tehničke greške.
+            Ako se korisnik ne javi, krediti se ne vraćaju automatski.
+          </li>
+        </ul>
+      </div>
 
       <div className="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-4">
         <p className="text-sm font-medium text-slate-700">Trenutni balans</p>
@@ -90,7 +101,7 @@ export default async function HandymanCreditsPage({
                 <p className="mt-1 text-xs text-slate-500">
                   {(() => {
                     const n = getLeadsEstimate(pkg.credits);
-                    return n === 1 ? "Oko 1 standardnog leada" : `Oko ${n} standardnih leadova`;
+                    return n === 1 ? "Oko 1 kontakta po uobičajenoj cijeni" : `Oko ${n} kontakata po uobičajenoj cijeni`;
                   })()}
                 </p>
               </CardHeader>
@@ -106,7 +117,7 @@ export default async function HandymanCreditsPage({
         <CardHeader>
           <CardTitle>Istorija transakcija</CardTitle>
           <CardDescription>
-            Pregled potrošnje, kupovine i refundova kredita
+            Pregled potrošnje, kupovine i povrata kredita
           </CardDescription>
         </CardHeader>
         <CardContent>

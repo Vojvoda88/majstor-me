@@ -17,7 +17,12 @@ export function slugify(text: string): string {
 }
 
 // Re-export iz centralnog categories modula
-import { CATEGORY_CONFIG, CATEGORY_SLUGS, getCategoryBySlug } from "./categories";
+import {
+  CATEGORY_CONFIG,
+  CATEGORY_CONFIG_FULL,
+  CATEGORY_SLUGS,
+  getCategoryBySlug,
+} from "./categories";
 export { CATEGORY_SLUGS, CATEGORY_CONFIG };
 
 // Gradovi - slug -> display name
@@ -109,7 +114,7 @@ export function cityGenitive(name: string): string {
 }
 
 export function categoryToSlug(name: string): string {
-  const entry = CATEGORY_CONFIG.find(
+  const entry = CATEGORY_CONFIG_FULL.find(
     (c) => c.displayName.toLowerCase() === name.toLowerCase()
   );
   return entry ? entry.slug : slugify(name);

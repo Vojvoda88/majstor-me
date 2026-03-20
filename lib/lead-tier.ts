@@ -77,7 +77,7 @@ export function getCreditsBreakdown(input: LeadInput): CreditBreakdown {
     baseLabel = "Hitno u naredna 2 dana";
   } else {
     base = BASE_STANDARD;
-    baseLabel = "Standard";
+    baseLabel = "Nije hitno";
   }
 
   const items: CreditBreakdownItem[] = [];

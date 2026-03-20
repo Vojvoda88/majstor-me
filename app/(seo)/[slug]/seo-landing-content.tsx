@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { PublicHeader } from "@/components/layout/PublicHeader";
+import { PublicFooter } from "@/components/layout/PublicFooter";
 import { Wrench, ChevronLeft, ChevronRight, MapPin, ArrowRight } from "lucide-react";
 import { HandymanCard } from "@/components/lists/handyman-card";
 import { DEFAULT_PAGE_SIZE } from "@/lib/constants";
@@ -244,6 +245,7 @@ export function SeoLandingContent({
           </section>
         </div>
       </div>
+      <PublicFooter />
     </main>
   );
 }

@@ -70,10 +70,10 @@ export function UnlockContactButton({
       <div className="rounded-xl border border-emerald-200 bg-emerald-50/80 p-4">
         <div className="flex items-center gap-2">
           <CheckCircle2 className="h-5 w-5 text-emerald-600" />
-          <p className="font-semibold text-emerald-900">Lead otključan</p>
+          <p className="font-semibold text-emerald-900">Kontakt je dostupan</p>
         </div>
         <p className="mt-1 text-sm text-emerald-700">
-          Kontakt podaci su sada dostupni. Možete poslati ponudu.
+          Možete se javiti korisniku i poslati ponudu.
         </p>
 
         <div className="mt-4 space-y-2 rounded-lg bg-white/70 p-3 text-sm">
@@ -111,7 +111,7 @@ export function UnlockContactButton({
         </div>
 
         <p className="mt-4 text-xs text-slate-600">
-          Kontakt je sada otključan samo za vas kroz BrziMajstor.ME kreditni sistem.
+          Ovaj kontakt je vezan za vaš nalog — možete ga koristiti da dogovorite posao na BrziMajstor.ME.
         </p>
       </div>
     );
@@ -121,7 +121,7 @@ export function UnlockContactButton({
     return (
       <div className="rounded-2xl border border-amber-300/80 bg-amber-50/90 p-4 shadow-sm">
         <p className="text-sm font-semibold text-amber-950">
-          Nemate dovoljno kredita za ovaj lead.
+          Nemate dovoljno kredita za ovaj kontakt.
         </p>
         <Link href="/dashboard/handyman/credits" className="mt-3 inline-block">
           <Button variant="outline" size="sm" className="gap-2 rounded-xl border-amber-400 bg-white font-semibold hover:bg-amber-50">
@@ -159,10 +159,10 @@ export function UnlockContactButton({
       >
         <Unlock className="h-5 w-5" />
         {mutation.isPending
-          ? "Otključavanje..."
+          ? "Potvrđujem..."
           : creditsRequired
-            ? `Otključaj lead (${creditsRequired} kredita)`
-            : "Otključaj lead"}
+            ? `Uzmi kontakt (${creditsRequired} kredita)`
+            : "Uzmi kontakt"}
       </Button>
     </div>
   );

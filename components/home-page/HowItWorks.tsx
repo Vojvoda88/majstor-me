@@ -30,17 +30,17 @@ const STEPS = [
 
 export function HowItWorks() {
   return (
-    <section id="kako-radi" className="py-20 md:py-28">
+    <section id="kako-radi" className="py-12 md:py-28">
       <div className="mx-auto max-w-3xl text-center md:max-w-none">
-        <h2 className="font-display text-3xl font-bold tracking-tight text-brand-navy md:text-4xl">
+        <h2 className="font-display text-[1.65rem] font-bold tracking-tight text-brand-navy sm:text-3xl md:text-4xl">
           Kako radi BrziMajstor.ME
         </h2>
-        <p className="mx-auto mt-4 max-w-2xl text-base font-medium leading-relaxed text-slate-600 md:text-lg">
+        <p className="mx-auto mt-3 max-w-2xl text-[15px] font-medium leading-relaxed text-slate-600 sm:mt-4 sm:text-base md:text-lg">
           Četiri koraka: od opisa posla do izbora majstora — jednostavno, pregledno, bez zvanja redom.
         </p>
       </div>
 
-      <div className="mt-12 rounded-[1.75rem] border border-slate-200/90 bg-gradient-to-b from-white to-slate-50/90 p-4 shadow-[0_24px_56px_-28px_rgba(10,22,40,0.16)] sm:p-6 md:mt-14 md:p-8 lg:p-10">
+      <div className="mt-8 rounded-[1.5rem] border border-slate-200/90 bg-gradient-to-b from-white to-slate-50/90 p-3.5 shadow-[0_24px_56px_-28px_rgba(10,22,40,0.16)] sm:p-5 md:mt-14 md:rounded-[1.75rem] md:p-8 lg:p-10">
         {/* Desktop / tablet: grid */}
         <div className="hidden gap-4 md:grid md:grid-cols-2 md:gap-5 lg:grid-cols-4 lg:gap-4">
           {STEPS.map((step) => (
@@ -84,14 +84,14 @@ export function HowItWorks() {
                         {step.n}
                       </span>
                     </div>
-                    <p className="mt-2 text-[15px] leading-relaxed text-slate-600">{step.desc}</p>
+                    <p className="mt-1.5 text-[14px] leading-relaxed text-slate-600 sm:mt-2 sm:text-[15px]">{step.desc}</p>
                   </div>
                 </div>
               </div>
               {idx < STEPS.length - 1 && (
-                <div className="flex justify-center py-3" aria-hidden>
-                  <div className="flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-400 shadow-sm">
-                    <ChevronRight className="h-4 w-4 rotate-90" strokeWidth={2.5} />
+                <div className="flex justify-center py-1.5" aria-hidden>
+                  <div className="flex h-8 w-8 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-400 shadow-sm">
+                    <ChevronRight className="h-3.5 w-3.5 rotate-90" strokeWidth={2.5} />
                   </div>
                 </div>
               )}
@@ -100,7 +100,7 @@ export function HowItWorks() {
         </div>
       </div>
 
-      <div className="mt-12 flex flex-col items-stretch gap-4 sm:mt-14 sm:flex-row sm:items-center sm:justify-center sm:gap-5">
+      <div className="mt-8 flex flex-col items-stretch gap-3 sm:mt-14 sm:flex-row sm:items-center sm:justify-center sm:gap-5">
         <Link
           href="/request/create"
           className="inline-flex min-h-[52px] items-center justify-center rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 px-8 text-base font-bold text-brand-navy shadow-[0_14px_36px_-10px_rgba(245,158,11,0.45)] transition hover:brightness-105 active:scale-[0.99]"

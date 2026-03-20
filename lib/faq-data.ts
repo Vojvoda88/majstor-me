@@ -17,6 +17,6 @@ export const FAQ_ITEMS = [
   },
   {
     q: "Kako majstori dobijaju poslove?",
-    a: "Majstori pregledaju zahtjeve, otključavaju lead i šalju svoju ponudu zainteresovanim korisnicima.",
+    a: "Majstori pregledaju zahtjeve, uzimaju kontakt korisnika (krediti se troše tek tada) i šalju ponudu onima kojima posao odgovara.",
   },
 ];

@@ -81,7 +81,7 @@ export async function POST(request: Request) {
       return NextResponse.json(
         {
           success: false,
-          error: "Morate otključati lead prije slanja ponude. Otključajte lead da biste vidjeli kontakt i poslali ponudu.",
+          error: "Prije slanja ponude morate uzeti kontakt korisnika (krediti se troše tek tada).",
           needsUnlock: true,
         },
         { status: 402 }

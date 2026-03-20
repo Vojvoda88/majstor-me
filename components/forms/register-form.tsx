@@ -126,6 +126,11 @@ export function RegisterForm({
                 <span className="text-xs text-[#64748B]">Nudim usluge</span>
               </label>
             </div>
+            {role === "HANDYMAN" && (
+              <div className="rounded-lg border border-amber-100 bg-amber-50/70 px-3 py-2.5 text-xs leading-relaxed text-slate-700">
+                <strong className="font-semibold text-slate-800">Za majstore:</strong> Pregledate poslove bez plaćanja. Kada želite broj korisnika, trošite kredite. Cijena zavisi od hitnosti i detalja posla.
+              </div>
+            )}
           </div>
           <div className="space-y-3">
             <Label htmlFor="name">Ime i prezime</Label>

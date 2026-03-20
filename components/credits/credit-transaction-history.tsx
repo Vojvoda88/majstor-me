@@ -11,8 +11,8 @@ type Transaction = {
 
 const TYPE_LABELS: Record<string, string> = {
   PURCHASE: "Kupovina",
-  CONTACT_UNLOCK: "Otključavanje leada",
-  REFUND: "Refund",
+  CONTACT_UNLOCK: "Uzimanje kontakta",
+  REFUND: "Povrat kredita",
   ADMIN_ADD: "Dodano od admina",
   ADMIN_REMOVE: "Oduzeto od admina",
   PROMO_BONUS: "Promo bonus",
@@ -26,8 +26,8 @@ function getTypeLabel(type: string): string {
 
 function getReasonDisplay(txn: Transaction): string {
   if (txn.reason) return txn.reason;
-  if (txn.type === "REFUND") return "Refund zbog SPAM/BYPASS zahtjeva";
-  if (txn.type === "CONTACT_UNLOCK") return "Otključavanje leada";
+  if (txn.type === "REFUND") return "Povrat zbog spam/zaobilaženja zahtjeva";
+  if (txn.type === "CONTACT_UNLOCK") return "Uzimanje kontakta";
   if (txn.type === "PURCHASE") return "Kupovina paketa";
   return "";
 }

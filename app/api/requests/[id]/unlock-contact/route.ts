@@ -27,7 +27,7 @@ export async function POST(
 
     if (session.user.role !== "HANDYMAN") {
       return NextResponse.json(
-        { success: false, error: "Samo majstori mogu otključati lead" },
+        { success: false, error: "Samo majstori mogu uzeti kontakt" },
         { status: 403 }
       );
     }
@@ -95,7 +95,7 @@ export async function POST(
         return NextResponse.json(
           {
             success: false,
-            error: `Nemate dovoljno kredita. Ovaj lead košta ${creditsRequired} kredita. Imate: ${balance}.`,
+            error: `Nemate dovoljno kredita. Ovaj kontakt košta ${creditsRequired} kredita. Imate: ${balance}.`,
             needsCredits: true,
             creditsRequired,
           },
@@ -154,7 +154,7 @@ export async function POST(
   } catch (error) {
     logError("Unlock contact error", error);
     return NextResponse.json(
-      { success: false, error: "Greška pri otključavanju leada" },
+      { success: false, error: "Greška pri uzimanju kontakta" },
       { status: 500 }
     );
   }

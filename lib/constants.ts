@@ -5,6 +5,9 @@ export const CITIES = [
   "Kolašin", "Plav", "Žabljak", "Šavnik", "Andrijevica", "Petnjica", "Gusinje",
 ] as const;
 
+/** Fallback za zahtjev kad korisnik ne pronalazi tačnu uslugu u listi (isti string ide u bazu). */
+export const REQUEST_CATEGORY_FALLBACK = "Ne vidim svoju uslugu" as const;
+
 // Categories - Crna Gora (extended for homepage display + form validation)
 export const REQUEST_CATEGORIES = [
   "Vodoinstalater",
@@ -42,6 +45,7 @@ export const REQUEST_CATEGORIES = [
   "Odvoz šuta / otpada",
   "Brave / hitna otvaranja",
   "Solarni sistemi / paneli",
+  REQUEST_CATEGORY_FALLBACK,
 ] as const;
 
 // Urgency levels

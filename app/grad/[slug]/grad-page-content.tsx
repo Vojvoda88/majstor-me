@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { PublicHeader } from "@/components/layout/PublicHeader";
+import { PublicFooter } from "@/components/layout/PublicFooter";
 import { Wrench, ChevronLeft, ChevronRight } from "lucide-react";
 import { HandymanCard } from "@/components/lists/handyman-card";
 import { POPULAR_CATEGORIES } from "@/lib/categories";
@@ -236,6 +237,7 @@ export function GradPageContent({
           </div>
         </div>
       </div>
+      <PublicFooter />
     </main>
   );
 }

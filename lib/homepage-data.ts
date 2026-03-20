@@ -1,6 +1,9 @@
 // Homepage display data - cities, images
 // Kategorije su u lib/categories.ts (centralni source of truth)
 
+import { CATEGORY_CONFIG } from "@/lib/categories";
+import { getCategoryImageUrl } from "@/lib/category-images";
+
 /** Hero pozadina (portret, lokalno) — uključeno u repo */
 export const HERO_IMAGE = "/images/hero/hero-majstor-living-room.png";
 /** Stari Unsplash samo ako treba rezervni URL (nije u upotrebi u Hero) */
@@ -9,25 +12,10 @@ export const HERO_IMAGE_FALLBACK = HERO_IMAGE;
 export const AVATAR_IMAGE_FALLBACK =
   "https://images.unsplash.com/photo-1504148455328-c376907d081c?w=400&q=80";
 
-// Category name -> local image path (fallbacks for slug-based lookup)
-export const CATEGORY_IMAGES: Record<string, string> = {
-  Vodoinstalater: "/images/categories/plumber.jpg",
-  Električar: "/images/categories/electrician.jpg",
-  Keramičar: "/images/categories/tiles.jpg",
-  Gipsar: "/images/categories/painter.jpg",
-  Stolar: "/images/categories/carpenter.jpg",
-  Bravar: "/images/categories/locksmith.jpg",
-  Fasader: "/images/categories/fasade.jpg",
-  Parketar: "/images/categories/parquet.jpg",
-  "Klima servis": "/images/categories/ac-technician.jpg",
-  "Servis bojlera": "/images/categories/boiler.jpg",
-  "Servis bijele tehnike": "/images/categories/washing-machine.jpg",
-  Selidbe: "/images/categories/movers.jpg",
-  Čišćenje: "/images/categories/cleaning.jpg",
-  Baštovanstvo: "/images/categories/gardener.jpg",
-  "PVC stolarija": "/images/categories/construction.jpg",
-  Krovopokrivač: "/images/categories/construction.jpg",
-};
+/** displayName -> URL slike (lokalno u /public/images/categories ili Unsplash) */
+export const CATEGORY_IMAGES: Record<string, string> = Object.fromEntries(
+  CATEGORY_CONFIG.map((c) => [c.displayName, getCategoryImageUrl(c.slug)])
+) as Record<string, string>;
 
 // Gradovi za homepage grid (20)
 export const HOMEPAGE_CITIES = [

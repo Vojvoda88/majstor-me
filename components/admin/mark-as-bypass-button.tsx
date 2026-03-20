@@ -18,7 +18,7 @@ export function MarkAsBypassAttemptButton({
   if (!canMark) return null;
 
   const handleClick = async () => {
-    if (!confirm("Označiti ovaj zahtjev kao pokušaj zaobilaženja (spam)? Zahtjev će biti uklonjen, a majstorima koji su otključali lead biće vraćeni krediti."))
+    if (!confirm("Označiti ovaj zahtjev kao pokušaj zaobilaženja (spam)? Zahtjev će biti uklonjen, a majstorima koji su uzeli kontakt biće vraćeni krediti."))
       return;
     setLoading(true);
     try {

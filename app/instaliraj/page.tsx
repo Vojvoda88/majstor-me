@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { PublicHeader } from "@/components/layout/PublicHeader";
+import { PublicFooter } from "@/components/layout/PublicFooter";
 import { InstallHints } from "@/components/pwa/install-hints";
 
 export const metadata: Metadata = {
@@ -30,6 +31,7 @@ export default function InstalirajPage() {
           </Link>
         </p>
       </div>
+      <PublicFooter />
     </main>
   );
 }

@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { PublicHeader } from "@/components/layout/PublicHeader";
+import { PublicFooter } from "@/components/layout/PublicFooter";
 import { StickyBottomCTA } from "@/components/layout/StickyBottomCTA";
 import { MobileFilterSheet } from "@/components/category/MobileFilterSheet";
 import { CategoryHandymanCard } from "@/components/lists/CategoryHandymanCard";
@@ -406,6 +407,7 @@ export function CategoryPageContent({
         </div>
       </div>
 
+      <PublicFooter />
       <StickyBottomCTA href="/request/create" label="Objavi zahtjev" />
       <MobileFilterSheet
         open={filterSheetOpen}

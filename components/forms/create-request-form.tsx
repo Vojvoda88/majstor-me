@@ -17,7 +17,21 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { REQUEST_CATEGORIES, URGENCY_OPTIONS, CITIES } from "@/lib/constants";
+import {
+  REQUEST_CATEGORIES,
+  REQUEST_CATEGORY_FALLBACK,
+  URGENCY_OPTIONS,
+  CITIES,
+} from "@/lib/constants";
+import { INTERNAL_CATEGORY_HIDDEN_FROM_PUBLIC } from "@/lib/categories";
+
+/** Ostale kategorije prvo, fallback posljednji — da ne dominira. Skrivene javne kategorije se ne nude. */
+const CATEGORY_OPTIONS_ORDERED = [
+  ...REQUEST_CATEGORIES.filter(
+    (c) => c !== REQUEST_CATEGORY_FALLBACK && !INTERNAL_CATEGORY_HIDDEN_FROM_PUBLIC.has(c)
+  ),
+  REQUEST_CATEGORY_FALLBACK,
+];
 import { RequestPhotosEditor } from "./request-photos-editor";
 import { containsContactBypass } from "@/lib/contact-sanitization";
 
@@ -169,12 +183,15 @@ export function CreateRequestForm({ initialCategory, initialCity }: CreateReques
               {...register("category")}
             >
               <option value="">Odaberite...</option>
-              {REQUEST_CATEGORIES.map((cat) => (
+              {CATEGORY_OPTIONS_ORDERED.map((cat) => (
                 <option key={cat} value={cat}>
                   {cat}
                 </option>
               ))}
             </select>
+            <p className="text-xs leading-relaxed text-slate-500">
+              Ne vidiš tačnu uslugu? Izaberi „{REQUEST_CATEGORY_FALLBACK}“ i u opisu napiši šta ti treba — zahtjev se šalje kao i obično.
+            </p>
             {errors.category && (
               <p className="text-sm text-destructive">{errors.category.message}</p>
             )}

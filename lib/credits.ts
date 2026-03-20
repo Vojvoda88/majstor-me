@@ -71,7 +71,7 @@ export async function spendCreditsForContactUnlock(
   if (balance < creditsRequired) {
     return {
       ok: false,
-      error: `Nemate dovoljno kredita. Potrebno: ${creditsRequired}, imate: ${balance}. Kupite kredite da biste mogli otključati lead.`,
+      error: `Nemate dovoljno kredita. Potrebno: ${creditsRequired}, imate: ${balance}. Kupite kredite da biste mogli uzeti kontakt.`,
       balance,
     };
   }

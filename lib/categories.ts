@@ -14,9 +14,18 @@ export type CategoryConfig = {
   icon: string;
 };
 
-// Mapiranje slug -> displayName -> internalCategory
-// internalCategory mora postojati u REQUEST_CATEGORIES
-export const CATEGORY_CONFIG: CategoryConfig[] = [
+/**
+ * Skrivene od javnog prikaza (homepage, /categories, javni izbori) — i dalje u bazi / istoriji zahtjeva.
+ * Slugovi ostaju u CATEGORY_CONFIG_FULL radi /category/[slug] i mapiranja.
+ */
+export const HIDDEN_FROM_PUBLIC_SLUGS = new Set([
+  "parketar",
+  "servis-bojlera",
+  "krovopokrivac",
+]);
+
+/** Sve konfigurisane kategorije (uključujući skrivene od javnog listinga). */
+export const CATEGORY_CONFIG_FULL: CategoryConfig[] = [
   { slug: "vodoinstalater", displayName: "Vodoinstalater", internalCategory: "Vodoinstalater", icon: "Wrench" },
   { slug: "elektricar", displayName: "Električar", internalCategory: "Električar", icon: "Zap" },
   { slug: "keramicar", displayName: "Keramičar", internalCategory: "Keramičar", icon: "Grid3X3" },
@@ -35,24 +44,36 @@ export const CATEGORY_CONFIG: CategoryConfig[] = [
   { slug: "krovopokrivac", displayName: "Krovopokrivač", internalCategory: "Krovopokrivač", icon: "Home" },
 ];
 
-// Slug -> displayName (za backward compatibility)
+/** Javni listing (homepage, /categories, hero, sitemap kategorija…) */
+export const CATEGORY_CONFIG: CategoryConfig[] = CATEGORY_CONFIG_FULL.filter(
+  (c) => !HIDDEN_FROM_PUBLIC_SLUGS.has(c.slug)
+);
+
+// Slug -> displayName (puni skup — SEO /category/[slug], parse slug)
 export const CATEGORY_SLUGS: Record<string, string> = Object.fromEntries(
-  CATEGORY_CONFIG.map((c) => [c.slug, c.displayName])
+  CATEGORY_CONFIG_FULL.map((c) => [c.slug, c.displayName])
 );
 
-// Slug -> internalCategory (za API i handyman profile)
+// Slug -> internalCategory (puni skup)
 export const SLUG_TO_INTERNAL: Record<string, string> = Object.fromEntries(
-  CATEGORY_CONFIG.map((c) => [c.slug, c.internalCategory])
+  CATEGORY_CONFIG_FULL.map((c) => [c.slug, c.internalCategory])
 );
 
-// DisplayName -> internalCategory (za edge cases)
+// DisplayName -> internalCategory (puni skup)
 export const DISPLAY_TO_INTERNAL: Record<string, string> = Object.fromEntries(
-  CATEGORY_CONFIG.map((c) => [c.displayName, c.internalCategory])
+  CATEGORY_CONFIG_FULL.map((c) => [c.displayName, c.internalCategory])
 );
 
 export function getCategoryBySlug(slug: string): CategoryConfig | null {
-  return CATEGORY_CONFIG.find((c) => c.slug === slug) ?? null;
+  return CATEGORY_CONFIG_FULL.find((c) => c.slug === slug) ?? null;
 }
+
+/** internalCategory vrijednosti koje se ne nude u javnom /request/create (usklađeno sa REQUEST_CATEGORIES) */
+export const INTERNAL_CATEGORY_HIDDEN_FROM_PUBLIC = new Set([
+  "Krovopokrivač",
+  "Parketar",
+  "Servis bojlera",
+]);
 
 /** Vraća internal category za API/handyman - koristi slug ili displayName */
 export function getInternalCategory(input: string): string | null {

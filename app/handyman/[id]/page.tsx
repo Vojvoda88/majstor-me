@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { auth } from "@/lib/auth";
 import Link from "next/link";
 import { PublicHeader } from "@/components/layout/PublicHeader";
+import { PublicFooter } from "@/components/layout/PublicFooter";
 import {
   CheckCircle2,
   Star,
@@ -392,6 +393,7 @@ export default async function HandymanProfilePage({
           </Link>
         </div>
       )}
+      <PublicFooter />
     </div>
   );
 }

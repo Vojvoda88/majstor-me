@@ -5,6 +5,7 @@
  */
 
 import type { PrismaClient } from "@prisma/client";
+import { REQUEST_CATEGORY_FALLBACK } from "@/lib/constants";
 import { sendNewRequestEmail } from "@/lib/email";
 import { createNotificationsBulk } from "@/lib/notifications";
 import { sendPushToUser } from "@/lib/push";
@@ -28,6 +29,9 @@ export async function distributeRequestToHandymen(params: DistributeRequestParam
   const { prisma, requestId, category, city, title, description } = params;
   const descTrimmed = (description ?? "").slice(0, 100);
 
+  /** Kad korisnik nije našao tačnu uslugu — obavještavamo majstore sa bilo kojom „pravom“ kategorijom (ne ovaj fallback). */
+  const isFallbackCategory = category === REQUEST_CATEGORY_FALLBACK;
+
   const allHandymen = await prisma.user.findMany({
     where: {
       role: "HANDYMAN",
@@ -36,7 +40,9 @@ export async function distributeRequestToHandymen(params: DistributeRequestParam
       handymanProfile: {
         workerStatus: "ACTIVE",
         workerCategories: {
-          some: { category: { name: category } },
+          some: isFallbackCategory
+            ? { category: { name: { not: REQUEST_CATEGORY_FALLBACK } } }
+            : { category: { name: category } },
         },
       },
     },

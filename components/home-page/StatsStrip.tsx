@@ -1,62 +1,233 @@
 "use client";
 
-import { Users, Briefcase, Star, MapPin } from "lucide-react";
+import { useEffect, useState } from "react";
+import {
+  Users,
+  Briefcase,
+  Star,
+  MapPin,
+  ClipboardList,
+  MapPinned,
+  Layers,
+  BadgeCheck,
+  CheckCircle2,
+} from "lucide-react";
 
-const STATS = [
+type PlatformStats = {
+  userCount: number | null;
+  handymanCount: number | null;
+  completedJobsCount: number | null;
+  avgRating: number | null;
+  reviewCount: number | null;
+  citiesCount: number;
+};
+
+type NumberStat = {
+  kind: "number";
+  icon: typeof Users;
+  value: string;
+  label: string;
+  badgeClass: string;
+};
+
+type TrustStat = {
+  kind: "trust";
+  icon: typeof ClipboardList;
+  title: string;
+  description: string;
+  badgeClass: string;
+};
+
+/** Kad nema dovoljno stvarnih brojki — kratki trust signal, bez dupliranja hero copy-ja */
+const TRUST_FALLBACK: TrustStat[] = [
   {
-    icon: Users,
-    value: "43",
-    label: "REGISTROVANIH KORISNIKA",
+    kind: "trust",
+    icon: ClipboardList,
+    title: "Jasna objava",
+    description: "Opišite posao jednom — majstori vide šta tražite.",
     badgeClass: "bg-slate-100 text-brand-navy ring-1 ring-slate-200/80",
   },
   {
-    icon: Briefcase,
-    value: "55",
-    label: "AKTIVNIH MAJSTORA",
+    kind: "trust",
+    icon: MapPinned,
+    title: "Lokalno",
+    description: "Povezivanje s majstorima iz grada i okoline.",
     badgeClass: "bg-slate-100 text-brand-navy ring-1 ring-slate-200/80",
   },
   {
-    icon: Star,
-    value: "4.7",
-    label: "PROSJEČNA OCJENA",
+    kind: "trust",
+    icon: Layers,
+    title: "Različite usluge",
+    description: "Od instalacije do zanatskih radova na jednom mjestu.",
+    badgeClass: "bg-slate-100 text-brand-navy ring-1 ring-slate-200/80",
+  },
+  {
+    kind: "trust",
+    icon: BadgeCheck,
+    title: "Pregledno",
+    description: "Ponude i ocjene prije odluke, u svom ritmu.",
     badgeClass: "bg-amber-50 text-amber-900 ring-1 ring-amber-200/80",
   },
-  {
-    icon: MapPin,
-    value: "22",
-    label: "GRADOVA U AKTIVNOSTI",
-    badgeClass: "bg-slate-100 text-brand-navy ring-1 ring-slate-200/80",
-  },
-] as const;
+];
 
-/** Premium proof bar odmah ispod hero — statički copy po specifikaciji */
+function buildNumberStats(data: PlatformStats): NumberStat[] {
+  const candidates: NumberStat[] = [];
+
+  if (data.handymanCount != null && data.handymanCount > 0) {
+    candidates.push({
+      kind: "number",
+      icon: Briefcase,
+      value: data.handymanCount.toLocaleString("sr-Latn"),
+      label: "majstora na platformi",
+      badgeClass: "bg-slate-100 text-brand-navy ring-1 ring-slate-200/80",
+    });
+  }
+
+  if (data.completedJobsCount != null && data.completedJobsCount > 0) {
+    candidates.push({
+      kind: "number",
+      icon: CheckCircle2,
+      value: data.completedJobsCount.toLocaleString("sr-Latn"),
+      label: "završenih poslova",
+      badgeClass: "bg-slate-100 text-brand-navy ring-1 ring-slate-200/80",
+    });
+  }
+
+  if (data.avgRating != null && data.reviewCount != null && data.reviewCount > 0) {
+    candidates.push({
+      kind: "number",
+      icon: Star,
+      value: data.avgRating.toLocaleString("sr-Latn", {
+        minimumFractionDigits: 1,
+        maximumFractionDigits: 1,
+      }),
+      label: "prosječna ocjena (recenzije)",
+      badgeClass: "bg-amber-50 text-amber-900 ring-1 ring-amber-200/80",
+    });
+  }
+
+  if (data.citiesCount > 0) {
+    candidates.push({
+      kind: "number",
+      icon: MapPin,
+      value: data.citiesCount.toLocaleString("sr-Latn"),
+      label: "gradova u aktivnosti",
+      badgeClass: "bg-slate-100 text-brand-navy ring-1 ring-slate-200/80",
+    });
+  }
+
+  if (data.userCount != null && data.userCount > 0) {
+    candidates.push({
+      kind: "number",
+      icon: Users,
+      value: data.userCount.toLocaleString("sr-Latn"),
+      label: "registrovanih korisnika",
+      badgeClass: "bg-slate-100 text-brand-navy ring-1 ring-slate-200/80",
+    });
+  }
+
+  return candidates.slice(0, 4);
+}
+
+function gridClass(count: number): string {
+  if (count <= 1) return "grid-cols-1";
+  if (count === 2) return "grid-cols-1 sm:grid-cols-2";
+  if (count === 3) return "grid-cols-1 sm:grid-cols-3";
+  return "grid-cols-1 gap-px overflow-hidden rounded-[inherit] bg-slate-200/80 sm:grid-cols-2 md:grid-cols-4";
+}
+
+/**
+ * Ispod hero-a: stvarne brojke iz /api/stats/platform kada postoje,
+ * inače kratki trust signali bez izmišljenih metrika.
+ */
 export function StatsStrip() {
+  const [stats, setStats] = useState<PlatformStats | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch("/api/stats/platform")
+      .then((res) => res.json())
+      .then((json: PlatformStats) => {
+        if (!cancelled) setStats(json);
+      })
+      .catch(() => {
+        if (!cancelled) setStats(null);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const numberStats = stats ? buildNumberStats(stats) : [];
+  const useNumbers = numberStats.length > 0;
+  const items: (NumberStat | TrustStat)[] = useNumbers ? numberStats : TRUST_FALLBACK;
+  const cols = gridClass(items.length);
+
   return (
-    /* pointer-events-none: strip vizuelno prelazi preko hero-a; bez ovoga klik „ispod“ ne dolazi do linka */
-    <div className="relative z-20 mx-auto -mt-14 max-w-5xl px-4 pointer-events-none md:-mt-20">
+    <div className="relative z-20 mx-auto -mt-10 max-w-5xl px-4 pointer-events-none sm:-mt-12 md:-mt-20">
       <div className="overflow-hidden rounded-2xl border border-slate-200/90 bg-slate-100/70 p-px shadow-[0_12px_40px_-12px_rgba(10,22,40,0.12)] md:rounded-3xl">
-        <div className="grid grid-cols-1 gap-px overflow-hidden rounded-[inherit] bg-slate-200/80 sm:grid-cols-2 md:grid-cols-4">
-          {STATS.map(({ icon: Icon, value, label, badgeClass }) => (
-            <div
-              key={label}
-              className="flex items-center gap-4 bg-white px-5 py-5 md:flex-col md:items-center md:justify-center md:gap-3 md:px-4 md:py-6 lg:py-7"
-            >
+        {loading ? (
+          <div className="grid grid-cols-2 gap-px overflow-hidden rounded-[inherit] bg-slate-200/80 md:grid-cols-4">
+            {[1, 2, 3, 4].map((i) => (
               <div
-                className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl md:h-12 md:w-12 ${badgeClass}`}
+                key={i}
+                className="flex min-h-[100px] items-center justify-center bg-white px-5 py-5 md:min-h-[120px] md:py-6"
               >
-                <Icon className="h-5 w-5 md:h-[22px] md:w-[22px]" strokeWidth={2} aria-hidden />
+                <div className="h-10 w-24 animate-pulse rounded-lg bg-slate-200/90 md:h-12 md:w-28" />
               </div>
-              <div className="min-w-0 text-left md:text-center">
-                <p className="font-display text-2xl font-bold tabular-nums tracking-tight text-brand-navy md:text-[1.75rem]">
-                  {value}
-                </p>
-                <p className="mt-1 text-[10px] font-bold uppercase leading-snug tracking-[0.12em] text-slate-500 md:text-[11px]">
-                  {label}
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        ) : (
+          <div className={`grid gap-px overflow-hidden rounded-[inherit] bg-slate-200/80 ${cols}`}>
+            {items.map((item) => {
+              const Icon = item.icon;
+              if (item.kind === "number") {
+                return (
+                  <div
+                    key={item.label}
+                    className="flex items-center gap-3 bg-white px-4 py-4 md:flex-col md:items-center md:justify-center md:gap-3 md:px-4 md:py-6 lg:py-7"
+                  >
+                    <div
+                      className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl md:h-12 md:w-12 ${item.badgeClass}`}
+                    >
+                      <Icon className="h-5 w-5 md:h-[22px] md:w-[22px]" strokeWidth={2} aria-hidden />
+                    </div>
+                    <div className="min-w-0 text-left md:text-center">
+                      <p className="font-display text-2xl font-bold tabular-nums tracking-tight text-brand-navy md:text-[1.75rem]">
+                        {item.value}
+                      </p>
+                      <p className="mt-1 text-[10px] font-bold uppercase leading-snug tracking-[0.08em] text-slate-500 md:text-[11px]">
+                        {item.label}
+                      </p>
+                    </div>
+                  </div>
+                );
+              }
+              return (
+                <div
+                  key={item.title}
+                  className="flex items-center gap-3 bg-white px-4 py-4 md:flex-col md:items-center md:justify-center md:gap-3 md:px-4 md:py-6 lg:py-7"
+                >
+                  <div
+                    className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl md:h-12 md:w-12 ${item.badgeClass}`}
+                  >
+                    <Icon className="h-5 w-5 md:h-[22px] md:w-[22px]" strokeWidth={2} aria-hidden />
+                  </div>
+                  <div className="min-w-0 text-left md:text-center">
+                    <p className="font-display text-base font-bold tracking-tight text-brand-navy md:text-xl">
+                      {item.title}
+                    </p>
+                    <p className="mt-1 text-[13px] leading-snug text-slate-600 md:text-sm">{item.description}</p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
     </div>
   );
