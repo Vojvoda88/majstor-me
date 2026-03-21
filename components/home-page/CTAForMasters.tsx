@@ -1,33 +1,54 @@
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Coins } from "lucide-react";
 
 export function CTAForMasters() {
   return (
-    <section className="py-12 md:py-28">
-      <div className="relative overflow-hidden rounded-[1.5rem] border border-blue-900/25 bg-gradient-to-br from-brand-navy via-[#0f2847] to-[#0a1628] p-7 shadow-[0_24px_64px_-20px_rgba(10,22,40,0.35)] sm:rounded-[1.75rem] sm:p-9 md:rounded-[2rem] md:p-14 lg:p-16">
-        <div
-          className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-amber-500/10 blur-3xl"
-          aria-hidden
-        />
-        <div
-          className="pointer-events-none absolute -bottom-20 left-1/3 h-56 w-56 rounded-full bg-blue-500/10 blur-3xl"
-          aria-hidden
-        />
-        <div className="relative flex max-w-4xl flex-col gap-7 md:flex-row md:items-center md:justify-between md:gap-14">
-          <div>
-            <h3 className="font-display text-2xl font-bold tracking-tight text-white sm:text-3xl md:text-4xl">Vi ste majstor?</h3>
-            <p className="mt-4 max-w-xl text-[15px] font-medium leading-relaxed text-slate-200 sm:mt-5 sm:text-base md:text-lg">
-              Pošaljite ponudu za manje od 2&nbsp;€ u odnosu na klasične oglase. Pregled poslova je besplatan — plaćate samo kada
-              otključate kontakt korisnika. Bez pretplate.
-            </p>
+    <section className="px-1 py-10 sm:px-0 md:py-16" aria-labelledby="cta-majstor-naslov">
+      <div className="relative overflow-hidden rounded-[1.35rem] border border-slate-200/90 bg-gradient-to-br from-white via-sky-50/35 to-slate-50/40 p-5 shadow-[0_20px_56px_-28px_rgba(15,23,42,0.12)] ring-1 ring-slate-100/80 sm:rounded-[1.75rem] sm:p-7 md:rounded-[2rem] md:p-12 lg:p-14">
+        <div className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-blue-500/[0.12] blur-3xl" aria-hidden />
+        <div className="pointer-events-none absolute -bottom-20 left-1/3 h-56 w-56 rounded-full bg-sky-400/18 blur-3xl" aria-hidden />
+        <div className="pointer-events-none absolute right-1/4 top-1/2 h-40 w-40 -translate-y-1/2 rounded-full bg-blue-600/[0.06] blur-2xl" aria-hidden />
+
+        <div className="relative mx-auto max-w-3xl text-center md:max-w-4xl">
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-slate-500">Za majstore</p>
+          <h3 id="cta-majstor-naslov" className="mt-3 font-display text-2xl font-bold tracking-tight text-brand-navy sm:text-3xl md:text-[2rem]">
+            Uđite besplatno. Počnite sa 1000 kredita.
+          </h3>
+          <p className="mx-auto mt-4 max-w-2xl text-[15px] leading-relaxed text-slate-600 sm:text-base md:text-lg">
+            <strong className="font-semibold text-slate-800">Bez pretplate.</strong> Novi majstori dobijaju{" "}
+            <strong className="font-semibold text-brand-navy">1000 kredita za početak</strong> — to obično znači{" "}
+            <strong className="font-semibold text-brand-navy">prvih 5 standardnih ponuda</strong> (standardni posao = 200 kredita).{" "}
+            <strong className="font-semibold text-slate-800">Plaćate samo kada želite kontakt za posao koji vam odgovara.</strong> Kada vam posao odgovara, otključate kontakt i zatim birate kako ćete se javiti — kroz ponudu ili direktno telefonom.
+          </p>
+
+          <div className="mx-auto mt-6 flex max-w-md flex-wrap items-center justify-center gap-2 text-xs font-medium text-slate-600 sm:text-sm">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-200/90 bg-white/90 px-3 py-1.5 shadow-sm">
+              <Coins className="h-3.5 w-3.5 text-blue-600" aria-hidden />
+              1 kredit = 1 cent
+            </span>
+            <span className="max-w-[100%] rounded-full border border-slate-200/90 bg-white/90 px-2.5 py-1.5 text-center shadow-sm sm:px-3">
+              Standardna ponuda za manje od 2 €
+            </span>
+            <span className="max-w-[100%] rounded-full border border-slate-200/90 bg-white/90 px-2.5 py-1.5 text-center shadow-sm sm:px-3">
+              Bez mjesečne članarine
+            </span>
           </div>
-          <Link
-            href="/register?type=majstor"
-            className="inline-flex h-14 shrink-0 items-center justify-center gap-2 rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 px-9 text-base font-bold text-brand-navy shadow-[0_14px_36px_-8px_rgba(245,158,11,0.45)] transition hover:brightness-105 active:scale-[0.98] md:h-[56px] md:px-10"
-          >
-            Prijavite se kao majstor
-            <ArrowRight className="h-5 w-5" />
-          </Link>
+
+          <div className="mt-8 flex flex-col items-stretch justify-center gap-3 sm:mt-10 sm:flex-row sm:items-center sm:gap-4">
+            <Link
+              href="/register?type=majstor"
+              className="inline-flex min-h-[52px] items-center justify-center gap-2 rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 px-8 text-base font-bold text-brand-navy shadow-[0_14px_36px_-10px_rgba(245,158,11,0.4)] transition hover:brightness-105 active:scale-[0.99]"
+            >
+              Registruj se kao majstor
+              <ArrowRight className="h-5 w-5" />
+            </Link>
+            <Link
+              href="#majstor-krediti"
+              className="inline-flex min-h-[52px] items-center justify-center rounded-2xl border-2 border-slate-200 bg-white px-8 text-base font-semibold text-brand-navy transition hover:border-slate-300 hover:bg-slate-50 active:scale-[0.99]"
+            >
+              Kako rade krediti
+            </Link>
+          </div>
         </div>
       </div>
     </section>

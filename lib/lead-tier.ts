@@ -1,6 +1,6 @@
 /**
- * Cijena leada u kreditima – varira po hitnosti i kvalitetu.
- * Baza hitnosti: standardni zahtjev 20, srednja hitnost 30, hitno danas 40 (+ dodatci).
+ * Cijena otključavanja kontakta u kreditima – varira po hitnosti i kvalitetu.
+ * Baza: standardni 200, hitno (7 dana) 300, hitno danas 400 (+ dodatci, max 650).
  */
 
 export type LeadTier = "STANDARD" | "URGENT" | "PREMIUM";
@@ -9,24 +9,27 @@ export type LeadInput = {
   urgency: "HITNO_DANAS" | "U_NAREDNA_2_DANA" | "NIJE_HITNO";
   photos?: string[];
   description?: string;
-  /** Email verifikovan → +5 kredita */
+  /** Email verifikovan → +50 kredita */
   emailVerified?: boolean;
-  /** Telefon verifikovan → +10 kredita. Oba = max +15 */
+  /** Telefon verifikovan → +100 kredita. Oba = max +150 */
   phoneVerified?: boolean;
 };
 
 /** NIJE_HITNO — „normalno / fleksibilno“ */
-const BASE_STANDARD = 20;
-/** U_NAREDNA_2_DANA u bazi = UI „U narednih 7 dana“ */
-const BASE_URGENT = 30;
+const BASE_STANDARD = 200;
+/** U_NAREDNA_2_DANA u bazi = UI „Hitno (u narednih 7 dana)“ */
+const BASE_URGENT = 300;
 /** HITNO_DANAS */
-const BASE_PREMIUM = 40;
+const BASE_PREMIUM = 400;
 
 const PREMIUM_DESC_LENGTH = 150;
-const PREMIUM_PHOTO_BONUS = 5;
-const EMAIL_VERIFIED_BONUS = 5;
-const PHONE_VERIFIED_BONUS = 10;
-const MAX_VERIFIED_BONUS = 15;
+const PREMIUM_PHOTO_BONUS = 50;
+const LONG_DESC_BONUS = 50;
+const EMAIL_VERIFIED_BONUS = 50;
+const PHONE_VERIFIED_BONUS = 100;
+const MAX_VERIFIED_BONUS = 150;
+/** Ukupno sa svim dodacima ne prelazi 650 (najveći paket u ponudi). */
+const MAX_TOTAL_CREDITS = 650;
 
 export function getCreditsForLead(input: LeadInput): { credits: number; tier: LeadTier } {
   let base: number;
@@ -43,16 +46,16 @@ export function getCreditsForLead(input: LeadInput): { credits: number; tier: Le
     bonus += PREMIUM_PHOTO_BONUS;
   }
   if (input.description && input.description.length >= PREMIUM_DESC_LENGTH) {
-    bonus += 5;
+    bonus += LONG_DESC_BONUS;
   }
   let verifiedBonus = 0;
   if (input.emailVerified) verifiedBonus += EMAIL_VERIFIED_BONUS;
   if (input.phoneVerified) verifiedBonus += PHONE_VERIFIED_BONUS;
   bonus += Math.min(verifiedBonus, MAX_VERIFIED_BONUS);
 
-  const credits = Math.min(base + bonus, 65);
+  const credits = Math.min(base + bonus, MAX_TOTAL_CREDITS);
   const tier: LeadTier =
-    credits >= 40 ? "PREMIUM" : credits >= 30 ? "URGENT" : "STANDARD";
+    input.urgency === "HITNO_DANAS" ? "PREMIUM" : input.urgency === "U_NAREDNA_2_DANA" ? "URGENT" : "STANDARD";
 
   return { credits, tier };
 }
@@ -77,10 +80,10 @@ export function getCreditsBreakdown(input: LeadInput): CreditBreakdown {
     baseLabel = "Hitno danas";
   } else if (input.urgency === "U_NAREDNA_2_DANA") {
     base = BASE_URGENT;
-    baseLabel = "U narednih 7 dana";
+    baseLabel = "Hitno (u narednih 7 dana)";
   } else {
     base = BASE_STANDARD;
-    baseLabel = "Normalno / fleksibilno";
+    baseLabel = "Nije hitno / fleksibilno";
   }
 
   const items: CreditBreakdownItem[] = [];
@@ -89,7 +92,7 @@ export function getCreditsBreakdown(input: LeadInput): CreditBreakdown {
     items.push({ label: "Slike", amount: PREMIUM_PHOTO_BONUS });
   }
   if (input.description && input.description.length >= PREMIUM_DESC_LENGTH) {
-    items.push({ label: "Dug opis", amount: 5 });
+    items.push({ label: "Dug opis", amount: LONG_DESC_BONUS });
   }
   let verifiedBonus = 0;
   if (input.emailVerified) verifiedBonus += EMAIL_VERIFIED_BONUS;
@@ -106,7 +109,7 @@ export function getCreditsBreakdown(input: LeadInput): CreditBreakdown {
   }
 
   const bonusSum = items.reduce((s, i) => s + i.amount, 0);
-  const total = Math.min(base + bonusSum, 65);
+  const total = Math.min(base + bonusSum, MAX_TOTAL_CREDITS);
 
   return { base, baseLabel, items, total };
 }

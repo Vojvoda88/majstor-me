@@ -16,10 +16,11 @@ export function HandymanCreditsCtaBlock({ paymentOnline }: Props) {
     : "/dashboard/handyman/credits#online-info";
 
   return (
-    <div className="rounded-2xl border-2 border-blue-200 bg-gradient-to-br from-blue-50/90 via-white to-slate-50 p-5 shadow-md md:p-6">
+    <div className="rounded-2xl border border-sky-200/90 bg-gradient-to-br from-white via-sky-50/40 to-slate-50/80 p-5 shadow-md ring-1 ring-slate-100/80 md:p-6">
       <h2 className="font-display text-lg font-bold text-slate-900 md:text-xl">Dopuni kredite</h2>
       <p className="mt-2 text-sm leading-relaxed text-slate-600">
-        Krediti se dodaju na račun nakon uspješne uplate online ili kad potvrdimo uplatu u kešu / preko Pošte.
+        1 kredit ≈ 1 cent u ponudi paketa — jasno vidite koliko ostaje. Krediti stižu nakon uplate online ili kad potvrdimo
+        uplatu u kešu / preko Pošte.
       </p>
       <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-stretch">
         <Button asChild size="lg" className="w-full sm:min-h-[48px] sm:flex-1">

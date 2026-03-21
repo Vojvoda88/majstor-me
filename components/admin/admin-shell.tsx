@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Menu, X } from "lucide-react";
 import { AdminSidebar } from "@/components/admin/admin-sidebar";
+import { AdminMobileBottomNav } from "@/components/admin/admin-mobile-bottom-nav";
 import { AdminSignOutButton } from "@/components/admin/admin-sign-out-button";
 import type { AdminRole } from "@/lib/admin/permissions";
 type Props = {
@@ -95,7 +96,10 @@ export function AdminShell({ adminRole, session, children }: Props) {
           </div>
         </header>
 
-        <main className="min-w-0 p-4 sm:p-6">{children}</main>
+        <main className="min-w-0 overflow-x-hidden p-4 pb-[calc(5.25rem+env(safe-area-inset-bottom,0px))] sm:p-6 lg:pb-6">
+          {children}
+        </main>
+        <AdminMobileBottomNav adminRole={adminRole} hidden={mobileOpen} />
       </div>
     </div>
   );

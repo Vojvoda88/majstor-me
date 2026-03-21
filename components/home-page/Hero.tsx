@@ -61,12 +61,20 @@ export function Hero() {
             Objavi besplatan zahtjev
           </Link>
           <Link
+            href="/#kako-radi-majstore"
+            className="inline-flex h-14 min-h-[52px] items-center justify-center rounded-2xl border border-white/25 bg-white/10 px-6 text-base font-semibold text-white backdrop-blur-md transition hover:bg-white/15 active:scale-[0.98] md:px-8"
+          >
+            Radite kao majstor? Pogledajte kako funkcioniše
+          </Link>
+        </div>
+        <p className="mt-4 text-center">
+          <Link
             href="/categories"
-            className="inline-flex h-14 min-h-[52px] items-center justify-center rounded-2xl border border-white/25 bg-white/10 px-8 text-base font-semibold text-white backdrop-blur-md transition hover:bg-white/15 active:scale-[0.98]"
+            className="text-sm font-semibold text-white/85 underline decoration-white/30 underline-offset-4 transition hover:text-white"
           >
             Pregled kategorija
           </Link>
-        </div>
+        </p>
 
         <div className="mt-6 flex flex-wrap items-center justify-center gap-2 sm:gap-3 md:mt-10 md:gap-4">
           {TRUST.map(({ icon: Icon, label }) => (
@@ -79,12 +87,12 @@ export function Hero() {
             </span>
           ))}
         </div>
-        <p className="relative z-30 mt-6 md:mt-8">
+        <p className="relative z-30 mt-5 text-center md:mt-6">
           <Link
             href="/register?type=majstor"
-            className="inline-block min-h-[44px] touch-manipulation py-2 text-sm font-semibold text-amber-200/90 underline decoration-amber-400/50 underline-offset-4 transition hover:text-white active:opacity-90"
+            className="inline-block min-h-[44px] touch-manipulation text-sm font-semibold text-amber-200/95 underline decoration-amber-400/45 underline-offset-4 transition hover:text-white active:opacity-90"
           >
-            Nudite usluge? Registrujte se kao majstor →
+            Spremni ste odmah? Registrujte se kao majstor →
           </Link>
         </p>
       </div>

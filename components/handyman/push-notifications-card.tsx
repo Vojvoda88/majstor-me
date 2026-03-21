@@ -20,7 +20,7 @@ type Status =
   | { kind: "ready"; permission: NotificationPermission; subscribed: boolean };
 
 const INTRO_COPY =
-  "Uključite obavještenja da ne propuštate nove poslove.";
+  "Uključite obavještenja za poslove iz kategorija i područja koja ste sami odabrali — da ne propuštate šta vam odgovara.";
 
 const UNAVAILABLE_COPY =
   "Obavještenja na telefonu trenutno nijesu dostupna.";

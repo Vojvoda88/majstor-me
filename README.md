@@ -31,7 +31,7 @@ cp .env.example .env
 **Obavezne varijable:**
 
 - `DATABASE_URL` – PostgreSQL connection string (Supabase)
-- `NEXTAUTH_URL` – URL aplikacije (npr. `http://localhost:3000`)
+- `NEXTAUTH_URL` – URL aplikacije (npr. `http://localhost:3010` — isti port kao `npm run dev`)
 - `NEXTAUTH_SECRET` – generiši sa `openssl rand -base64 32`
 
 **Opciono (email notifikacije):**
@@ -57,7 +57,7 @@ npx prisma studio
 npm run dev
 ```
 
-Aplikacija je dostupna na [http://localhost:3000](http://localhost:3000).
+Aplikacija je dostupna na [http://localhost:3010](http://localhost:3010) (`next dev` i `next start` podešeni na port 3010).
 
 ## Struktura projekta
 

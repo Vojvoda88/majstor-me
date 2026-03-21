@@ -89,8 +89,8 @@ export default async function HandymanCreditsPage({
 
       <h1 className="text-2xl font-bold tracking-tight text-slate-900">Krediti — kako dopuniti</h1>
       <p className="mt-2 text-slate-600">
-        Krediti se troše tek kada uzmete kontakt korisnika (obično 20–40 za hitnost, plus dodatci za slike, duži opis ili verifikovane
-        podatke). Ispod birate: <strong className="font-semibold text-slate-800">online kupovinu</strong> ili{" "}
+        Krediti se troše tek kada uzmete kontakt korisnika (obično 200–400 ovisno o hitnosti, plus dodatci za slike, duži opis ili verifikovane
+        podatke; max oko 650). Ispod birate: <strong className="font-semibold text-slate-800">online kupovinu</strong> ili{" "}
         <strong className="font-semibold text-slate-800">aktivaciju u kešu</strong> — oba puta znate šta slijedi.
       </p>
 

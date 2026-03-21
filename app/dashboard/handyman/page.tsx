@@ -187,7 +187,9 @@ export default async function HandymanDashboardPage({
             {isPaymentConfigured() ? "Kupi kredite →" : "Aktiviraj kredite →"}
           </Link>
           <p className="mt-1 text-xs text-[#94A3B8]">
-            {isCreditsRequired() ? "Obično 20–40 kredita po kontaktu (hitnost + detalji)" : "U ovom okruženju kontakt može biti bez kredita"}
+            {isCreditsRequired()
+              ? "Obično 200–400 kredita po kontaktu (hitnost + detalji; max oko 650 sa dodacima)"
+              : "U ovom okruženju kontakt može biti bez kredita"}
           </p>
         </div>
       </div>
@@ -210,7 +212,7 @@ export default async function HandymanDashboardPage({
           <>
             <p className="mt-3 text-sm leading-relaxed text-slate-700">
               <strong className="font-semibold text-[#0F172A]">Krediti</strong> su način da otključate kontakt. Troše se
-              samo u tom trenutku (obično 20–40 za hitnost + dodatci). Nakon toga možete poslati ponudu. Povrat
+              samo u tom trenutku (obično 200–400 za hitnost + dodatci). Nakon otključavanja možete poslati ponudu ili pozvati klijenta. Povrat
               kredita postoji ako admin označi spam ili zaobilaženje, ili zbog tehničke greške — ne ako se korisnik ne
               javi.
             </p>

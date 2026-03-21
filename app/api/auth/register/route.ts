@@ -4,6 +4,7 @@ import { z } from "zod";
 import { logError } from "@/lib/logger";
 import { zodErrorToString } from "@/lib/api-response";
 import { isRateLimited, getRetryAfterSeconds } from "@/lib/rate-limit";
+import { HANDYMAN_START_BONUS_CREDITS } from "@/lib/credit-packages";
 
 export const dynamic = "force-dynamic";
 
@@ -135,10 +136,24 @@ export async function POST(request: Request) {
       });
 
       if (role === "HANDYMAN") {
+        const bonus = HANDYMAN_START_BONUS_CREDITS;
         await tx.handymanProfile.create({
           data: {
             userId: u.id,
             cities: [],
+            creditsBalance: bonus,
+            starterBonusGrantedAt: new Date(),
+          },
+        });
+        await tx.creditTransaction.create({
+          data: {
+            handymanId: u.id,
+            amount: bonus,
+            type: "PROMO_BONUS",
+            referenceId: `starter_bonus_${u.id}`,
+            balanceBefore: 0,
+            balanceAfter: bonus,
+            reason: `${HANDYMAN_START_BONUS_CREDITS} kredita za početak — novi majstor`,
           },
         });
       }

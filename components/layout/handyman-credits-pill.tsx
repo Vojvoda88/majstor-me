@@ -40,11 +40,13 @@ export function HandymanCreditsPill() {
           ? "border-amber-300/90 bg-amber-50 text-amber-950 shadow-sm"
           : "border-slate-200 bg-white text-slate-800 hover:border-slate-300"
       )}
-      title="Krediti — klik za dopunu"
+      title={low ? "Malo kredita — klik za dopunu" : "Krediti — klik za dopunu"}
     >
       <Coins className="h-4 w-4 shrink-0 text-amber-600" aria-hidden />
-      {data}
-      {low && <span className="sr-only">— malo kredita</span>}
+      <span>{data}</span>
+      {low && (
+        <span className="hidden text-[10px] font-bold uppercase tracking-wide text-amber-800 sm:inline">Nisko</span>
+      )}
     </Link>
   );
 }

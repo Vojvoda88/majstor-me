@@ -100,6 +100,17 @@ export function UnlockContactButton({
               <Phone className="h-4 w-4 shrink-0" />
               Pozovi
             </a>
+            {vb !== "#" && (
+              <a
+                href={vb}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 font-semibold text-slate-800 hover:bg-slate-50"
+              >
+                <MessageCircle className="h-4 w-4 shrink-0 text-[#7360f2]" />
+                Viber
+              </a>
+            )}
             {wa !== "#" && (
               <a
                 href={wa}
@@ -109,15 +120,6 @@ export function UnlockContactButton({
               >
                 <MessageCircle className="h-4 w-4 shrink-0 text-slate-600" />
                 WhatsApp
-              </a>
-            )}
-            {vb !== "#" && (
-              <a
-                href={vb}
-                className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 font-semibold text-slate-800 hover:bg-slate-50"
-              >
-                <MessageCircle className="h-4 w-4 shrink-0 text-[#7360f2]" />
-                Viber
               </a>
             )}
           </div>
@@ -206,13 +208,13 @@ export function UnlockContactButton({
               <strong className="font-semibold text-slate-900">
                 {creditsRequired ?? "—"} kredita
               </strong>
-              . Odmah ćete vidjeti telefon i moći ćete pisati na Viber / WhatsApp, te poslati ponudu kroz formu
-              ispod.
+              . Tek nakon toga vidite pun kontakt: telefon, Viber i WhatsApp (ako postoje), te možete poslati ponudu kroz
+              formu ispod ili odmah pozvati korisnika.
             </p>
             <ul className="mt-3 list-disc space-y-1 pl-5 text-sm text-slate-600">
-              <li>Broj telefona i brzi kontakt (Viber / WhatsApp)</li>
-              <li>Mogućnost slanja ponude kroz platformu</li>
-              <li>Mogućnost direktnog poziva ili poruke</li>
+              <li>Telefon, zatim Viber i WhatsApp gdje je dostupno</li>
+              <li>Slanje ponude kroz platformu (nakon otključavanja)</li>
+              <li>Direktan poziv ili poruka korisniku</li>
             </ul>
             <div className="mt-2 text-xs text-slate-500">Bez pretplate — plaćate samo ovaj kontakt.</div>
             <div className="mt-6 flex flex-col gap-2 sm:flex-row sm:justify-end">

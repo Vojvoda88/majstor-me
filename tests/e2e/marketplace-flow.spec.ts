@@ -105,7 +105,7 @@ test.describe("Marketplace glavni tok (smoke)", () => {
     expect(unlockJson.success).toBeTruthy();
     const spentFirst = unlockJson.data?.creditsSpent ?? 0;
 
-    await expect(page.getByText(/Kontakt je dostupan/i)).toBeVisible({ timeout: 15_000 });
+    await expect(page.getByText(/Kontakt je otključan/i)).toBeVisible({ timeout: 15_000 });
     expect(await page.locator(`a[href^="tel:"]`).count()).toBeGreaterThan(0);
 
     const dup = await page.request.post(`/api/requests/${requestId}/unlock-contact`);

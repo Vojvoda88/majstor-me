@@ -1,6 +1,6 @@
 /**
- * Krediti za majstore – interna valuta. Otključavanje leada troši oko 20–65 kredita (hitnost + dodatci).
- * Slanje ponude je besplatno NAKON otključanja leada.
+ * Krediti za majstore – interna valuta. Otključavanje kontakta troši oko 200–650 kredita (hitnost + dodatci).
+ * Slanje ponude je besplatno NAKON otključavanja leada.
  *
  * CREDITS_REQUIRED=true u .env aktivira provjeru. Bez toga, lead unlock je besplatan.
  */
@@ -12,8 +12,8 @@ export function isCreditsRequired(): boolean {
   return process.env.CREDITS_REQUIRED === "true";
 }
 
-/** Prag ispod kojeg prikazujemo upozorenje "malo kredita" */
-export const LOW_CREDITS_THRESHOLD = 30;
+/** Prag ispod kojeg prikazujemo upozorenje "malo kredita" (ispod ~1,5 standardna otključavanja) */
+export const LOW_CREDITS_THRESHOLD = 300;
 
 export type SpendCreditsResult =
   | { ok: true; balanceAfter: number }

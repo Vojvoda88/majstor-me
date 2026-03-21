@@ -270,6 +270,8 @@ model HandymanProfile {
   isPromoted            Boolean            @default(false) @map("is_promoted")
   promotedUntil         DateTime?          @map("promoted_until")
   creditsBalance        Int                @default(0) @map("credits_balance")
+  /// Kad je dodijeljen start bonus (1000 kredita) — sprečava duplo knjiženje
+  starterBonusGrantedAt DateTime?          @map("starter_bonus_granted_at")
   viberPhone            String?            @map("viber_phone")
   whatsappPhone         String?            @map("whatsapp_phone")
   createdAt             DateTime           @default(now()) @map("created_at")

@@ -99,6 +99,8 @@ export function CreateRequestForm({ initialCategory, initialCity }: CreateReques
   });
 
   const photos = watch("photos") ?? [];
+  const urgencyWatch = watch("urgency");
+  const urgencyHint = URGENCY_OPTIONS.find((o) => o.value === urgencyWatch)?.hint;
 
   useEffect(() => {
     // Kada se promijene URL parametri ili inicijalne vrijednosti, sinhronizuj formu
@@ -275,6 +277,9 @@ export function CreateRequestForm({ initialCategory, initialCity }: CreateReques
                 </option>
               ))}
             </select>
+            {urgencyHint && (
+              <p className="mt-2 text-xs leading-relaxed text-slate-600">{urgencyHint}</p>
+            )}
           </div>
           <p className="text-xs text-slate-500">
             Poslije slanja, ponude stižu uskoro. Vi sami odlučujete da li ćete nekoga angažovati – bez obaveze.

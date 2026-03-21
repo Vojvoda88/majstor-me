@@ -228,7 +228,7 @@ export default async function RequestDetailPage({
               <p className="mt-3 text-sm leading-relaxed text-slate-600">
                 Pregled opisa, grada i slika je besplatan.{" "}
                 <strong className="font-semibold text-slate-800">Plaćate samo kada želite kontakt</strong> — bez pretplate.
-                Pošaljite ponudu za manje od 2&nbsp;€ u odnosu na klasične oglase (krediti su obično 20–40 po kontaktu, ovisno o hitnosti).
+                Pošaljite ponudu za manje od 2&nbsp;€ u odnosu na klasične oglase (standardni kontakt je oko 200 kredita ≈ 2&nbsp;€; hitnije oglase više).
               </p>
               <p className="mt-2 text-sm leading-relaxed text-slate-600">
                 Prvo <strong className="font-semibold text-slate-800">otključavate kontakt kreditima</strong> (potvrda u koraku ispod). Tek

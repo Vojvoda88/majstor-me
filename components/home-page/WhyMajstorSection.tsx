@@ -28,9 +28,9 @@ export function WhyMajstorSection() {
       <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent" />
 
       <div className="grid gap-10 lg:grid-cols-[minmax(0,1.08fr)_minmax(0,0.95fr)] lg:gap-12 xl:gap-16 lg:items-start">
-        <div className="relative overflow-hidden rounded-[1.75rem] border border-slate-800/40 bg-gradient-to-br from-brand-navy via-[#0c1f3d] to-[#132d52] p-8 text-white shadow-premium md:p-10 lg:p-12">
-          <div className="pointer-events-none absolute -right-20 -top-28 h-72 w-72 rounded-full bg-blue-500/20 blur-3xl" />
-          <div className="pointer-events-none absolute -bottom-24 -left-12 h-56 w-56 rounded-full bg-amber-500/10 blur-3xl" />
+        <div className="relative overflow-hidden rounded-[1.75rem] border border-slate-200/90 bg-gradient-to-br from-slate-800 via-brand-navy to-[#152a45] p-8 text-white shadow-[0_24px_56px_-28px_rgba(10,22,40,0.22)] md:p-10 lg:p-12">
+          <div className="pointer-events-none absolute -right-20 -top-28 h-72 w-72 rounded-full bg-sky-400/15 blur-3xl" />
+          <div className="pointer-events-none absolute -bottom-24 -left-12 h-56 w-56 rounded-full bg-amber-400/12 blur-3xl" />
           <p className="relative text-[11px] font-bold uppercase tracking-[0.28em] text-blue-200/90">ZAŠTO MARKETPLACE</p>
           <h2 className="relative mt-4 font-display text-3xl font-bold leading-tight tracking-tight md:text-4xl lg:text-[2.5rem]">
             Zašto BrziMajstor.ME?
@@ -62,7 +62,7 @@ export function WhyMajstorSection() {
           {BENEFITS.map(({ id, title, body, icon: Icon }) => (
             <li
               key={id}
-              className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-[0_8px_28px_-12px_rgba(10,22,40,0.12)] md:p-7 lg:p-8"
+              className="rounded-2xl border border-slate-100/90 bg-white p-5 shadow-[0_12px_40px_-20px_rgba(10,22,40,0.1)] ring-1 ring-slate-50 md:p-7 lg:p-8"
             >
               <div className="flex gap-4 md:gap-5">
                 <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-brand-navy text-white shadow-md md:h-14 md:w-14 md:rounded-2xl">

@@ -8,7 +8,7 @@ import { StatsStrip } from "@/components/home-page/StatsStrip";
 import { HomeConversionBand } from "@/components/home-page/HomeConversionBand";
 import { WhyMajstorSection } from "@/components/home-page/WhyMajstorSection";
 import { CategoriesGrid } from "@/components/home-page/CategoriesGrid";
-import { HowItWorks } from "@/components/home-page/HowItWorks";
+import { HowItWorksForUsers, HowItWorksForHandymen } from "@/components/home-page/HowItWorks";
 import { CTAForMasters } from "@/components/home-page/CTAForMasters";
 import { SeoLandingLinks } from "@/components/home-page/SeoLandingLinks";
 import { organizationJsonLd, faqPageJsonLd } from "@/lib/json-ld";
@@ -64,25 +64,28 @@ export default function HomePage() {
 
       <div className="mx-auto max-w-6xl px-4 py-8 sm:px-5 md:px-6 md:py-16">
         <div className="animate-fade-up" style={{ animationDelay: "0.05s", animationFillMode: "both" }}>
-          <CategoriesGrid />
+          <HowItWorksForUsers />
+        </div>
+        <div className="animate-fade-up" style={{ animationDelay: "0.08s", animationFillMode: "both" }}>
+          <HowItWorksForHandymen />
         </div>
         <div className="animate-fade-up" style={{ animationDelay: "0.1s", animationFillMode: "both" }}>
-          <HowItWorks />
+          <CTAForMasters />
         </div>
-        <div className="animate-fade-up" style={{ animationDelay: "0.15s", animationFillMode: "both" }}>
+        <div className="animate-fade-up" style={{ animationDelay: "0.14s", animationFillMode: "both" }}>
+          <CategoriesGrid />
+        </div>
+        <div className="animate-fade-up" style={{ animationDelay: "0.18s", animationFillMode: "both" }}>
           <ReviewCardsSection />
         </div>
-        <div className="animate-fade-up" style={{ animationDelay: "0.2s", animationFillMode: "both" }}>
+        <div className="animate-fade-up" style={{ animationDelay: "0.22s", animationFillMode: "both" }}>
           <WhyMajstorSection />
         </div>
-        <div className="animate-fade-up" style={{ animationDelay: "0.25s", animationFillMode: "both" }}>
+        <div className="animate-fade-up" style={{ animationDelay: "0.26s", animationFillMode: "both" }}>
           <FAQ />
         </div>
         <div className="animate-fade-up" style={{ animationDelay: "0.28s", animationFillMode: "both" }}>
           <SeoLandingLinks />
-        </div>
-        <div className="animate-fade-up" style={{ animationDelay: "0.3s", animationFillMode: "both" }}>
-          <CTAForMasters />
         </div>
       </div>
       <PublicFooter />
