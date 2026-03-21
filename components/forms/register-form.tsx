@@ -26,7 +26,7 @@ const registerSchema = z.object({
   password: z.string().min(6, "Lozinka mora imati najmanje 6 karaktera"),
   phone: z.string().optional(),
   city: z.string().optional(),
-  role: z.enum(["USER", "HANDYMAN"]),
+  role: z.enum(["USER", "HANDYMAN"]).default("USER"),
 });
 
 type RegisterFormData = z.infer<typeof registerSchema>;
@@ -51,28 +51,52 @@ export function RegisterForm({
 
   async function onSubmit(data: RegisterFormData) {
     setError("");
+    const role: "USER" | "HANDYMAN" = data.role === "HANDYMAN" ? "HANDYMAN" : "USER";
+    const payload = {
+      name: data.name.trim(),
+      email: data.email.trim().toLowerCase(),
+      password: data.password,
+      role,
+      ...(data.phone?.trim() ? { phone: data.phone.trim() } : {}),
+      ...(data.city?.trim() ? { city: data.city.trim() } : {}),
+    };
+
     const res = await fetch("/api/auth/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
+      body: JSON.stringify(payload),
     });
 
-    const json = await res.json();
+    let json: { success?: boolean; error?: unknown; code?: string };
+    try {
+      json = await res.json();
+    } catch {
+      setError("Server nije vratio validan odgovor. Pokušajte ponovo.");
+      return;
+    }
+
     if (!json.success) {
+      if (json.code === "EMAIL_ALREADY_EXISTS") {
+        setError(
+          "Ovaj email je već registrovan. Prijavite se ili koristite drugi email."
+        );
+        return;
+      }
       const err = json.error;
       const msg =
         typeof err === "string"
           ? err
           : err && typeof err === "object"
-            ? (Object.values(err).flat().find(Boolean) as string) || "Greška pri registraciji"
+            ? (Object.values(err as Record<string, unknown>).flat().find(Boolean) as string) ||
+              "Greška pri registraciji"
             : "Greška pri registraciji";
       setError(msg);
       return;
     }
 
     const signInResult = await signIn("credentials", {
-      email: data.email,
-      password: data.password,
+      email: payload.email,
+      password: payload.password,
       redirect: false,
     });
 
@@ -81,7 +105,7 @@ export function RegisterForm({
       return;
     }
 
-    if (data.role === "HANDYMAN") {
+    if (role === "HANDYMAN") {
       router.push("/dashboard/handyman");
     } else {
       router.push("/request/create");
@@ -95,7 +119,11 @@ export function RegisterForm({
     <Card className="w-full rounded-2xl border-[#E2E8F0] shadow-card">
       <CardContent className="pt-8">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-          {error ? <div className="form-error">{error}</div> : null}
+          {error ? (
+            <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800" role="alert">
+              {error}
+            </div>
+          ) : null}
           <div className="space-y-3">
             <Label>Tip naloga</Label>
             <div className="grid grid-cols-2 gap-3">

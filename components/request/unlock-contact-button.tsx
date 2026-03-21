@@ -32,7 +32,10 @@ export function UnlockContactButton({
   const { data: fetchedContact, refetch } = useQuery({
     queryKey: ["unlock-contact", requestId],
     queryFn: async () => {
-      const res = await fetch(`/api/requests/${requestId}/unlock-contact`, { method: "POST" });
+      const res = await fetch(`/api/requests/${requestId}/unlock-contact`, {
+        method: "POST",
+        credentials: "include",
+      });
       const json = await res.json();
       if (!json.success) throw new Error(json.error);
       return json.data;
@@ -48,6 +51,7 @@ export function UnlockContactButton({
     mutationFn: async () => {
       const res = await fetch(`/api/requests/${requestId}/unlock-contact`, {
         method: "POST",
+        credentials: "include",
       });
       const json = await res.json();
       if (!json.success) {

@@ -15,6 +15,7 @@ const EVENT_ORDER: FunnelEventType[] = [
   "credit_package_selected",
   "credit_purchase_started",
   "credit_purchase_success",
+  "cash_activation_requested",
   "offer_sent_after_unlock",
 ];
 
@@ -28,6 +29,7 @@ const EVENT_LABELS: Record<FunnelEventType, string> = {
   credit_package_selected: "Paket izabran",
   credit_purchase_started: "Kupovina započeta",
   credit_purchase_success: "Kupovina uspjela",
+  cash_activation_requested: "Zahtjev za aktivaciju u kešu",
   offer_sent_after_unlock: "Ponuda poslata (nakon unlock)",
 };
 

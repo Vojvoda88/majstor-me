@@ -115,6 +115,7 @@ model User {
   messagesSent    Message[]
   notifications   Notification[]
   creditTransactions CreditTransaction[]
+  creditCashActivationRequests CreditCashActivationRequest[]
   contactUnlocks     RequestContactUnlock[]
   pushSubscriptions  PushSubscription[]
   adminProfile       AdminProfile?
@@ -295,6 +296,26 @@ model CreditTransaction {
   @@map("credit_transactions")
 }
 
+/// Zahtjev majstora za aktivaciju kredita nakon uplate u kešu / preko Pošte (ručna obrada).
+model CreditCashActivationRequest {
+  id            String   @id @default(cuid())
+  userId        String   @map("user_id")
+  fullName      String   @map("full_name")
+  phone         String
+  city          String
+  packageId     String   @map("package_id")
+  paymentMethod String?  @map("payment_method")
+  note          String?  @db.Text
+  status        String   @default("PENDING")
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([createdAt])
+  @@map("credit_cash_activation_requests")
+}
+
 model Request {
   id              String        @id @default(cuid())
   userId          String?       @map("user_id") // null = guest zahtjev
@@ -322,6 +343,7 @@ model Request {
   conversation      Conversation?
   handymanInvites   HandymanInvite[]
   contactUnlocks    RequestContactUnlock[]
+  distributionJobs  DistributionJob[]
 
   @@index([status])
   @@index([adminStatus])
@@ -500,6 +522,7 @@ model HandymanInvite {
 model DistributionJob {
   id          String    @id @default(cuid())
   requestId   String    @map("request_id")
+  request     Request   @relation(fields: [requestId], references: [id], onDelete: Cascade)
   status      String    @default("PENDING") // PENDING, PROCESSING, COMPLETED, FAILED
   attempts    Int       @default(0)
   maxAttempts Int       @default(3) @map("max_attempts")

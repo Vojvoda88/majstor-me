@@ -52,12 +52,18 @@ export const authOptions: NextAuthOptions = {
     async session({ session, token }) {
       if (session.user && token.id) {
         (session.user as { id?: string }).id = token.id as string;
-        const { prisma } = await import("@/lib/db");
-        const dbUser = await prisma.user.findUnique({
-          where: { id: token.id as string },
-          select: { role: true },
-        });
-        (session.user as { role?: string }).role = dbUser?.role ?? (token.role as string);
+        // JWT već nosi ulogu nakon prijave — ne udaraj u bazu na svakom zahtjevu
+        // (to je bilo +1 query po stranici i uz connection_limit=1 često „zakucavalo” app).
+        let role = token.role as string | undefined;
+        if (!role || !["USER", "HANDYMAN", "ADMIN"].includes(role)) {
+          const { prisma } = await import("@/lib/db");
+          const dbUser = await prisma.user.findUnique({
+            where: { id: token.id as string },
+            select: { role: true },
+          });
+          role = dbUser?.role ?? role;
+        }
+        (session.user as { role?: string }).role = role;
         const img = (session.user as { image?: string | null }).image;
         (session.user as { image?: string | null }).image =
           typeof img === "string" && (img.startsWith("http") || img.startsWith("/")) ? img : null;

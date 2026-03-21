@@ -34,6 +34,7 @@ const CATEGORY_OPTIONS_ORDERED = [
 ];
 import { RequestPhotosEditor } from "./request-photos-editor";
 import { containsContactBypass } from "@/lib/contact-sanitization";
+import { createRequestAction } from "@/app/actions/create-request";
 
 const createRequestSchema = z
   .object({
@@ -112,16 +113,11 @@ export function CreateRequestForm({ initialCategory, initialCity }: CreateReques
 
   const mutation = useMutation({
     mutationFn: async (data: CreateRequestFormData) => {
-      const res = await fetch("/api/requests", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
-      const json = await res.json();
-      if (!json.success) {
-        throw new Error(json.error ?? "Došlo je do greške prilikom slanja zahtjeva. Pokušajte ponovo.");
+      const result = await createRequestAction(data);
+      if (!result.ok) {
+        throw new Error(result.error ?? "Došlo je do greške prilikom slanja zahtjeva. Pokušajte ponovo.");
       }
-      return json.data;
+      return result.data;
     },
     onSuccess: (data) => {
       const notified = data.handymenNotified ?? 0;

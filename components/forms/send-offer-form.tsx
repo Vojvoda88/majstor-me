@@ -50,6 +50,7 @@ export function SendOfferForm({ requestId }: { requestId: string }) {
     mutationFn: async (data: OfferFormData) => {
       const res = await fetch("/api/offers", {
         method: "POST",
+        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           requestId,

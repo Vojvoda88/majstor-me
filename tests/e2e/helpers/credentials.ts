@@ -13,6 +13,11 @@ export const CREDS = {
     email: process.env.E2E_USER_EMAIL ?? "marko@test.me",
     password: TEST_PASSWORD,
   },
+  /** Smoke E2E objava zahtjeva — izbjegava MAX_REQUESTS_PER_DAY na marko nakon više runova */
+  smokeRequester: {
+    email: process.env.E2E_SMOKE_REQUESTER_EMAIL ?? "petar@test.me",
+    password: TEST_PASSWORD,
+  },
   handyman: {
     email: process.env.E2E_HANDYMAN_EMAIL ?? "majstor.vodoinstalater@test.me",
     password: TEST_PASSWORD,

@@ -29,7 +29,8 @@ async function main() {
   const adminEmail = process.env.ADMIN_EMAIL ?? "admin@brzimajstor.me";
   const admin = await prisma.user.upsert({
     where: { email: adminEmail },
-    update: { role: "ADMIN", name: "Admin Korisnik" },
+    // Uvijek uskladi lozinku sa seedom (Test123!) da E2E / lokalni smoke ne padaju na starom hash-u
+    update: { role: "ADMIN", name: "Admin Korisnik", passwordHash: password },
     create: {
       email: adminEmail,
       name: "Admin Korisnik",

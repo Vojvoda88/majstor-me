@@ -5,6 +5,7 @@ import Link from "next/link";
 import { RegisterForm } from "@/components/forms/register-form";
 import { Button } from "@/components/ui/button";
 import { SiteHeaderSimple } from "@/components/layout/site-header-simple";
+import { RegisterMajstorSignOutCta } from "@/components/auth/register-majstor-sign-out-cta";
 
 export const metadata: Metadata = {
   title: "Registracija",
@@ -18,17 +19,33 @@ export default async function RegisterPage({
 }: {
   searchParams: Promise<{ type?: string }>;
 }) {
+  const { type } = await searchParams;
+  const wantsHandyman = String(type ?? "")
+    .toLowerCase()
+    .trim() === "majstor";
+
   const session = await auth();
   if (session) {
     const role = (session.user as { role?: string }).role;
     if (role === "HANDYMAN") redirect("/dashboard/handyman");
     if (role === "ADMIN") redirect("/admin");
-    if (role === "USER") redirect("/dashboard/user");
-    redirect("/");
+    if (role === "USER") {
+      /** Traži majstora ali već je korisnik — ne redirect na panel; objasni + odjava */
+      if (wantsHandyman) {
+        return (
+          <div className="min-h-screen bg-brand-page">
+            <SiteHeaderSimple />
+            <RegisterMajstorSignOutCta />
+          </div>
+        );
+      }
+      redirect("/dashboard/user");
+    }
+    /** Sesija postoji ali uloga nije prepoznata (npr. pokvareni JWT) — ne šalji na "/" jer to izgleda kao "ništa se ne dešava" */
+    redirect("/login?callbackUrl=/register");
   }
 
-  const { type } = await searchParams;
-  const defaultRole = type === "majstor" ? "HANDYMAN" : "USER";
+  const defaultRole = wantsHandyman ? "HANDYMAN" : "USER";
 
   return (
     <div className="min-h-screen bg-brand-page">

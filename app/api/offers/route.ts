@@ -1,11 +1,12 @@
-import { NextResponse } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
 import { z } from "zod";
 
 export const dynamic = "force-dynamic";
-import { auth } from "@/lib/auth";
+import { authFromNextRequest } from "@/lib/auth";
 import { isRateLimited, getRetryAfterSeconds } from "@/lib/rate-limit";
 import { sendNewOfferEmail } from "@/lib/email";
 import { createNotification } from "@/lib/notifications";
+import { sendPushToUser } from "@/lib/push";
 import { logError } from "@/lib/logger";
 import { trackFunnelEvent } from "@/lib/funnel-events";
 import { zodErrorToString } from "@/lib/api-response";
@@ -24,10 +25,10 @@ const createOfferSchema = z
     { message: "Fiksna cijena zahtijeva pozitivan iznos", path: ["priceValue"] }
   );
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
     const { prisma } = await import("@/lib/db");
-    const session = await auth();
+    const session = await authFromNextRequest(request);
     if (!session?.user?.id) {
       return NextResponse.json(
         { success: false, error: "Morate biti prijavljeni" },
@@ -95,9 +96,11 @@ export async function POST(request: Request) {
       );
     }
 
-    if (req.adminStatus && req.adminStatus !== "DISTRIBUTED") {
+    // Novi zahtjevi korisnika imaju PENDING_REVIEW; javni tok mora dozvoliti ponude bez čekanja admina.
+    // Blokiramo samo eksplicitno zabranjene statuse.
+    if (req.adminStatus === "SPAM" || req.adminStatus === "DELETED") {
       return NextResponse.json(
-        { success: false, error: "Ovaj zahtjev još nije odobren za ponude" },
+        { success: false, error: "Ovaj zahtjev ne prihvata ponude." },
         { status: 400 }
       );
     }
@@ -174,6 +177,12 @@ export async function POST(request: Request) {
       createNotification(req.userId, "NEW_OFFER", `Nova ponuda: ${req.category}`, {
         body: `${handyman?.name ?? "Majstor"} vam je poslao ponudu`,
         link: `/request/${requestId}`,
+      });
+      void sendPushToUser(prisma, req.userId, {
+        title: "Stigla vam je nova ponuda",
+        body: "Za posao koji ste objavili stigla je nova ponuda. Otvorite zahtjev i pogledajte detalje.",
+        link: `/request/${requestId}`,
+        tag: `new-offer-${offer.id}`,
       });
     }
 

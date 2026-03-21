@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import nextDynamic from "next/dynamic";
+import { getSiteUrl } from "@/lib/site-url";
 import { PublicHeader } from "@/components/layout/PublicHeader";
 import { PublicFooter } from "@/components/layout/PublicFooter";
 import { Hero } from "@/components/home-page/Hero";
@@ -13,9 +14,23 @@ import { SeoLandingLinks } from "@/components/home-page/SeoLandingLinks";
 import { organizationJsonLd, faqPageJsonLd } from "@/lib/json-ld";
 import { FAQ_ITEMS } from "@/lib/faq-data";
 
+const siteUrl = getSiteUrl();
+
+const homeDescription =
+  "Povezivanje korisnika sa majstorima u Crnoj Gori. Objavite zahtjev jednom — besplatno za korisnike — javljaju se majstori kojima posao odgovara; uporedite ponude i ocjene prije odluke.";
+
+/** Naslov koristi template iz root layout-a: „… | BrziMajstor.ME“ */
 export const metadata: Metadata = {
-  title: {
-    absolute: "BrziMajstor.ME – Nađi majstora brzo",
+  title: "Marketplace majstora u Crnoj Gori",
+  description: homeDescription,
+  openGraph: {
+    title: "Marketplace majstora u Crnoj Gori | BrziMajstor.ME",
+    description: homeDescription,
+    url: siteUrl,
+  },
+  twitter: {
+    title: "Marketplace majstora u Crnoj Gori | BrziMajstor.ME",
+    description: homeDescription,
   },
 };
 

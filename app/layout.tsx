@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Inter, DM_Sans, Outfit } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { Providers } from "@/app/providers";
+import { auth } from "@/lib/auth";
 import { InstallCTA } from "@/components/pwa/install-cta";
 import { ServiceWorkerRegister } from "@/components/pwa/service-worker-register";
 import { getSiteUrl } from "@/lib/site-url";
@@ -41,11 +42,11 @@ export const metadata: Metadata = {
     statusBarStyle: "default",
   },
   title: {
-    default: "BrziMajstor.ME – Pronađi majstora brzo i lako u Crnoj Gori",
+    default: "BrziMajstor.ME – Zahtjev za majstore u Crnoj Gori",
     template: "%s | BrziMajstor.ME",
   },
   description:
-    "BrziMajstor.ME je platforma gdje brzo nalaziš provjerene majstore u Crnoj Gori. Vodoinstalateri, električari, majstori – sve na jednom mjestu.",
+    "Povezivanje korisnika sa majstorima u Crnoj Gori. Objavite zahtjev jednom — besplatno za korisnike — javljaju se majstori kojima posao odgovara; uporedite ponude i ocjene prije odluke.",
   keywords: [
     "majstori Crna Gora",
     "vodoinstalater Podgorica",
@@ -59,8 +60,9 @@ export const metadata: Metadata = {
     apple: "/icon-192.png",
   },
   openGraph: {
-    title: "BrziMajstor.ME",
-    description: "Nađi majstora za 2 minute.",
+    title: "BrziMajstor.ME – Zahtjev za majstore u Crnoj Gori",
+    description:
+      "Povezivanje korisnika sa majstorima u Crnoj Gori. Besplatna objava zahtjeva; više majstora može da se javi — uporedite ponude prije odluke.",
     url: siteUrl,
     siteName: "BrziMajstor.ME",
     locale: "sr_ME",
@@ -68,8 +70,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "BrziMajstor.ME",
-    description: "Nađi majstora za 2 minute.",
+    title: "BrziMajstor.ME – Zahtjev za majstore u Crnoj Gori",
+    description:
+      "Povezivanje korisnika sa majstorima u Crnoj Gori. Besplatna objava zahtjeva; više majstora može da se javi — uporedite ponude prije odluke.",
   },
   robots: {
     index: true,
@@ -84,15 +87,16 @@ export const viewport: Viewport = {
   viewportFit: "cover",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await auth();
   return (
     <html lang="sr" className={`${inter.variable} ${dmSans.variable} ${outfit.variable}`}>
       <body className="min-h-[100dvh] overflow-x-hidden font-sans antialiased bg-[#FAFBFC] text-[#0F172A] [padding-bottom:env(safe-area-inset-bottom)]">
-        <Providers>
+        <Providers session={session}>
           {children}
           <Analytics />
           <ServiceWorkerRegister />

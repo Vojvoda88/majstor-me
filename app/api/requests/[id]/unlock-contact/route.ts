@@ -1,5 +1,5 @@
-import { NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
+import { NextResponse, type NextRequest } from "next/server";
+import { authFromNextRequest } from "@/lib/auth";
 import { logError } from "@/lib/logger";
 import {
   isCreditsRequired,
@@ -12,12 +12,12 @@ import { trackFunnelEvent } from "@/lib/funnel-events";
 export const dynamic = "force-dynamic";
 
 export async function POST(
-  _request: Request,
+  request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { prisma } = await import("@/lib/db");
-    const session = await auth();
+    const session = await authFromNextRequest(request);
     if (!session?.user?.id) {
       return NextResponse.json(
         { success: false, error: "Morate biti prijavljeni" },

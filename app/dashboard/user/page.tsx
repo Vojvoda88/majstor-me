@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { MapPin, Calendar, MessageSquare } from "lucide-react";
 import { DeleteMyAccount } from "@/components/account/delete-my-account";
+import { UserPushNotificationsCard } from "@/components/user/push-notifications-card";
 
 export const dynamic = "force-dynamic";
 
@@ -58,6 +59,11 @@ export default async function UserDashboardPage() {
           </Button>
         </Link>
       </div>
+
+      <div className="mt-6">
+        <UserPushNotificationsCard />
+      </div>
+
       {requests.length === 0 ? (
         <EmptyState
           className="mt-8"

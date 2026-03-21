@@ -50,7 +50,15 @@ const NAV_ITEMS: {
   { href: "/admin/audit", label: "Audit Log", icon: ScrollText, permission: "audit_log" },
 ];
 
-export function AdminSidebar({ adminRole }: { adminRole: AdminRole }) {
+type SidebarProps = {
+  adminRole: AdminRole;
+  /** Kada je false ispod lg breakpointa, sidebar je sakriven (drawer zatvoren). Na desktopu se ignoriše. */
+  mobileOpen?: boolean;
+  /** Pozovi nakon klika na stavku na mobilnom (zatvara drawer). */
+  onClose?: () => void;
+};
+
+export function AdminSidebar({ adminRole, mobileOpen = false, onClose }: SidebarProps) {
   const pathname = usePathname();
 
   const visibleItems = NAV_ITEMS.filter((item) =>
@@ -58,14 +66,27 @@ export function AdminSidebar({ adminRole }: { adminRole: AdminRole }) {
   );
 
   return (
-    <aside className="fixed left-0 top-0 z-40 h-screen w-64 border-r border-[#E2E8F0] bg-white" data-testid="admin-sidebar">
-      <div className="flex h-full flex-col">
-        <div className="flex h-16 items-center border-b border-[#E2E8F0] px-4">
-          <Link href="/admin" className="font-semibold text-[#0F172A]" data-testid="admin-nav-dashboard">
+    <aside
+      id="admin-sidebar-nav"
+      data-testid="admin-sidebar"
+      className={cn(
+        "fixed left-0 top-0 z-50 flex h-screen w-[min(100vw,16rem)] max-w-[85vw] flex-col border-r border-[#E2E8F0] bg-white shadow-xl transition-transform duration-200 ease-out lg:z-40 lg:max-w-none lg:shadow-none",
+        "lg:translate-x-0 lg:pointer-events-auto",
+        mobileOpen ? "translate-x-0 pointer-events-auto" : "-translate-x-full pointer-events-none lg:translate-x-0"
+      )}
+    >
+      <div className="flex h-full min-h-0 flex-col">
+        <div className="flex h-16 shrink-0 items-center border-b border-[#E2E8F0] px-4">
+          <Link
+            href="/admin"
+            className="font-semibold text-[#0F172A]"
+            data-testid="admin-nav-dashboard"
+            onClick={() => onClose?.()}
+          >
             Admin Panel
           </Link>
         </div>
-        <nav className="flex-1 overflow-y-auto px-3 py-4">
+        <nav className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-3 py-4" aria-label="Admin navigacija">
           <ul className="space-y-0.5">
             {visibleItems.map((item) => {
               const Icon = item.icon;
@@ -76,6 +97,7 @@ export function AdminSidebar({ adminRole }: { adminRole: AdminRole }) {
                   <Link
                     href={item.href}
                     data-testid={testId}
+                    onClick={() => onClose?.()}
                     className={cn(
                       "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
                       isActive

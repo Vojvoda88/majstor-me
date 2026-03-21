@@ -165,17 +165,25 @@ export function InstallCTA() {
 
   const showNotifRow = status !== "loading";
   const loggedIn = !!(session?.user as { id?: string } | undefined)?.id;
+  const isHandyman = session?.user?.role === "HANDYMAN";
   const canPush = !!vapid && typeof window !== "undefined" && "PushManager" in window;
 
   return (
     <>
-      <div className="fixed inset-0 z-[90] bg-black/35 backdrop-blur-[2px] md:bg-black/25" aria-hidden onClick={close} />
+      {/*
+        Pozadina je samo vizuelna — BEZ pointer-events. Inače full-screen sloj (z-90)
+        prekriva cijelu stranicu i „pojede” sve klikove (linkovi, dugmad) — korisnik misli
+        da ništa ne radi dok ne zatvori modal. Zatvaranje: X ili „Kasnije”.
+      */}
       <div
-        className="fixed bottom-[max(0.75rem,env(safe-area-inset-bottom))] left-3 right-3 z-[95] mx-auto max-w-md rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xl sm:left-1/2 sm:right-auto sm:w-full sm:-translate-x-1/2"
+        className="pointer-events-none fixed inset-0 z-[90] bg-black/35 backdrop-blur-[2px] md:bg-black/25"
+        aria-hidden
+      />
+      <div
+        className="pointer-events-auto fixed bottom-[max(0.75rem,env(safe-area-inset-bottom))] left-3 right-3 z-[95] mx-auto max-w-md rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xl sm:left-1/2 sm:right-auto sm:w-full sm:-translate-x-1/2"
         role="dialog"
         aria-modal="true"
         aria-labelledby="pwa-entry-title"
-        onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0">
@@ -220,7 +228,7 @@ export function InstallCTA() {
 
           {showNotifRow && (
             <>
-              {loggedIn && canPush ? (
+              {loggedIn && isHandyman && canPush ? (
                 <button
                   type="button"
                   onClick={handleNotifications}
@@ -228,8 +236,12 @@ export function InstallCTA() {
                   className="flex min-h-[48px] w-full touch-manipulation items-center justify-center gap-2 rounded-xl border border-amber-200/80 bg-amber-50 px-4 py-3 text-[15px] font-semibold text-amber-950 transition hover:bg-amber-100 disabled:opacity-80"
                 >
                   <Bell className="h-5 w-5 shrink-0" aria-hidden />
-                  {notifDone ? "Obavještenja su uključena" : notifBusy ? "Čekaj…" : "Primaj obavještenja"}
+                  {notifDone ? "Obavještenja su uključena" : notifBusy ? "Čekaj…" : "Primaj obavještenja za nove poslove"}
                 </button>
+              ) : loggedIn && !isHandyman ? (
+                <p className="rounded-lg bg-slate-50 px-3 py-2 text-center text-xs text-slate-600">
+                  Obavještenja o novim poslovima dostupna su u dashboardu majstora nakon prijave kao majstor.
+                </p>
               ) : !loggedIn ? (
                 <Link
                   href="/login?callbackUrl=/"

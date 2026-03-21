@@ -5,7 +5,7 @@
  * Homepage, category pages, filters koriste slug i displayName.
  */
 
-import { REQUEST_CATEGORIES } from "./constants";
+import { REQUEST_CATEGORIES, REQUEST_CATEGORY_FALLBACK } from "./constants";
 
 export type CategoryConfig = {
   slug: string;
@@ -93,3 +93,14 @@ export function isCategorySlugValid(slug: string): boolean {
 
 /** Popularne kategorije za homepage - iz centralnog config-a */
 export const POPULAR_CATEGORIES = CATEGORY_CONFIG;
+
+/**
+ * Kratki naziv usluge za push / notifikacije (internal category iz zahtjeva).
+ */
+export function displayLabelForRequestCategory(internalCategory: string): string {
+  if (internalCategory === REQUEST_CATEGORY_FALLBACK) {
+    return "Usluga po opisu";
+  }
+  const found = CATEGORY_CONFIG_FULL.find((c) => c.internalCategory === internalCategory);
+  return found?.displayName ?? internalCategory;
+}

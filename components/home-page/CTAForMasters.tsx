@@ -21,7 +21,7 @@ export function CTAForMasters() {
             </p>
           </div>
           <Link
-            href="/register"
+            href="/register?type=majstor"
             className="inline-flex h-14 shrink-0 items-center justify-center gap-2 rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 px-9 text-base font-bold text-brand-navy shadow-[0_14px_36px_-8px_rgba(245,158,11,0.45)] transition hover:brightness-105 active:scale-[0.98] md:h-[56px] md:px-10"
           >
             Prijavite se kao majstor

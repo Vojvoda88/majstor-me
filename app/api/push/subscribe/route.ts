@@ -22,6 +22,12 @@ export async function POST(request: Request) {
         { status: 401 }
       );
     }
+    if (session.user.role !== "HANDYMAN" && session.user.role !== "USER") {
+      return NextResponse.json(
+        { success: false, error: "Obavještenja na ovom uređaju dostupna su prijavljenim korisnicima i majstorima" },
+        { status: 403 }
+      );
+    }
 
     const body = await request.json();
     const parsed = subscribeSchema.safeParse(body);

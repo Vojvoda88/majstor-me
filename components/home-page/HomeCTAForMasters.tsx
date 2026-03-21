@@ -15,7 +15,7 @@ export function HomeCTAForMasters() {
             Prijavite svoj profil i počnite primati zahtjeve od klijenata u vašoj oblasti.
           </p>
           <Link
-            href="/register"
+            href="/register?type=majstor"
             className="mt-4 flex h-[48px] items-center justify-center rounded-[14px] border border-[#D6E2F1] bg-white text-[15px] font-medium text-[#0F172A] transition active:scale-[0.98]"
           >
             Prijavite profil

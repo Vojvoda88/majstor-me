@@ -15,7 +15,8 @@ export type FunnelEventType =
   | "credit_package_selected"
   | "credit_purchase_started"
   | "credit_purchase_success"
-  | "offer_sent_after_unlock";
+  | "offer_sent_after_unlock"
+  | "cash_activation_requested";
 
 export type FunnelMetadata = {
   requestId?: string;

@@ -70,6 +70,7 @@ export async function processDistributionJob(jobId: string): Promise<boolean> {
       city: request.city,
       title: request.title,
       description: request.description,
+      urgency: request.urgency,
     });
 
     await prisma.distributionJob.update({

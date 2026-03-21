@@ -13,7 +13,8 @@ export default defineConfig({
   workers: process.env.CI ? 2 : undefined,
   reporter: [["html", { open: "never" }], ["list"]],
   use: {
-    baseURL: process.env.PLAYWRIGHT_BASE_URL || "http://localhost:3000",
+    // Uskladiti sa NEXTAUTH_URL / `next dev -p` (npr. 3010 u .env) da kolačići i origin budu isti.
+    baseURL: process.env.PLAYWRIGHT_BASE_URL || "http://localhost:3010",
     trace: "on-first-retry",
     screenshot: "only-on-failure",
     video: "on-first-retry",

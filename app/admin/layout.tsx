@@ -1,8 +1,7 @@
 import { AppProviders } from "@/app/app-providers";
 import { Providers } from "@/app/providers";
+import { AdminShell } from "@/components/admin/admin-shell";
 import { requireAdmin } from "@/lib/admin/auth";
-import { AdminSidebar } from "@/components/admin/admin-sidebar";
-import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 
@@ -16,34 +15,9 @@ export default async function AdminLayout({
   return (
     <Providers>
       <AppProviders>
-        <div className="min-h-screen bg-[#F1F5F9] lg:flex">
-          <AdminSidebar adminRole={adminRole} />
-          <div className="w-full lg:pl-64">
-            <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-[#E2E8F0] bg-white px-4 sm:px-6">
-              <span className="text-sm text-[#64748B]">
-                Prijavljeni ste kao <strong>{session.user.name}</strong> ({adminRole.replace("_", " ")})
-              </span>
-              <div className="flex items-center gap-4">
-                <Link
-                  href="/"
-                  className="text-sm font-medium text-[#64748B] hover:text-[#0F172A]"
-                >
-                  ← Javna stranica
-                </Link>
-                <form action="/api/auth/signout" method="POST">
-                  <button
-                    type="submit"
-                    className="text-sm font-medium text-[#64748B] hover:text-[#DC2626]"
-                    data-testid="admin-signout"
-                  >
-                    Odjavi se
-                  </button>
-                </form>
-              </div>
-            </header>
-            <main className="p-4 sm:p-6">{children}</main>
-          </div>
-        </div>
+        <AdminShell adminRole={adminRole} session={session}>
+          {children}
+        </AdminShell>
       </AppProviders>
     </Providers>
   );

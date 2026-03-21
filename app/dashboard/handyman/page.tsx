@@ -8,11 +8,12 @@ import { Button } from "@/components/ui/button";
 import { HandymanRequestList } from "./handyman-request-list";
 import { OnboardingBanner } from "@/components/handyman/onboarding-banner";
 import { StickyBottomCTA } from "@/components/layout/StickyBottomCTA";
+import { HandymanPushNotificationsCard } from "@/components/handyman/push-notifications-card";
 import { calcProfileCompletion } from "@/lib/handyman-onboarding";
 import { isCreditsRequired, LOW_CREDITS_THRESHOLD } from "@/lib/credits";
 import { REQUEST_CATEGORY_FALLBACK } from "@/lib/constants";
-import { CREDIT_PACKAGES } from "@/lib/credit-packages";
 import { isPaymentConfigured } from "@/lib/payment";
+import { HandymanCreditsCtaBlock } from "@/components/credits/handyman-credits-cta-block";
 
 const URGENCY_LABELS: Record<string, string> = {
   HITNO_DANAS: "Hitno danas",
@@ -187,28 +188,58 @@ export default async function HandymanDashboardPage({
                 Preostalo vam je još {(profile as { creditsBalance?: number }).creditsBalance ?? 0} kredita.
               </p>
             )}
-            {isPaymentConfigured() ? (
-              <Link href="/dashboard/handyman/credits" className="mt-2 inline-block text-sm font-medium text-blue-600 hover:underline">
-                Kupi kredite →
-              </Link>
-            ) : (
-              <p className="mt-1 text-xs text-[#94A3B8]">20–60 kredita po kontaktu</p>
-            )}
+            <Link
+              href="/dashboard/handyman/credits"
+              className="mt-2 inline-block text-sm font-semibold text-blue-600 hover:underline"
+            >
+              {isPaymentConfigured() ? "Kupi kredite →" : "Aktiviraj kredite →"}
+            </Link>
+            <p className="mt-1 text-xs text-[#94A3B8]">20–60 kredita po kontaktu</p>
           </div>
         )}
       </div>
 
       {isCreditsRequired() && (
-        <div className="mt-6 rounded-xl border border-slate-200 bg-slate-50/90 p-4 text-sm leading-relaxed text-slate-700">
-          <p className="font-semibold text-[#0F172A]">Kako funkcioniše za majstore</p>
-          <p className="mt-2">
-            Pregledate objavljene poslove bez plaćanja. Vidite opis, grad, kategoriju i slike ako ih ima —{" "}
-            <strong className="font-semibold text-[#0F172A]">broj telefona ne vidite odmah</strong>. Kada vam posao odgovara,
-            potvrdite kontakt: <strong className="font-semibold text-[#0F172A]">tek tada se skidaju krediti</strong>, pa dobijate kontakt i možete poslati ponudu.
-            Povrat kredita postoji samo ako admin označi spam ili zaobilaženje, ili zbog tehničke greške — ne ako se korisnik ne javi.
-          </p>
+        <div className="mt-6">
+          <HandymanCreditsCtaBlock paymentOnline={isPaymentConfigured()} />
         </div>
       )}
+
+      <div className="mt-6 rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+        <h2 className="text-lg font-semibold text-[#0F172A]">Kako radi sistem</h2>
+        <p className="mt-2 text-sm leading-relaxed text-slate-700">
+          Klijenti objavljaju zahtjeve — vi ih vidite na listi. Pregled opisa, grada, kategorije i slika je{" "}
+          <strong className="font-semibold text-[#0F172A]">besplatan</strong>.{" "}
+          <strong className="font-semibold text-[#0F172A]">Broj telefona ne vidite odmah</strong>: dobijate ga tek kad
+          potvrdite da želite kontakt za taj posao.
+        </p>
+        {isCreditsRequired() ? (
+          <>
+            <p className="mt-3 text-sm leading-relaxed text-slate-700">
+              <strong className="font-semibold text-[#0F172A]">Krediti</strong> su način da otključate kontakt. Troše se
+              samo u tom trenutku (obično 20–60 po poslu, zavisi od detalja). Nakon toga možete poslati ponudu. Povrat
+              kredita postoji ako admin označi spam ili zaobilaženje, ili zbog tehničke greške — ne ako se korisnik ne
+              javi.
+            </p>
+            <p className="mt-3 text-sm text-slate-600">
+              Sve opcije za dopunu (online i keš) su na{" "}
+              <Link href="/dashboard/handyman/credits" className="font-semibold text-blue-600 underline underline-offset-2">
+                stranici Krediti
+              </Link>
+              .
+            </p>
+          </>
+        ) : (
+          <p className="mt-3 text-sm text-slate-600">
+            U ovom okruženju otključavanje kontakta je trenutno bez kredita — i dalje potvrdite kontakt prije nego što
+            vidite broj telefona.
+          </p>
+        )}
+      </div>
+
+      <div className="mt-6">
+        <HandymanPushNotificationsCard />
+      </div>
 
       <HandymanRequestList
         requests={requests}
@@ -222,7 +253,13 @@ export default async function HandymanDashboardPage({
       />
       <StickyBottomCTA
         href={isCreditsRequired() ? "/dashboard/handyman/credits" : "/dashboard/handyman"}
-        label={isCreditsRequired() ? "Kupi kredite" : "Pregledaj zahtjeve"}
+        label={
+          isCreditsRequired()
+            ? isPaymentConfigured()
+              ? "Kupi kredite"
+              : "Aktiviraj kredite"
+            : "Pregledaj zahtjeve"
+        }
       />
     </div>
   );

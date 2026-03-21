@@ -1,8 +1,15 @@
 import { requireAdminPermission } from "@/lib/admin/auth";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CashActivationStatusCell } from "@/components/admin/cash-activation-status-cell";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { getPackageById } from "@/lib/credit-packages";
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";
+
+const PAYMENT_METHOD_LABELS: Record<string, string> = {
+  kes: "Keš",
+  posta: "Pošta Crne Gore",
+};
 
 const TYPE_LABELS: Record<string, string> = {
   PURCHASE: "Kupovina",
@@ -35,6 +42,14 @@ export default async function AdminCreditsPage() {
 
   const totalCreditsInCirculation = handymenWithCredits.reduce((s, h) => s + h.creditsBalance, 0);
 
+  const cashActivations = await prisma.creditCashActivationRequest.findMany({
+    orderBy: { createdAt: "desc" },
+    take: 50,
+    include: {
+      user: { select: { id: true, email: true, name: true } },
+    },
+  });
+
   return (
     <div className="space-y-6">
       <div>
@@ -52,6 +67,69 @@ export default async function AdminCreditsPage() {
           </CardContent>
         </Card>
       </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Zahtjevi za aktivaciju u kešu / Pošti</CardTitle>
+          <CardDescription>
+            Ručna obrada — kontakt na telefon iz forme; nalog majstora u sistemu (email za vezu sa nalogom). Posljednjih{" "}
+            {cashActivations.length} zapisa.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b text-left">
+                  <th className="pb-3 pr-3">Datum</th>
+                  <th className="pb-3 pr-3">Status</th>
+                  <th className="pb-3 pr-3">Ime</th>
+                  <th className="pb-3 pr-3">Telefon</th>
+                  <th className="pb-3 pr-3">Grad</th>
+                  <th className="pb-3 pr-3">Paket</th>
+                  <th className="pb-3 pr-3">Način</th>
+                  <th className="pb-3 pr-3">Nalog</th>
+                  <th className="pb-3 pr-3">Napomena</th>
+                </tr>
+              </thead>
+              <tbody>
+                {cashActivations.map((row) => {
+                  const pkg = getPackageById(row.packageId);
+                  return (
+                    <tr key={row.id} className="border-b last:border-0 align-top">
+                      <td className="py-3 pr-3 whitespace-nowrap text-[#64748B]">
+                        {new Date(row.createdAt).toLocaleString("sr")}
+                      </td>
+                      <td className="py-3 pr-3">
+                        <CashActivationStatusCell requestId={row.id} initialStatus={row.status} />
+                      </td>
+                      <td className="py-3 pr-3 max-w-[140px]">{row.fullName}</td>
+                      <td className="py-3 pr-3 whitespace-nowrap font-mono text-xs">{row.phone}</td>
+                      <td className="py-3 pr-3">{row.city}</td>
+                      <td className="py-3 pr-3">{pkg ? `${pkg.label} (${pkg.priceEur.toFixed(2)} €)` : row.packageId}</td>
+                      <td className="py-3 pr-3">
+                        {row.paymentMethod ? PAYMENT_METHOD_LABELS[row.paymentMethod] ?? row.paymentMethod : "—"}
+                      </td>
+                      <td className="py-3 pr-3">
+                        <div className="flex flex-col gap-0.5">
+                          <Link href={`/admin/handymen/${row.userId}`} className="text-blue-700 hover:underline">
+                            {row.user.name}
+                          </Link>
+                          <span className="text-xs text-[#64748B]">{row.user.email}</span>
+                        </div>
+                      </td>
+                      <td className="py-3 pr-3 max-w-[200px] text-xs text-[#475569]">{row.note ?? "—"}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+          {cashActivations.length === 0 && (
+            <p className="py-6 text-center text-[#64748B]">Još nema zahtjeva za keš aktivaciju.</p>
+          )}
+        </CardContent>
+      </Card>
 
       <Card>
         <CardHeader>

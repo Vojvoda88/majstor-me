@@ -13,29 +13,84 @@ function getClientIp(request: Request): string {
   return request.headers.get("x-real-ip") || "unknown";
 }
 
+/** Jednostavna shema — sve stringove normalizujemo prije safeParse (bez z.preprocess). */
 const registerSchema = z.object({
   name: z.string().min(2, "Ime mora imati najmanje 2 karaktera"),
   email: z.string().email("Neispravan email"),
   password: z.string().min(6, "Lozinka mora imati najmanje 6 karaktera"),
   phone: z.string().optional(),
   city: z.string().optional(),
-  role: z.enum(["USER", "HANDYMAN"]).default("USER"),
+  role: z.enum(["USER", "HANDYMAN"]),
 });
+
+/**
+ * Bilo koji JSON od klijenta → predvidljiv objekat za Zod.
+ * (Izbjegava greške tipa kod z.preprocess + optional.)
+ */
+function normalizeRegisterBody(raw: unknown): z.infer<typeof registerSchema> {
+  const b =
+    raw !== null && typeof raw === "object" && !Array.isArray(raw)
+      ? (raw as Record<string, unknown>)
+      : {};
+
+  const name = String(b.name ?? "").trim();
+  const email = String(b.email ?? "")
+    .trim()
+    .toLowerCase();
+  const password = String(b.password ?? "");
+
+  const phoneRaw = b.phone;
+  const phone =
+    phoneRaw === null || phoneRaw === undefined || phoneRaw === ""
+      ? undefined
+      : String(phoneRaw).trim() || undefined;
+
+  const cityRaw = b.city;
+  const city =
+    cityRaw === null || cityRaw === undefined || cityRaw === ""
+      ? undefined
+      : String(cityRaw).trim() || undefined;
+
+  const roleRaw = String(b.role ?? "USER")
+    .trim()
+    .toUpperCase();
+  const role: "USER" | "HANDYMAN" = roleRaw === "HANDYMAN" ? "HANDYMAN" : "USER";
+
+  return { name, email, password, phone, city, role };
+}
 
 export async function POST(request: Request) {
   try {
     const ip = getClientIp(request);
-    if (isRateLimited(`register:${ip}`, 5, 60 * 60 * 1000)) {
+    /** U dev-u više pokušaja (testiranje); u produkciji 5/h */
+    const registerLimit = process.env.NODE_ENV === "development" ? 100 : 5;
+    if (isRateLimited(`register:${ip}`, registerLimit, 60 * 60 * 1000)) {
       return NextResponse.json(
         { success: false, error: "Previše pokušaja registracije. Pokušajte ponovo kasnije." },
         { status: 429, headers: { "Retry-After": String(getRetryAfterSeconds(`register:${ip}`)) } }
       );
     }
 
-    const body = await request.json();
-    const parsed = registerSchema.safeParse(body);
+    let raw: unknown;
+    try {
+      raw = await request.json();
+    } catch {
+      return NextResponse.json(
+        { success: false, error: "Neispravan zahtjev (JSON)." },
+        { status: 400 }
+      );
+    }
+
+    const normalized = normalizeRegisterBody(raw);
+    const parsed = registerSchema.safeParse(normalized);
 
     if (!parsed.success) {
+      if (process.env.NODE_ENV === "development") {
+        console.warn("[register] validation failed", {
+          normalized,
+          issues: parsed.error.flatten(),
+        });
+      }
       return NextResponse.json(
         { success: false, error: zodErrorToString(parsed.error) },
         { status: 400 }
@@ -49,7 +104,11 @@ export async function POST(request: Request) {
     const existing = await prisma.user.findUnique({ where: { email } });
     if (existing) {
       return NextResponse.json(
-        { success: false, error: "Korisnik sa ovim email-om već postoji" },
+        {
+          success: false,
+          error: "Korisnik sa ovim email-om već postoji",
+          code: "EMAIL_ALREADY_EXISTS",
+        },
         { status: 400 }
       );
     }
@@ -62,8 +121,8 @@ export async function POST(request: Request) {
           name,
           email,
           passwordHash,
-          phone: phone || null,
-          city: city || null,
+          phone: phone ?? null,
+          city: city ?? null,
           role,
         },
         select: {

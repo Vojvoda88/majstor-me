@@ -1,8 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { signIn } from "next-auth/react";
+import { signIn, getSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
+import {
+  defaultLoginPathForRole,
+  getSafeInternalCallbackPath,
+  shouldUseRoleDefaultInstead,
+} from "@/lib/auth/safe-callback-path";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -22,7 +27,6 @@ type LoginFormData = z.infer<typeof loginSchema>;
 export function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get("callbackUrl") ?? "/";
   const [error, setError] = useState<string | null>(null);
 
   const {
@@ -46,14 +50,37 @@ export function LoginForm() {
       return;
     }
 
-    router.push(callbackUrl);
+    router.refresh();
+    let session = await getSession();
+    if (!session?.user) {
+      await new Promise((r) => setTimeout(r, 80));
+      session = await getSession();
+    }
+    const role = (session?.user as { role?: string } | undefined)?.role;
+    const rawCallback = searchParams.get("callbackUrl");
+    const origin = typeof window !== "undefined" ? window.location.origin : "";
+    const safe = getSafeInternalCallbackPath(rawCallback, origin);
+
+    let target: string;
+    if (!shouldUseRoleDefaultInstead(safe)) {
+      target = safe as string;
+    } else {
+      target = defaultLoginPathForRole(role);
+    }
+
+    router.push(target);
     router.refresh();
   }
 
   return (
     <Card className="w-full rounded-2xl border-[#E2E8F0] shadow-card">
       <CardContent className="pt-8">
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5" data-testid="login-form">
+        <form
+          method="post"
+          onSubmit={handleSubmit(onSubmit)}
+          className="space-y-5"
+          data-testid="login-form"
+        >
           {error && <div className="form-error" data-testid="login-error">{error}</div>}
           <div className="space-y-3">
             <Label htmlFor="email">Email</Label>

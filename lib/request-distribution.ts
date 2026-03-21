@@ -4,8 +4,9 @@
  * Filtrira samo majstore sa workerStatus = ACTIVE (ne PENDING_REVIEW, SUSPENDED, BANNED).
  */
 
-import type { PrismaClient } from "@prisma/client";
+import type { PrismaClient, UrgencyLevel } from "@prisma/client";
 import { REQUEST_CATEGORY_FALLBACK } from "@/lib/constants";
+import { displayLabelForRequestCategory } from "@/lib/categories";
 import { sendNewRequestEmail } from "@/lib/email";
 import { createNotificationsBulk } from "@/lib/notifications";
 import { sendPushToUser } from "@/lib/push";
@@ -20,14 +21,43 @@ export type DistributeRequestParams = {
   city: string;
   title?: string | null;
   description: string;
+  /** Za naslov push-a (hitno / uskoro). */
+  urgency?: UrgencyLevel;
 };
 
 export type DistributeResult = { handymenNotified: number; durationMs: number };
 
+function buildNewRequestNotificationTitle(
+  urgency: UrgencyLevel | undefined,
+  categoryLabel: string,
+  city: string
+): string {
+  const place = (city ?? "").trim() || "Crna Gora";
+  const cat = categoryLabel.trim();
+  if (urgency === "HITNO_DANAS") {
+    return `Novi hitan zahtjev za ${cat} u ${place}`;
+  }
+  if (urgency === "U_NAREDNA_2_DANA") {
+    return `Novi zahtjev (uskoro) za ${cat} u ${place}`;
+  }
+  return `Novi zahtjev za ${cat} u ${place}`;
+}
+
+function buildNewRequestNotificationBody(title: string | null | undefined, description: string): string {
+  const t = (title ?? "").trim();
+  const d = (description ?? "").trim().replace(/\s+/g, " ");
+  if (t.length >= 8) {
+    return t.slice(0, 160);
+  }
+  return d.slice(0, 160) || "Otvorite zahtjev i pošaljite ponudu ako vam odgovara.";
+}
+
 export async function distributeRequestToHandymen(params: DistributeRequestParams): Promise<DistributeResult> {
   const start = Date.now();
-  const { prisma, requestId, category, city, title, description } = params;
-  const descTrimmed = (description ?? "").slice(0, 100);
+  const { prisma, requestId, category, city, title, description, urgency } = params;
+  const categoryLabel = displayLabelForRequestCategory(category);
+  const pushTitle = buildNewRequestNotificationTitle(urgency, categoryLabel, city);
+  const pushBody = buildNewRequestNotificationBody(title, description);
 
   /** Kad korisnik nije našao tačnu uslugu — obavještavamo majstore sa bilo kojom „pravom“ kategorijom (ne ovaj fallback). */
   const isFallbackCategory = category === REQUEST_CATEGORY_FALLBACK;
@@ -84,8 +114,8 @@ export async function distributeRequestToHandymen(params: DistributeRequestParam
     ? topForNotify.slice(0, SMART_DISTRIBUTION_CONFIG.TOP_N_NOTIFY)
     : forDist;
 
-  const notifyMsg = `Novi zahtjev: ${category} – ${city}. Otvori aplikaciju i pošalji ponudu.`;
-  const bodyTrim = (title ?? descTrimmed).slice(0, 100);
+  const notifyMsg = pushTitle;
+  const bodyTrim = pushBody.slice(0, 200);
   const link = `/request/${requestId}`;
 
   await createNotificationsBulk(
@@ -103,11 +133,13 @@ export async function distributeRequestToHandymen(params: DistributeRequestParam
       sendNewRequestEmail(h.id, requestId, category, city)
     )
   );
+  const pushBodyShort = `${pushBody} Otvorite zahtjev i pošaljite ponudu.`.replace(/\s+/g, " ").trim().slice(0, 220);
+
   await Promise.allSettled(
     toNotify.map((h) =>
       sendPushToUser(prisma, h.id, {
-        title: "Novi zahtjev: " + category + " – " + city,
-        body: "Otvori aplikaciju i pošalji ponudu.",
+        title: pushTitle,
+        body: pushBodyShort,
         link,
         tag: "new-job-" + requestId,
       })
