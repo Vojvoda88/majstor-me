@@ -28,7 +28,16 @@ export async function fillCreateRequestForm(page: Page, overrides?: Partial<{
  * Submit create-request form (desktop or mobile submit button).
  */
 export async function submitCreateRequestForm(page: Page): Promise<void> {
-  await page.getByTestId("create-request-submit").first().click();
+  const buttons = page.getByTestId("create-request-submit");
+  const n = await buttons.count();
+  for (let i = 0; i < n; i++) {
+    const b = buttons.nth(i);
+    if (await b.isVisible()) {
+      await b.click();
+      return;
+    }
+  }
+  throw new Error("Nema vidljivog create-request-submit gumba (mobile sticky vs desktop).");
 }
 
 /**
@@ -36,11 +45,9 @@ export async function submitCreateRequestForm(page: Page): Promise<void> {
  */
 export async function createRequestAndWaitForRedirect(page: Page): Promise<string> {
   await fillCreateRequestForm(page);
-  const responsePromise = page.waitForResponse((res) => res.url().includes("/api/requests") && res.request().method() === "POST", { timeout: 15_000 });
   await submitCreateRequestForm(page);
-  const response = await responsePromise;
-  if (!response.ok()) throw new Error("Create request API failed: " + response.status());
-  await page.waitForURL(/\/request\/[^/]+/, { timeout: 15_000 });
+  /** Slanje ide kroz server action (createRequestAction), ne nužno POST /api/requests. */
+  await page.waitForURL(/\/request\/[^/]+/, { timeout: 25_000 });
   const url = page.url();
   const match = url.match(/\/request\/([^/?#]+)/);
   if (!match) throw new Error("Expected redirect to /request/[id], got " + url);

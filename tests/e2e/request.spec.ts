@@ -36,7 +36,7 @@ test.describe("Request flow", () => {
 
   test("Submit without required fields shows validation", async ({ page }) => {
     await page.goto("/request/create");
-    await page.getByTestId("create-request-submit").first().click();
+    await submitCreateRequestForm(page);
     await expect(page).toHaveURL(/\/request\/create/);
     await expect(
       page.getByText(/unesite|obavezno|minimalno|odaberite/i).first()

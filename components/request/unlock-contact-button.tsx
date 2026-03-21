@@ -199,7 +199,7 @@ export function UnlockContactButton({
           aria-modal="true"
           aria-labelledby="unlock-confirm-title"
         >
-          <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-4 shadow-2xl sm:p-6">
+          <div className="max-h-[min(90vh,calc(100dvh-2rem))] w-full max-w-md overflow-y-auto overscroll-contain rounded-2xl border border-slate-200 bg-white p-4 shadow-2xl sm:p-6">
             <h3 id="unlock-confirm-title" className="font-display text-lg font-bold text-slate-900">
               Otključati kontakt za ovaj posao?
             </h3>
@@ -247,7 +247,7 @@ export function UnlockContactButton({
         type="button"
         onClick={() => setConfirmOpen(true)}
         disabled={mutation.isPending}
-        className="h-14 w-full gap-2 rounded-2xl bg-gradient-to-br from-[#2563eb] to-[#1d4ed8] text-base font-bold text-white shadow-btn-cta hover:brightness-105 disabled:opacity-60 md:h-12 md:w-auto md:px-8"
+        className="h-auto min-h-14 w-full gap-2 whitespace-normal rounded-2xl bg-gradient-to-br from-[#2563eb] to-[#1d4ed8] px-3 py-3 text-center text-sm font-bold leading-tight text-white shadow-btn-cta hover:brightness-105 disabled:opacity-60 sm:text-base md:h-12 md:min-h-0 md:w-auto md:px-8 md:py-0 md:leading-none"
         size="lg"
       >
         <Unlock className="h-5 w-5" />

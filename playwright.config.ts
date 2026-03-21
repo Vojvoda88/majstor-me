@@ -22,6 +22,16 @@ export default defineConfig({
   projects: [
     { name: "chromium", use: { ...devices["Desktop Chrome"] } },
     { name: "firefox", use: { ...devices["Desktop Firefox"] } },
+    /** Mobile QA: iPhone 13–class viewport (390×844) */
+    {
+      name: "mobile",
+      use: {
+        ...devices["Desktop Chrome"],
+        viewport: { width: 390, height: 844 },
+        isMobile: true,
+        hasTouch: true,
+      },
+    },
   ],
   timeout: 45_000,
   expect: { timeout: 12_000 },

@@ -14,7 +14,7 @@ export function PremiumMobileHeader() {
 
   return (
     <header className="fixed left-0 right-0 top-0 z-50 border-b border-slate-200/80 bg-white/95 backdrop-blur-md">
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
+      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-3 sm:px-6">
         <Link href="/" className="font-display text-xl font-bold tracking-tight md:text-2xl">
           <span className="text-[#1d4ed8]">BrziMajstor</span>
           <span className="text-slate-800">.ME</span>
@@ -89,7 +89,7 @@ export function PremiumMobileHeader() {
       </div>
 
       {menuOpen && (
-        <div className="border-t border-slate-100 bg-white px-6 py-5 md:hidden">
+        <div className="border-t border-slate-100 bg-white px-3 py-5 sm:px-6 md:hidden">
           <nav className="flex flex-col gap-1">
             <Link href="/categories" className="py-3 text-[16px] font-medium text-slate-700" onClick={() => setMenuOpen(false)}>
               Kategorije

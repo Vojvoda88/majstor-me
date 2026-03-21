@@ -24,7 +24,8 @@ export function UrgencyBadge({
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-full font-semibold tracking-tight ring-1",
+        "inline-flex max-w-full items-center justify-center whitespace-normal break-words text-center leading-snug ring-1 [word-break:break-word]",
+        "rounded-full font-semibold tracking-tight",
         size === "sm" ? "px-2.5 py-0.5 text-[11px]" : "px-3 py-1 text-xs",
         isHot &&
           "bg-gradient-to-r from-red-600/95 via-orange-600/95 to-amber-600/90 text-white shadow-[0_0_0_1px_rgba(254,215,170,0.35),0_6px_20px_-8px_rgba(220,38,38,0.55)] ring-red-500/30",

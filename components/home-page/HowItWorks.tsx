@@ -101,7 +101,9 @@ function StepGrid({
               {step.n}
             </span>
           </div>
-          <h3 className="mt-4 font-display text-base font-bold leading-snug text-brand-navy lg:text-[17px]">{step.title}</h3>
+          <h3 className="mt-4 min-w-0 break-words font-display text-base font-bold leading-snug text-brand-navy lg:text-[17px]">
+            {step.title}
+          </h3>
           <p className="mt-2 flex-1 text-sm leading-relaxed text-slate-600">{step.desc}</p>
         </div>
       ))}
@@ -128,7 +130,9 @@ function StepGridMobile({
               </span>
               <div className="min-w-0 flex-1">
                 <div className="flex items-start justify-between gap-2">
-                  <h3 className="font-display text-lg font-bold leading-snug text-brand-navy">{step.title}</h3>
+                  <h3 className="min-w-0 break-words font-display text-lg font-bold leading-snug text-brand-navy">
+                    {step.title}
+                  </h3>
                   <span className="inline-flex min-h-[1.75rem] min-w-[1.75rem] shrink-0 items-center justify-center rounded-full bg-brand-navy/90 px-2.5 text-xs font-bold tabular-nums text-white shadow-sm">
                     {step.n}
                   </span>
@@ -246,7 +250,9 @@ function HandymanStepGridMobile({ steps }: { steps: readonly HandymanStep[] }) {
                 <step.icon className="h-5 w-5" strokeWidth={2} />
               </span>
               <div className="min-w-0 flex-1">
-                <h3 className="font-display text-[17px] font-bold leading-snug text-slate-900">{step.title}</h3>
+                <h3 className="min-w-0 break-words font-display text-[17px] font-bold leading-snug text-slate-900">
+                  {step.title}
+                </h3>
                 <p className="mt-2.5 text-[14px] leading-relaxed text-slate-600 sm:text-[15px]">{step.desc}</p>
               </div>
             </div>
