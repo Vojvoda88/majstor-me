@@ -1,5 +1,5 @@
 /**
- * Krediti za majstore – interna valuta. Otključavanje leada troši 20–60 kredita.
+ * Krediti za majstore – interna valuta. Otključavanje leada troši oko 20–65 kredita (hitnost + dodatci).
  * Slanje ponude je besplatno NAKON otključanja leada.
  *
  * CREDITS_REQUIRED=true u .env aktivira provjeru. Bez toga, lead unlock je besplatan.

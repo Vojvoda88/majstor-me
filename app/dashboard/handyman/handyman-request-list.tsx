@@ -8,12 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { REQUEST_CATEGORIES, CITIES } from "@/lib/constants";
 import { MapPin, MessageSquare, Calendar, User } from "lucide-react";
-
-const URGENCY_LABELS: Record<string, string> = {
-  HITNO_DANAS: "Hitno danas",
-  U_NAREDNA_2_DANA: "U naredna 2 dana",
-  NIJE_HITNO: "Nije hitno",
-};
+import { UrgencyBadge } from "@/components/request/urgency-badge";
 
 export function HandymanRequestList({
   requests,
@@ -110,17 +105,7 @@ export function HandymanRequestList({
                       {req.description}
                     </p>
                     <div className="mt-3 flex flex-wrap items-center gap-2">
-                      <Badge
-                        variant={
-                          req.urgency === "HITNO_DANAS"
-                            ? "destructive"
-                            : req.urgency === "U_NAREDNA_2_DANA"
-                              ? "warning"
-                              : "outline"
-                        }
-                      >
-                        {URGENCY_LABELS[req.urgency]}
-                      </Badge>
+                      <UrgencyBadge urgency={req.urgency} />
                       <span className="flex items-center gap-1 text-sm text-[#64748B]">
                         <MapPin className="h-4 w-4" />
                         {req.city}

@@ -2,10 +2,19 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import type { CreditPackage } from "@/lib/credit-packages";
 import { trackFunnel } from "@/lib/track-funnel";
 
-export function CreditsPurchaseButton({ pkg }: { pkg: CreditPackage }) {
+type ButtonVariant = "default" | "premium";
+
+export function CreditsPurchaseButton({
+  pkg,
+  variant = "default",
+}: {
+  pkg: CreditPackage;
+  variant?: ButtonVariant;
+}) {
   const [loading, setLoading] = useState(false);
 
   const handleClick = async () => {
@@ -15,6 +24,7 @@ export function CreditsPurchaseButton({ pkg }: { pkg: CreditPackage }) {
       const res = await fetch("/api/checkout/credits", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify({ packageId: pkg.id }),
       });
       const json = await res.json();
@@ -33,11 +43,19 @@ export function CreditsPurchaseButton({ pkg }: { pkg: CreditPackage }) {
 
   return (
     <Button
+      type="button"
       onClick={handleClick}
       disabled={loading}
-      className="w-full"
+      variant="outline"
+      size="lg"
+      className={cn(
+        "w-full min-h-[48px] text-base font-semibold transition-shadow",
+        variant === "premium" &&
+          "border-slate-800 !bg-slate-900 !text-white shadow-[0_8px_28px_-12px_rgba(15,23,42,0.45)] hover:!bg-slate-800 hover:!text-white",
+        variant === "default" && "border-slate-200 bg-white hover:bg-slate-50"
+      )}
     >
-      {loading ? "Učitavanje..." : `Kupi za ${pkg.priceEur.toFixed(2)} €`}
+      {loading ? "Učitavanje…" : `Kupi za ${pkg.priceEur.toFixed(2)} €`}
     </Button>
   );
 }

@@ -84,15 +84,18 @@ test.describe("Marketplace glavni tok (smoke)", () => {
     }
 
     await page.goto(`/request/${requestId}`, gotoOpts);
-    const unlockBtn = page.getByRole("button", { name: /Uzmi kontakt/i });
+    const unlockBtn = page.getByRole("button", { name: /Želim kontakt/i });
     await expect(unlockBtn).toBeVisible({ timeout: 15_000 });
+    await unlockBtn.click();
+    const confirmBtn = page.getByRole("button", { name: /Potvrdi i otključaj/i });
+    await expect(confirmBtn).toBeVisible({ timeout: 10_000 });
 
     const unlockRespP = page.waitForResponse(
       (r) =>
         r.url().includes(`/api/requests/${requestId}/unlock-contact`) && r.request().method() === "POST",
       { timeout: 25_000 }
     );
-    await unlockBtn.click();
+    await confirmBtn.click();
     const unlockRes = await unlockRespP;
     expect(unlockRes.ok()).toBeTruthy();
     const unlockJson = (await unlockRes.json()) as {

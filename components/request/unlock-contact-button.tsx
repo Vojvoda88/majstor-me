@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { trackFunnel } from "@/lib/track-funnel";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
-import { Unlock, Coins, CheckCircle2, Phone, Mail, MapPin } from "lucide-react";
+import { Unlock, Coins, CheckCircle2, Phone, Mail, MapPin, MessageCircle } from "lucide-react";
+import { whatsappHref, viberHref } from "@/lib/contact-links";
 
 export function UnlockContactButton({
   requestId,
@@ -29,6 +30,8 @@ export function UnlockContactButton({
   }) => void;
 }) {
   const router = useRouter();
+  const [confirmOpen, setConfirmOpen] = useState(false);
+
   const { data: fetchedContact, refetch } = useQuery({
     queryKey: ["unlock-contact", requestId],
     queryFn: async () => {
@@ -62,6 +65,7 @@ export function UnlockContactButton({
       return json.data;
     },
     onSuccess: (data) => {
+      setConfirmOpen(false);
       onUnlocked?.(data);
       router.refresh();
     },
@@ -70,20 +74,53 @@ export function UnlockContactButton({
   const contactData = mutation.data ?? fetchedContact;
 
   if (contactData) {
+    const wa = contactData.phone ? whatsappHref(contactData.phone) : "#";
+    const vb = contactData.phone ? viberHref(contactData.phone) : "#";
+
     return (
       <div className="rounded-xl border border-emerald-200 bg-emerald-50/80 p-4">
         <div className="flex items-center gap-2">
           <CheckCircle2 className="h-5 w-5 text-emerald-600" />
-          <p className="font-semibold text-emerald-900">Kontakt je dostupan</p>
+          <p className="font-semibold text-emerald-900">Kontakt je otključan</p>
         </div>
-        <p className="mt-1 text-sm text-emerald-700">
-          Možete se javiti korisniku i poslati ponudu.
+        <p className="mt-2 text-sm leading-relaxed text-emerald-800">
+          Možete <strong className="font-semibold">odmah pozvati ili pisati</strong> korisniku (Viber / WhatsApp / telefon), ili prvo
+          poslati ponudu kroz formu ispod — oba su u redu nakon otključavanja.
         </p>
 
-        <div className="mt-4 space-y-2 rounded-lg bg-white/70 p-3 text-sm">
+        <div className="mt-4 space-y-3 rounded-lg bg-white/80 p-3 text-sm">
           {contactData.requesterName && (
             <p className="font-medium text-slate-800">{contactData.requesterName}</p>
           )}
+          <div className="flex flex-wrap gap-2">
+            <a
+              href={`tel:${contactData.phone}`}
+              className="inline-flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50/80 px-3 py-2 font-semibold text-emerald-900 hover:bg-emerald-100"
+            >
+              <Phone className="h-4 w-4 shrink-0" />
+              Pozovi
+            </a>
+            {wa !== "#" && (
+              <a
+                href={wa}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 font-semibold text-slate-800 hover:bg-slate-50"
+              >
+                <MessageCircle className="h-4 w-4 shrink-0 text-slate-600" />
+                WhatsApp
+              </a>
+            )}
+            {vb !== "#" && (
+              <a
+                href={vb}
+                className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 font-semibold text-slate-800 hover:bg-slate-50"
+              >
+                <MessageCircle className="h-4 w-4 shrink-0 text-[#7360f2]" />
+                Viber
+              </a>
+            )}
+          </div>
           <div className="flex items-center gap-2 text-slate-700">
             <Phone className="h-4 w-4 shrink-0 text-slate-500" />
             <a href={`tel:${contactData.phone}`} className="font-medium text-emerald-800 hover:underline">
@@ -91,9 +128,9 @@ export function UnlockContactButton({
             </a>
           </div>
           {contactData.email && (
-            <div className="flex items-center gap-2 text-slate-700">
+            <div className="flex items-center gap-2 text-slate-600">
               <Mail className="h-4 w-4 shrink-0 text-slate-500" />
-              <a href={`mailto:${contactData.email}`} className="text-emerald-800 hover:underline">
+              <a href={`mailto:${contactData.email}`} className="text-sm hover:underline">
                 {contactData.email}
               </a>
             </div>
@@ -109,13 +146,13 @@ export function UnlockContactButton({
           )}
           {contactData.creditsSpent != null && contactData.creditsSpent > 0 && (
             <p className="text-xs text-slate-500">
-              Potrošeno: {contactData.creditsSpent} kredita
+              Potrošeno na kontakt: {contactData.creditsSpent} kredita
             </p>
           )}
         </div>
 
         <p className="mt-4 text-xs text-slate-600">
-          Ovaj kontakt je vezan za vaš nalog — možete ga koristiti da dogovorite posao na BrziMajstor.ME.
+          Ovaj kontakt je vezan za vaš nalog — koristite ga za dogovor oko posla na BrziMajstor.ME.
         </p>
       </div>
     );
@@ -152,11 +189,61 @@ export function UnlockContactButton({
           )}
         </p>
       )}
+
+      {confirmOpen && (
+        <div
+          className="fixed inset-0 z-[100] flex items-end justify-center bg-black/45 p-4 sm:items-center sm:p-6"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="unlock-confirm-title"
+        >
+          <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-4 shadow-2xl sm:p-6">
+            <h3 id="unlock-confirm-title" className="font-display text-lg font-bold text-slate-900">
+              Otključati kontakt za ovaj posao?
+            </h3>
+            <p className="mt-3 text-sm leading-relaxed text-slate-600">
+              Sada će se sa vašeg računa skinuti{" "}
+              <strong className="font-semibold text-slate-900">
+                {creditsRequired ?? "—"} kredita
+              </strong>
+              . Odmah ćete vidjeti telefon i moći ćete pisati na Viber / WhatsApp, te poslati ponudu kroz formu
+              ispod.
+            </p>
+            <ul className="mt-3 list-disc space-y-1 pl-5 text-sm text-slate-600">
+              <li>Broj telefona i brzi kontakt (Viber / WhatsApp)</li>
+              <li>Mogućnost slanja ponude kroz platformu</li>
+              <li>Mogućnost direktnog poziva ili poruke</li>
+            </ul>
+            <div className="mt-2 text-xs text-slate-500">Bez pretplate — plaćate samo ovaj kontakt.</div>
+            <div className="mt-6 flex flex-col gap-2 sm:flex-row sm:justify-end">
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full sm:w-auto"
+                onClick={() => setConfirmOpen(false)}
+                disabled={mutation.isPending}
+              >
+                Otkaži
+              </Button>
+              <Button
+                type="button"
+                className="w-full sm:w-auto"
+                onClick={() => {
+                  trackFunnel("unlock_clicked", { requestId, creditsRequired });
+                  mutation.mutate();
+                }}
+                disabled={mutation.isPending}
+              >
+                {mutation.isPending ? "Potvrđujem…" : "Potvrdi i otključaj"}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <Button
-        onClick={() => {
-          trackFunnel("unlock_clicked", { requestId, creditsRequired });
-          mutation.mutate();
-        }}
+        type="button"
+        onClick={() => setConfirmOpen(true)}
         disabled={mutation.isPending}
         className="h-14 w-full gap-2 rounded-2xl bg-gradient-to-br from-[#2563eb] to-[#1d4ed8] text-base font-bold text-white shadow-btn-cta hover:brightness-105 disabled:opacity-60 md:h-12 md:w-auto md:px-8"
         size="lg"
@@ -165,8 +252,8 @@ export function UnlockContactButton({
         {mutation.isPending
           ? "Potvrđujem..."
           : creditsRequired
-            ? `Uzmi kontakt (${creditsRequired} kredita)`
-            : "Uzmi kontakt"}
+            ? `Želim kontakt (${creditsRequired} kredita)`
+            : "Želim kontakt"}
       </Button>
     </div>
   );

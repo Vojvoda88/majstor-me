@@ -17,7 +17,8 @@ export function CTAForMasters() {
           <div>
             <h3 className="font-display text-2xl font-bold tracking-tight text-white sm:text-3xl md:text-4xl">Vi ste majstor?</h3>
             <p className="mt-4 max-w-xl text-[15px] font-medium leading-relaxed text-slate-200 sm:mt-5 sm:text-base md:text-lg">
-              Prijavite profil besplatno. Primajte zahtjeve od klijenata. Bez provizije na objavljivanje.
+              Pošaljite ponudu za manje od 2&nbsp;€ u odnosu na klasične oglase. Pregled poslova je besplatan — plaćate samo kada
+              otključate kontakt korisnika. Bez pretplate.
             </p>
           </div>
           <Link

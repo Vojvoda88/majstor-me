@@ -2,11 +2,11 @@ import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { CREDIT_PACKAGES, getLeadsEstimate } from "@/lib/credit-packages";
+import { CREDIT_PACKAGES } from "@/lib/credit-packages";
 import { LOW_CREDITS_THRESHOLD } from "@/lib/credits";
 import { trackFunnelEvent } from "@/lib/funnel-events";
-import { isPaymentConfigured } from "@/lib/payment";
-import { CreditsPurchaseButton } from "@/components/credits/credits-purchase-button";
+import { isPaymentConfigured, isStripeWebhookConfigured } from "@/lib/payment";
+import { CreditPackagesPremium } from "@/components/credits/credit-packages-premium";
 import { CreditTransactionHistory } from "@/components/credits/credit-transaction-history";
 import { HandymanCreditsCtaBlock } from "@/components/credits/handyman-credits-cta-block";
 
@@ -50,18 +50,47 @@ export default async function HandymanCreditsPage({
   }
 
   const paymentOnline = isPaymentConfigured();
+  const webhookConfigured = isStripeWebhookConfigured();
 
   return (
-    <div className="container mx-auto max-w-2xl px-4 py-8">
+    <div className="container mx-auto max-w-5xl px-4 py-8">
       <div className="mb-6">
         <Link href="/dashboard/handyman" className="text-sm text-slate-500 hover:text-slate-700">
           ← Dashboard
         </Link>
       </div>
+
+      {params.success === "1" && (
+        <div
+          className="mb-6 rounded-2xl border border-emerald-200/90 bg-gradient-to-r from-emerald-50/95 to-white px-4 py-3 text-sm text-emerald-900 shadow-sm"
+          role="status"
+        >
+          <p className="font-semibold">Uplata je završena</p>
+          <p className="mt-1 text-emerald-800/90">
+            Krediti bi trebali biti na računu u roku od nekoliko sekundi. Ako se balans ne ažurira, osvježite stranicu.
+          </p>
+        </div>
+      )}
+      {params.canceled === "1" && (
+        <div className="mb-6 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700" role="status">
+          <p className="font-semibold text-slate-900">Plaćanje nije dovršeno</p>
+          <p className="mt-1">Možete pokušati ponovo ili dopuniti kredite putem aktivacije u kešu.</p>
+        </div>
+      )}
+      {paymentOnline && !webhookConfigured && (
+        <div className="mb-6 rounded-2xl border border-amber-200 bg-amber-50/90 px-4 py-3 text-sm text-amber-950">
+          <p className="font-semibold">Webhook za Stripe</p>
+          <p className="mt-1 text-amber-900/90">
+            Bez podešenog webhook endpointa u Stripe-u i varijable <code className="rounded bg-amber-100/80 px-1">STRIPE_WEBHOOK_SECRET</code>{" "}
+            krediti se neće automatski dodati nakon uplate. Checkout radi, ali obrada uplate zahtijeva webhook.
+          </p>
+        </div>
+      )}
+
       <h1 className="text-2xl font-bold tracking-tight text-slate-900">Krediti — kako dopuniti</h1>
       <p className="mt-2 text-slate-600">
-        Krediti se troše tek kada uzmete kontakt korisnika (obično 20–60, zavisi od hitnosti, slika, detalja i potvrđenog
-        kontakta). Ispod birate: <strong className="font-semibold text-slate-800">online kupovinu</strong> ili{" "}
+        Krediti se troše tek kada uzmete kontakt korisnika (obično 20–40 za hitnost, plus dodatci za slike, duži opis ili verifikovane
+        podatke). Ispod birate: <strong className="font-semibold text-slate-800">online kupovinu</strong> ili{" "}
         <strong className="font-semibold text-slate-800">aktivaciju u kešu</strong> — oba puta znate šta slijedi.
       </p>
 
@@ -104,36 +133,12 @@ export default async function HandymanCreditsPage({
 
       {paymentOnline ? (
         <section id="online-paketi" className="scroll-mt-24">
-          <h2 className="mt-10 text-lg font-bold text-slate-900">Kupovina online</h2>
-          <p className="mt-2 text-sm text-slate-600">
-            Platite karticom — krediti se dodaju na račun nakon uspješne uplate.
+          <h2 className="mt-10 font-display text-xl font-bold tracking-tight text-slate-900 md:text-2xl">Kupovina online</h2>
+          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-slate-600">
+            Sigurno plaćanje karticom. Odaberite paket — preusmjerit ćemo vas na Stripe Checkout. Nakon uplate krediti se
+            knjiže na vaš nalog (kad je webhook podešen).
           </p>
-          <div className="mt-4 grid gap-4 sm:grid-cols-2">
-            {CREDIT_PACKAGES.map((pkg) => (
-              <Card key={pkg.id} className={pkg.popular ? "border-blue-500 ring-1 ring-blue-200" : ""}>
-                <CardHeader className="pb-2">
-                  {pkg.popular && (
-                    <span className="mb-2 inline-block w-fit rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-700">
-                      Popularno
-                    </span>
-                  )}
-                  <CardTitle>{pkg.label}</CardTitle>
-                  <CardDescription>
-                    {pkg.priceEur.toFixed(2)} € {pkg.perCredit && ` · ${pkg.perCredit}`}
-                  </CardDescription>
-                  <p className="mt-1 text-xs text-slate-500">
-                    {(() => {
-                      const n = getLeadsEstimate(pkg.credits);
-                      return n === 1 ? "Oko 1 kontakta po uobičajenoj cijeni" : `Oko ${n} kontakata po uobičajenoj cijeni`;
-                    })()}
-                  </p>
-                </CardHeader>
-                <CardContent>
-                  <CreditsPurchaseButton pkg={pkg} />
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+          <CreditPackagesPremium packages={CREDIT_PACKAGES} />
         </section>
       ) : (
         <section id="online-info" className="scroll-mt-24">

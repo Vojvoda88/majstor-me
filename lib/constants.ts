@@ -48,20 +48,26 @@ export const REQUEST_CATEGORIES = [
   REQUEST_CATEGORY_FALLBACK,
 ] as const;
 
-// Urgency levels
+// Urgency levels (enum vrijednosti ne mijenjamo — samo copy)
 export const URGENCY_OPTIONS = [
   { value: "HITNO_DANAS", label: "Hitno danas" },
-  { value: "U_NAREDNA_2_DANA", label: "U naredna 2 dana" },
-  { value: "NIJE_HITNO", label: "Nije hitno" },
+  { value: "U_NAREDNA_2_DANA", label: "U narednih 7 dana" },
+  { value: "NIJE_HITNO", label: "Normalno / fleksibilno" },
 ] as const;
 
-// Price types for offers
+/** Tipovi cijene u ponudi — mapiraju na Prisma PriceType */
 export const PRICE_TYPES = [
-  { value: "PO_DOGOVORU", label: "Po dogovoru" },
-  { value: "OKVIRNA", label: "Okvirna cijena" },
-  { value: "IZLAZAK_NA_TEREN", label: "Potreban izlazak na teren" },
   { value: "FIKSNA", label: "Fiksna cijena" },
+  { value: "PREGLED_PA_KONACNA", label: "Pregled pa konačna cijena" },
+  { value: "PO_SATU", label: "Po satu" },
+  { value: "PO_M2", label: "Po m²" },
+  { value: "PO_METRU_DUZNOM", label: "Po metru dužnom" },
+  { value: "PO_TURI", label: "Po turi" },
+  { value: "PO_DOGOVORU", label: "Po dogovoru" },
+  { value: "DRUGO", label: "Drugo" },
 ] as const;
+
+export type PriceTypeValue = (typeof PRICE_TYPES)[number]["value"];
 
 // Request limits per user per day (anti-spam)
 export const MAX_REQUESTS_PER_DAY = 5;

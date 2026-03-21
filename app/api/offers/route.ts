@@ -11,19 +11,49 @@ import { logError } from "@/lib/logger";
 import { trackFunnelEvent } from "@/lib/funnel-events";
 import { zodErrorToString } from "@/lib/api-response";
 
+const PRICE_TYPES_ALL = [
+  "PO_DOGOVORU",
+  "OKVIRNA",
+  "IZLAZAK_NA_TEREN",
+  "FIKSNA",
+  "PREGLED_PA_KONACNA",
+  "PO_SATU",
+  "PO_M2",
+  "PO_METRU_DUZNOM",
+  "PO_TURI",
+  "DRUGO",
+] as const;
+
 const createOfferSchema = z
   .object({
     requestId: z.string().cuid(),
-    priceType: z.enum(["PO_DOGOVORU", "OKVIRNA", "IZLAZAK_NA_TEREN", "FIKSNA"]),
+    priceType: z.enum(PRICE_TYPES_ALL),
+    priceTypeOtherLabel: z.string().max(200).optional().nullable(),
     priceValue: z.number().optional().nullable(),
-    message: z.string().max(1000).optional(),
+    message: z.string().max(1200).optional(),
+    availabilityWindow: z.string().max(80).optional().nullable(),
+    includedInPrice: z.string().max(500).optional().nullable(),
+    extraNote: z.string().max(2000).optional().nullable(),
     proposedDate: z.union([z.string().datetime(), z.string()]).optional().nullable(),
-    proposedArrival: z.string().max(200).optional(), // procijenjeni dolazak (npr. "Sutra ujutro")
+    proposedArrival: z.string().max(200).optional(),
   })
-  .refine(
-    (data) => data.priceType !== "FIKSNA" || (data.priceValue != null && data.priceValue >= 0),
-    { message: "Fiksna cijena zahtijeva pozitivan iznos", path: ["priceValue"] }
-  );
+  .superRefine((data, ctx) => {
+    if (data.priceType === "FIKSNA") {
+      if (data.priceValue == null || data.priceValue < 0) {
+        ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Fiksna cijena zahtijeva iznos", path: ["priceValue"] });
+      }
+    }
+    if (data.priceType === "DRUGO") {
+      const t = (data.priceTypeOtherLabel ?? "").trim();
+      if (t.length < 2) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Napišite kako naplaćujete (polje „Drugo“)",
+          path: ["priceTypeOtherLabel"],
+        });
+      }
+    }
+  });
 
 export async function POST(request: NextRequest) {
   try {
@@ -62,7 +92,18 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { requestId, priceType, priceValue, message, proposedDate } = parsed.data;
+    const {
+      requestId,
+      priceType,
+      priceTypeOtherLabel,
+      priceValue,
+      message,
+      availabilityWindow,
+      includedInPrice,
+      extraNote,
+      proposedDate,
+      proposedArrival,
+    } = parsed.data;
 
     const req = await prisma.request.findUnique({
       where: { id: requestId },
@@ -76,13 +117,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { isCreditsRequired } = await import("@/lib/credits");
     const hasUnlocked = req.contactUnlocks.length > 0;
-    if (isCreditsRequired() && !hasUnlocked) {
+    if (!hasUnlocked) {
       return NextResponse.json(
         {
           success: false,
-          error: "Prije slanja ponude morate uzeti kontakt korisnika (krediti se troše tek tada).",
+          error:
+            "Prije slanja ponude morate otključati kontakt korisnika. Krediti se troše tek u tom koraku — zatim možete poslati ponudu ili direktno kontaktirati klijenta.",
           needsUnlock: true,
         },
         { status: 402 }
@@ -152,9 +193,13 @@ export async function POST(request: NextRequest) {
         handymanId: session.user.id,
         priceType,
         priceValue: priceValue ?? undefined,
+        priceTypeOtherLabel: priceTypeOtherLabel?.trim() || undefined,
+        availabilityWindow: availabilityWindow?.trim() || undefined,
+        includedInPrice: includedInPrice?.trim() || undefined,
+        extraNote: extraNote?.trim() || undefined,
         message: message ?? undefined,
         proposedDate: proposedDate ? new Date(proposedDate) : undefined,
-        proposedArrival: body.proposedArrival ?? undefined,
+        proposedArrival: proposedArrival?.trim() || undefined,
       },
     });
 

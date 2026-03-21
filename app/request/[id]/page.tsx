@@ -28,14 +28,9 @@ import { RequestChatPanel } from "@/components/chat/request-chat-panel";
 import { InviteHandymanForm } from "@/components/invite/invite-handyman-form";
 import { UnlockContactButton } from "@/components/request/unlock-contact-button";
 import { LeadPriceBreakdown } from "@/components/request/lead-price-breakdown";
+import { UrgencyBadge } from "@/components/request/urgency-badge";
 import { SiteHeader } from "@/components/layout/site-header";
 import { MapPin, Calendar, User } from "lucide-react";
-
-const URGENCY_LABELS: Record<string, string> = {
-  HITNO_DANAS: "Hitno danas",
-  U_NAREDNA_2_DANA: "U naredna 2 dana",
-  NIJE_HITNO: "Nije hitno",
-};
 
 const STATUS_LABELS: Record<string, string> = {
   OPEN: "Otvoren",
@@ -179,17 +174,7 @@ export default async function RequestDetailPage({
             >
               {STATUS_LABELS[req.status]}
             </Badge>
-            <Badge
-              variant={
-                req.urgency === "HITNO_DANAS"
-                  ? "destructive"
-                  : req.urgency === "U_NAREDNA_2_DANA"
-                    ? "warning"
-                    : "outline"
-              }
-            >
-              {URGENCY_LABELS[req.urgency]}
-            </Badge>
+            <UrgencyBadge urgency={req.urgency} />
             <span className="flex items-center gap-1 text-sm text-[#64748B]">
               <MapPin className="h-4 w-4" />
               {req.city}
@@ -239,15 +224,15 @@ export default async function RequestDetailPage({
           )}
           {session?.user?.role === "HANDYMAN" && !isOwner && (
             <div className="rounded-3xl border border-amber-200/60 bg-gradient-to-br from-amber-50/90 via-white to-slate-50 p-6 shadow-inner md:p-7">
-              <h3 className="font-display text-lg font-bold text-brand-navy">Uzmi kontakt korisnika</h3>
+              <h3 className="font-display text-lg font-bold text-brand-navy">Otključaj kontakt za ovaj posao</h3>
               <p className="mt-3 text-sm leading-relaxed text-slate-600">
-                Prije toga vidite opis posla, grad, kategoriju i slike ako ih ima.{" "}
-                <strong className="font-semibold text-slate-800">Broj telefona i puni kontakt ne vidite odmah</strong> — to je namjerno,
-                da se dogovor ide preko platforme.
+                Pregled opisa, grada i slika je besplatan.{" "}
+                <strong className="font-semibold text-slate-800">Plaćate samo kada želite kontakt</strong> — bez pretplate.
+                Pošaljite ponudu za manje od 2&nbsp;€ u odnosu na klasične oglase (krediti su obično 20–40 po kontaktu, ovisno o hitnosti).
               </p>
               <p className="mt-2 text-sm leading-relaxed text-slate-600">
-                Kada vam posao odgovara, potvrdite dolje: <strong className="font-semibold text-slate-800">tek tada se skidaju krediti</strong>, a
-                dobijate kontakt da se javite i pošaljete ponudu.
+                Prvo <strong className="font-semibold text-slate-800">otključavate kontakt kreditima</strong> (potvrda u koraku ispod). Tek
+                onda vidite telefon / Viber / WhatsApp i možete poslati ponudu kroz formu ili direktno kontaktirati klijenta.
               </p>
               <LeadPriceBreakdown breakdown={creditsBreakdown} />
               <div className="mt-5">

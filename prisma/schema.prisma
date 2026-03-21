@@ -71,6 +71,12 @@ enum PriceType {
   OKVIRNA
   IZLAZAK_NA_TEREN
   FIKSNA
+  PREGLED_PA_KONACNA
+  PO_SATU
+  PO_M2
+  PO_METRU_DUZNOM
+  PO_TURI
+  DRUGO
 }
 
 enum VerifiedStatus {
@@ -316,6 +322,15 @@ model CreditCashActivationRequest {
   @@map("credit_cash_activation_requests")
 }
 
+/// Idempotencija Stripe webhook događaja (jedan event = jedna obrada).
+model StripeProcessedEvent {
+  id            String   @id @default(cuid())
+  stripeEventId String   @unique @map("stripe_event_id")
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  @@map("stripe_processed_events")
+}
+
 model Request {
   id              String        @id @default(cuid())
   userId          String?       @map("user_id") // null = guest zahtjev
@@ -376,6 +391,12 @@ model Offer {
   handymanId   String      @map("handyman_id") // References User (handyman)
   priceType    PriceType   @map("price_type")
   priceValue   Float?      @map("price_value") // Optional for PO_DOGOVORU
+  // Kad je priceType DRUGO — kako majstor naplaćuje
+  priceTypeOtherLabel String? @map("price_type_other_label") @db.VarChar(200)
+  // Kada može doći (npr. Danas, Sjutra, Po dogovoru)
+  availabilityWindow  String? @map("availability_window") @db.VarChar(80)
+  includedInPrice     String? @map("included_in_price") @db.Text
+  extraNote           String? @map("extra_note") @db.Text
   message      String?
   proposedDate DateTime?   @map("proposed_date")
   proposedArrival String?  @map("proposed_arrival") // procijenjeni dolazak (npr. "Sutra ujutro")

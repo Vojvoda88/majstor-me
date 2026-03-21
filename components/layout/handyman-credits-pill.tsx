@@ -1,0 +1,50 @@
+"use client";
+
+import Link from "next/link";
+import { useQuery } from "@tanstack/react-query";
+import { Coins } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { LOW_CREDITS_THRESHOLD } from "@/lib/credits";
+
+/** Kompaktan prikaz salda u headeru (samo majstori). */
+export function HandymanCreditsPill() {
+  const { data, isLoading } = useQuery({
+    queryKey: ["handyman-credits-balance"],
+    queryFn: async () => {
+      const res = await fetch("/api/handyman/credits-balance", { credentials: "include" });
+      const json = (await res.json()) as { ok?: boolean; balance?: number };
+      if (!json.ok) return null;
+      return json.balance ?? 0;
+    },
+    staleTime: 30_000,
+    refetchOnWindowFocus: true,
+  });
+
+  if (isLoading) {
+    return (
+      <span className="inline-block h-9 min-w-[4.5rem] animate-pulse rounded-full bg-slate-100" aria-hidden />
+    );
+  }
+
+  if (data == null) return null;
+
+  const low = data > 0 && data < LOW_CREDITS_THRESHOLD;
+
+  return (
+    <Link
+      href="/dashboard/handyman/credits"
+      id="credits"
+      className={cn(
+        "inline-flex max-w-[7rem] items-center gap-1.5 rounded-full border px-2.5 py-1.5 text-sm font-semibold tabular-nums transition sm:max-w-none sm:px-3",
+        low
+          ? "border-amber-300/90 bg-amber-50 text-amber-950 shadow-sm"
+          : "border-slate-200 bg-white text-slate-800 hover:border-slate-300"
+      )}
+      title="Krediti — klik za dopunu"
+    >
+      <Coins className="h-4 w-4 shrink-0 text-amber-600" aria-hidden />
+      {data}
+      {low && <span className="sr-only">— malo kredita</span>}
+    </Link>
+  );
+}

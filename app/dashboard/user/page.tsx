@@ -2,7 +2,7 @@ import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
-import { StickyBottomCTA } from "@/components/layout/StickyBottomCTA";
+import { UrgencyBadge } from "@/components/request/urgency-badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -17,12 +17,6 @@ const STATUS_LABELS: Record<string, string> = {
   IN_PROGRESS: "U toku",
   COMPLETED: "Završen",
   CANCELLED: "Otkazan",
-};
-
-const URGENCY_LABELS: Record<string, string> = {
-  HITNO_DANAS: "Hitno danas",
-  U_NAREDNA_2_DANA: "U naredna 2 dana",
-  NIJE_HITNO: "Nije hitno",
 };
 
 export default async function UserDashboardPage() {
@@ -112,17 +106,7 @@ export default async function UserDashboardPage() {
                       >
                         {STATUS_LABELS[req.status]}
                       </Badge>
-                      <Badge
-                        variant={
-                          req.urgency === "HITNO_DANAS"
-                            ? "destructive"
-                            : req.urgency === "U_NAREDNA_2_DANA"
-                              ? "warning"
-                              : "outline"
-                        }
-                      >
-                        {URGENCY_LABELS[req.urgency]}
-                      </Badge>
+                      <UrgencyBadge urgency={req.urgency} />
                       <span className="flex items-center gap-1 text-sm text-[#64748B]">
                         <MapPin className="h-4 w-4" />
                         {req.city}
@@ -152,7 +136,6 @@ export default async function UserDashboardPage() {
         <DeleteMyAccount />
       </div>
     </div>
-    <StickyBottomCTA href="/request/create" label="Objavi zahtjev" />
     </div>
   );
 }

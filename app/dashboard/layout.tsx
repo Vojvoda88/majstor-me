@@ -1,5 +1,6 @@
 import { AppProviders } from "@/app/app-providers";
 import { PremiumMobileHeader } from "@/components/layout/PremiumMobileHeader";
+import { MobileBottomNav } from "@/components/layout/mobile-bottom-nav";
 
 /**
  * SessionProvider je već u root layoutu (app/layout.tsx). Dupli <Providers> ovdje
@@ -12,9 +13,10 @@ export default function DashboardLayout({
 }) {
   return (
     <AppProviders>
-      <div className="min-h-screen bg-[#F3F4F6] pt-16">
+      <div className="min-h-screen bg-[#F3F4F6] pb-24 pt-16 md:pb-8">
         <PremiumMobileHeader />
         {children}
+        <MobileBottomNav />
       </div>
     </AppProviders>
   );

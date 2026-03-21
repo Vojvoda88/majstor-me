@@ -12,6 +12,12 @@ const PRICE_LABELS: Record<string, string> = {
   OKVIRNA: "Okvirna cijena",
   IZLAZAK_NA_TEREN: "Potreban izlazak na teren",
   FIKSNA: "Fiksna cijena",
+  PREGLED_PA_KONACNA: "Pregled pa konačna cijena",
+  PO_SATU: "Po satu",
+  PO_M2: "Po m²",
+  PO_METRU_DUZNOM: "Po metru dužnom",
+  PO_TURI: "Po turi",
+  DRUGO: "Drugo",
 };
 
 export function OfferCard({
@@ -24,6 +30,10 @@ export function OfferCard({
     id: string;
     priceType: string;
     priceValue: number | null;
+    priceTypeOtherLabel?: string | null;
+    availabilityWindow?: string | null;
+    includedInPrice?: string | null;
+    extraNote?: string | null;
     message: string | null;
     proposedDate: Date | null;
     proposedArrival?: string | null;
@@ -106,15 +116,40 @@ export function OfferCard({
           )}
           <div className="rounded-xl bg-[#F8FAFC] px-4 py-3">
             <p className="font-medium text-[#0F172A]">
-              {PRICE_LABELS[offer.priceType]}
-              {offer.priceType === "FIKSNA" && offer.priceValue != null && (
+              {PRICE_LABELS[offer.priceType] ?? offer.priceType}
+              {offer.priceType === "DRUGO" && offer.priceTypeOtherLabel && (
+                <span className="text-[#475569]"> — {offer.priceTypeOtherLabel}</span>
+              )}
+              {offer.priceValue != null && offer.priceType !== "DRUGO" && (
                 <span className="text-[#2563EB]"> • {offer.priceValue} €</span>
               )}
             </p>
+            {offer.availabilityWindow && (
+              <p className="mt-1 text-sm text-[#64748B]">
+                Dolazak:{" "}
+                {offer.availabilityWindow === "DANAS"
+                  ? "Danas"
+                  : offer.availabilityWindow === "SUTRA"
+                    ? "Sjutra"
+                    : offer.availabilityWindow === "NEKOLIKO_DANA"
+                      ? "U narednih nekoliko dana"
+                      : "Po dogovoru"}
+              </p>
+            )}
             {(offer.proposedDate || offer.proposedArrival) && (
               <p className="mt-1 flex items-center gap-1 text-sm text-[#64748B]">
                 <Calendar className="h-4 w-4" />
                 {offer.proposedArrival || (offer.proposedDate ? `Predloženi datum: ${new Date(offer.proposedDate).toLocaleDateString("sr")}` : "")}
+              </p>
+            )}
+            {offer.includedInPrice && (
+              <p className="mt-2 text-sm text-[#64748B]">
+                <span className="font-medium text-[#475569]">Uključeno:</span> {offer.includedInPrice}
+              </p>
+            )}
+            {offer.extraNote && (
+              <p className="mt-1 text-sm text-[#64748B]">
+                <span className="font-medium text-[#475569]">Napomena:</span> {offer.extraNote}
               </p>
             )}
           </div>

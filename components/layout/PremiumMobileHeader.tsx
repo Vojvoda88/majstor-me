@@ -5,6 +5,8 @@ import Image from "next/image";
 import { Menu, X, Shield } from "lucide-react";
 import { useState } from "react";
 import { useSession } from "next-auth/react";
+import { NotificationsDropdown } from "@/components/layout/notifications-dropdown";
+import { HandymanCreditsPill } from "@/components/layout/handyman-credits-pill";
 
 export function PremiumMobileHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -18,7 +20,7 @@ export function PremiumMobileHeader() {
           <span className="text-slate-800">.ME</span>
         </Link>
 
-        <nav className="hidden items-center gap-10 md:flex">
+        <nav className="hidden items-center gap-6 md:flex">
           <Link href="/categories" className="text-[15px] font-medium text-slate-600 transition hover:text-[#1d4ed8]">
             Kategorije
           </Link>
@@ -35,18 +37,28 @@ export function PremiumMobileHeader() {
             </Link>
           )}
           {session ? (
-            <Link
-              href={session.user?.role === "HANDYMAN" ? "/dashboard/handyman" : session.user?.role === "ADMIN" ? "/admin" : "/dashboard/user"}
-              className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-xl bg-slate-100 transition hover:bg-slate-200"
-            >
-              {session.user?.image && (session.user.image.startsWith("http") || session.user.image.startsWith("/")) ? (
-                <Image src={session.user.image} alt="" width={40} height={40} className="object-cover" />
-              ) : (
-                <span className="text-sm font-semibold text-slate-600">
-                  {session.user?.name?.charAt(0) ?? "?"}
-                </span>
-              )}
-            </Link>
+            <>
+              {session.user?.role === "HANDYMAN" && <HandymanCreditsPill />}
+              <NotificationsDropdown />
+              <Link
+                href={
+                  session.user?.role === "HANDYMAN"
+                    ? "/dashboard/handyman"
+                    : session.user?.role === "ADMIN"
+                      ? "/admin"
+                      : "/dashboard/user"
+                }
+                className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-xl bg-slate-100 transition hover:bg-slate-200"
+              >
+                {session.user?.image && (session.user.image.startsWith("http") || session.user.image.startsWith("/")) ? (
+                  <Image src={session.user.image} alt="" width={40} height={40} className="object-cover" />
+                ) : (
+                  <span className="text-sm font-semibold text-slate-600">
+                    {session.user?.name?.charAt(0) ?? "?"}
+                  </span>
+                )}
+              </Link>
+            </>
           ) : (
             <div className="flex items-center gap-4">
               <Link href="/login" className="text-[15px] font-medium text-slate-600 transition hover:text-[#1d4ed8]">
@@ -62,14 +74,18 @@ export function PremiumMobileHeader() {
           )}
         </nav>
 
-        <button
-          type="button"
-          onClick={() => setMenuOpen(!menuOpen)}
-          className="flex h-10 w-10 items-center justify-center rounded-xl text-slate-600 transition hover:bg-slate-100 md:hidden"
-          aria-label="Meni"
-        >
-          {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-        </button>
+        <div className="flex items-center gap-2 md:hidden">
+          {session?.user?.role === "HANDYMAN" && <HandymanCreditsPill />}
+          {session && <NotificationsDropdown />}
+          <button
+            type="button"
+            onClick={() => setMenuOpen(!menuOpen)}
+            className="flex h-10 w-10 items-center justify-center rounded-xl text-slate-600 transition hover:bg-slate-100"
+            aria-label="Meni"
+          >
+            {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
+        </div>
       </div>
 
       {menuOpen && (

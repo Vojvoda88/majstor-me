@@ -7,19 +7,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { HandymanRequestList } from "./handyman-request-list";
 import { OnboardingBanner } from "@/components/handyman/onboarding-banner";
-import { StickyBottomCTA } from "@/components/layout/StickyBottomCTA";
 import { HandymanPushNotificationsCard } from "@/components/handyman/push-notifications-card";
 import { calcProfileCompletion } from "@/lib/handyman-onboarding";
 import { isCreditsRequired, LOW_CREDITS_THRESHOLD } from "@/lib/credits";
 import { REQUEST_CATEGORY_FALLBACK } from "@/lib/constants";
 import { isPaymentConfigured } from "@/lib/payment";
 import { HandymanCreditsCtaBlock } from "@/components/credits/handyman-credits-cta-block";
-
-const URGENCY_LABELS: Record<string, string> = {
-  HITNO_DANAS: "Hitno danas",
-  U_NAREDNA_2_DANA: "U naredna 2 dana",
-  NIJE_HITNO: "Nije hitno",
-};
 
 function isRequesterVerifiedUser(
   user: { emailVerified?: Date | null; phoneVerified?: Date | null } | null | undefined
@@ -177,26 +170,26 @@ export default async function HandymanDashboardPage({
           <p className="text-sm font-medium text-[#64748B]">Prihvaćeni poslovi</p>
           <p className="mt-1 text-2xl font-bold text-[#16A34A]">{acceptedCount}</p>
         </div>
-        {isCreditsRequired() && (
-          <div id="credits" className="rounded-xl bg-white p-6 shadow-sm transition hover:shadow-md scroll-mt-24">
-            <p className="text-sm font-medium text-[#64748B]">Krediti</p>
-            <p className="mt-1 text-2xl font-bold text-[#0F172A]">{(profile as { creditsBalance?: number }).creditsBalance ?? 0}</p>
-            {(profile as { creditsBalance?: number }).creditsBalance !== undefined &&
-              ((profile as { creditsBalance?: number }).creditsBalance ?? 0) < LOW_CREDITS_THRESHOLD &&
-              ((profile as { creditsBalance?: number }).creditsBalance ?? 0) > 0 && (
-              <p className="mt-1 text-xs font-medium text-amber-600">
-                Preostalo vam je još {(profile as { creditsBalance?: number }).creditsBalance ?? 0} kredita.
-              </p>
-            )}
-            <Link
-              href="/dashboard/handyman/credits"
-              className="mt-2 inline-block text-sm font-semibold text-blue-600 hover:underline"
-            >
-              {isPaymentConfigured() ? "Kupi kredite →" : "Aktiviraj kredite →"}
-            </Link>
-            <p className="mt-1 text-xs text-[#94A3B8]">20–60 kredita po kontaktu</p>
-          </div>
-        )}
+        <div id="credits" className="rounded-xl bg-white p-6 shadow-sm transition hover:shadow-md scroll-mt-24">
+          <p className="text-sm font-medium text-[#64748B]">Krediti</p>
+          <p className="mt-1 text-2xl font-bold text-[#0F172A]">{(profile as { creditsBalance?: number }).creditsBalance ?? 0}</p>
+          {(profile as { creditsBalance?: number }).creditsBalance !== undefined &&
+            ((profile as { creditsBalance?: number }).creditsBalance ?? 0) < LOW_CREDITS_THRESHOLD &&
+            ((profile as { creditsBalance?: number }).creditsBalance ?? 0) > 0 && (
+            <p className="mt-1 text-xs font-medium text-amber-600">
+              Malo kredita — dopunite prije nego što vam zatreba kontakt.
+            </p>
+          )}
+          <Link
+            href="/dashboard/handyman/credits"
+            className="mt-2 inline-block text-sm font-semibold text-blue-600 hover:underline"
+          >
+            {isPaymentConfigured() ? "Kupi kredite →" : "Aktiviraj kredite →"}
+          </Link>
+          <p className="mt-1 text-xs text-[#94A3B8]">
+            {isCreditsRequired() ? "Obično 20–40 kredita po kontaktu (hitnost + detalji)" : "U ovom okruženju kontakt može biti bez kredita"}
+          </p>
+        </div>
       </div>
 
       {isCreditsRequired() && (
@@ -217,7 +210,7 @@ export default async function HandymanDashboardPage({
           <>
             <p className="mt-3 text-sm leading-relaxed text-slate-700">
               <strong className="font-semibold text-[#0F172A]">Krediti</strong> su način da otključate kontakt. Troše se
-              samo u tom trenutku (obično 20–60 po poslu, zavisi od detalja). Nakon toga možete poslati ponudu. Povrat
+              samo u tom trenutku (obično 20–40 za hitnost + dodatci). Nakon toga možete poslati ponudu. Povrat
               kredita postoji ako admin označi spam ili zaobilaženje, ili zbog tehničke greške — ne ako se korisnik ne
               javi.
             </p>
@@ -250,16 +243,6 @@ export default async function HandymanDashboardPage({
         total={totalDisplayed}
         page={page}
         limit={limit}
-      />
-      <StickyBottomCTA
-        href={isCreditsRequired() ? "/dashboard/handyman/credits" : "/dashboard/handyman"}
-        label={
-          isCreditsRequired()
-            ? isPaymentConfigured()
-              ? "Kupi kredite"
-              : "Aktiviraj kredite"
-            : "Pregledaj zahtjeve"
-        }
       />
     </div>
   );

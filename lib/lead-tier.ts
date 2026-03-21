@@ -1,6 +1,6 @@
 /**
  * Cijena leada u kreditima – varira po hitnosti i kvalitetu.
- * Standard: 20–25, Urgent: 30–40, Premium: 40–60.
+ * Baza hitnosti: standardni zahtjev 20, srednja hitnost 30, hitno danas 40 (+ dodatci).
  */
 
 export type LeadTier = "STANDARD" | "URGENT" | "PREMIUM";
@@ -15,9 +15,12 @@ export type LeadInput = {
   phoneVerified?: boolean;
 };
 
-const BASE_STANDARD = 25;
-const BASE_URGENT = 35;
-const BASE_PREMIUM = 45;
+/** NIJE_HITNO — „normalno / fleksibilno“ */
+const BASE_STANDARD = 20;
+/** U_NAREDNA_2_DANA u bazi = UI „U narednih 7 dana“ */
+const BASE_URGENT = 30;
+/** HITNO_DANAS */
+const BASE_PREMIUM = 40;
 
 const PREMIUM_DESC_LENGTH = 150;
 const PREMIUM_PHOTO_BONUS = 5;
@@ -47,7 +50,7 @@ export function getCreditsForLead(input: LeadInput): { credits: number; tier: Le
   if (input.phoneVerified) verifiedBonus += PHONE_VERIFIED_BONUS;
   bonus += Math.min(verifiedBonus, MAX_VERIFIED_BONUS);
 
-  const credits = Math.min(base + bonus, 70);
+  const credits = Math.min(base + bonus, 65);
   const tier: LeadTier =
     credits >= 40 ? "PREMIUM" : credits >= 30 ? "URGENT" : "STANDARD";
 
@@ -74,10 +77,10 @@ export function getCreditsBreakdown(input: LeadInput): CreditBreakdown {
     baseLabel = "Hitno danas";
   } else if (input.urgency === "U_NAREDNA_2_DANA") {
     base = BASE_URGENT;
-    baseLabel = "Hitno u naredna 2 dana";
+    baseLabel = "U narednih 7 dana";
   } else {
     base = BASE_STANDARD;
-    baseLabel = "Nije hitno";
+    baseLabel = "Normalno / fleksibilno";
   }
 
   const items: CreditBreakdownItem[] = [];
@@ -103,7 +106,7 @@ export function getCreditsBreakdown(input: LeadInput): CreditBreakdown {
   }
 
   const bonusSum = items.reduce((s, i) => s + i.amount, 0);
-  const total = Math.min(base + bonusSum, 70);
+  const total = Math.min(base + bonusSum, 65);
 
   return { base, baseLabel, items, total };
 }

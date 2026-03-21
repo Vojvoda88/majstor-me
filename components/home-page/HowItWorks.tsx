@@ -1,7 +1,22 @@
-import Link from "next/link";
-import { FileText, Eye, MessageSquare, CheckCircle2, ChevronRight } from "lucide-react";
+"use client";
 
-const STEPS = [
+import Link from "next/link";
+import { useState } from "react";
+import {
+  FileText,
+  Eye,
+  MessageSquare,
+  CheckCircle2,
+  ChevronRight,
+  UserPlus,
+  MapPinned,
+  Unlock,
+  Send,
+  Coins,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+
+const USER_STEPS = [
   {
     n: 1,
     icon: FileText,
@@ -28,7 +43,43 @@ const STEPS = [
   },
 ] as const;
 
+const HANDYMAN_STEPS = [
+  {
+    n: 1,
+    icon: UserPlus,
+    title: "Registrujete se kao majstor",
+    desc: "Profil i kategorije su besplatni — bez pretplate.",
+  },
+  {
+    n: 2,
+    icon: MapPinned,
+    title: "Vidite poslove iz oblasti i grada",
+    desc: "Pregled opisa i slika je besplatan; kontakt tek kada vam posao odgovara.",
+  },
+  {
+    n: 3,
+    icon: Unlock,
+    title: "Otključavate kontakt kreditima",
+    desc: "Tek tada vidite telefon / Viber / WhatsApp. Krediti su obično 20–40 po kontaktu (hitnost + detalji).",
+  },
+  {
+    n: 4,
+    icon: Send,
+    title: "Šaljete ponudu ili se direktno javljate",
+    desc: "Možete koristiti formu ponude na platformi ili odmah pozvati korisnika — nakon otključavanja.",
+  },
+  {
+    n: 5,
+    icon: Coins,
+    title: "Plaćate samo kada želite kontakt",
+    desc: "Bez mjesečne pretplate — samo kada konkretno uzmete kontakt za posao koji vam ima smisla.",
+  },
+] as const;
+
 export function HowItWorks() {
+  const [audience, setAudience] = useState<"user" | "handyman">("user");
+  const steps = audience === "user" ? USER_STEPS : HANDYMAN_STEPS;
+
   return (
     <section id="kako-radi" className="py-12 md:py-28">
       <div className="mx-auto max-w-3xl text-center md:max-w-none">
@@ -36,16 +87,53 @@ export function HowItWorks() {
           Kako radi BrziMajstor.ME
         </h2>
         <p className="mx-auto mt-3 max-w-2xl text-[15px] font-medium leading-relaxed text-slate-600 sm:mt-4 sm:text-base md:text-lg">
-          Četiri koraka: od opisa posla do izbora majstora — jednostavno, pregledno, bez zvanja redom.
+          {audience === "user"
+            ? "Četiri koraka: od opisa posla do izbora majstora — jednostavno, pregledno, bez zvanja redom."
+            : "Za majstore: krediti, kontakt, ponuda — bez pretplate, platite samo kada želite kontakt."}
         </p>
+
+        <div
+          className="mx-auto mt-6 flex max-w-md justify-center gap-2 rounded-2xl border border-slate-200/90 bg-white/80 p-1 shadow-sm"
+          role="tablist"
+          aria-label="Za koga prikazujemo objašnjenje"
+        >
+          <button
+            type="button"
+            role="tab"
+            aria-selected={audience === "user"}
+            className={cn(
+              "min-h-[44px] flex-1 rounded-xl px-4 text-sm font-semibold transition",
+              audience === "user" ? "bg-brand-navy text-white shadow-sm" : "text-slate-600 hover:bg-slate-50"
+            )}
+            onClick={() => setAudience("user")}
+          >
+            Za korisnike
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={audience === "handyman"}
+            className={cn(
+              "min-h-[44px] flex-1 rounded-xl px-4 text-sm font-semibold transition",
+              audience === "handyman" ? "bg-brand-navy text-white shadow-sm" : "text-slate-600 hover:bg-slate-50"
+            )}
+            onClick={() => setAudience("handyman")}
+          >
+            Za majstore
+          </button>
+        </div>
       </div>
 
-      <div className="mt-8 rounded-[1.5rem] border border-slate-200/90 bg-gradient-to-b from-white to-slate-50/90 p-3.5 shadow-[0_24px_56px_-28px_rgba(10,22,40,0.16)] sm:p-5 md:mt-14 md:rounded-[1.75rem] md:p-8 lg:p-10">
-        {/* Desktop / tablet: grid */}
-        <div className="hidden gap-4 md:grid md:grid-cols-2 md:gap-5 lg:grid-cols-4 lg:gap-4">
-          {STEPS.map((step) => (
+      <div className="mt-8 rounded-[1.5rem] border border-slate-200/90 bg-gradient-to-b from-white to-slate-50/90 p-3.5 shadow-[0_24px_56px_-28px_rgba(10,22,40,0.16)] sm:p-5 md:mt-10 md:rounded-[1.75rem] md:p-8 lg:p-10">
+        <div
+          className={cn(
+            "hidden gap-4 md:grid md:gap-5",
+            audience === "user" ? "md:grid-cols-2 lg:grid-cols-4" : "md:grid-cols-2 lg:grid-cols-5"
+          )}
+        >
+          {steps.map((step) => (
             <div
-              key={step.n}
+              key={`${audience}-${step.n}`}
               className="flex min-h-full flex-col rounded-3xl border border-slate-200/90 bg-white p-6 shadow-[0_10px_36px_-20px_rgba(10,22,40,0.12)] lg:p-7"
             >
               <div className="flex items-start justify-between gap-2">
@@ -65,10 +153,9 @@ export function HowItWorks() {
           ))}
         </div>
 
-        {/* Mobile: stack + connector */}
         <div className="space-y-6 md:hidden">
-          {STEPS.map((step, idx) => (
-            <div key={step.n}>
+          {steps.map((step, idx) => (
+            <div key={`${audience}-m-${step.n}`}>
               <div className="rounded-3xl border border-slate-200/90 bg-white p-6 shadow-[0_10px_36px_-20px_rgba(10,22,40,0.12)]">
                 <div className="flex items-start gap-4">
                   <span
@@ -88,7 +175,7 @@ export function HowItWorks() {
                   </div>
                 </div>
               </div>
-              {idx < STEPS.length - 1 && (
+              {idx < steps.length - 1 && (
                 <div className="flex justify-center py-1.5" aria-hidden>
                   <div className="flex h-8 w-8 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-400 shadow-sm">
                     <ChevronRight className="h-3.5 w-3.5 rotate-90" strokeWidth={2.5} />
@@ -101,18 +188,37 @@ export function HowItWorks() {
       </div>
 
       <div className="mt-8 flex flex-col items-stretch gap-3 sm:mt-14 sm:flex-row sm:items-center sm:justify-center sm:gap-5">
-        <Link
-          href="/request/create"
-          className="inline-flex min-h-[52px] items-center justify-center rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 px-8 text-base font-bold text-brand-navy shadow-[0_14px_36px_-10px_rgba(245,158,11,0.45)] transition hover:brightness-105 active:scale-[0.99]"
-        >
-          Objavi besplatan zahtjev
-        </Link>
-        <Link
-          href="/categories"
-          className="inline-flex min-h-[52px] items-center justify-center rounded-2xl border-2 border-slate-200 bg-white px-8 text-base font-semibold text-brand-navy transition hover:border-slate-300 hover:bg-slate-50 active:scale-[0.99]"
-        >
-          Pogledaj kategorije
-        </Link>
+        {audience === "user" ? (
+          <>
+            <Link
+              href="/request/create"
+              className="inline-flex min-h-[52px] items-center justify-center rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 px-8 text-base font-bold text-brand-navy shadow-[0_14px_36px_-10px_rgba(245,158,11,0.45)] transition hover:brightness-105 active:scale-[0.99]"
+            >
+              Objavi besplatan zahtjev
+            </Link>
+            <Link
+              href="/categories"
+              className="inline-flex min-h-[52px] items-center justify-center rounded-2xl border-2 border-slate-200 bg-white px-8 text-base font-semibold text-brand-navy transition hover:border-slate-300 hover:bg-slate-50 active:scale-[0.99]"
+            >
+              Pogledaj kategorije
+            </Link>
+          </>
+        ) : (
+          <>
+            <Link
+              href="/register?type=majstor"
+              className="inline-flex min-h-[52px] items-center justify-center rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 px-8 text-base font-bold text-brand-navy shadow-[0_14px_36px_-10px_rgba(245,158,11,0.45)] transition hover:brightness-105 active:scale-[0.99]"
+            >
+              Prijavite se kao majstor
+            </Link>
+            <Link
+              href="/login"
+              className="inline-flex min-h-[52px] items-center justify-center rounded-2xl border-2 border-slate-200 bg-white px-8 text-base font-semibold text-brand-navy transition hover:border-slate-300 hover:bg-slate-50 active:scale-[0.99]"
+            >
+              Već imate nalog? Prijava
+            </Link>
+          </>
+        )}
       </div>
     </section>
   );
