@@ -50,11 +50,7 @@ export async function PendingWorkersList() {
             <tbody>
               {handymen.map((u) => (
                 <tr key={u.id} className="border-b last:border-0">
-                  <td className="py-3 pr-4">
-                    <Link href={`/admin/handymen/${u.id}`} className="font-medium text-[#2563EB] hover:underline">
-                      {u.name}
-                    </Link>
-                  </td>
+                  <td className="py-3 pr-4">{u.name}</td>
                   <td className="py-3 pr-4 font-mono text-xs">{u.phone ?? "-"}</td>
                   <td className="py-3 pr-4">{u.email}</td>
                   <td className="py-3 pr-4">{u.city ?? "-"}</td>

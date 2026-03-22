@@ -74,11 +74,11 @@ export function RequestModerationActions({
         disabled={!!loading}
         className="h-7 text-xs"
       >
-        Odobri
+        Approve
       </Button>
       <Link href={`/admin/requests/${requestId}`}>
         <Button size="sm" variant="outline" className="h-7 text-xs">
-          Pregled
+          Edit
         </Button>
       </Link>
       <Button
@@ -88,16 +88,7 @@ export function RequestModerationActions({
         disabled={!!loading}
         className="h-7 text-xs"
       >
-        Odbij
-      </Button>
-      <Button
-        size="sm"
-        variant="outline"
-        onClick={() => action("/suspicious")}
-        disabled={!!loading}
-        className="h-7 border-amber-500 text-amber-800 text-xs"
-      >
-        Sumnjivo
+        Reject
       </Button>
       <Button
         size="sm"
@@ -115,7 +106,7 @@ export function RequestModerationActions({
         disabled={!!loading}
         className="h-7 text-xs"
       >
-        Obriši
+        Delete
       </Button>
       {requesterPhone && (
         <Button

@@ -30,7 +30,6 @@ export type AuditActionType =
   | "REJECT_WORKER"
   | "EDIT_REQUEST"
   | "MARK_SPAM"
-  | "MARK_REQUEST_SUSPICIOUS"
   | "EDIT_OFFER"
   | "EDIT_CATEGORY"
   | "EDIT_CITY"

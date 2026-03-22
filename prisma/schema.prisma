@@ -44,7 +44,6 @@ enum RequestAdminStatus {
   CLOSED
   SPAM
   DELETED
-  SUSPICIOUS
 }
 
 enum WorkerStatus {
@@ -84,7 +83,6 @@ enum VerifiedStatus {
   PENDING
   VERIFIED
   REJECTED
-  SUSPICIOUS
 }
 
 enum ReportStatus {

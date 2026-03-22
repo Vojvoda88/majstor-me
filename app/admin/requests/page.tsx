@@ -22,7 +22,6 @@ const ADMIN_STATUS_LABELS: Record<string, string> = {
   CLOSED: "Zatvoren",
   SPAM: "Spam",
   DELETED: "Obrisan",
-  SUSPICIOUS: "Sumnjivo",
 };
 
 const PAGE_SIZE = 25;
@@ -123,7 +122,7 @@ export default async function AdminRequestsPage({
         })()}>
           <Badge variant={!adminStatusFilter ? "default" : "outline"}>Svi</Badge>
         </Link>
-        {(["PENDING_REVIEW", "DISTRIBUTED", "SUSPICIOUS", "SPAM", "DELETED"] as const).map((s) => (
+        {(["PENDING_REVIEW", "DISTRIBUTED", "SPAM", "DELETED"] as const).map((s) => (
           <Link key={s} href={`/admin/requests?adminStatus=${s}${statusFilter ? `&status=${statusFilter}` : ""}${cityFilter ? `&city=${cityFilter}` : ""}${categoryFilter ? `&category=${categoryFilter}` : ""}${searchQ ? `&search=${encodeURIComponent(searchQ)}` : ""}`}>
             <Badge variant={adminStatusFilter === s ? "default" : "outline"}>{ADMIN_STATUS_LABELS[s]}</Badge>
           </Link>

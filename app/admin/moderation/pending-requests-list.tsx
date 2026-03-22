@@ -1,5 +1,4 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import Link from "next/link";
 import { RequestModerationActions } from "./request-moderation-actions";
 
 export const dynamic = "force-dynamic";
@@ -60,9 +59,7 @@ export async function PendingRequestsList() {
                   <td className="py-3 pr-4">{r.city}</td>
                   <td className="py-3 pr-4">{r.category}</td>
                   <td className="max-w-[180px] truncate py-3 pr-4">
-                    <Link href={`/admin/requests/${r.id}`} className="font-medium text-[#2563EB] hover:underline">
-                      {requestTitlePreview(r.title, r.description)}
-                    </Link>
+                    {requestTitlePreview(r.title, r.description)}
                   </td>
                   <td className="py-3 pr-4 text-[#64748B]">
                     {new Date(r.createdAt).toLocaleDateString("sr")}

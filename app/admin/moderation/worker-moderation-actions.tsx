@@ -26,26 +26,6 @@ export function WorkerModerationActions({ handymanId }: { handymanId: string }) 
     }
   };
 
-  const markSuspicious = async () => {
-    if (!confirm("Označiti kao sumnjivo? Profil će biti suspendovan za javni prikaz.")) return;
-    if (loading) return;
-    setLoading("suspicious");
-    try {
-      const res = await fetch(`/api/admin/handymen/${handymanId}/verify`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status: "SUSPICIOUS" }),
-      });
-      const data = await res.json();
-      if (data.success) router.refresh();
-      else alert(data.error ?? "Greška");
-    } catch {
-      alert("Greška");
-    } finally {
-      setLoading(null);
-    }
-  };
-
   return (
     <div className="flex flex-wrap items-center gap-1">
       <Button
@@ -55,7 +35,7 @@ export function WorkerModerationActions({ handymanId }: { handymanId: string }) 
         disabled={!!loading}
         className="h-7 text-xs"
       >
-        Odobri
+        Approve
       </Button>
       <Button
         size="sm"
@@ -64,16 +44,7 @@ export function WorkerModerationActions({ handymanId }: { handymanId: string }) 
         disabled={!!loading}
         className="h-7 text-xs"
       >
-        Odbij
-      </Button>
-      <Button
-        size="sm"
-        variant="outline"
-        onClick={() => void markSuspicious()}
-        disabled={!!loading}
-        className="h-7 border-amber-500 text-amber-800 text-xs"
-      >
-        Sumnjivo
+        Reject
       </Button>
       <Button
         size="sm"
@@ -95,7 +66,12 @@ export function WorkerModerationActions({ handymanId }: { handymanId: string }) 
       </Button>
       <Link href={`/admin/handymen/${handymanId}`}>
         <Button size="sm" variant="outline" className="h-7 text-xs">
-          Pregled
+          Edit
+        </Button>
+      </Link>
+      <Link href={`/admin/handymen/${handymanId}`}>
+        <Button size="sm" variant="outline" className="h-7 text-xs">
+          Credits
         </Button>
       </Link>
     </div>

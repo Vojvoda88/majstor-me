@@ -33,7 +33,7 @@ export async function POST(
       );
     }
 
-    if (!["PENDING_REVIEW", null, "SUSPICIOUS"].includes(request.adminStatus)) {
+    if (!["PENDING_REVIEW", null].includes(request.adminStatus)) {
       return NextResponse.json(
         { success: false, error: "Zahtjev nije na čekanju odobrenja" },
         { status: 400 }
