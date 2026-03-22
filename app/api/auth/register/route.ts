@@ -11,7 +11,7 @@ export const dynamic = "force-dynamic";
 
 /** Jednostavna shema — sve stringove normalizujemo prije safeParse (bez z.preprocess). */
 const registerSchema = z.object({
-  name: z.string().min(2, "Ime mora imati najmanje 2 karaktera"),
+  name: z.string().min(2, "Naziv mora imati najmanje 2 karaktera"),
   email: z.string().email("Neispravan email"),
   password: z.string().min(6, "Lozinka mora imati najmanje 6 karaktera"),
   phone: z.string().optional(),

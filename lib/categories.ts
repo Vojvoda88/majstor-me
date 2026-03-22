@@ -11,7 +11,7 @@ export const REQUEST_CATEGORY_FALLBACK = "Ne vidim svoju uslugu" as const;
 /** Prikaz u formama / hero / notifikacijama (konzistentan label) */
 export const REQUEST_CATEGORY_FALLBACK_DISPLAY = "Ostalo / Ne vidim svoju uslugu" as const;
 
-/** 14 aktivnih poslovnih kategorija (isti skup za request/create, profil majstora, javni listing) */
+/** 15 aktivnih poslovnih kategorija (isti skup za request/create, profil majstora, javni listing) */
 export const ACTIVE_INTERNAL_CATEGORY_NAMES = [
   "Vodoinstalater",
   "Električar",
@@ -20,7 +20,8 @@ export const ACTIVE_INTERNAL_CATEGORY_NAMES = [
   "Stolar",
   "PVC stolarija",
   "Bravar",
-  "Moler / gipsar",
+  "Moler",
+  "Gipsar",
   "Fasade / izolacija",
   "Servis bijele tehnike",
   "Čišćenje",
@@ -31,6 +32,7 @@ export const ACTIVE_INTERNAL_CATEGORY_NAMES = [
 
 /** Stari nazivi u bazi / istoriji — validni za čitanje i API, nisu u novim dropdown-ima */
 export const LEGACY_INTERNAL_CATEGORY_NAMES = [
+  "Moler / gipsar",
   "Moler / sitne kućne popravke",
   "Montaža namještaja",
   "Krovopokrivač",
@@ -83,7 +85,7 @@ export type CategoryConfig = {
 };
 
 /**
- * Kanonski redoslijed — 14 javnih + legacy slugovi za stare URL-ove.
+ * Kanonski redoslijed — 15 javnih + legacy slugovi za stare URL-ove / istoriju.
  */
 export const CATEGORY_CONFIG_FULL: CategoryConfig[] = [
   {
@@ -143,9 +145,17 @@ export const CATEGORY_CONFIG_FULL: CategoryConfig[] = [
     selectableForHandyman: true,
   },
   {
+    slug: "moler",
+    displayName: "Moler",
+    internalCategory: "Moler",
+    icon: "Paintbrush",
+    publicListing: true,
+    selectableForHandyman: true,
+  },
+  {
     slug: "gipsar",
-    displayName: "Moler / gipsar",
-    internalCategory: "Moler / gipsar",
+    displayName: "Gipsar",
+    internalCategory: "Gipsar",
     icon: "Paintbrush",
     publicListing: true,
     selectableForHandyman: true,
@@ -198,7 +208,15 @@ export const CATEGORY_CONFIG_FULL: CategoryConfig[] = [
     publicListing: true,
     selectableForHandyman: true,
   },
-  // Legacy — samo SEO / stari linkovi, nisu u javnom fokusu
+  // Stari zajednički unos — samo istorija / SEO, ne u novim izborima
+  {
+    slug: "moler-gipsar",
+    displayName: "Moler / gipsar",
+    internalCategory: "Moler / gipsar",
+    icon: "Paintbrush",
+    publicListing: false,
+    selectableForHandyman: false,
+  },
   {
     slug: "parketar",
     displayName: "Parketar",
@@ -230,7 +248,7 @@ export const CATEGORY_CONFIG: CategoryConfig[] = CATEGORY_CONFIG_FULL.filter((c)
 
 export const POPULAR_CATEGORIES = CATEGORY_CONFIG;
 
-/** Profil majstora: samo 14 aktivnih (bez fallback) */
+/** Profil majstora: aktivni skup (bez fallback) */
 export const HANDYMAN_SELECTABLE_INTERNAL_NAMES: readonly string[] = ACTIVE_INTERNAL_CATEGORY_NAMES;
 
 // Slug -> displayName (puni skup)
@@ -248,31 +266,34 @@ export const DISPLAY_TO_INTERNAL: Record<string, string> = Object.fromEntries(
   CATEGORY_CONFIG_FULL.map((c) => [c.displayName, c.internalCategory])
 );
 
-/** Grupa ekvivalentnih DB naziva za match zahtjeva i majstora (sitni poslovi / stare oznake) */
+/** Sitni poslovi — stare oznake u istoj grupi */
 const SITNI_GROUP = [
   "Sitni kućni poslovi",
   "Sitne kućne popravke",
   "Moler / sitne kućne popravke",
 ] as const;
 
-const EQUIVALENCE_GROUPS: readonly (readonly string[])[] = [SITNI_GROUP];
-
-export function getEquivalenceGroup(category: string): string[] {
-  for (const g of EQUIVALENCE_GROUPS) {
-    if (g.includes(category as (typeof g)[number])) return [...g];
-  }
-  return [category];
+function isSitniGroup(name: string): boolean {
+  return (SITNI_GROUP as readonly string[]).includes(name);
 }
 
-/** Da li majstorova kategorija odgovara kategoriji zahtjeva (uključuje alias grupe) */
+/** Da li majstorova kategorija odgovara kategoriji zahtjeva (sitni + moler/gipsar split) */
 export function workerCategoryMatchesRequest(
   workerCategoryName: string,
   requestCategory: string
 ): boolean {
   if (workerCategoryName === requestCategory) return true;
-  const reqG = getEquivalenceGroup(requestCategory);
-  const workG = getEquivalenceGroup(workerCategoryName);
-  return reqG.some((x) => workG.includes(x));
+  if (isSitniGroup(requestCategory) && isSitniGroup(workerCategoryName)) return true;
+  if (requestCategory === "Moler") {
+    return workerCategoryName === "Moler" || workerCategoryName === "Moler / gipsar";
+  }
+  if (requestCategory === "Gipsar") {
+    return workerCategoryName === "Gipsar" || workerCategoryName === "Moler / gipsar";
+  }
+  if (requestCategory === "Moler / gipsar") {
+    return workerCategoryName === "Moler" || workerCategoryName === "Gipsar" || workerCategoryName === "Moler / gipsar";
+  }
+  return false;
 }
 
 export function workerHasCategoryForRequest(
@@ -289,7 +310,19 @@ export function dbCategoryNamesForDistributionFilter(requestCategory: string): s
   if (requestCategory === REQUEST_CATEGORY_FALLBACK) {
     return [REQUEST_CATEGORY_FALLBACK];
   }
-  return getEquivalenceGroup(requestCategory);
+  if (isSitniGroup(requestCategory)) {
+    return [...SITNI_GROUP];
+  }
+  if (requestCategory === "Moler") {
+    return ["Moler", "Moler / gipsar"];
+  }
+  if (requestCategory === "Gipsar") {
+    return ["Gipsar", "Moler / gipsar"];
+  }
+  if (requestCategory === "Moler / gipsar") {
+    return ["Moler", "Gipsar", "Moler / gipsar"];
+  }
+  return [requestCategory];
 }
 
 export function getCategoryBySlug(slug: string): CategoryConfig | null {
@@ -299,7 +332,6 @@ export function getCategoryBySlug(slug: string): CategoryConfig | null {
 /** Stari marketing / SEO nazivi -> internal (deep link kompatibilnost) */
 const LEGACY_DISPLAY_ALIASES: Record<string, string> = {
   Baštovanstvo: "Dvorište / bašta",
-  Gipsar: "Moler / gipsar",
   Fasader: "Fasade / izolacija",
 };
 
@@ -334,4 +366,3 @@ export function displayLabelForRequestCategory(internalCategory: string): string
   const found = CATEGORY_CONFIG_FULL.find((c) => c.internalCategory === internalCategory);
   return found?.displayName ?? internalCategory;
 }
-

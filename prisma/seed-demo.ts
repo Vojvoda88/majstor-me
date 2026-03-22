@@ -273,7 +273,7 @@ const REQUEST_TEMPLATES: Tpl[] = [
       "Želimo mali pult ostrvo u sredini kuhinje. Materijal sličan postojećim frontama. Treba majstor za rezanje ploča i montažu. Električna tačka već u blizini.",
   },
   {
-    category: "Moler / gipsar",
+    category: "Moler",
     title: "Špaktovanje i krečenje nakon pukotine",
     shortDesc: "Pukotina iznad vrata, treba gips i kreč.",
     longDesc:

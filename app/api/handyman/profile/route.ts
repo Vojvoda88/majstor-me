@@ -127,19 +127,24 @@ export async function PATCH(request: Request) {
       });
     }
 
-    const categoryRecords = await prisma.category.findMany({
-      where: { name: { in: categories } },
-      select: { id: true },
-    });
-    const categoryIds = categoryRecords.map((c) => c.id);
-    if (categoryIds.length !== categories.length) {
-      return NextResponse.json(
-        { success: false, error: "Jedna ili više kategorija nije validna." },
-        { status: 400 }
-      );
-    }
-
     const profile = await prisma.$transaction(async (tx) => {
+      /** Osiguraj Category redove u bazi — bez ovoga PATCH pada kad DB nema novi naziv (npr. nakon deploya). */
+      for (const name of categories) {
+        await tx.category.upsert({
+          where: { name },
+          update: {},
+          create: { name },
+        });
+      }
+
+      const categoryRecords = await tx.category.findMany({
+        where: { name: { in: categories } },
+        select: { id: true, name: true },
+      });
+      const categoryIds = categoryRecords.map((c) => c.id);
+      if (categoryIds.length !== categories.length) {
+        throw new Error("Kategorije nisu pronađene nakon upsert-a.");
+      }
       const prof = await tx.handymanProfile.upsert({
         where: { userId: session.user!.id },
         create: {

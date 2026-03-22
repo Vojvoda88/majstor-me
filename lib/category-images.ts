@@ -31,6 +31,8 @@ const SLUG_IMAGE_REMOTE: Record<string, string> = {
   "servis-bojlera": UNSPLASH.bojler,
   krovopokrivac: UNSPLASH.krov,
   "sitni-kucni-poslovi": UNSPLASH.default,
+  "moler-gipsar": UNSPLASH.default,
+  moler: UNSPLASH.default,
 };
 
 export function getCategoryImageUrl(slug: string): string {

@@ -21,7 +21,7 @@ import { cn } from "@/lib/utils";
 import { User, Wrench } from "lucide-react";
 
 const registerSchema = z.object({
-  name: z.string().min(2, "Ime mora imati najmanje 2 karaktera"),
+  name: z.string().min(2, "Naziv mora imati najmanje 2 karaktera"),
   email: z.string().email("Unesite validan email"),
   password: z.string().min(6, "Lozinka mora imati najmanje 6 karaktera"),
   phone: z.string().optional(),
@@ -161,8 +161,20 @@ export function RegisterForm({
             )}
           </div>
           <div className="space-y-3">
-            <Label htmlFor="name">Ime i prezime</Label>
-            <Input id="name" placeholder="Marko Marković" {...register("name")} />
+            <Label htmlFor="name">
+              {role === "HANDYMAN"
+                ? "Naziv profila (firma, servis, tim ili ime)"
+                : "Ime i prezime"}
+            </Label>
+            <Input
+              id="name"
+              placeholder={
+                role === "HANDYMAN"
+                  ? "npr. Elektro Servis Podgorica, Tim Majstor, Marko Marković"
+                  : "Marko Marković"
+              }
+              {...register("name")}
+            />
             {errors.name && (
               <p className="text-sm text-destructive">{errors.name.message}</p>
             )}
