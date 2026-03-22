@@ -4,6 +4,7 @@ import { useEffect, useState, useRef, useCallback } from "react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { Bell, Download, X } from "lucide-react";
+import { requestPermissionAndSubscribe } from "@/lib/push-client";
 
 const DISMISS_KEY = "pwa-entry-modal-dismissed";
 /** Koliko dugo ne prikazuj ponovo nakon „Kasnije“ */
@@ -44,15 +45,6 @@ function setDismissed(): void {
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<{ outcome: string }>;
   userChoice: Promise<{ outcome: string }>;
-}
-
-function urlBase64ToUint8Array(base64: string): Uint8Array {
-  const padding = "=".repeat((4 - (base64.length % 4)) % 4);
-  const b64 = (base64 + padding).replace(/-/g, "+").replace(/_/g, "/");
-  const raw = window.atob(b64);
-  const arr = new Uint8Array(raw.length);
-  for (let i = 0; i < raw.length; i++) arr[i] = raw.charCodeAt(i);
-  return arr;
 }
 
 /**
@@ -119,35 +111,12 @@ export function InstallCTA() {
 
   const handleNotifications = useCallback(async () => {
     const uid = (session?.user as { id?: string } | undefined)?.id;
-    if (!uid) return;
-    if (!("Notification" in window) || !("serviceWorker" in navigator) || !("PushManager" in window)) {
-      return;
-    }
-    if (!vapid) return;
+    if (!uid || !vapid) return;
 
     setNotifBusy(true);
     try {
-      const perm = await Notification.requestPermission();
-      if (perm !== "granted") return;
-
-      const reg = await navigator.serviceWorker.ready;
-      let sub = await reg.pushManager.getSubscription();
-      if (!sub) {
-        sub = await reg.pushManager.subscribe({
-          userVisibleOnly: true,
-          applicationServerKey: urlBase64ToUint8Array(vapid) as BufferSource,
-        });
-      }
-      const json = sub.toJSON();
-      const res = await fetch("/api/push/subscribe", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          endpoint: json.endpoint,
-          keys: json.keys,
-        }),
-      });
-      if (res.ok) setNotifDone(true);
+      const result = await requestPermissionAndSubscribe(vapid);
+      if (result.ok) setNotifDone(true);
     } catch {
       /* denied or error */
     } finally {

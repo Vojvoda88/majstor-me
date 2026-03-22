@@ -3,60 +3,24 @@
 import { useCallback, useEffect, useState } from "react";
 import { Bell, BellOff, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-
-function urlBase64ToUint8Array(base64: string): Uint8Array {
-  const padding = "=".repeat((4 - (base64.length % 4)) % 4);
-  const b64 = (base64 + padding).replace(/-/g, "+").replace(/_/g, "/");
-  const raw = window.atob(b64);
-  const arr = new Uint8Array(raw.length);
-  for (let i = 0; i < raw.length; i++) arr[i] = raw.charCodeAt(i);
-  return arr;
-}
-
-type Status =
-  | { kind: "loading" }
-  | { kind: "unsupported"; reason: string }
-  | { kind: "no_vapid" }
-  | { kind: "ready"; permission: NotificationPermission; subscribed: boolean };
+import {
+  getPushReadyState,
+  requestPermissionAndSubscribe,
+  type PushReadyState,
+} from "@/lib/push-client";
 
 /**
- * Korisnik: uključivanje obavještenja na telefonu kada stigne nova ponuda na vaš zahtjev (PWA).
+ * Korisnik: uključivanje push obavještenja kada stigne nova ponuda na zahtjev.
  */
 export function UserPushNotificationsCard() {
-  const [status, setStatus] = useState<Status>({ kind: "loading" });
+  const [status, setStatus] = useState<PushReadyState | { kind: "loading" }>({ kind: "loading" });
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const vapid = typeof process !== "undefined" ? process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY : undefined;
 
   const refresh = useCallback(async () => {
-    if (typeof window === "undefined") return;
-    if (!vapid) {
-      setStatus({ kind: "no_vapid" });
-      return;
-    }
-    if (!("serviceWorker" in navigator) || !("PushManager" in window)) {
-      setStatus({
-        kind: "unsupported",
-        reason: "Ovaj preglednik ne podržava obavještenja na telefonu na ovaj način. Koristite Chrome ili Edge na Androidu, ili Safari na iPhoneu (aplikacija sa početnog ekrana).",
-      });
-      return;
-    }
-    if (!("Notification" in window)) {
-      setStatus({ kind: "unsupported", reason: "Obavještenja nisu dostupna u ovom okruženju." });
-      return;
-    }
-    try {
-      const reg = await navigator.serviceWorker.ready;
-      const sub = await reg.pushManager.getSubscription();
-      setStatus({
-        kind: "ready",
-        permission: Notification.permission,
-        subscribed: !!sub,
-      });
-    } catch {
-      setStatus({ kind: "unsupported", reason: "Nije moguće provjeriti pretplatu. Pokušajte ponovo kasnije." });
-    }
+    setStatus(await getPushReadyState(vapid));
   }, [vapid]);
 
   useEffect(() => {
@@ -67,41 +31,12 @@ export function UserPushNotificationsCard() {
     if (!vapid || busy) return;
     setBusy(true);
     setError(null);
-    try {
-      const perm = await Notification.requestPermission();
-      if (perm !== "granted") {
-        await refresh();
-        return;
-      }
-      const reg = await navigator.serviceWorker.ready;
-      let sub = await reg.pushManager.getSubscription();
-      if (!sub) {
-        sub = await reg.pushManager.subscribe({
-          userVisibleOnly: true,
-          applicationServerKey: urlBase64ToUint8Array(vapid) as BufferSource,
-        });
-      }
-      const json = sub.toJSON();
-      const res = await fetch("/api/push/subscribe", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          endpoint: json.endpoint,
-          keys: json.keys,
-        }),
-      });
-      if (!res.ok) {
-        const j = await res.json().catch(() => ({}));
-        throw new Error((j as { error?: string }).error ?? "Pretplata nije sačuvana");
-      }
-      await refresh();
-    } catch (e) {
-      console.error(e);
-      setError(e instanceof Error ? e.message : "Greška pri uključivanju obavještenja.");
-      await refresh();
-    } finally {
-      setBusy(false);
+    const result = await requestPermissionAndSubscribe(vapid);
+    if (!result.ok && result.reason !== "permission_denied") {
+      setError(result.message ?? "Greška pri uključivanju obavještenja.");
     }
+    await refresh();
+    setBusy(false);
   };
 
   if (status.kind === "loading") {
@@ -129,7 +64,7 @@ export function UserPushNotificationsCard() {
   if (status.kind === "no_vapid") {
     return (
       <div className="rounded-xl border border-amber-200 bg-amber-50/80 p-4 text-sm text-amber-950">
-        Obavještenja na telefonu nisu podešena na serveru. Kontaktirajte podršku ako treba uključiti.
+        Obavještenja na telefonu nisu podešena na serveru. Ako treba uključiti push, kontaktirajte podršku.
       </div>
     );
   }
@@ -145,8 +80,7 @@ export function UserPushNotificationsCard() {
           <h2 className="font-display text-base font-bold text-brand-navy md:text-lg">Obavještenja o novim ponudama</h2>
         </div>
         <p className="mt-2 text-sm leading-relaxed text-slate-600">
-          Dobijte obavještenje na telefon kada majstor pošalje ponudu na vaš zahtjev. Klik otvara taj zahtjev da odmah
-          vidite ponudu.
+          Dobij obavještenje na telefon kad majstor pošalje ponudu na tvoj zahtjev. Klik na obavještenje otvara zahtjev.
         </p>
       </div>
 

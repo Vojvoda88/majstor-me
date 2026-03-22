@@ -141,6 +141,9 @@ export default async function HandymanDashboardPage({
       {onboarding.percent < 100 && (
         <OnboardingBanner percent={onboarding.percent} steps={onboarding.steps} className="mb-6" />
       )}
+      <div className="mb-6">
+        <HandymanPushNotificationsCard />
+      </div>
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-[#0F172A] sm:text-3xl">
@@ -230,10 +233,6 @@ export default async function HandymanDashboardPage({
             vidite broj telefona.
           </p>
         )}
-      </div>
-
-      <div className="mt-6">
-        <HandymanPushNotificationsCard />
       </div>
 
       <HandymanRequestList
