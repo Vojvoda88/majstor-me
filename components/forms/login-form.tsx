@@ -40,7 +40,7 @@ export function LoginForm() {
   async function onSubmit(data: LoginFormData) {
     setError(null);
     const result = await signIn("credentials", {
-      email: data.email,
+      email: data.email.trim().toLowerCase(),
       password: data.password,
       redirect: false,
     });

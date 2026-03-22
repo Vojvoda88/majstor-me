@@ -5,14 +5,9 @@ import { logError } from "@/lib/logger";
 import { zodErrorToString } from "@/lib/api-response";
 import { isRateLimited, getRetryAfterSeconds } from "@/lib/rate-limit";
 import { HANDYMAN_START_BONUS_CREDITS } from "@/lib/credit-packages";
+import { getRegisterRateLimitKey, getRequestClientIp } from "@/lib/request-ip";
 
 export const dynamic = "force-dynamic";
-
-function getClientIp(request: Request): string {
-  const forwarded = request.headers.get("x-forwarded-for");
-  if (forwarded) return forwarded.split(",")[0]?.trim() || "unknown";
-  return request.headers.get("x-real-ip") || "unknown";
-}
 
 /** Jednostavna shema — sve stringove normalizujemo prije safeParse (bez z.preprocess). */
 const registerSchema = z.object({
@@ -62,16 +57,6 @@ function normalizeRegisterBody(raw: unknown): z.infer<typeof registerSchema> {
 
 export async function POST(request: Request) {
   try {
-    const ip = getClientIp(request);
-    /** U dev-u više pokušaja (testiranje); u produkciji 5/h */
-    const registerLimit = process.env.NODE_ENV === "development" ? 100 : 5;
-    if (isRateLimited(`register:${ip}`, registerLimit, 60 * 60 * 1000)) {
-      return NextResponse.json(
-        { success: false, error: "Previše pokušaja registracije. Pokušajte ponovo kasnije." },
-        { status: 429, headers: { "Retry-After": String(getRetryAfterSeconds(`register:${ip}`)) } }
-      );
-    }
-
     let raw: unknown;
     try {
       raw = await request.json();
@@ -99,6 +84,23 @@ export async function POST(request: Request) {
     }
 
     const { name, email, password, phone, city, role } = parsed.data;
+
+    /**
+     * Rate limit NAKON validacije JSON-a — da ne trošimo slot na loš JSON.
+     * Ključ: po IP-u kad je IP poznat; kad je "unknown" (npr. bez forwarded headera),
+     * limit je po emailu — inače svi dijele jedan globalni `register:unknown` i prvi
+     * pet pokušaja bilo koga blokiraju sve ostale.
+     */
+    const ip = getRequestClientIp(request);
+    const rateLimitKey = getRegisterRateLimitKey(ip, email);
+    /** U dev-u više pokušaja (testiranje); u produkciji 5/h po ključu */
+    const registerLimit = process.env.NODE_ENV === "development" ? 100 : 5;
+    if (isRateLimited(rateLimitKey, registerLimit, 60 * 60 * 1000)) {
+      return NextResponse.json(
+        { success: false, error: "Previše pokušaja registracije. Pokušajte ponovo kasnije." },
+        { status: 429, headers: { "Retry-After": String(getRetryAfterSeconds(rateLimitKey)) } }
+      );
+    }
 
     const { prisma } = await import("@/lib/db");
 

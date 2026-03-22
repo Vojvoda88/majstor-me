@@ -13,6 +13,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { REQUEST_CATEGORIES, CITIES, AVAILABILITY_STATUS_OPTIONS } from "@/lib/constants";
 import { GalleryEditor } from "@/components/profile/gallery-editor";
 import { AvatarUpload } from "@/components/profile/avatar-upload";
+import type { HandymanProfileClientProps } from "@/lib/handyman-profile-for-client";
 
 const MAX_CATEGORIES = 5;
 
@@ -40,25 +41,13 @@ type ProfileFormData = z.infer<typeof profileSchema>;
 
 const CITIES_LIST = [...CITIES];
 
-type Profile = {
-  avatarUrl?: string | null;
-  phone?: string | null;
-  bio: string | null;
-  categories: string[];
-  cities: string[];
-  galleryImages?: string[];
-  yearsOfExperience?: number | null;
-  startingPrice?: number | null;
-  completedJobsCount?: number;
-  averageResponseMinutes?: number | null;
-  serviceAreasDescription?: string | null;
-  travelRadiusKm?: number | null;
-  availabilityStatus?: string | null;
-  viberPhone?: string | null;
-  whatsappPhone?: string | null;
-} | null;
-
-export function HandymanProfileForm({ profile, userName }: { profile: Profile; userName?: string | null }) {
+export function HandymanProfileForm({
+  profile,
+  userName,
+}: {
+  profile: HandymanProfileClientProps | null;
+  userName?: string | null;
+}) {
   const router = useRouter();
   const {
     register,

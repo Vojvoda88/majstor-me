@@ -4,6 +4,7 @@ import { HandymanProfileForm } from "./handyman-profile-form";
 import { calcProfileCompletion } from "@/lib/handyman-onboarding";
 import { OnboardingBanner } from "@/components/handyman/onboarding-banner";
 import { DeleteMyAccount } from "@/components/account/delete-my-account";
+import { mapHandymanProfileForClient } from "@/lib/handyman-profile-for-client";
 
 export const dynamic = "force-dynamic";
 
@@ -23,14 +24,7 @@ export default async function HandymanProfilePage() {
       select: { phone: true },
     }),
   ]);
-  const profileData = profileRaw
-    ? {
-        ...profileRaw,
-        categories: profileRaw.workerCategories.map((wc) => wc.category.name),
-        galleryImages: profileRaw.galleryImages ?? [],
-        phone: user?.phone ?? null,
-      }
-    : null;
+  const profileData = mapHandymanProfileForClient(profileRaw, user?.phone);
 
   const onboarding = calcProfileCompletion(profileData, user);
 
