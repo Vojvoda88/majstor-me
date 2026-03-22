@@ -92,44 +92,49 @@ export function RequestPhotosEditor({ photos, onChange }: RequestPhotosEditorPro
         ref={fileInputRef}
         type="file"
         accept="image/jpeg,image/png,image/webp"
+        capture="environment"
         className="hidden"
         onChange={handleFileSelect}
       />
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-col gap-3">
         <Button
           type="button"
-          variant="outline"
-          size="sm"
+          variant="default"
+          className="min-h-[48px] w-full touch-manipulation"
           onClick={() => {
-            checkUpload();
-            if (uploadAvailable === false) return;
+            void checkUpload();
             fileInputRef.current?.click();
           }}
           disabled={uploading || photos.length >= MAX_IMAGES_PER_REQUEST}
         >
-          <Upload className="mr-2 h-4 w-4" />
-          {uploading ? "Upload..." : "Dodaj sliku"}
+          <Upload className="mr-2 h-4 w-4 shrink-0" />
+          {uploading ? "Šaljem..." : "Dodaj sliku (galerija ili kamera)"}
         </Button>
-        <span className="flex items-center text-sm text-slate-500">ili</span>
-        <div className="flex min-w-[180px] flex-1 gap-2">
-          <Input
-            type="url"
-            placeholder="URL slike"
-            value={newUrl}
-            onChange={(e) => setNewUrl(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addByUrl())}
-            className="flex-1 text-sm"
-          />
-          <Button
-            type="button"
-            variant="outline"
-            size="icon"
-            onClick={addByUrl}
-            disabled={!newUrl.trim() || photos.length >= MAX_IMAGES_PER_REQUEST}
-          >
-            <Link2 className="h-4 w-4" />
-          </Button>
-        </div>
+        <details className="rounded-lg border border-slate-200 bg-slate-50/80 px-3 py-2 text-sm">
+          <summary className="cursor-pointer font-medium text-slate-700">
+            Napredno: URL slike
+          </summary>
+          <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-center">
+            <Input
+              type="url"
+              placeholder="https://..."
+              value={newUrl}
+              onChange={(e) => setNewUrl(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addByUrl())}
+              className="flex-1 text-sm"
+            />
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={addByUrl}
+              disabled={!newUrl.trim() || photos.length >= MAX_IMAGES_PER_REQUEST}
+            >
+              <Link2 className="mr-1 h-4 w-4" />
+              Dodaj URL
+            </Button>
+          </div>
+        </details>
       </div>
       {error && <p className="text-sm text-red-600">{error}</p>}
       {photos.length > 0 && (

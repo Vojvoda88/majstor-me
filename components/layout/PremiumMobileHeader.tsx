@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Menu, X, Shield } from "lucide-react";
 import { useState } from "react";
-import { useSession } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 import { NotificationsDropdown } from "@/components/layout/notifications-dropdown";
 import { HandymanCreditsPill } from "@/components/layout/handyman-credits-pill";
 
@@ -116,15 +116,16 @@ export function PremiumMobileHeader() {
                 >
                   Moj dashboard
                 </Link>
-                <form action="/api/auth/signout" method="POST" className="w-full">
-                  <button
-                    type="submit"
-                    className="w-full py-3 text-center text-[16px] font-medium text-red-600 hover:underline"
-                    onClick={() => setMenuOpen(false)}
-                  >
-                    Odjavi se
-                  </button>
-                </form>
+                <button
+                  type="button"
+                  className="w-full py-3 text-center text-[16px] font-medium text-red-600 hover:underline"
+                  onClick={async () => {
+                    setMenuOpen(false);
+                    await signOut({ callbackUrl: "/" });
+                  }}
+                >
+                  Odjavi se
+                </button>
               </div>
             ) : (
               <div className="mt-4 flex flex-col gap-2 border-t border-slate-100 pt-4">

@@ -97,44 +97,50 @@ export function GalleryEditor({ images, onChange }: GalleryEditorProps) {
         ref={fileInputRef}
         type="file"
         accept="image/jpeg,image/png,image/webp"
+        capture="environment"
         className="hidden"
         onChange={handleFileSelect}
       />
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-col gap-3">
         <Button
           type="button"
-          variant="outline"
-          size="sm"
+          variant="default"
+          className="min-h-[48px] w-full touch-manipulation"
           onClick={() => {
-            checkUploadAvailability();
-            if (uploadAvailable === false) return;
+            void checkUploadAvailability();
             fileInputRef.current?.click();
           }}
           disabled={uploading || images.length >= MAX_GALLERY_IMAGES}
         >
-          <Upload className="mr-2 h-4 w-4" />
-          {uploading ? "Uploadujem..." : "Dodaj datoteku"}
+          <Upload className="mr-2 h-4 w-4 shrink-0" />
+          {uploading ? "Šaljem sliku..." : "Dodaj sliku sa telefona ili galerije"}
         </Button>
-        <span className="flex items-center text-sm text-slate-500">ili</span>
-        <div className="flex min-w-[200px] flex-1 gap-2">
-          <Input
-            type="url"
-            placeholder="https://example.com/slika.jpg"
-            value={newUrl}
-            onChange={(e) => setNewUrl(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addByUrl())}
-            className="flex-1"
-          />
-          <Button
-            type="button"
-            variant="outline"
-            size="icon"
-            onClick={addByUrl}
-            disabled={!newUrl.trim() || images.length >= MAX_GALLERY_IMAGES}
-          >
-            <Link2 className="h-4 w-4" />
-          </Button>
-        </div>
+        <details className="rounded-lg border border-slate-200 bg-slate-50/80 px-3 py-2 text-sm">
+          <summary className="cursor-pointer font-medium text-slate-700">
+            Napredno: unos URL-a slike (ako već imate link)
+          </summary>
+          <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-center">
+            <Input
+              type="url"
+              placeholder="https://..."
+              value={newUrl}
+              onChange={(e) => setNewUrl(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addByUrl())}
+              className="flex-1"
+            />
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="shrink-0"
+              onClick={addByUrl}
+              disabled={!newUrl.trim() || images.length >= MAX_GALLERY_IMAGES}
+            >
+              <Link2 className="mr-1 h-4 w-4" />
+              Dodaj URL
+            </Button>
+          </div>
+        </details>
       </div>
       {uploadError && <p className="text-sm text-red-600">{uploadError}</p>}
       {uploadAvailable === false && (

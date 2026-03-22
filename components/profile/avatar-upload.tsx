@@ -106,6 +106,7 @@ export function AvatarUpload({
         ref={fileInputRef}
         type="file"
         accept="image/jpeg,image/png,image/webp"
+        capture="environment"
         className="hidden"
         onChange={handleFileSelect}
       />
@@ -128,11 +129,11 @@ export function AvatarUpload({
           <div className="flex flex-wrap gap-2">
             <Button
               type="button"
-              variant="outline"
+              variant="default"
               size="sm"
+              className="min-h-[44px] touch-manipulation"
               onClick={() => {
-                checkUpload();
-                if (uploadAvailable === false) return;
+                void checkUpload();
                 fileInputRef.current?.click();
               }}
               disabled={uploading}
@@ -142,7 +143,7 @@ export function AvatarUpload({
               ) : (
                 <Camera className="h-4 w-4" />
               )}
-              <span className="ml-2">Upload</span>
+              <span className="ml-2">Slikaj / izaberi sliku</span>
             </Button>
             <Button
               type="button"
@@ -154,19 +155,22 @@ export function AvatarUpload({
               Ukloni
             </Button>
           </div>
-          <div className="flex gap-2">
-            <Input
-              type="url"
-              placeholder="URL slike (fallback)"
-              value={urlInput}
-              onChange={(e) => setUrlInput(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addByUrl())}
-              className="flex-1 text-sm"
-            />
-            <Button type="button" variant="outline" size="sm" onClick={addByUrl}>
-              <Link2 className="h-4 w-4" />
-            </Button>
-          </div>
+          <details className="rounded-lg border border-slate-200 bg-slate-50/80 px-2 py-2 text-sm">
+            <summary className="cursor-pointer font-medium text-slate-700">Ili URL slike</summary>
+            <div className="mt-2 flex gap-2">
+              <Input
+                type="url"
+                placeholder="https://..."
+                value={urlInput}
+                onChange={(e) => setUrlInput(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addByUrl())}
+                className="flex-1 text-sm"
+              />
+              <Button type="button" variant="outline" size="sm" onClick={addByUrl}>
+                <Link2 className="h-4 w-4" />
+              </Button>
+            </div>
+          </details>
         </div>
       </div>
 
