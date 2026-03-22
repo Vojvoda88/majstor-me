@@ -142,6 +142,39 @@ npx prisma db seed
 
 ---
 
+## 7b. Admin login — reset lozinke u bazi (401 credentials)
+
+Ako `POST /api/auth/callback/credentials` vraća 401 za poznat email, uzrok je gotovo uvijek red u `users` (nema reda, prazan `password_hash`, ili lozinka ne odgovara hash-u). **Deploy aplikacije to ne popravlja** dok se u bazi koju koristi Vercel (`DATABASE_URL`) ne postavi validan bcrypt hash.
+
+1. Privremeno u `.env` postavi **isti** `DATABASE_URL` kao na Vercelu (Production).
+2. Provjera (ne loguje lozinku u skripti osim što je proslijediš u CLI):
+
+   ```bash
+   npx tsx scripts/verify-login-db.ts "email@domen.me" "LozinkaKojuTestiras"
+   ```
+
+3. Postavljanje nove lozinke i `role=ADMIN` (zahtijeva eksplicitnu dozvolu):
+
+   ```bash
+   set ALLOW_ADMIN_PASSWORD_RESET=1
+   npx tsx scripts/reset-admin-password.ts "email@domen.me" "NovaJakaLozinka123"
+   ```
+   (Na macOS/Linux: `ALLOW_ADMIN_PASSWORD_RESET=1 npx tsx ...`)
+
+4. Ako korisnik **ne postoji** u bazi, dodatno (samo namjerno):
+
+   ```bash
+   set ALLOW_ADMIN_PASSWORD_RESET=1
+   set ALLOW_ADMIN_USER_CREATE=1
+   npx tsx scripts/reset-admin-password.ts "email@domen.me" "NovaJakaLozinka123"
+   ```
+
+   Opciono: `ADMIN_DEFAULT_NAME=Ime` za polje `name` pri kreiranju.
+
+Nakon toga ponovo `verify-login-db` pa login na produkciji — **nije potreban** novi deploy samo zbog ove DB promjene.
+
+---
+
 ## 8. Redoslijed deploya
 
 1. Kreirati Supabase projekt
