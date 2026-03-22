@@ -4,6 +4,8 @@ import { createAuditLog } from "@/lib/admin/audit";
 import { createDistributionJob, processDistributionJob } from "@/lib/distribution-job";
 
 export const dynamic = "force-dynamic";
+/** Isto kao cron za distribuciju — approve sada čeka kraj procesa (Vercel inače ubije „fire-and-forget“ prije logova). */
+export const maxDuration = 60;
 
 export async function POST(
   _req: Request,
@@ -46,6 +48,7 @@ export async function POST(
     });
 
     const jobId = await createDistributionJob(prisma, id);
+    console.info("[Approve] distribution_jobs row created", { requestId: id, jobId });
 
     await createAuditLog(prisma, {
       adminId: auth.session.user.id,
@@ -56,13 +59,27 @@ export async function POST(
       newValue: { adminStatus: "DISTRIBUTED", distributionJobId: jobId },
     });
 
-    processDistributionJob(jobId).catch((err) =>
-      console.error("[Approve] Distribution job error:", jobId, err)
-    );
+    console.info("[Approve] awaiting processDistributionJob (same invocation — logs follow)", { jobId });
+    await processDistributionJob(jobId);
+    const jobRow = await prisma.distributionJob.findUnique({
+      where: { id: jobId },
+      select: { status: true, resultMeta: true, lastError: true },
+    });
+    console.info("[Approve] processDistributionJob finished", {
+      jobId,
+      status: jobRow?.status,
+      lastError: jobRow?.lastError ? jobRow.lastError.slice(0, 120) : null,
+    });
 
+    const meta = jobRow?.resultMeta as { handymenNotified?: number } | null;
     return NextResponse.json({
       success: true,
-      data: { adminStatus: "DISTRIBUTED", handymenNotified: "in_progress", jobId },
+      data: {
+        adminStatus: "DISTRIBUTED",
+        jobId,
+        distributionJobStatus: jobRow?.status ?? null,
+        handymenNotified: typeof meta?.handymenNotified === "number" ? meta.handymenNotified : null,
+      },
     });
   } catch (error) {
     console.error("Approve request error:", error);
