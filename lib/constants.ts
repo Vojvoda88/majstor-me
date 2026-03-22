@@ -9,8 +9,8 @@ export const CITIES = [
 export const REQUEST_CATEGORY_FALLBACK = "Ne vidim svoju uslugu" as const;
 
 /**
- * Samo za /request/create dropdown — fokus platforme (vrijednosti moraju ostati u REQUEST_CATEGORIES zbog API zod validacije).
- * Ostale tokove (majstor profil, admin filteri) ne diramo.
+ * Samo za /request/create — isti 13 kao javni CATEGORY_CONFIG (lib/categories), bez skrivenih slugova.
+ * Vrijednosti moraju biti podskup REQUEST_CATEGORIES (zod na serveru).
  */
 export const REQUEST_CREATE_CATEGORY_CHOICES = [
   "Vodoinstalater",
@@ -18,8 +18,14 @@ export const REQUEST_CREATE_CATEGORY_CHOICES = [
   "Klima servis",
   "Keramičar",
   "Stolar",
+  "PVC stolarija",
+  "Bravar",
+  "Moler / gipsar",
+  "Fasade / izolacija",
+  "Servis bijele tehnike",
   "Čišćenje",
   "Selidbe",
+  "Dvorište / bašta",
   REQUEST_CATEGORY_FALLBACK,
 ] as const;
 
