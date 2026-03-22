@@ -92,7 +92,6 @@ export function RequestPhotosEditor({ photos, onChange }: RequestPhotosEditorPro
         ref={fileInputRef}
         type="file"
         accept="image/jpeg,image/png,image/webp"
-        capture="environment"
         className="hidden"
         onChange={handleFileSelect}
       />
