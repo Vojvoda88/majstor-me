@@ -115,6 +115,15 @@ export async function distributeRequestToHandymen(params: DistributeRequestParam
     ? topForNotify.slice(0, SMART_DISTRIBUTION_CONFIG.TOP_N_NOTIFY)
     : forDist;
 
+  console.info("[distribution] toNotify batch", {
+    requestId,
+    count: toNotify.length,
+    userIds: toNotify.map((h) => h.id),
+    rankedPool: forDist.length,
+    category,
+    city,
+  });
+
   if (toNotify.length === 0) {
     console.warn("[distribution] toNotify empty — no ACTIVE handyman matched category/city filters", {
       requestId,
@@ -137,6 +146,10 @@ export async function distributeRequestToHandymen(params: DistributeRequestParam
       link,
     }))
   );
+  console.info("[distribution] NEW_JOB notifications insert attempted", {
+    requestId,
+    count: toNotify.length,
+  });
 
   await Promise.allSettled(
     toNotify.map((h) =>
@@ -152,7 +165,7 @@ export async function distributeRequestToHandymen(params: DistributeRequestParam
         body: pushBodyShort,
         link,
         tag: "new-job-" + requestId,
-      })
+      }, { requestId })
     )
   );
 

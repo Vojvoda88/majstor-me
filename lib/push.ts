@@ -67,16 +67,24 @@ export async function sendPushNotification(
   }
 }
 
+export type SendPushTrace = { requestId?: string };
+
 /**
  * Pošalji push svim pretplatama određenog korisnika.
  */
 export async function sendPushToUser(
   prisma: { pushSubscription: { findMany: (args: { where: { userId: string } }) => Promise<Array<{ endpoint: string; p256dh: string; auth: string }>> } },
   userId: string,
-  payload: PushPayload
+  payload: PushPayload,
+  trace?: SendPushTrace
 ): Promise<number> {
   const subs = await prisma.pushSubscription.findMany({
     where: { userId },
+  });
+  console.info("[push] sendPushToUser invoke", {
+    userId,
+    requestId: trace?.requestId,
+    subscriptionCount: subs.length,
   });
   let sent = 0;
   for (const sub of subs) {
@@ -86,9 +94,18 @@ export async function sendPushToUser(
     );
     if (ok) sent++;
   }
+  if (subs.length > 0) {
+    console.info("[push] sendPushToUser result", {
+      userId,
+      requestId: trace?.requestId,
+      okDeliveries: sent,
+      attemptedSubscriptions: subs.length,
+    });
+  }
   if (subs.length > 0 && sent === 0) {
     console.warn("[push] sendPushToUser: 0/OK deliveries for user", {
       userId,
+      requestId: trace?.requestId,
       subscriptionCount: subs.length,
     });
   }

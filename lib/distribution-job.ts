@@ -62,6 +62,8 @@ export async function processDistributionJob(jobId: string): Promise<boolean> {
     data: { status: "PROCESSING", attempts: job.attempts + 1 },
   });
 
+  console.info("[DistributionJob] distribute start", { jobId, requestId: request.id });
+
   try {
     const result = await distributeRequestToHandymen({
       prisma,

@@ -45,7 +45,12 @@ export async function createNotificationsBulk(
       })),
       skipDuplicates: true,
     });
-  } catch {
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e);
+    console.warn("[notifications] createMany failed; fallback to per-row", {
+      count: items.length,
+      message: msg.slice(0, 200),
+    });
     // Fallback: pojedinačno (non-blocking)
     await Promise.allSettled(
       items.map((item) =>
