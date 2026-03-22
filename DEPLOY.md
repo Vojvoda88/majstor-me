@@ -81,6 +81,8 @@ prije push-a na git i deploya.
 - Runtime koristi `DATABASE_URL` (Transaction pooler) – Vercel injektuje env
 - `prisma db push` / `migrate` se ne pokreće na Vercel – uradi lokalno prije deploya
 
+**Kritično (registracija majstora):** migracija `20250316150000_handyman_starter_bonus_and_credit_scale` dodaje `starter_bonus_granted_at` na `handyman_profiles`. Ako **nije** primijenjena, `POST /api/auth/register` za `HANDYMAN` pada (Prisma **P2022**) i korisnik vidi generičku grešku. Prije produkcije: `npx prisma migrate status` pa `npm run db:migrate:deploy` sa `DIRECT_DATABASE_URL` (port 5432).
+
 ---
 
 ## 4. Vercel deployment

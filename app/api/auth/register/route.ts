@@ -104,7 +104,9 @@ export async function POST(request: Request) {
 
     const { prisma } = await import("@/lib/db");
 
-    const existing = await prisma.user.findUnique({ where: { email } });
+    const existing = await prisma.user.findFirst({
+      where: { email: { equals: email, mode: "insensitive" } },
+    });
     if (existing) {
       return NextResponse.json(
         {
@@ -168,18 +170,23 @@ export async function POST(request: Request) {
     console.error("Register error:", error);
     logError("Register error", error);
 
-    const err = error as { code?: string; meta?: { target?: string[] } };
+    const err = error as { code?: string; meta?: { target?: string[] }; message?: string };
     let userMessage = "Greška pri registraciji. Pokušajte ponovo.";
+    let status: number = 500;
 
     if (err?.code === "P2002" && err?.meta?.target?.includes("email")) {
       userMessage = "Korisnik sa ovim email-om već postoji";
+      status = 400;
+    } else if (err?.code === "P2022") {
+      /** Kolona/tabela ne postoji u bazi — migracije nisu primijenjene na ovom okruženju. */
+      userMessage =
+        "Registracija trenutno nije dostupna (ažuriranje sistema). Pokušajte kasnije ili kontaktirajte podršku.";
+    } else if (err?.code === "P1001") {
+      userMessage = "Ne možemo se povezati na bazu. Pokušajte za nekoliko minuta.";
     } else if (process.env.NODE_ENV === "development" && error instanceof Error) {
       userMessage = error.message;
     }
 
-    return NextResponse.json(
-      { success: false, error: userMessage },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, error: userMessage }, { status });
   }
 }

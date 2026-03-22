@@ -2,6 +2,9 @@ import type { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { compare } from "bcryptjs";
 
+const authStepsLog =
+  process.env.LOGIN_AUTH_DEBUG === "1" || process.env.LOG_AUTH_STEPS === "1";
+
 export const authOptions: NextAuthOptions = {
   session: {
     strategy: "jwt",
@@ -18,20 +21,57 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) return null;
+        if (!credentials?.email || !credentials?.password) {
+          if (authStepsLog) console.warn("[auth][authorize] missing email or password");
+          return null;
+        }
 
         const email = credentials.email.trim().toLowerCase();
         if (!email) return null;
 
         const { prisma } = await import("@/lib/db");
-        const user = await prisma.user.findUnique({
-          where: { email },
+        /**
+         * findUnique({ where: { email } }) pada ako je u bazi zapisano drugačije
+         * (npr. stariji unos sa velikim slovima) — PostgreSQL unique je case-sensitive.
+         * Case-insensitive lookup pokriva i novi (lowercase) i legacy zapis.
+         */
+        const user = await prisma.user.findFirst({
+          where: {
+            email: { equals: email, mode: "insensitive" },
+          },
         });
 
-        if (!user || !user.passwordHash) return null;
+        if (!user) {
+          if (authStepsLog) {
+            console.warn("[auth][authorize] user not found", { emailLookup: email });
+          }
+          return null;
+        }
+        if (!user.passwordHash || user.passwordHash.length < 10) {
+          if (authStepsLog) {
+            console.warn("[auth][authorize] no password hash (OAuth-only / broken row?)", {
+              userId: user.id,
+              hasHash: !!user.passwordHash,
+            });
+          }
+          return null;
+        }
 
-        const isValid = await compare(credentials.password, user.passwordHash);
-        if (!isValid) return null;
+        let isValid = false;
+        try {
+          isValid = await compare(credentials.password, user.passwordHash);
+        } catch (e) {
+          console.error("[auth][authorize] bcrypt.compare threw", e);
+          return null;
+        }
+        if (!isValid) {
+          if (authStepsLog) console.warn("[auth][authorize] password mismatch", { userId: user.id });
+          return null;
+        }
+
+        if (authStepsLog) {
+          console.warn("[auth][authorize] ok", { userId: user.id, role: user.role });
+        }
 
         return {
           id: user.id,
@@ -46,9 +86,14 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        const u = user as { id?: string; role?: string };
-        if (u.id) token.id = u.id;
+        const u = user as { id?: string; role?: string; email?: string; name?: string | null };
+        if (u.id) {
+          token.id = u.id;
+          token.sub = u.id;
+        }
         if (u.role) token.role = u.role;
+        if (u.email) token.email = u.email;
+        if (u.name !== undefined) token.name = u.name;
       }
       return token;
     },
