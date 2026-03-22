@@ -50,21 +50,25 @@ export default async function RegisterPage({
   return (
     <div className="min-h-screen bg-brand-page">
       <SiteHeaderSimple />
-      <div className="flex min-h-[calc(100vh-4rem)] flex-col items-center justify-center px-4 py-12">
-        <div className="w-full max-w-md rounded-[2rem] border border-slate-200/80 bg-white p-8 shadow-marketplace sm:p-10">
-          <div className="mb-8 text-center">
-            <h1 className="font-display text-2xl font-bold text-brand-navy sm:text-3xl">Kreirajte nalog</h1>
-            <p className="mt-3 text-slate-600">
-              Korisnik ili majstor — izaberite kako želite da koristite platformu
+      <div className="flex min-h-[calc(100vh-4rem)] flex-col items-center justify-center px-4 py-10 sm:py-12">
+        <div className="w-full max-w-md">
+          <div className="mb-6 text-center sm:mb-8">
+            <h1 className="font-display text-2xl font-bold tracking-tight text-brand-navy sm:text-3xl">
+              Kreirajte nalog
+            </h1>
+            <p className="mt-3 text-sm leading-relaxed text-slate-600 sm:text-base">
+              Jedan nalog — birate da li tražite majstora ili nudite usluge
             </p>
           </div>
           <RegisterForm defaultRole={defaultRole} />
           <p className="mt-6 text-center">
             <Link href="/">
-              <Button variant="ghost" size="sm">← Nazad na početnu</Button>
+              <Button variant="ghost" size="sm">
+                ← Nazad na početnu
+              </Button>
             </Link>
           </p>
-          <p className="mt-4 text-center text-xs text-[#94A3B8]">
+          <p className="mt-4 text-center text-xs text-slate-400">
             Besplatna registracija • Bez skrivenih troškova
           </p>
         </div>
