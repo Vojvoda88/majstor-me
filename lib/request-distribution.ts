@@ -114,6 +114,15 @@ export async function distributeRequestToHandymen(params: DistributeRequestParam
     ? topForNotify.slice(0, SMART_DISTRIBUTION_CONFIG.TOP_N_NOTIFY)
     : forDist;
 
+  if (toNotify.length === 0) {
+    console.warn("[distribution] toNotify empty — no ACTIVE handyman matched category/city filters", {
+      requestId,
+      category,
+      city,
+      rankedPool: forDist.length,
+    });
+  }
+
   const notifyMsg = pushTitle;
   const bodyTrim = pushBody.slice(0, 200);
   const link = `/request/${requestId}`;

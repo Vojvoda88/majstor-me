@@ -5,6 +5,7 @@
 import webpush from "web-push";
 
 let vapidConfigured = false;
+let vapidMissingLogged = false;
 
 function ensureVapid() {
   if (vapidConfigured) return;
@@ -13,6 +14,9 @@ function ensureVapid() {
   if (publicKey && privateKey) {
     webpush.setVapidDetails("mailto:support@brzimajstor.me", publicKey, privateKey);
     vapidConfigured = true;
+  } else if (!vapidMissingLogged) {
+    vapidMissingLogged = true;
+    console.warn("[push] Missing VAPID_PUBLIC_KEY or VAPID_PRIVATE_KEY — server cannot send push");
   }
 }
 
@@ -51,7 +55,14 @@ export async function sendPushNotification(
       { TTL: 86400 }
     );
     return true;
-  } catch {
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e);
+    const status = typeof e === "object" && e !== null && "statusCode" in e ? String((e as { statusCode?: number }).statusCode) : "";
+    console.warn("[push] sendNotification failed", {
+      statusCode: status || undefined,
+      message: msg.slice(0, 300),
+      endpointPrefix: subscription.endpoint.slice(0, 48),
+    });
     return false;
   }
 }
@@ -74,6 +85,12 @@ export async function sendPushToUser(
       payload
     );
     if (ok) sent++;
+  }
+  if (subs.length > 0 && sent === 0) {
+    console.warn("[push] sendPushToUser: 0/OK deliveries for user", {
+      userId,
+      subscriptionCount: subs.length,
+    });
   }
   return sent;
 }
