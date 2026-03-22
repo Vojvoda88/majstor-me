@@ -9,13 +9,19 @@ import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { User, Wrench, CheckCircle2, Sparkles } from "lucide-react";
+import { User, Wrench } from "lucide-react";
 
 const registerSchema = z.object({
-  name: z.string().min(2, "Unesite najmanje 2 karaktera (ime, firma ili tim)"),
+  name: z.string().min(2, "Ime mora imati najmanje 2 karaktera"),
   email: z.string().email("Unesite validan email"),
   password: z.string().min(6, "Lozinka mora imati najmanje 6 karaktera"),
   phone: z.string().optional(),
@@ -110,9 +116,9 @@ export function RegisterForm({
   const role = watch("role") ?? "USER";
 
   return (
-    <Card className="card-premium w-full overflow-hidden rounded-[1.35rem] border-slate-200/80">
-      <CardContent className="px-5 pb-8 pt-7 sm:px-8 sm:pt-9">
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+    <Card className="w-full rounded-2xl border-[#E2E8F0] shadow-card">
+      <CardContent className="pt-8">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
           {error ? (
             <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800" role="alert">
               {error}
@@ -149,56 +155,14 @@ export function RegisterForm({
               </label>
             </div>
             {role === "HANDYMAN" && (
-              <div className="relative overflow-hidden rounded-2xl border border-[#BFDBFE]/90 bg-gradient-to-br from-[#F8FAFC] via-white to-[#EFF6FF] p-4 shadow-[0_12px_40px_-20px_rgba(29,78,216,0.35)] ring-1 ring-white/80">
-                <div className="absolute -right-6 -top-6 h-24 w-24 rounded-full bg-[#2563EB]/10 blur-2xl" aria-hidden />
-                <div className="relative flex items-start gap-3">
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#2563EB] text-white shadow-md shadow-blue-500/25">
-                    <Sparkles className="h-5 w-5" aria-hidden />
-                  </div>
-                  <div className="min-w-0 flex-1 space-y-2">
-                    <p className="font-display text-sm font-bold uppercase tracking-wide text-[#1e3a8a]">
-                      Za majstore
-                    </p>
-                    <ul className="space-y-2 text-sm leading-snug text-slate-700">
-                      <li className="flex gap-2">
-                        <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" aria-hidden />
-                        <span>Pregledate poslove <strong className="font-semibold text-slate-900">besplatno</strong></span>
-                      </li>
-                      <li className="flex gap-2">
-                        <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" aria-hidden />
-                        <span>
-                          <strong className="font-semibold text-slate-900">1000 kredita</strong> za početak
-                        </span>
-                      </li>
-                      <li className="flex gap-2">
-                        <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" aria-hidden />
-                        <span>Kontakt i ponuda tek kada vam posao odgovara</span>
-                      </li>
-                      <li className="flex gap-2">
-                        <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" aria-hidden />
-                        <span>
-                          <strong className="font-semibold text-slate-900">Bez pretplate</strong> — platite samo kredite kad šaljete ponudu
-                        </span>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
+              <div className="rounded-lg border border-amber-100 bg-amber-50/70 px-3 py-2.5 text-xs leading-relaxed text-slate-700">
+                <strong className="font-semibold text-slate-800">Za majstore:</strong> Pregledate poslove bez plaćanja. Kada želite broj korisnika, trošite kredite. Cijena zavisi od hitnosti i detalja posla.
               </div>
             )}
           </div>
           <div className="space-y-3">
-            <Label htmlFor="name">
-              {role === "HANDYMAN" ? "Naziv profila (firma, tim ili ime)" : "Ime i prezime"}
-            </Label>
-            <Input
-              id="name"
-              placeholder={
-                role === "HANDYMAN"
-                  ? "npr. Majstor Marko, Studio XY, Tim „Brza popravka“"
-                  : "Marko Marković"
-              }
-              {...register("name")}
-            />
+            <Label htmlFor="name">Ime i prezime</Label>
+            <Input id="name" placeholder="Marko Marković" {...register("name")} />
             {errors.name && (
               <p className="text-sm text-destructive">{errors.name.message}</p>
             )}

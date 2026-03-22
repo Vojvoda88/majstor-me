@@ -2,7 +2,6 @@ import type { Metadata, Viewport } from "next";
 import { Inter, DM_Sans, Outfit } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { Providers } from "@/app/providers";
-import { AppChrome } from "@/components/layout/app-chrome";
 import { auth } from "@/lib/auth";
 import { InstallCTA } from "@/components/pwa/install-cta";
 import { ServiceWorkerRegister } from "@/components/pwa/service-worker-register";
@@ -98,7 +97,7 @@ export default async function RootLayout({
     <html lang="sr" className={`${inter.variable} ${dmSans.variable} ${outfit.variable}`}>
       <body className="min-h-[100dvh] overflow-x-hidden font-sans antialiased bg-[#FAFBFC] text-[#0F172A] [padding-bottom:env(safe-area-inset-bottom)]">
         <Providers session={session}>
-          <AppChrome>{children}</AppChrome>
+          {children}
           <Analytics />
           <ServiceWorkerRegister />
           <InstallCTA />

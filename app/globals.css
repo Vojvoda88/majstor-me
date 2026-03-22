@@ -67,13 +67,6 @@ html {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
-
-  /* Prostor za globalni sticky bottom nav (AppChrome) — samo mobilni */
-  @media (max-width: 767px) {
-    body[data-mobile-nav="true"] {
-      padding-bottom: calc(5.35rem + env(safe-area-inset-bottom, 0px));
-    }
-  }
 }
 
 @layer components {
