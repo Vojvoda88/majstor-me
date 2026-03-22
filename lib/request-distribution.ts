@@ -6,7 +6,7 @@
 
 import type { PrismaClient, UrgencyLevel } from "@prisma/client";
 import { REQUEST_CATEGORY_FALLBACK } from "@/lib/constants";
-import { displayLabelForRequestCategory } from "@/lib/categories";
+import { dbCategoryNamesForDistributionFilter, displayLabelForRequestCategory } from "@/lib/categories";
 import { sendNewRequestEmail } from "@/lib/email";
 import { createNotificationsBulk } from "@/lib/notifications";
 import { sendPushToUser } from "@/lib/push";
@@ -61,6 +61,7 @@ export async function distributeRequestToHandymen(params: DistributeRequestParam
 
   /** Kad korisnik nije našao tačnu uslugu — obavještavamo majstore sa bilo kojom „pravom“ kategorijom (ne ovaj fallback). */
   const isFallbackCategory = category === REQUEST_CATEGORY_FALLBACK;
+  const dbNamesForCategory = dbCategoryNamesForDistributionFilter(category);
 
   const allHandymen = await prisma.user.findMany({
     where: {
@@ -72,7 +73,7 @@ export async function distributeRequestToHandymen(params: DistributeRequestParam
         workerCategories: {
           some: isFallbackCategory
             ? { category: { name: { not: REQUEST_CATEGORY_FALLBACK } } }
-            : { category: { name: category } },
+            : { category: { name: { in: dbNamesForCategory } } },
         },
       },
     },

@@ -5,69 +5,12 @@ export const CITIES = [
   "Kolašin", "Plav", "Žabljak", "Šavnik", "Andrijevica", "Petnjica", "Gusinje",
 ] as const;
 
-/** Fallback za zahtjev kad korisnik ne pronalazi tačnu uslugu u listi (isti string ide u bazu). */
-export const REQUEST_CATEGORY_FALLBACK = "Ne vidim svoju uslugu" as const;
-
-/**
- * Samo za /request/create — isti 13 kao javni CATEGORY_CONFIG (lib/categories), bez skrivenih slugova.
- * Vrijednosti moraju biti podskup REQUEST_CATEGORIES (zod na serveru).
- */
-export const REQUEST_CREATE_CATEGORY_CHOICES = [
-  "Vodoinstalater",
-  "Električar",
-  "Klima servis",
-  "Keramičar",
-  "Stolar",
-  "PVC stolarija",
-  "Bravar",
-  "Moler / gipsar",
-  "Fasade / izolacija",
-  "Servis bijele tehnike",
-  "Čišćenje",
-  "Selidbe",
-  "Dvorište / bašta",
+/** Kategorije — jedan izvor u `lib/categories.ts` (REQUEST_CATEGORIES, REQUEST_CREATE_CATEGORY_CHOICES, fallback). */
+export {
   REQUEST_CATEGORY_FALLBACK,
-] as const;
-
-// Categories - Crna Gora (extended for homepage display + form validation)
-export const REQUEST_CATEGORIES = [
-  "Vodoinstalater",
-  "Električar",
-  "Klima servis",
-  "Moler / sitne kućne popravke",
-  "Montaža namještaja",
-  "PVC stolarija",
-  "Krovopokrivač",
-  "Čišćenje",
-  "Selidbe",
-  "Keramičar",
-  "Moler / gipsar",
-  "Stolar",
-  "Bravar",
-  "Parketar",
-  "Fasade / izolacija",
-  "Građevinski radovi",
-  "Servis bojlera",
-  "Servis bijele tehnike",
-  "Servis veš mašina",
-  "Servis frižidera",
-  "Servis šporeta / rerne",
-  "Servis elektronike",
-  "Servis računara / laptopa",
-  "TV / antene / internet instalacije",
-  "Ugradnja kuhinja",
-  "Dubinsko čišćenje",
-  "Dvorište / bašta",
-  "Sitne kućne popravke",
-  "Alarm / video nadzor",
-  "Roletne / tende",
-  "Gipsani radovi",
-  "Sanacija vlage",
-  "Odvoz šuta / otpada",
-  "Brave / hitna otvaranja",
-  "Solarni sistemi / paneli",
-  REQUEST_CATEGORY_FALLBACK,
-] as const;
+  REQUEST_CATEGORIES,
+  REQUEST_CREATE_CATEGORY_CHOICES,
+} from "./categories";
 
 // Urgency levels (enum vrijednosti ne mijenjamo — samo copy)
 export const URGENCY_OPTIONS = [

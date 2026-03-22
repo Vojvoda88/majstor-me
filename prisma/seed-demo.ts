@@ -98,7 +98,7 @@ const REQUEST_TEMPLATES: Tpl[] = [
       "Klima je stara oko osam godina, prošle godine je radila dobro. Sada hladi slabije, vanjska jedinica radi ali osjećaj u sobi nije kao ranije. Filter sam čistio. Treba stručnjak da procijeni da li treba punjenje plina, servis ili nešto treće. Sprat, pristup vanjskoj jedinici preko terase.",
   },
   {
-    category: "Moler / sitne kućne popravke",
+    category: "Sitni kućni poslovi",
     title: "Krečenje stana prije useljenja",
     shortDesc: "Dvosoban stan, oko pedeset pet kvadrata, neutralna boja.",
     longDesc:

@@ -17,12 +17,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  REQUEST_CATEGORY_FALLBACK,
-  REQUEST_CREATE_CATEGORY_CHOICES,
-  URGENCY_OPTIONS,
-  CITIES,
-} from "@/lib/constants";
+import { REQUEST_CREATE_CATEGORY_CHOICES, URGENCY_OPTIONS, CITIES } from "@/lib/constants";
+import { displayLabelForRequestCategory, REQUEST_CATEGORY_FALLBACK } from "@/lib/categories";
 import { RequestPhotosEditor } from "./request-photos-editor";
 import { containsContactBypass } from "@/lib/contact-sanitization";
 import { createRequestAction } from "@/app/actions/create-request";
@@ -183,7 +179,7 @@ export function CreateRequestForm({ initialCategory, initialCity }: CreateReques
               <option value="">Odaberite...</option>
               {categorySelectOptions.map((cat) => (
                 <option key={cat} value={cat}>
-                  {cat === REQUEST_CATEGORY_FALLBACK ? "Ostalo" : cat}
+                  {displayLabelForRequestCategory(cat)}
                 </option>
               ))}
             </select>

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getInternalCategory } from "@/lib/categories";
+import { dbCategoryNamesForDistributionFilter, getInternalCategory } from "@/lib/categories";
 import { DEFAULT_PAGE_SIZE } from "@/lib/constants";
 import { getCityCoords } from "@/lib/cities";
 import { getDistanceBetweenCities } from "@/lib/distance";
@@ -21,16 +21,17 @@ export async function GET(req: NextRequest) {
     const page = Math.max(1, parseInt(searchParams.get("page") ?? "1", 10));
     const limit = Math.min(MAX_PAGE_SIZE, Math.max(1, parseInt(searchParams.get("limit") ?? String(DEFAULT_PAGE_SIZE), 10)));
 
-    const category = categoryParam ? (getInternalCategory(categoryParam) ?? categoryParam) : null;
+    const resolvedCategory = categoryParam ? (getInternalCategory(categoryParam) ?? categoryParam) : null;
+    const categoryDbNames = resolvedCategory ? dbCategoryNamesForDistributionFilter(resolvedCategory) : null;
     const baseWhere = {
       role: "HANDYMAN" as const,
       bannedAt: null,
       suspendedAt: null,
       handymanProfile: {
         workerStatus: "ACTIVE" as const,
-        ...(category && {
+        ...(categoryDbNames && {
           workerCategories: {
-            some: { category: { name: category } },
+            some: { category: { name: { in: categoryDbNames } } },
           },
         }),
       },

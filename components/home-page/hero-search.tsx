@@ -3,8 +3,12 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ChevronDown, Search } from "lucide-react";
-import { CITIES, REQUEST_CATEGORY_FALLBACK } from "@/lib/constants";
-import { POPULAR_CATEGORIES } from "@/lib/categories";
+import { CITIES } from "@/lib/constants";
+import {
+  POPULAR_CATEGORIES,
+  REQUEST_CATEGORY_FALLBACK,
+  REQUEST_CATEGORY_FALLBACK_DISPLAY,
+} from "@/lib/categories";
 
 export function HeroSearch() {
   const router = useRouter();
@@ -58,7 +62,7 @@ export function HeroSearch() {
                 {cat.displayName}
               </option>
             ))}
-            <option value={REQUEST_CATEGORY_FALLBACK}>Ne vidim svoju uslugu</option>
+            <option value={REQUEST_CATEGORY_FALLBACK}>{REQUEST_CATEGORY_FALLBACK_DISPLAY}</option>
           </select>
           <div className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-slate-500">
             <ChevronDown className="h-5 w-5" />

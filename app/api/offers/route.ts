@@ -10,6 +10,7 @@ import { sendPushToUser } from "@/lib/push";
 import { logError } from "@/lib/logger";
 import { trackFunnelEvent } from "@/lib/funnel-events";
 import { zodErrorToString } from "@/lib/api-response";
+import { workerHasCategoryForRequest } from "@/lib/categories";
 
 const PRICE_TYPES_ALL = [
   "PO_DOGOVORU",
@@ -158,8 +159,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const hasCategory =
-      profile?.workerCategories?.some((wc) => wc.category.name === req.category) ?? false;
+    const workerNames = profile?.workerCategories?.map((wc) => wc.category.name) ?? [];
+    const hasCategory = workerHasCategoryForRequest(workerNames, req.category);
     if (!profile || !hasCategory) {
       return NextResponse.json(
         { success: false, error: "Niste registrovani za ovu kategoriju" },

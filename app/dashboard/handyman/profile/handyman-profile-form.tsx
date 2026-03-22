@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -10,7 +11,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { REQUEST_CATEGORIES, CITIES, AVAILABILITY_STATUS_OPTIONS } from "@/lib/constants";
+import { CITIES, AVAILABILITY_STATUS_OPTIONS } from "@/lib/constants";
+import { displayLabelForRequestCategory, HANDYMAN_SELECTABLE_INTERNAL_NAMES } from "@/lib/categories";
 import { GalleryEditor } from "@/components/profile/gallery-editor";
 import { AvatarUpload } from "@/components/profile/avatar-upload";
 import type { HandymanProfileClientProps } from "@/lib/handyman-profile-for-client";
@@ -77,6 +79,12 @@ export function HandymanProfileForm({
 
   const categories = watch("categories");
   const cities = watch("cities");
+
+  const handymanCategoryChoices = useMemo(() => {
+    const selectable = new Set(HANDYMAN_SELECTABLE_INTERNAL_NAMES);
+    const extras = (profile?.categories ?? []).filter((c) => !selectable.has(c));
+    return [...HANDYMAN_SELECTABLE_INTERNAL_NAMES, ...extras];
+  }, [profile?.categories]);
   const galleryImages = watch("galleryImages") ?? [];
   const avatarUrl = watch("avatarUrl");
 
@@ -176,14 +184,14 @@ export function HandymanProfileForm({
               Odaberite kategorije u kojima nudite usluge (maks. {MAX_CATEGORIES})
             </p>
             <div className="mt-2 flex flex-wrap gap-2">
-              {REQUEST_CATEGORIES.map((cat) => (
+              {handymanCategoryChoices.map((cat) => (
                 <label key={cat} className="flex cursor-pointer items-center gap-2">
                   <input
                     type="checkbox"
                     checked={categories.includes(cat)}
                     onChange={() => toggleCategory(cat)}
                   />
-                  <span className="text-sm">{cat}</span>
+                  <span className="text-sm">{displayLabelForRequestCategory(cat)}</span>
                 </label>
               ))}
             </div>

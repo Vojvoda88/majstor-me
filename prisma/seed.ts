@@ -9,21 +9,20 @@
 
 import { PrismaClient } from "@prisma/client";
 import { hash } from "bcryptjs";
+import { REQUEST_CATEGORIES } from "../lib/constants";
 
 const prisma = new PrismaClient();
 
-const CATEGORIES = [
-  "Vodoinstalater",
-  "Električar",
-  "Klima servis",
-  "Moler / sitne kućne popravke",
-  "Montaža namještaja",
-  "Čišćenje",
-  "Selidbe",
-];
-
 async function main() {
   const password = await hash("Test123!", 12);
+
+  for (const name of REQUEST_CATEGORIES) {
+    await prisma.category.upsert({
+      where: { name },
+      update: {},
+      create: { name },
+    });
+  }
 
   // Admin – upsert: ako nalog sa ovim emailom već postoji, postavi ga na ADMIN
   /** Usklađeno sa tipičnim DB i E2E: `admin@majstor.me` (ne `.brzimajstor` — taj nalog često ne postoji u prod). */

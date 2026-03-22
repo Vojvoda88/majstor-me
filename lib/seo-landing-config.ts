@@ -3,6 +3,8 @@
  * Koristi se za generateStaticParams i interne linkove.
  */
 
+import { CATEGORY_CONFIG } from "@/lib/categories";
+
 export const SEO_LANDING_CITIES = [
   "podgorica",
   "niksic",
@@ -13,20 +15,13 @@ export const SEO_LANDING_CITIES = [
   "kotor",
 ] as const;
 
-/** Slugovi koji postoje u lib/categories (CATEGORY_CONFIG) */
-export const SEO_LANDING_CATEGORIES = [
-  "vodoinstalater",
-  "elektricar",
-  "klima-servis",
-  "keramicar",
-  "stolar",
-  "ciscenje",
-] as const;
+/** Isti skup slugova kao javni CATEGORY_CONFIG (usklađeno) */
+export const SEO_LANDING_CATEGORIES = CATEGORY_CONFIG.map((c) => c.slug);
 
 export type SeoLandingCitySlug = (typeof SEO_LANDING_CITIES)[number];
 export type SeoLandingCategorySlug = (typeof SEO_LANDING_CATEGORIES)[number];
 
-/** Sve kombinacije za statičku generaciju (7×6 = 42 stranice) */
+/** Sve kombinacije za statičku generaciju */
 export function getSeoLandingStaticParams(): { slug: string }[] {
   const out: { slug: string }[] = [];
   for (const cat of SEO_LANDING_CATEGORIES) {
@@ -37,11 +32,11 @@ export function getSeoLandingStaticParams(): { slug: string }[] {
   return out;
 }
 
-/** Primjeri za početnu stranicu (3–5 internih linkova) */
+/** Primjeri za početnu stranicu (interni linkovi) */
 export const SEO_LANDING_HOMEPAGE_LINKS: { slug: string; label: string }[] = [
   { slug: "vodoinstalater-podgorica", label: "Vodoinstalater Podgorica" },
   { slug: "elektricar-niksic", label: "Električar Nikšić" },
-  { slug: "klima-servis-budva", label: "Klima servis Budva" },
+  { slug: "sitni-kucni-poslovi-budva", label: "Sitni kućni poslovi Budva" },
   { slug: "keramicar-kotor", label: "Keramičar Kotor" },
   { slug: "stolar-bar", label: "Stolar Bar" },
 ];
