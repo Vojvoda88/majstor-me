@@ -8,6 +8,21 @@ export const CITIES = [
 /** Fallback za zahtjev kad korisnik ne pronalazi tačnu uslugu u listi (isti string ide u bazu). */
 export const REQUEST_CATEGORY_FALLBACK = "Ne vidim svoju uslugu" as const;
 
+/**
+ * Samo za /request/create dropdown — fokus platforme (vrijednosti moraju ostati u REQUEST_CATEGORIES zbog API zod validacije).
+ * Ostale tokove (majstor profil, admin filteri) ne diramo.
+ */
+export const REQUEST_CREATE_CATEGORY_CHOICES = [
+  "Vodoinstalater",
+  "Električar",
+  "Klima servis",
+  "Keramičar",
+  "Stolar",
+  "Čišćenje",
+  "Selidbe",
+  REQUEST_CATEGORY_FALLBACK,
+] as const;
+
 // Categories - Crna Gora (extended for homepage display + form validation)
 export const REQUEST_CATEGORIES = [
   "Vodoinstalater",

@@ -2,7 +2,7 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useMutation } from "@tanstack/react-query";
@@ -18,20 +18,11 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import {
-  REQUEST_CATEGORIES,
   REQUEST_CATEGORY_FALLBACK,
+  REQUEST_CREATE_CATEGORY_CHOICES,
   URGENCY_OPTIONS,
   CITIES,
 } from "@/lib/constants";
-import { INTERNAL_CATEGORY_HIDDEN_FROM_PUBLIC } from "@/lib/categories";
-
-/** Ostale kategorije prvo, fallback posljednji — da ne dominira. Skrivene javne kategorije se ne nude. */
-const CATEGORY_OPTIONS_ORDERED = [
-  ...REQUEST_CATEGORIES.filter(
-    (c) => c !== REQUEST_CATEGORY_FALLBACK && !INTERNAL_CATEGORY_HIDDEN_FROM_PUBLIC.has(c)
-  ),
-  REQUEST_CATEGORY_FALLBACK,
-];
 import { RequestPhotosEditor } from "./request-photos-editor";
 import { containsContactBypass } from "@/lib/contact-sanitization";
 import { createRequestAction } from "@/app/actions/create-request";
@@ -113,6 +104,15 @@ export function CreateRequestForm({ initialCategory, initialCity }: CreateReques
     }
   }, [urlCategory, urlCity, reset]);
 
+  /** Ako URL nosi staru kategoriju (npr. deep link), prikaži je da submit i dalje prolazi validaciju. */
+  const categorySelectOptions = useMemo(() => {
+    const base = [...REQUEST_CREATE_CATEGORY_CHOICES] as string[];
+    if (urlCategory && !base.includes(urlCategory)) {
+      return [urlCategory, ...base];
+    }
+    return base;
+  }, [urlCategory]);
+
   const mutation = useMutation({
     mutationFn: async (data: CreateRequestFormData) => {
       const result = await createRequestAction(data);
@@ -181,14 +181,14 @@ export function CreateRequestForm({ initialCategory, initialCity }: CreateReques
               {...register("category")}
             >
               <option value="">Odaberite...</option>
-              {CATEGORY_OPTIONS_ORDERED.map((cat) => (
+              {categorySelectOptions.map((cat) => (
                 <option key={cat} value={cat}>
-                  {cat}
+                  {cat === REQUEST_CATEGORY_FALLBACK ? "Ostalo" : cat}
                 </option>
               ))}
             </select>
             <p className="text-xs leading-relaxed text-slate-500">
-              Ne vidiš tačnu uslugu? Izaberi „{REQUEST_CATEGORY_FALLBACK}“ i u opisu napiši šta ti treba — zahtjev se šalje kao i obično.
+              Ne vidiš tačnu uslugu? Izaberi „Ostalo“ i u opisu napiši šta ti treba.
             </p>
             {errors.category && (
               <p className="text-sm text-destructive">{errors.category.message}</p>

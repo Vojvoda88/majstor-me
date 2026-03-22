@@ -68,7 +68,7 @@ export function getCategoryBySlug(slug: string): CategoryConfig | null {
   return CATEGORY_CONFIG_FULL.find((c) => c.slug === slug) ?? null;
 }
 
-/** internalCategory vrijednosti koje se ne nude u javnom /request/create (usklađeno sa REQUEST_CATEGORIES) */
+/** Historiski: skrivanje od stare široke liste; /request/create sada koristi REQUEST_CREATE_CATEGORY_CHOICES. */
 export const INTERNAL_CATEGORY_HIDDEN_FROM_PUBLIC = new Set([
   "Krovopokrivač",
   "Parketar",
