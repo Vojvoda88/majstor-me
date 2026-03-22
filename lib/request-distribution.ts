@@ -13,6 +13,7 @@ import { sendPushToUser } from "@/lib/push";
 import { rankHandymenForRequest } from "@/lib/smart-distribution";
 import type { HandymanForDistribution } from "@/lib/smart-distribution";
 import { SMART_DISTRIBUTION_CONFIG } from "@/lib/smart-distribution";
+import { prismaWhereHandymanEmailNotDemo } from "@/lib/demo-email";
 
 export type DistributeRequestParams = {
   prisma: PrismaClient;
@@ -68,6 +69,7 @@ export async function distributeRequestToHandymen(params: DistributeRequestParam
       role: "HANDYMAN",
       bannedAt: null,
       suspendedAt: null,
+      ...prismaWhereHandymanEmailNotDemo(),
       handymanProfile: {
         workerStatus: "ACTIVE",
         workerCategories: {

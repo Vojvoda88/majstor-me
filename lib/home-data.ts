@@ -5,6 +5,7 @@
 
 import { getDistanceBetweenCities } from "@/lib/distance";
 import { calcHandymanScore } from "@/lib/handyman-score";
+import { prismaWhereHandymanEmailNotDemo } from "@/lib/demo-email";
 
 export type PlatformStats = {
   /** Registrovani klijenti (role USER) */
@@ -72,6 +73,7 @@ export async function getTopHandymenForHome(limit: number = 3): Promise<HomeHand
         role: "HANDYMAN",
         bannedAt: null,
         suspendedAt: null,
+        ...prismaWhereHandymanEmailNotDemo(),
         handymanProfile: {
           workerStatus: "ACTIVE",
         },

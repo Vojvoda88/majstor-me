@@ -5,19 +5,17 @@
  *   npx tsx scripts/audit-production-demo-patterns.ts
  */
 import { PrismaClient } from "@prisma/client";
+import { DEMO_EMAIL_SUFFIX, TEST_ME_EMAIL_SUFFIX } from "../lib/demo-email";
 
 const prisma = new PrismaClient();
 
 async function main() {
-  const localDemoSuffix = "@local.majstor.demo";
-  const testMeSuffix = "@test.me";
-
   const [demoUsersLocal, demoHandymenLocal, demoUsersTestMe, demoHandymenTestMe] =
     await Promise.all([
-      prisma.user.count({ where: { email: { endsWith: localDemoSuffix }, role: "USER" } }),
-      prisma.user.count({ where: { email: { endsWith: localDemoSuffix }, role: "HANDYMAN" } }),
-      prisma.user.count({ where: { email: { endsWith: testMeSuffix }, role: "USER" } }),
-      prisma.user.count({ where: { email: { endsWith: testMeSuffix }, role: "HANDYMAN" } }),
+      prisma.user.count({ where: { email: { endsWith: DEMO_EMAIL_SUFFIX }, role: "USER" } }),
+      prisma.user.count({ where: { email: { endsWith: DEMO_EMAIL_SUFFIX }, role: "HANDYMAN" } }),
+      prisma.user.count({ where: { email: { endsWith: TEST_ME_EMAIL_SUFFIX }, role: "USER" } }),
+      prisma.user.count({ where: { email: { endsWith: TEST_ME_EMAIL_SUFFIX }, role: "HANDYMAN" } }),
     ]);
 
   const guestDemoRequests = await prisma.request.count({
@@ -32,24 +30,24 @@ async function main() {
   });
 
   const creditTxTestMe = await prisma.creditTransaction.count({
-    where: { handyman: { email: { endsWith: testMeSuffix } } },
+    where: { handyman: { email: { endsWith: TEST_ME_EMAIL_SUFFIX } } },
   });
   const creditTxLocalDemo = await prisma.creditTransaction.count({
-    where: { handyman: { email: { endsWith: localDemoSuffix } } },
+    where: { handyman: { email: { endsWith: DEMO_EMAIL_SUFFIX } } },
   });
 
   const cashTestMe = await prisma.creditCashActivationRequest.count({
-    where: { user: { email: { endsWith: testMeSuffix } } },
+    where: { user: { email: { endsWith: TEST_ME_EMAIL_SUFFIX } } },
   });
   const cashLocalDemo = await prisma.creditCashActivationRequest.count({
-    where: { user: { email: { endsWith: localDemoSuffix } } },
+    where: { user: { email: { endsWith: DEMO_EMAIL_SUFFIX } } },
   });
 
   const offersTestMe = await prisma.offer.count({
-    where: { handyman: { email: { endsWith: testMeSuffix } } },
+    where: { handyman: { email: { endsWith: TEST_ME_EMAIL_SUFFIX } } },
   });
   const offersLocalDemo = await prisma.offer.count({
-    where: { handyman: { email: { endsWith: localDemoSuffix } } },
+    where: { handyman: { email: { endsWith: DEMO_EMAIL_SUFFIX } } },
   });
 
   const adminEmails = await prisma.user.findMany({

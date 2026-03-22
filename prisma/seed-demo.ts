@@ -18,13 +18,11 @@
 import { PrismaClient } from "@prisma/client";
 import { hash } from "bcryptjs";
 import { REQUEST_CATEGORIES, CITIES } from "../lib/constants";
+import { DEMO_EMAIL_SUFFIX } from "../lib/demo-email";
 
 const prisma = new PrismaClient();
 
 const DEMO_PASSWORD = "Test123!";
-
-/** Samo nalozi koje demo seed kreira — brisanje ide isključivo po ovom sufiksu. */
-export const DEMO_EMAIL_SUFFIX = "@local.majstor.demo";
 
 function assertSafeToRun(): void {
   const allow =

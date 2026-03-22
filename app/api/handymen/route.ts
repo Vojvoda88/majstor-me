@@ -4,6 +4,7 @@ import { DEFAULT_PAGE_SIZE } from "@/lib/constants";
 import { getCityCoords } from "@/lib/cities";
 import { getDistanceBetweenCities } from "@/lib/distance";
 import { calcHandymanScore } from "@/lib/handyman-score";
+import { prismaWhereHandymanEmailNotDemo } from "@/lib/demo-email";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 60;
@@ -27,6 +28,7 @@ export async function GET(req: NextRequest) {
       role: "HANDYMAN" as const,
       bannedAt: null,
       suspendedAt: null,
+      ...prismaWhereHandymanEmailNotDemo(),
       handymanProfile: {
         workerStatus: "ACTIVE" as const,
         ...(categoryDbNames && {
