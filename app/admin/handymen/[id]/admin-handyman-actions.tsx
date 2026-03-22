@@ -56,7 +56,7 @@ export function AdminHandymanActions({
             onClick={() => action(`/handymen/${handymanId}/approve`)}
             disabled={!!loading}
           >
-            Approve
+            Odobri profil (aktivacija)
           </Button>
           <Button
             size="sm"
@@ -64,18 +64,19 @@ export function AdminHandymanActions({
             onClick={() => action(`/handymen/${handymanId}/reject`)}
             disabled={!!loading}
           >
-            Reject
+            Odbij (ban)
           </Button>
         </>
       )}
+
       {verifiedStatus !== "VERIFIED" && (
         <Button
           size="sm"
-          variant="default"
+          variant="secondary"
           onClick={() => action(`/handymen/${handymanId}/verify`, { status: "VERIFIED" })}
           disabled={!!loading}
         >
-          {loading === `/handymen/${handymanId}/verify` ? "..." : "Verifikuj"}
+          Admin bedž: potvrđen profil
         </Button>
       )}
       {verifiedStatus !== "REJECTED" && (
@@ -85,9 +86,24 @@ export function AdminHandymanActions({
           onClick={() => action(`/handymen/${handymanId}/verify`, { status: "REJECTED" })}
           disabled={!!loading}
         >
-          Odbij verifikaciju
+          Admin bedž: odbijen
         </Button>
       )}
+      {verifiedStatus !== "SUSPICIOUS" && (
+        <Button
+          size="sm"
+          variant="outline"
+          className="border-amber-500 text-amber-800 hover:bg-amber-50"
+          onClick={() => {
+            if (!confirm("Označiti kao sumnjivo? Profil će biti suspendovan za javni prikaz.")) return;
+            void action(`/handymen/${handymanId}/verify`, { status: "SUSPICIOUS" });
+          }}
+          disabled={!!loading}
+        >
+          Označi kao sumnjivo
+        </Button>
+      )}
+
       {!suspendedAt && !bannedAt && (
         <Button
           size="sm"

@@ -28,7 +28,7 @@ export async function POST(
       return NextResponse.json({ success: false, error: "Zahtjev nije pronađen" }, { status: 404 });
     }
 
-    if (!["PENDING_REVIEW", null].includes(request.adminStatus)) {
+    if (!["PENDING_REVIEW", null, "SUSPICIOUS"].includes(request.adminStatus)) {
       return NextResponse.json(
         { success: false, error: "Zahtjev nije na čekanju" },
         { status: 400 }

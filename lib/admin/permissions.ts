@@ -110,6 +110,7 @@ const ROLE_PERMISSIONS: Record<AdminRole, Permission[]> = {
     "workers",
     "users",
     "requests",
+    "notifications",
     "chat",
     "trust_safety",
     "workers_write",

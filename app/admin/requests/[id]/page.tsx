@@ -11,13 +11,14 @@ import { MarkAsBypassAttemptButton } from "@/components/admin/mark-as-bypass-but
 export const dynamic = "force-dynamic";
 
 const ADMIN_STATUS_LABELS: Record<string, string> = {
-  PENDING_REVIEW: "Na čekanju",
+  PENDING_REVIEW: "Na čekanju (admin)",
   DISTRIBUTED: "Distribuiran",
   HAS_OFFERS: "Ima ponude",
   CONTACT_UNLOCKED: "Kontakt otključan",
   CLOSED: "Zatvoren",
   SPAM: "Spam",
   DELETED: "Obrisan",
+  SUSPICIOUS: "Sumnjivo (admin)",
 };
 
 const STATUS_LABELS: Record<string, string> = {
@@ -25,6 +26,12 @@ const STATUS_LABELS: Record<string, string> = {
   IN_PROGRESS: "U toku",
   COMPLETED: "Završen",
   CANCELLED: "Otkazan",
+};
+
+const URGENCY_LABELS: Record<string, string> = {
+  HITNO_DANAS: "Hitno (danas)",
+  U_NAREDNA_2_DANA: "U naredna 2 dana",
+  NIJE_HITNO: "Nije hitno",
 };
 
 export default async function AdminRequestDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -75,8 +82,9 @@ export default async function AdminRequestDetailPage({ params }: { params: Promi
             <CardTitle>Zahtjev</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2 text-sm">
-            <p><strong>Admin status:</strong> <Badge variant="outline">{ADMIN_STATUS_LABELS[req.adminStatus ?? ""] ?? req.adminStatus ?? "–"}</Badge></p>
-            <p><strong>Status:</strong> <Badge>{STATUS_LABELS[req.status] ?? req.status}</Badge></p>
+            <p><strong>Admin pregled:</strong> <Badge variant="outline">{ADMIN_STATUS_LABELS[req.adminStatus ?? ""] ?? req.adminStatus ?? "–"}</Badge></p>
+            <p><strong>Hitnost:</strong> {URGENCY_LABELS[req.urgency] ?? req.urgency}</p>
+            <p><strong>Status zahtjeva:</strong> <Badge>{STATUS_LABELS[req.status] ?? req.status}</Badge></p>
             <p><strong>Datum:</strong> {new Date(req.createdAt).toLocaleString("sr")}</p>
             <p><strong>Broj ponuda:</strong> {req.offers.length}</p>
             <p><strong>Broj otključanja:</strong> {req.contactUnlocks.length}</p>
@@ -147,7 +155,7 @@ export default async function AdminRequestDetailPage({ params }: { params: Promi
         <RestoreRequestButton requestId={req.id} />
       )}
 
-      {req.adminStatus === "PENDING_REVIEW" && (
+      {(req.adminStatus === "PENDING_REVIEW" || req.adminStatus === "SUSPICIOUS" || !req.adminStatus) && (
         <RequestDetailActions
           requestId={req.id}
           requesterPhone={req.requesterPhone}

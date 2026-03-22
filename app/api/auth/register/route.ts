@@ -165,6 +165,19 @@ export async function POST(request: Request) {
       return u;
     });
 
+    if (user.role === "HANDYMAN") {
+      void import("@/lib/admin/notify-admins")
+        .then(({ notifyAdminsModeration }) =>
+          notifyAdminsModeration({
+            type: "ADMIN_PENDING_HANDYMAN_PROFILE",
+            title: "Novi profil čeka pregled",
+            body: user.name,
+            linkPath: `/admin/handymen/${user.id}`,
+          })
+        )
+        .catch(() => {});
+    }
+
     return NextResponse.json({ success: true, data: user });
   } catch (error) {
     console.error("Register error:", error);

@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
 const verifySchema = z.object({
-  status: z.enum(["VERIFIED", "REJECTED"]),
+  status: z.enum(["VERIFIED", "REJECTED", "SUSPICIOUS"]),
 });
 
 export async function POST(
@@ -40,9 +40,14 @@ export async function POST(
     }
 
     const oldStatus = profile.verifiedStatus;
+    const newVerified = parsed.data.status;
     const updated = await prisma.handymanProfile.update({
       where: { userId: handymanUserId },
-      data: { verifiedStatus: parsed.data.status },
+      data: {
+        verifiedStatus: newVerified,
+        // Sumnjiv profil: pauza u javnom prikazu (nije self-verifikacija)
+        ...(newVerified === "SUSPICIOUS" ? { workerStatus: "SUSPENDED" as const } : {}),
+      },
     });
 
     await createAuditLog(prisma, {

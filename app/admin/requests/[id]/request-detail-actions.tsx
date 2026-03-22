@@ -17,7 +17,8 @@ export function RequestDetailActions({
   const router = useRouter();
   const [loading, setLoading] = useState<string | null>(null);
 
-  const canAct = adminStatus === "PENDING_REVIEW" || !adminStatus;
+  const canAct =
+    adminStatus === "PENDING_REVIEW" || adminStatus === null || adminStatus === "SUSPICIOUS";
 
   const action = async (path: string) => {
     if (!canAct || loading) return;
@@ -76,27 +77,35 @@ export function RequestDetailActions({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Moderacija</CardTitle>
+        <CardTitle>Moderacija zahtjeva</CardTitle>
+        <p className="text-sm font-normal text-[#64748B]">
+          Odobri šalje oglas majstorima. Odbij briše. Sumnjivo pauzira distribuciju dok ne odlučite.
+        </p>
       </CardHeader>
       <CardContent className="flex flex-wrap gap-2">
-        <Button
-          onClick={() => action("/approve")}
-          disabled={!!loading}
-        >
-          Approve
+        <Button onClick={() => action("/approve")} disabled={!!loading}>
+          Odobri (distribucija)
         </Button>
         <Button variant="outline" onClick={() => action("/reject")} disabled={!!loading}>
-          Reject
+          Odbij
+        </Button>
+        <Button
+          variant="outline"
+          className="border-amber-500 text-amber-800 hover:bg-amber-50"
+          onClick={() => action("/suspicious")}
+          disabled={!!loading}
+        >
+          Označi kao sumnjivo
         </Button>
         <Button variant="outline" onClick={() => action("/spam")} disabled={!!loading}>
-          Mark as spam
+          Spam
         </Button>
         <Button variant="outline" onClick={() => action("/delete")} disabled={!!loading}>
-          Delete
+          Obriši
         </Button>
         {requesterPhone && (
           <Button variant="destructive" onClick={blacklist} disabled={!!loading}>
-            Blacklist phone
+            Blacklist telefon
           </Button>
         )}
       </CardContent>

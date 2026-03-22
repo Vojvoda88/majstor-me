@@ -139,7 +139,7 @@ export async function POST(request: NextRequest) {
 
     // Novi zahtjevi korisnika imaju PENDING_REVIEW; javni tok mora dozvoliti ponude bez čekanja admina.
     // Blokiramo samo eksplicitno zabranjene statuse.
-    if (req.adminStatus === "SPAM" || req.adminStatus === "DELETED") {
+    if (req.adminStatus === "SPAM" || req.adminStatus === "DELETED" || req.adminStatus === "SUSPICIOUS") {
       return NextResponse.json(
         { success: false, error: "Ovaj zahtjev ne prihvata ponude." },
         { status: 400 }

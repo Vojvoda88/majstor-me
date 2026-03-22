@@ -22,9 +22,13 @@ export async function POST(request: Request) {
         { status: 401 }
       );
     }
-    if (session.user.role !== "HANDYMAN" && session.user.role !== "USER") {
+    if (
+      session.user.role !== "HANDYMAN" &&
+      session.user.role !== "USER" &&
+      session.user.role !== "ADMIN"
+    ) {
       return NextResponse.json(
-        { success: false, error: "Obavještenja na ovom uređaju dostupna su prijavljenim korisnicima i majstorima" },
+        { success: false, error: "Obavještenja na ovom uređaju dostupna su prijavljenim korisnicima, majstorima i adminima" },
         { status: 403 }
       );
     }

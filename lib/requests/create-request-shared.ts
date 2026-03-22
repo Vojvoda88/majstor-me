@@ -134,6 +134,17 @@ export async function createRequestShared(
 
   void trackFunnelEvent(prisma, "request_created", { requestId: req.id }, session?.user?.id ?? null);
 
+  void import("@/lib/admin/notify-admins")
+    .then(({ notifyAdminsModeration }) =>
+      notifyAdminsModeration({
+        type: "ADMIN_PENDING_REQUEST",
+        title: "Novi oglas čeka pregled",
+        body: titleTrimmed || parsed.data.category,
+        linkPath: `/admin/requests/${req.id}`,
+      })
+    )
+    .catch(() => {});
+
   return {
     ok: true,
     data: {

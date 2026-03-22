@@ -63,10 +63,31 @@ export default async function AdminHandymanDetailPage({ params }: { params: Prom
           <CardContent className="space-y-2 text-sm">
             <p><strong>Telefon:</strong> {user.phone ?? "-"}</p>
             <p><strong>Grad:</strong> {user.city ?? hp.cities[0] ?? "-"}</p>
-            <p><strong>Status:</strong> {hp.workerStatus === "BANNED" || user.bannedAt ? "Banned" : hp.workerStatus === "SUSPENDED" || user.suspendedAt ? "Suspendovan" : hp.workerStatus === "PENDING_REVIEW" ? "Na čekanju" : "Aktivan"}</p>
-            <p><strong>Verifikacija:</strong> {hp.verifiedStatus}</p>
+            <p><strong>Status naloga (majstor):</strong>{" "}
+              {hp.workerStatus === "BANNED" || user.bannedAt ? "Banned" : hp.workerStatus === "SUSPENDED" || user.suspendedAt ? "Suspendovan" : hp.workerStatus === "PENDING_REVIEW" ? "Na čekanju admina" : "Aktivan"}
+            </p>
+            <p>
+              <strong>Self-verifikacija (korisnik sam):</strong>{" "}
+              email {user.emailVerified ? "✓ potvrđen" : "—"} · telefon{" "}
+              {user.phoneVerified ? "✓ potvrđen" : "—"}
+            </p>
+            <p>
+              <strong>Admin pregled profila (bedž / odluka):</strong>{" "}
+              <Badge variant="outline">{hp.verifiedStatus}</Badge>
+            </p>
             <p><strong>Kategorije:</strong> {categories.join(", ") || "-"}</p>
             <p><strong>Gradovi rada:</strong> {hp.cities.join(", ") || "-"}</p>
+            {(hp.serviceAreasDescription || hp.travelRadiusKm != null) && (
+              <p>
+                <strong>Područje / opis:</strong> {hp.serviceAreasDescription ?? "—"}
+                {hp.travelRadiusKm != null ? ` · do ${hp.travelRadiusKm} km` : ""}
+              </p>
+            )}
+            {(hp.viberPhone || hp.whatsappPhone) && (
+              <p>
+                <strong>Kontakt (app):</strong> Viber {hp.viberPhone ?? "—"} · WhatsApp {hp.whatsappPhone ?? "—"}
+              </p>
+            )}
           </CardContent>
         </Card>
 
@@ -84,13 +105,55 @@ export default async function AdminHandymanDetailPage({ params }: { params: Prom
         </Card>
       </div>
 
+      <Card>
+        <CardHeader>
+          <CardTitle>Pregled slika (moderacija)</CardTitle>
+          <p className="text-sm text-[#64748B]">Avatar i galerija — klik za punu veličinu</p>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-wrap gap-3">
+            {hp.avatarUrl ? (
+              <a
+                href={hp.avatarUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="block h-28 w-28 overflow-hidden rounded-lg border border-[#E2E8F0]"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={hp.avatarUrl} alt="Avatar" className="h-full w-full object-cover" />
+              </a>
+            ) : (
+              <p className="text-sm text-[#64748B]">Nema avatara</p>
+            )}
+          </div>
+          {hp.galleryImages.length > 0 ? (
+            <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4">
+              {hp.galleryImages.map((url) => (
+                <a
+                  key={url}
+                  href={url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="block aspect-square overflow-hidden rounded-lg border border-[#E2E8F0]"
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={url} alt="" className="h-full w-full object-cover" loading="lazy" />
+                </a>
+              ))}
+            </div>
+          ) : (
+            <p className="mt-2 text-sm text-[#64748B]">Nema slika u galeriji</p>
+          )}
+        </CardContent>
+      </Card>
+
       {hp.bio && (
         <Card>
           <CardHeader>
             <CardTitle>Opis</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-sm">{hp.bio}</p>
+            <p className="text-sm whitespace-pre-wrap">{hp.bio}</p>
           </CardContent>
         </Card>
       )}

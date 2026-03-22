@@ -6,14 +6,18 @@ import { Menu, X } from "lucide-react";
 import { AdminSidebar } from "@/components/admin/admin-sidebar";
 import { AdminMobileBottomNav } from "@/components/admin/admin-mobile-bottom-nav";
 import { AdminSignOutButton } from "@/components/admin/admin-sign-out-button";
+import { AdminNotificationBell } from "@/components/admin/admin-notification-bell";
 import type { AdminRole } from "@/lib/admin/permissions";
+import { hasPermission } from "@/lib/admin/permissions";
 type Props = {
   adminRole: AdminRole;
   session: { user?: { name?: string | null } | null };
+  /** Broj majstora + zahtjeva na čekanju (moderacija) */
+  moderationQueueCount?: number;
   children: React.ReactNode;
 };
 
-export function AdminShell({ adminRole, session, children }: Props) {
+export function AdminShell({ adminRole, session, children, moderationQueueCount = 0 }: Props) {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
@@ -85,6 +89,9 @@ export function AdminShell({ adminRole, session, children }: Props) {
           </span>
 
           <div className="flex shrink-0 items-center gap-2 sm:gap-4">
+            {hasPermission(adminRole, "moderation") && (
+              <AdminNotificationBell queueCount={moderationQueueCount} />
+            )}
             <Link
               href="/"
               className="whitespace-nowrap text-xs font-medium text-[#64748B] hover:text-[#0F172A] sm:text-sm"
