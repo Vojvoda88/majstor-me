@@ -26,7 +26,8 @@ async function main() {
   const password = await hash("Test123!", 12);
 
   // Admin – upsert: ako nalog sa ovim emailom već postoji, postavi ga na ADMIN
-  const adminEmail = process.env.ADMIN_EMAIL ?? "admin@brzimajstor.me";
+  /** Usklađeno sa tipičnim DB i E2E: `admin@majstor.me` (ne `.brzimajstor` — taj nalog često ne postoji u prod). */
+  const adminEmail = process.env.ADMIN_EMAIL ?? "admin@majstor.me";
   const admin = await prisma.user.upsert({
     where: { email: adminEmail },
     // Uvijek uskladi lozinku sa seedom (Test123!) da E2E / lokalni smoke ne padaju na starom hash-u
