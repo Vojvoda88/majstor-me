@@ -51,6 +51,7 @@ export async function POST(request: Request) {
         userAgent,
       },
       update: {
+        userId: session.user.id,
         p256dh: parsed.data.keys.p256dh,
         auth: parsed.data.keys.auth,
         userAgent,
