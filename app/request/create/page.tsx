@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { CreateRequestForm } from "@/components/forms/create-request-form";
 import { PremiumMobileHeader } from "@/components/layout/PremiumMobileHeader";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
@@ -60,10 +61,19 @@ export default function CreateRequestPage(props: { searchParams?: CreateRequestS
           </p>
         </header>
 
-        <CreateRequestForm
-          initialCategory={params.category}
-          initialCity={params.city}
-        />
+        <Suspense
+          fallback={
+            <div
+              className="w-full animate-pulse overflow-hidden rounded-[1.75rem] border border-slate-200/80 bg-white p-8 shadow-marketplace"
+              aria-hidden
+            >
+              <div className="mb-4 h-6 w-48 rounded bg-slate-200" />
+              <div className="h-32 rounded-lg bg-slate-100" />
+            </div>
+          }
+        >
+          <CreateRequestForm initialCategory={params.category} initialCity={params.city} />
+        </Suspense>
       </div>
     </div>
   );
