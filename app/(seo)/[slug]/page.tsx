@@ -81,6 +81,7 @@ export default async function SeoLandingPage({
           internalCategory={parsed.internalCategory}
           cityName={parsed.cityDisplayName}
           citySlug={parsed.citySlug}
+          categorySlug={parsed.categorySlug}
         />
       </Suspense>
     </>

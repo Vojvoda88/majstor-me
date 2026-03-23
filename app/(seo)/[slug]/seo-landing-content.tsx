@@ -7,7 +7,8 @@ import { PublicFooter } from "@/components/layout/PublicFooter";
 import { Wrench, ChevronLeft, ChevronRight, MapPin, ArrowRight } from "lucide-react";
 import { HandymanCard } from "@/components/lists/handyman-card";
 import { DEFAULT_PAGE_SIZE } from "@/lib/constants";
-import { cityGenitive, cityLocative } from "@/lib/slugs";
+import { cityLocative } from "@/lib/slugs";
+import { buildSeoCombinedIntroParagraph, type SeoCombinedParsed } from "@/lib/seo-landing-copy";
 
 type Handyman = {
   id: string;
@@ -18,21 +19,18 @@ type Handyman = {
   reviewCount: number;
 };
 
-function buildIntroParagraph(displayName: string, cityLoc: string, cityGen: string): string {
-  const service = displayName.toLowerCase();
-  return `Tražite pouzdanog ${service}a u ${cityLoc}? Na BrziMajstor.ME možete brzo pronaći provjerene majstore koji dolaze na vašu adresu. Bez obzira da li vam treba hitna intervencija ili planirani radovi, jednim zahtjevom dobijate ponude od stručnjaka iz ${cityGen} i okolice. Platforma štedi vrijeme: ne morate zvati redom niti tražiti preporuke — opišite posao, odaberite grad i uporedite ocjene i recenzije. Majstori koji su aktivni u vašoj zoni mogu vam se javiti u kratkom roku. Svi profili su povezani sa iskustvima stvarnih korisnika, što olakšava odluku. Pošaljite zahtjev besplatno i izaberite ponudu koja vam najviše odgovara.`;
-}
-
 export function SeoLandingContent({
   displayName,
   internalCategory,
   cityName,
   citySlug,
+  categorySlug,
 }: {
   displayName: string;
   internalCategory: string;
   cityName: string;
   citySlug: string;
+  categorySlug: string;
 }) {
   const [handymen, setHandymen] = useState<Handyman[]>([]);
   const [sortBy, setSortBy] = useState<"rating" | "reviews">("rating");
@@ -44,8 +42,14 @@ export function SeoLandingContent({
   const [reloadToken, setReloadToken] = useState(0);
 
   const cityNameLocative = cityLocative(cityName);
-  const cityGen = cityGenitive(cityName);
-  const intro = buildIntroParagraph(displayName, cityNameLocative, cityGen);
+  const parsed: SeoCombinedParsed = {
+    categorySlug,
+    citySlug,
+    categoryDisplayName: displayName,
+    cityDisplayName: cityName,
+    internalCategory,
+  };
+  const intro = buildSeoCombinedIntroParagraph(parsed);
 
   useEffect(() => {
     setPage(1);
@@ -112,18 +116,33 @@ export function SeoLandingContent({
               {cityName}
             </Link>
             <span className="mx-2">/</span>
-            <Link href="/categories" className="hover:text-slate-700">
-              Kategorije
-            </Link>
-            <span className="mx-2">/</span>
             <span className="font-medium text-slate-900">{displayName}</span>
           </nav>
 
-          <h1 className="mb-5 text-2xl font-black leading-tight tracking-tight text-slate-950 sm:text-3xl md:text-4xl">
-            {displayName} u {cityNameLocative} – BrziMajstor.ME
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-slate-500">Usluga u gradu</p>
+          <h1 className="mb-5 mt-2 text-2xl font-black leading-tight tracking-tight text-slate-950 sm:text-3xl md:text-4xl">
+            {displayName} u {cityNameLocative}
           </h1>
 
-          <p className="mb-8 max-w-3xl text-base leading-relaxed text-slate-700 sm:text-[1.05rem]">{intro}</p>
+          <p className="mb-4 max-w-3xl text-base leading-relaxed text-slate-700 sm:text-[1.05rem]">{intro}</p>
+
+          <p className="mb-8 flex flex-wrap gap-x-4 gap-y-2 text-sm text-slate-600">
+            <Link
+              href={`/category/${categorySlug}`}
+              className="font-semibold text-blue-700 underline underline-offset-2 hover:text-blue-900"
+            >
+              {displayName} — cijela Crna Gora
+            </Link>
+            <span className="hidden text-slate-300 sm:inline" aria-hidden>
+              |
+            </span>
+            <Link
+              href={`/grad/${citySlug}`}
+              className="font-semibold text-blue-700 underline underline-offset-2 hover:text-blue-900"
+            >
+              Sve usluge u {cityName}
+            </Link>
+          </p>
 
           <div className="mb-6 flex flex-wrap gap-4">
             <select
@@ -203,7 +222,7 @@ export function SeoLandingContent({
           <section className="mt-12 rounded-2xl border border-blue-100 bg-gradient-to-br from-blue-50 to-white p-6 shadow-sm sm:p-8">
             <h2 className="text-lg font-bold text-slate-900 sm:text-xl">Pošaljite zahtjev</h2>
             <p className="mt-2 max-w-2xl text-slate-600">
-              Pošaljite zahtjev i majstori će vam se javiti u roku od par minuta.
+              Jedan opis posla, jedan grad — majstori koji mogu da odgovore šalju ponude. Nema obaveze da prihvatite.
             </p>
             <Link
               href={createUrl}
@@ -214,7 +233,6 @@ export function SeoLandingContent({
             </Link>
           </section>
 
-          {/* FAQ za SEO */}
           <section className="mt-10 rounded-2xl border border-white bg-white p-6 shadow-sm sm:p-8">
             <h2 className="mb-4 text-lg font-bold text-slate-900">Često postavljana pitanja</h2>
             <div className="space-y-5 text-sm leading-relaxed text-slate-600">
@@ -223,22 +241,22 @@ export function SeoLandingContent({
                   Koliko košta {displayName.toLowerCase()} u {cityNameLocative}?
                 </h3>
                 <p>
-                  Cijena zavisi od vrste posla, materijala i hitnosti. Na BrziMajstor.ME dobijate više ponuda pa možete
-                  uporediti cijene prije nego što angažujete majstora.
+                  Cijena zavisi od vrste posla i materijala. Na BrziMajstor.ME možete dobiti više ponuda pa uporediti prije
+                  angažmana.
                 </p>
               </div>
               <div>
-                <h3 className="font-semibold text-slate-800">Koliko brzo dolazi majstor?</h3>
+                <h3 className="font-semibold text-slate-800">Kada mogu očekivati odgovor?</h3>
                 <p>
-                  Zavisno od dostupnosti i hitnosti, mnogi majstori odgovaraju u roku od nekoliko minuta do nekoliko
-                  sati. U zahtjevu navedite kada vam odgovara dolazak.
+                  Zavisi od dostupnosti majstora. U zahtjevu navedite kada vam odgovara dolazak — majstori odgovaraju kad
+                  mogu.
                 </p>
               </div>
               <div>
-                <h3 className="font-semibold text-slate-800">Da li su majstori provjereni?</h3>
+                <h3 className="font-semibold text-slate-800">Šta vidim na profilu majstora?</h3>
                 <p>
-                  Majstori na BrziMajstor.ME imaju recenzije od stvarnih korisnika. Verifikovani majstori imaju dodatnu
-                  provjeru identiteta.
+                  Ocjene i broj recenzija od ranijih korisnika, kad postoje. Na profilu možete vidjeti i kategorije koje
+                  majstor nudi.
                 </p>
               </div>
             </div>

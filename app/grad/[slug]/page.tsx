@@ -7,6 +7,7 @@ import { DEFAULT_PAGE_SIZE } from "@/lib/constants";
 export const revalidate = 3600;
 import { HOMEPAGE_CITIES } from "@/lib/homepage-data";
 import { buildPublicListingPageJsonLd } from "@/lib/json-ld";
+import { gradMetaDescription, gradMetaTitle } from "@/lib/seo-landing-copy";
 import { getSiteUrl } from "@/lib/site-url";
 import { GradPageContent } from "./grad-page-content";
 
@@ -25,8 +26,8 @@ export async function generateMetadata({
   }
   const nameLocative = cityLocative(name);
   const base = getSiteUrl();
-  const title = `Majstori u ${nameLocative}`;
-  const description = `Pregled majstora u ${nameLocative} — vodoinstalater, električar, klima servis i druge usluge. Pogledajte profile ili objavite besplatan zahtjev i sačekajte ponude.`;
+  const title = gradMetaTitle(nameLocative);
+  const description = gradMetaDescription(nameLocative, name);
 
   return {
     title,
@@ -68,10 +69,10 @@ export default async function GradPage({
   const base = getSiteUrl().replace(/\/$/, "");
   const nameLocative = cityLocative(name);
   const canonical = `${base}/grad/${slug}`;
-  const pageDescription = `Pregled majstora u ${nameLocative} — vodoinstalater, električar, klima servis i druge usluge. Pogledajte profile ili objavite besplatan zahtjev i sačekajte ponude.`;
+  const pageDescription = gradMetaDescription(nameLocative, name);
   const gradJsonLd = buildPublicListingPageJsonLd({
     canonicalUrl: canonical,
-    pageTitle: `Majstori u ${nameLocative}`,
+    pageTitle: gradMetaTitle(nameLocative),
     description: pageDescription,
     breadcrumbs: [
       { name: "Početna", itemUrl: base },

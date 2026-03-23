@@ -13,6 +13,7 @@ import { LandingValueBlock } from "@/components/landing/landing-value-block";
 import { Wrench, MapPin, List, ChevronLeft, ChevronRight, SlidersHorizontal } from "lucide-react";
 import { CITIES, DEFAULT_PAGE_SIZE } from "@/lib/constants";
 import { HOMEPAGE_CITIES } from "@/lib/homepage-data";
+import { cityToSlug } from "@/lib/slugs";
 import type { PublicHandymenListResult } from "@/lib/handymen-listing";
 
 type Handyman = {
@@ -152,21 +153,37 @@ export function CategoryPageContent({
               Početna
             </Link>
             <span className="mx-2 text-slate-300">/</span>
+            <Link href="/categories" className="font-medium transition hover:text-blue-700">
+              Kategorije
+            </Link>
+            <span className="mx-2 text-slate-300">/</span>
             <span className="font-semibold text-brand-navy">{displayName}</span>
           </nav>
 
-          {/* Header zone */}
+          {/* Header zone — fokus: jedna usluga, više gradova */}
           <header className="mb-10">
-            <h1 className="font-display text-3xl font-bold tracking-tight text-brand-navy md:text-5xl">
-              {displayName} u Crnoj Gori
+            <p className="text-xs font-bold uppercase tracking-[0.2em] text-slate-500">Kategorija</p>
+            <h1 className="font-display mt-2 text-3xl font-bold tracking-tight text-brand-navy md:text-5xl">
+              {displayName}
             </h1>
             <p className="mt-4 max-w-2xl text-base leading-relaxed text-slate-600 md:text-lg">
-              Pregled majstora za kategoriju <span className="font-medium text-[#0F172A]">{displayName.toLowerCase()}</span>
+              Jedna vrsta usluge, cijela Crna Gora — birajte grad filterom ili mapom, uporedite ocjene ili pošaljite{" "}
+              <span className="font-medium text-[#0F172A]">jedan besplatan zahtjev</span> ako želite ponude od više
+              majstora.
               {cityFilter ? (
-                <> u gradu <span className="font-medium text-[#0F172A]">{cityFilter}</span>. Filtrirajte listu ili objavite zahtjev ako ne nalazite idealnog majstora.</>
-              ) : (
-                <> širom Crne Gore. Pronađite majstora ili objavite zahtjev i dobijte ponude.</>
-              )}
+                <>
+                  {" "}
+                  Trenutno:{" "}
+                  <span className="font-medium text-[#0F172A]">{cityFilter}</span>. Za sve usluge u tom gradu, otvorite{" "}
+                  <Link
+                    href={`/grad/${cityToSlug(cityFilter)}`}
+                    className="font-semibold text-blue-700 underline underline-offset-2 hover:text-blue-900"
+                  >
+                    stranicu grada
+                  </Link>
+                  .
+                </>
+              ) : null}
             </p>
           </header>
 

@@ -142,9 +142,11 @@ export function GradPageContent({
             </h1>
           )}
 
+          <p className="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-slate-500">Grad</p>
           <p className="mb-6 max-w-2xl text-sm leading-relaxed text-slate-600 sm:text-base">
-            Profili majstora koji rade u <span className="font-medium text-slate-900">{cityName}</span>. Pogledajte ocjene
-            i kontakt, ili objavite jedan zahtjev i sačekajte ponude — bez zvanja više brojeva redom.
+            Jedan grad, više kategorija — ispod su profili majstora u{" "}
+            <span className="font-medium text-slate-900">{cityName}</span>. Možete otvoriti uslugu po kategoriji ili
+            poslati jedan zahtjev i sačekati ponude; nema obaveze da birate odmah.
           </p>
 
           <LandingValueBlock

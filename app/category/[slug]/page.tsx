@@ -6,6 +6,7 @@ import { DEFAULT_PAGE_SIZE } from "@/lib/constants";
 
 export const revalidate = 3600;
 import { buildPublicListingPageJsonLd } from "@/lib/json-ld";
+import { categoryMetaDescription, categoryMetaTitle } from "@/lib/seo-landing-copy";
 import { getSiteUrl } from "@/lib/site-url";
 import { CategoryPageContent } from "./category-page-content";
 
@@ -23,8 +24,8 @@ export async function generateMetadata({
     };
   }
   const base = getSiteUrl();
-  const title = `${config.displayName} majstori u Crnoj Gori`;
-  const description = `Pregled majstora za kategoriju ${config.displayName.toLowerCase()} širom Crne Gore. Pronađite provjerenog majstora ili objavite besplatan zahtjev i dobijte ponude.`;
+  const title = categoryMetaTitle(config.displayName);
+  const description = categoryMetaDescription(config.displayName);
 
   const ogTitle = `${title} | BrziMajstor.ME`;
   return {
@@ -77,10 +78,10 @@ export default async function CategoryPage({
 
   const base = getSiteUrl().replace(/\/$/, "");
   const canonical = `${base}/category/${slug}`;
-  const pageDescription = `Pregled majstora za kategoriju ${config.displayName.toLowerCase()} širom Crne Gore. Pronađite provjerenog majstora ili objavite besplatan zahtjev i dobijte ponude.`;
+  const pageDescription = categoryMetaDescription(config.displayName);
   const categoryJsonLd = buildPublicListingPageJsonLd({
     canonicalUrl: canonical,
-    pageTitle: `${config.displayName} majstori u Crnoj Gori`,
+    pageTitle: categoryMetaTitle(config.displayName),
     description: pageDescription,
     breadcrumbs: [
       { name: "Početna", itemUrl: base },
