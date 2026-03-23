@@ -3,6 +3,7 @@ import { getSiteUrl } from "@/lib/site-url";
 import { PUBLIC_CATEGORY_LISTING } from "@/lib/categories";
 import { HOMEPAGE_CITIES } from "@/lib/homepage-data";
 import { SEO_LANDING_CITIES } from "@/lib/seo-landing-config";
+import { prismaWhereHandymanSitemapEligible } from "@/lib/handyman-sitemap-eligibility";
 
 /** Gradovi iz SEO FAZE 3 (kombinovane rute u generateStaticParams) — viši prioritet u sitemapu */
 const SEO_CORE_CITY_SLUGS = new Set<string>(SEO_LANDING_CITIES);
@@ -48,7 +49,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   try {
     const { prisma } = await import("@/lib/db");
     const handymen = await prisma.user.findMany({
-      where: { role: "HANDYMAN" },
+      where: prismaWhereHandymanSitemapEligible(),
       select: { id: true },
       take: 500,
     });

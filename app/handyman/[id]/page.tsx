@@ -48,9 +48,12 @@ export async function generateMetadata({
   const city = user.city || "";
   const base = getSiteUrl();
   const title = `${user.name} – ${cat}${city ? `, ${city}` : ""}`.trim();
+  const bioTrim = user.handymanProfile.bio?.trim() ?? "";
   const description =
-    user.handymanProfile.bio ||
-    `Profil majstora ${user.name} za usluge kategorije ${cat}${city ? ` u ${city}` : ""} na BrziMajstor.ME.`;
+    bioTrim ||
+    (categories.length > 0
+      ? `${user.name} — ${cat}${city ? `, ${city}` : ""}. Javni profil na BrziMajstor.ME.`
+      : `${user.name} — javni profil majstora na BrziMajstor.ME.`);
   const imageUrl =
     (user.handymanProfile as { avatarUrl?: string | null }).avatarUrl ??
     AVATAR_IMAGE_FALLBACK;
@@ -130,9 +133,15 @@ export default async function HandymanProfilePage({
   if (profileCategories.length > 0)
     createParams.set("category", profileCategories[0]);
 
+  const ldDescription =
+    profile.bio?.trim() ||
+    (profileCategories.length > 0
+      ? `${user.name ?? "Majstor"} — ${profileCategories.join(", ")}${user.city ? `, ${user.city}` : profile.cities[0] ? `, ${profile.cities[0]}` : ""}.`
+      : `${user.name ?? "Majstor"} — javni profil na BrziMajstor.ME.`);
+
   const jsonLd = localBusinessJsonLd({
     name: user.name ?? "Majstor",
-    description: profile.bio ?? undefined,
+    description: ldDescription,
     image: profileExt.avatarUrl ?? undefined,
     address: user.city ? { city: user.city } : undefined,
     aggregateRating:
