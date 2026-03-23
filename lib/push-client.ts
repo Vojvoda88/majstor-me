@@ -16,6 +16,39 @@ export function browserSupportsWebPush(): boolean {
   return "Notification" in window && "serviceWorker" in navigator && "PushManager" in window;
 }
 
+/** `navigator.serviceWorker.ready` može vječno čekati ako SW nikad ne postane aktivan (npr. neuspjeli register). */
+const SW_READY_TIMEOUT_MS = 12_000;
+
+function withTimeout<T>(ms: number, p: Promise<T>): Promise<T> {
+  let id: ReturnType<typeof setTimeout>;
+  return new Promise((resolve, reject) => {
+    id = setTimeout(() => reject(new Error("sw_ready_timeout")), ms);
+    p.then(
+      (v) => {
+        clearTimeout(id);
+        resolve(v);
+      },
+      (e) => {
+        clearTimeout(id);
+        reject(e);
+      }
+    );
+  });
+}
+
+/**
+ * Aktivna registracija za push (brzi put ako već postoji; inače čeka `ready` s timeoutom).
+ */
+export async function getServiceWorkerRegistrationForPush(): Promise<ServiceWorkerRegistration | null> {
+  const existing = await navigator.serviceWorker.getRegistration();
+  if (existing?.active) return existing;
+  try {
+    return await withTimeout(SW_READY_TIMEOUT_MS, navigator.serviceWorker.ready);
+  } catch {
+    return (await navigator.serviceWorker.getRegistration()) ?? null;
+  }
+}
+
 export type PushReadyState =
   | { kind: "no_vapid" }
   | { kind: "unsupported"; reason: string }
@@ -31,7 +64,14 @@ export async function getPushReadyState(vapidPublicKey: string | undefined): Pro
     };
   }
   try {
-    const reg = await navigator.serviceWorker.ready;
+    const reg = await getServiceWorkerRegistrationForPush();
+    if (!reg) {
+      return {
+        kind: "unsupported",
+        reason:
+          "Service worker se nije učitao u roku (npr. blokiran ili neuspjeli SW). Osvježite stranicu; na HTTPS provjerite da /sw.js radi.",
+      };
+    }
     const sub = await reg.pushManager.getSubscription();
     return {
       kind: "ready",
@@ -62,7 +102,14 @@ export async function requestPermissionAndSubscribe(vapidPublicKey: string): Pro
     if (perm !== "granted") {
       return { ok: false, reason: "permission_denied" };
     }
-    const reg = await navigator.serviceWorker.ready;
+    const reg = await getServiceWorkerRegistrationForPush();
+    if (!reg) {
+      return {
+        ok: false,
+        reason: "subscribe_failed",
+        message: "Service worker nije spreman. Osvježite stranicu i pokušajte ponovo.",
+      };
+    }
     let sub = await reg.pushManager.getSubscription();
     if (!sub) {
       sub = await reg.pushManager.subscribe({
