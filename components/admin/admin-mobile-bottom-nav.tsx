@@ -31,9 +31,11 @@ type Props = {
   adminRole: AdminRole;
   /** Kad je otvoren drawer meni, sakrij bottom bar da ne preklapa UX */
   hidden?: boolean;
+  /** Ukupno stvari na čekanju (za tačku na Moderacija) */
+  pendingTotal?: number;
 };
 
-export function AdminMobileBottomNav({ adminRole, hidden = false }: Props) {
+export function AdminMobileBottomNav({ adminRole, hidden = false, pendingTotal = 0 }: Props) {
   const pathname = usePathname();
 
   const visible = ITEMS.filter((item) => hasPermission(adminRole, item.permission));
@@ -49,16 +51,24 @@ export function AdminMobileBottomNav({ adminRole, hidden = false }: Props) {
         {visible.map(({ href, label, icon: Icon }) => {
           const isActive =
             href === "/admin" ? pathname === "/admin" || pathname === "/admin/" : pathname === href || pathname.startsWith(href + "/");
+          const showDot = href === "/admin/moderation" && pendingTotal > 0;
           return (
             <Link
               key={href}
               href={href}
               className={cn(
-                "flex min-h-[50px] min-w-0 flex-1 flex-col items-center justify-center gap-0.5 rounded-xl px-0.5 py-1 text-[10px] font-semibold leading-tight transition-colors sm:min-h-[52px] sm:text-[11px]",
+                "relative flex min-h-[50px] min-w-0 flex-1 flex-col items-center justify-center gap-0.5 rounded-xl px-0.5 py-1 text-[10px] font-semibold leading-tight transition-colors sm:min-h-[52px] sm:text-[11px]",
                 isActive ? "text-brand-navy" : "text-slate-500 hover:text-slate-800"
               )}
             >
-              <Icon className={cn("h-5 w-5 shrink-0", isActive ? "text-[#2563eb]" : "text-slate-500")} strokeWidth={2} aria-hidden />
+              <span className="relative">
+                <Icon className={cn("h-5 w-5 shrink-0", isActive ? "text-[#2563eb]" : "text-slate-500")} strokeWidth={2} aria-hidden />
+                {showDot && (
+                  <span className="absolute -right-1 -top-0.5 flex h-4 min-w-[1rem] items-center justify-center rounded-full bg-red-500 px-0.5 text-[9px] font-bold text-white">
+                    {pendingTotal > 9 ? "9+" : pendingTotal}
+                  </span>
+                )}
+              </span>
               <span className="line-clamp-2 w-full text-center">{label}</span>
             </Link>
           );

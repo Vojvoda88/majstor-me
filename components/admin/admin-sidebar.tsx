@@ -22,6 +22,7 @@ import {
   BarChart3,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import type { AdminPendingReviewCounts } from "@/lib/admin-pending-counts";
 import type { AdminRole } from "@/lib/admin/permissions";
 import { hasPermission } from "@/lib/admin/permissions";
 
@@ -52,13 +53,14 @@ const NAV_ITEMS: {
 
 type SidebarProps = {
   adminRole: AdminRole;
+  pendingReview: AdminPendingReviewCounts;
   /** Kada je false ispod lg breakpointa, sidebar je sakriven (drawer zatvoren). Na desktopu se ignoriše. */
   mobileOpen?: boolean;
   /** Pozovi nakon klika na stavku na mobilnom (zatvara drawer). */
   onClose?: () => void;
 };
 
-export function AdminSidebar({ adminRole, mobileOpen = false, onClose }: SidebarProps) {
+export function AdminSidebar({ adminRole, pendingReview, mobileOpen = false, onClose }: SidebarProps) {
   const pathname = usePathname();
 
   const visibleItems = NAV_ITEMS.filter((item) =>
@@ -92,6 +94,14 @@ export function AdminSidebar({ adminRole, mobileOpen = false, onClose }: Sidebar
               const Icon = item.icon;
               const isActive = pathname === item.href || (item.href !== "/admin" && pathname.startsWith(item.href + "/"));
               const testId = item.href === "/admin" ? "admin-nav-dashboard" : "admin-nav-" + item.href.replace(/^\/admin\/?/, "");
+              const pendingMod =
+                item.href === "/admin/moderation"
+                  ? pendingReview.pendingRequests + pendingReview.pendingHandymen
+                  : item.href === "/admin/requests"
+                    ? pendingReview.pendingRequests
+                    : item.href === "/admin/handymen"
+                      ? pendingReview.pendingHandymen
+                      : 0;
               return (
                 <li key={item.href}>
                   <Link
@@ -106,7 +116,17 @@ export function AdminSidebar({ adminRole, mobileOpen = false, onClose }: Sidebar
                     )}
                   >
                     <Icon className="h-4 w-4 shrink-0" />
-                    {item.label}
+                    <span className="flex-1">{item.label}</span>
+                    {pendingMod > 0 && (
+                      <span
+                        className={cn(
+                          "min-w-[1.25rem] rounded-full px-1.5 py-0.5 text-center text-[11px] font-bold",
+                          isActive ? "bg-white/25 text-white" : "bg-amber-100 text-amber-900"
+                        )}
+                      >
+                        {pendingMod > 99 ? "99+" : pendingMod}
+                      </span>
+                    )}
                   </Link>
                 </li>
               );

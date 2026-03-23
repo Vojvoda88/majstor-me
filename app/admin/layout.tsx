@@ -1,7 +1,7 @@
 import { AppProviders } from "@/app/app-providers";
-import { Providers } from "@/app/providers";
 import { AdminShell } from "@/components/admin/admin-shell";
 import { requireAdmin } from "@/lib/admin/auth";
+import { getAdminPendingReviewCounts } from "@/lib/admin-pending-counts";
 
 export const dynamic = "force-dynamic";
 
@@ -11,14 +11,18 @@ export default async function AdminLayout({
   children: React.ReactNode;
 }) {
   const { session, adminRole } = await requireAdmin();
+  let pendingReview = { pendingRequests: 0, pendingHandymen: 0, urgentPendingRequests: 0 };
+  try {
+    pendingReview = await getAdminPendingReviewCounts();
+  } catch {
+    /* non-blocking */
+  }
 
   return (
-    <Providers>
-      <AppProviders>
-        <AdminShell adminRole={adminRole} session={session}>
-          {children}
-        </AdminShell>
-      </AppProviders>
-    </Providers>
+    <AppProviders>
+      <AdminShell adminRole={adminRole} session={session} pendingReview={pendingReview}>
+        {children}
+      </AdminShell>
+    </AppProviders>
   );
 }

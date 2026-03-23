@@ -134,6 +134,15 @@ export async function createRequestShared(
 
   void trackFunnelEvent(prisma, "request_created", { requestId: req.id }, session?.user?.id ?? null);
 
+  const { notifyAdminsNewPendingRequest } = await import("@/lib/admin-signals");
+  void notifyAdminsNewPendingRequest({
+    requestId: req.id,
+    category: req.category,
+    city: req.city,
+    title: req.title,
+    urgency: req.urgency,
+  });
+
   return {
     ok: true,
     data: {

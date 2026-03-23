@@ -120,6 +120,11 @@ export async function PATCH(request: Request) {
       );
     }
 
+    const hadProfileBefore = !!(await prisma.handymanProfile.findUnique({
+      where: { userId: session.user.id },
+      select: { id: true },
+    }));
+
     if (phone !== undefined) {
       await prisma.user.update({
         where: { id: session.user.id },
@@ -193,6 +198,19 @@ export async function PATCH(request: Request) {
 
     const cats = profile.workerCategories.map((wc) => wc.category.name);
     const { workerCategories, ...rest } = profile;
+
+    if (!hadProfileBefore) {
+      const u = await prisma.user.findUnique({
+        where: { id: session.user.id },
+        select: { name: true },
+      });
+      const { notifyAdminsNewPendingHandyman } = await import("@/lib/admin-signals");
+      void notifyAdminsNewPendingHandyman({
+        handymanUserId: session.user.id,
+        displayName: u?.name?.trim() ?? "",
+      });
+    }
+
     return NextResponse.json({ success: true, data: { ...rest, categories: cats } });
   } catch (error) {
     logError("PATCH handyman profile error", error);

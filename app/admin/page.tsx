@@ -1,4 +1,5 @@
 import { requireAdminPermission } from "@/lib/admin/auth";
+import { getAdminPendingReviewCounts } from "@/lib/admin-pending-counts";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 
@@ -124,6 +125,13 @@ async function loadDashboardData() {
 }
 
 export default async function AdminDashboardPage() {
+  let pendingStrip = { pendingRequests: 0, pendingHandymen: 0, urgentPendingRequests: 0 };
+  try {
+    pendingStrip = await getAdminPendingReviewCounts();
+  } catch {
+    /* ignore */
+  }
+
   const emptyData: Awaited<ReturnType<typeof loadDashboardData>> = {
     requestsToday: 0,
     requestsWeek: 0,
@@ -193,6 +201,37 @@ export default async function AdminDashboardPage() {
         <h1 className="text-xl font-bold text-[#0F172A] sm:text-2xl">Dashboard</h1>
         <p className="mt-1 text-xs text-[#64748B] sm:text-sm">Pregled platforme i ključnih metrika</p>
       </div>
+
+      {(pendingStrip.pendingRequests > 0 || pendingStrip.pendingHandymen > 0) && (
+        <div className="grid gap-3 sm:grid-cols-2">
+          <Link href="/admin/requests?adminStatus=PENDING_REVIEW">
+            <Card className="h-full border-amber-200 bg-amber-50/90 transition-shadow hover:shadow-md">
+              <CardHeader className="pb-1">
+                <CardTitle className="text-sm font-semibold text-amber-950">Zahtjevi na pregled</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-2xl font-bold text-amber-950">{pendingStrip.pendingRequests}</p>
+                {pendingStrip.urgentPendingRequests > 0 && (
+                  <p className="mt-1 text-xs font-medium text-red-700">
+                    Hitno (danas): {pendingStrip.urgentPendingRequests}
+                  </p>
+                )}
+              </CardContent>
+            </Card>
+          </Link>
+          <Link href="/admin/handymen?status=PENDING_REVIEW">
+            <Card className="h-full border-sky-200 bg-sky-50/90 transition-shadow hover:shadow-md">
+              <CardHeader className="pb-1">
+                <CardTitle className="text-sm font-semibold text-sky-950">Majstori na pregled</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-2xl font-bold text-sky-950">{pendingStrip.pendingHandymen}</p>
+                <p className="mt-1 text-xs text-sky-800">Nova prijava ili profil na čekanju</p>
+              </CardContent>
+            </Card>
+          </Link>
+        </div>
+      )}
 
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {statCards.map((stat) => {

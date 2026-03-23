@@ -6,14 +6,18 @@ import { Menu, X } from "lucide-react";
 import { AdminSidebar } from "@/components/admin/admin-sidebar";
 import { AdminMobileBottomNav } from "@/components/admin/admin-mobile-bottom-nav";
 import { AdminSignOutButton } from "@/components/admin/admin-sign-out-button";
+import { AdminPendingHeaderBadge } from "@/components/admin/admin-pending-header-badge";
+import { NotificationsDropdown } from "@/components/layout/notifications-dropdown";
+import type { AdminPendingReviewCounts } from "@/lib/admin-pending-counts";
 import type { AdminRole } from "@/lib/admin/permissions";
 type Props = {
   adminRole: AdminRole;
   session: { user?: { name?: string | null } | null };
+  pendingReview: AdminPendingReviewCounts;
   children: React.ReactNode;
 };
 
-export function AdminShell({ adminRole, session, children }: Props) {
+export function AdminShell({ adminRole, session, pendingReview, children }: Props) {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
@@ -63,6 +67,7 @@ export function AdminShell({ adminRole, session, children }: Props) {
         adminRole={adminRole}
         mobileOpen={mobileOpen}
         onClose={() => setMobileOpen(false)}
+        pendingReview={pendingReview}
       />
 
       <div className="flex min-h-screen w-full min-w-0 flex-col lg:pl-64">
@@ -99,7 +104,7 @@ export function AdminShell({ adminRole, session, children }: Props) {
         <main className="min-w-0 overflow-x-hidden p-4 pb-[calc(5.25rem+env(safe-area-inset-bottom,0px))] sm:p-6 lg:pb-6">
           {children}
         </main>
-        <AdminMobileBottomNav adminRole={adminRole} hidden={mobileOpen} />
+        <AdminMobileBottomNav adminRole={adminRole} hidden={mobileOpen} pendingTotal={pendingReview.pendingRequests + pendingReview.pendingHandymen} />
       </div>
     </div>
   );

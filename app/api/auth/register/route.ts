@@ -165,6 +165,14 @@ export async function POST(request: Request) {
       return u;
     });
 
+    if (role === "HANDYMAN") {
+      const { notifyAdminsNewPendingHandyman } = await import("@/lib/admin-signals");
+      void notifyAdminsNewPendingHandyman({
+        handymanUserId: user.id,
+        displayName: user.name ?? "",
+      });
+    }
+
     return NextResponse.json({ success: true, data: user });
   } catch (error) {
     console.error("Register error:", error);
