@@ -1,3 +1,9 @@
+import {
+  breadcrumbListEntity,
+  organizationEntity,
+  schemaWebsiteId,
+  websiteEntity,
+} from "@/lib/json-ld";
 import { cityGenitive, cityLocative } from "@/lib/slugs";
 
 type ParsedSlug = {
@@ -44,7 +50,7 @@ export type SeoLandingJsonLdInput = {
   parsed: ParsedSlug;
 };
 
-/** WebPage + BreadcrumbList — jedan @graph, bez pretjerivanja */
+/** WebPage + BreadcrumbList + dijeljeni Organization/WebSite @id (bez odvojenog Service — sadržaj je već u opisu stranice). */
 export function buildSeoLandingJsonLd({
   canonicalUrl,
   siteUrl,
@@ -52,60 +58,27 @@ export function buildSeoLandingJsonLd({
   description,
   parsed,
 }: SeoLandingJsonLdInput): Record<string, unknown> {
-  const cityGradUrl = `${siteUrl}/grad/${parsed.citySlug}`;
+  const root = siteUrl.replace(/\/$/, "");
+  const cityGradUrl = `${root}/grad/${parsed.citySlug}`;
 
   return {
     "@context": "https://schema.org",
     "@graph": [
+      organizationEntity(root),
+      websiteEntity(root),
       {
         "@type": "WebPage",
         "@id": `${canonicalUrl}#webpage`,
         url: canonicalUrl,
         name: `${title} | BrziMajstor.ME`,
         description,
-        isPartOf: {
-          "@type": "WebSite",
-          "@id": `${siteUrl}/#website`,
-          name: "BrziMajstor.ME",
-          url: siteUrl,
-        },
-        about: {
-          "@type": "Service",
-          name: `${parsed.categoryDisplayName} — ${parsed.cityDisplayName}`,
-          areaServed: {
-            "@type": "City",
-            name: parsed.cityDisplayName,
-          },
-          provider: {
-            "@type": "Organization",
-            name: "BrziMajstor.ME",
-            url: siteUrl,
-          },
-        },
+        isPartOf: { "@id": schemaWebsiteId(root) },
       },
-      {
-        "@type": "BreadcrumbList",
-        itemListElement: [
-          {
-            "@type": "ListItem",
-            position: 1,
-            name: "Početna",
-            item: siteUrl,
-          },
-          {
-            "@type": "ListItem",
-            position: 2,
-            name: parsed.cityDisplayName,
-            item: cityGradUrl,
-          },
-          {
-            "@type": "ListItem",
-            position: 3,
-            name: parsed.categoryDisplayName,
-            item: canonicalUrl,
-          },
-        ],
-      },
+      breadcrumbListEntity([
+        { name: "Početna", itemUrl: root },
+        { name: parsed.cityDisplayName, itemUrl: cityGradUrl },
+        { name: parsed.categoryDisplayName, itemUrl: canonicalUrl },
+      ]),
     ],
   };
 }

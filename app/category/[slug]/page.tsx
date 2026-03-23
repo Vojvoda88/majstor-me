@@ -5,6 +5,7 @@ import { getPublicHandymenList } from "@/lib/handymen-listing";
 import { DEFAULT_PAGE_SIZE } from "@/lib/constants";
 
 export const revalidate = 3600;
+import { buildPublicListingPageJsonLd } from "@/lib/json-ld";
 import { getSiteUrl } from "@/lib/site-url";
 import { CategoryPageContent } from "./category-page-content";
 
@@ -74,13 +75,30 @@ export default async function CategoryPage({
     initialListing = null;
   }
 
+  const base = getSiteUrl().replace(/\/$/, "");
+  const canonical = `${base}/category/${slug}`;
+  const pageDescription = `Pregled majstora za kategoriju ${config.displayName.toLowerCase()} širom Crne Gore. Pronađite provjerenog majstora ili objavite besplatan zahtjev i dobijte ponude.`;
+  const categoryJsonLd = buildPublicListingPageJsonLd({
+    canonicalUrl: canonical,
+    pageTitle: `${config.displayName} majstori u Crnoj Gori`,
+    description: pageDescription,
+    breadcrumbs: [
+      { name: "Početna", itemUrl: base },
+      { name: "Kategorije", itemUrl: `${base}/categories` },
+      { name: config.displayName, itemUrl: canonical },
+    ],
+  });
+
   return (
-    <CategoryPageContent
-      displayName={config.displayName}
-      internalCategory={config.internalCategory}
-      slug={slug}
-      initialCity={initialCity}
-      initialListing={initialListing}
-    />
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(categoryJsonLd) }} />
+      <CategoryPageContent
+        displayName={config.displayName}
+        internalCategory={config.internalCategory}
+        slug={slug}
+        initialCity={initialCity}
+        initialListing={initialListing}
+      />
+    </>
   );
 }

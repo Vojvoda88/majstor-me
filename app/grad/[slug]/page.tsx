@@ -6,6 +6,7 @@ import { DEFAULT_PAGE_SIZE } from "@/lib/constants";
 
 export const revalidate = 3600;
 import { HOMEPAGE_CITIES } from "@/lib/homepage-data";
+import { buildPublicListingPageJsonLd } from "@/lib/json-ld";
 import { getSiteUrl } from "@/lib/site-url";
 import { GradPageContent } from "./grad-page-content";
 
@@ -64,12 +65,29 @@ export default async function GradPage({
     initialListing = null;
   }
 
+  const base = getSiteUrl().replace(/\/$/, "");
+  const nameLocative = cityLocative(name);
+  const canonical = `${base}/grad/${slug}`;
+  const pageDescription = `Pregled majstora u ${nameLocative} — vodoinstalater, električar, klima servis i druge usluge. Pogledajte profile ili objavite besplatan zahtjev i sačekajte ponude.`;
+  const gradJsonLd = buildPublicListingPageJsonLd({
+    canonicalUrl: canonical,
+    pageTitle: `Majstori u ${nameLocative}`,
+    description: pageDescription,
+    breadcrumbs: [
+      { name: "Početna", itemUrl: base },
+      { name: name, itemUrl: canonical },
+    ],
+  });
+
   return (
-    <GradPageContent
-      cityName={name}
-      slug={slug}
-      cityImage={cityImage}
-      initialListing={initialListing}
-    />
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(gradJsonLd) }} />
+      <GradPageContent
+        cityName={name}
+        slug={slug}
+        cityImage={cityImage}
+        initialListing={initialListing}
+      />
+    </>
   );
 }

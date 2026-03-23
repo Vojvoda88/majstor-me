@@ -11,16 +11,19 @@ import {
 } from "@/lib/categories";
 import { getCategoryImageUrl } from "@/lib/category-images";
 import { ArrowRight } from "lucide-react";
+import { buildPublicListingPageJsonLd } from "@/lib/json-ld";
 import { getSiteUrl } from "@/lib/site-url";
 import { SEO_LANDING_CITIES } from "@/lib/seo-landing-config";
 import { CITY_SLUGS } from "@/lib/slugs";
 
 const baseUrl = getSiteUrl();
 
+const categoriesDescription =
+  "Pregledajte sve kategorije usluga u Crnoj Gori – vodoinstalater, električar, klima servis, keramičar i druge. Brzo pronađite pravog majstora za svaki posao.";
+
 export const metadata: Metadata = {
   title: "Majstori po kategorijama",
-  description:
-    "Pregledajte sve kategorije usluga u Crnoj Gori – vodoinstalater, električar, klima servis, keramičar i druge. Brzo pronađite pravog majstora za svaki posao.",
+  description: categoriesDescription,
   alternates: {
     canonical: `${baseUrl}/categories`,
   },
@@ -35,8 +38,20 @@ export const metadata: Metadata = {
 };
 
 export default function CategoriesPage() {
+  const base = baseUrl.replace(/\/$/, "");
+  const categoriesJsonLd = buildPublicListingPageJsonLd({
+    canonicalUrl: `${base}/categories`,
+    pageTitle: "Majstori po kategorijama",
+    description: categoriesDescription,
+    breadcrumbs: [
+      { name: "Početna", itemUrl: base },
+      { name: "Sve kategorije", itemUrl: `${base}/categories` },
+    ],
+  });
+
   return (
     <div className="min-h-screen bg-brand-page pb-28 pt-16 md:pb-10 md:pt-20">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(categoriesJsonLd) }} />
       <PublicHeader />
       <div className="mx-auto max-w-6xl px-5 py-10 md:px-8 md:py-14">
         <header className="mb-10 md:mb-14">
