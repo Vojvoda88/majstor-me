@@ -1,5 +1,5 @@
-import { requireAdminPermission } from "@/lib/admin/auth";
 import { getAdminPendingReviewCounts } from "@/lib/admin-pending-counts";
+import { AdminPushEntryCard } from "@/components/admin/admin-push-entry-card";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 
@@ -201,6 +201,8 @@ export default async function AdminDashboardPage() {
         <h1 className="text-xl font-bold text-[#0F172A] sm:text-2xl">Dashboard</h1>
         <p className="mt-1 text-xs text-[#64748B] sm:text-sm">Pregled platforme i ključnih metrika</p>
       </div>
+
+      <AdminPushEntryCard />
 
       {(pendingStrip.pendingRequests > 0 || pendingStrip.pendingHandymen > 0) && (
         <div className="grid gap-3 sm:grid-cols-2">

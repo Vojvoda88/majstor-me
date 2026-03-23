@@ -10,30 +10,13 @@ import {
 } from "@/lib/push-client";
 import { IOS_PWA_PUSH_HINT, isLikelyIOSDevice } from "@/lib/push-ui-copy";
 
-const UI_MODE_KEY = "bm_handyman_push_ui_mode";
-/** Legacy: 7 dana skrivanja — migriramo u compact umjesto trajnog nestajanja */
-const LEGACY_DISMISS_UNTIL_KEY = "bm_handyman_push_dismiss_until_ms";
+const UI_MODE_KEY = "bm_admin_push_ui_mode";
 
 type UiMode = "full" | "compact";
-
-function migrateLegacyDismiss(): void {
-  try {
-    const raw = localStorage.getItem(LEGACY_DISMISS_UNTIL_KEY);
-    if (!raw) return;
-    const until = parseInt(raw, 10);
-    if (!isNaN(until) && Date.now() < until) {
-      localStorage.setItem(UI_MODE_KEY, "compact");
-    }
-    localStorage.removeItem(LEGACY_DISMISS_UNTIL_KEY);
-  } catch {
-    /* ignore */
-  }
-}
 
 function getUiMode(): UiMode {
   if (typeof window === "undefined") return "full";
   try {
-    migrateLegacyDismiss();
     const m = localStorage.getItem(UI_MODE_KEY);
     if (m === "compact" || m === "full") return m;
   } catch {
@@ -50,14 +33,10 @@ function setUiMode(mode: UiMode): void {
   }
 }
 
-const TITLE = "Ne propusti nove zahtjeve";
-const BODY =
-  "Uključite obavještenja na ovom uređaju — čim se pojavi posao koji odgovara vašoj usluci i gradu, dobijate obavještenje. Možete odmah otvoriti zahtjev i poslati ponudu.";
-
 /**
- * Majstor: eksplicitno uključivanje push obavještenja. Nakon „Kasnije“ ostaje vidljiv kompaktan blok (nije „jedna šansa“).
+ * Admin: naknadno uključivanje push-a (pending zahtjevi/majstori). Uvijek dostupan put na dashboardu / notifikacije.
  */
-export function HandymanPushNotificationsCard() {
+export function AdminPushEntryCard() {
   const [status, setStatus] = useState<PushUiState | { kind: "loading" }>({ kind: "loading" });
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -80,12 +59,8 @@ export function HandymanPushNotificationsCard() {
     setBusy(true);
     setError(null);
     const result = await requestPermissionAndSubscribe(vapid);
-    if (!result.ok) {
-      if (result.reason === "permission_denied") {
-        setError(null);
-      } else {
-        setError(result.message ?? "Nije moguće uključiti obavještenja. Pokušajte ponovo.");
-      }
+    if (!result.ok && result.reason !== "permission_denied") {
+      setError(result.message ?? "Nije moguće uključiti obavještenja. Pokušajte ponovo.");
     }
     await refresh();
     setBusy(false);
@@ -98,12 +73,9 @@ export function HandymanPushNotificationsCard() {
 
   if (status.kind === "loading") {
     return (
-      <div
-        className="rounded-2xl border-2 border-amber-300/60 bg-gradient-to-br from-amber-50 via-white to-amber-50/80 p-4 shadow-md md:p-5"
-        aria-busy="true"
-      >
-        <div className="flex items-center gap-2 text-sm font-medium text-amber-950">
-          <Loader2 className="h-5 w-5 shrink-0 animate-spin text-amber-700" aria-hidden />
+      <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+        <div className="flex items-center gap-2 text-sm text-slate-600">
+          <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
           Provjera obavještenja…
         </div>
       </div>
@@ -118,12 +90,11 @@ export function HandymanPushNotificationsCard() {
 
   if (enabled) {
     return (
-      <div className="rounded-xl border border-emerald-200 bg-emerald-50/90 p-4 shadow-sm md:p-5">
+      <div className="rounded-xl border border-emerald-200 bg-emerald-50/90 p-4 shadow-sm">
         <div className="flex flex-wrap items-center gap-2">
           <span className="inline-flex h-2.5 w-2.5 shrink-0 rounded-full bg-emerald-500" aria-hidden />
           <p className="text-sm font-semibold text-emerald-900">
-            Obavještenja su uključena — šaljemo push kada stigne novi zahtjev koji vam odgovara (nakon što zahtjev prođe u
-            sistem).
+            Push obavještenja su uključena na ovom uređaju — dobićete obavještenje za nove stvari koje čekaju pregled.
           </p>
         </div>
       </div>
@@ -132,27 +103,19 @@ export function HandymanPushNotificationsCard() {
 
   if (status.kind === "unsupported") {
     return (
-      <div className="rounded-2xl border-2 border-slate-200 bg-slate-50 p-4 md:p-5">
-        <div className="flex items-start gap-2">
-          <Bell className="mt-0.5 h-5 w-5 shrink-0 text-slate-500" aria-hidden />
-          <div className="min-w-0">
-            <p className="text-sm leading-relaxed text-slate-800">{status.reason}</p>
-            {isLikelyIOSDevice() && (
-              <p className="mt-3 text-sm leading-relaxed text-slate-700">{IOS_PWA_PUSH_HINT}</p>
-            )}
-          </div>
-        </div>
+      <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+        <p className="text-sm leading-relaxed text-slate-800">{status.reason}</p>
+        {isLikelyIOSDevice() && (
+          <p className="mt-3 text-sm leading-relaxed text-slate-700">{IOS_PWA_PUSH_HINT}</p>
+        )}
       </div>
     );
   }
 
   if (status.kind === "no_vapid") {
     return (
-      <div className="rounded-2xl border-2 border-amber-200 bg-amber-50/90 p-4 md:p-5">
-        <p className="text-sm text-amber-950">
-          Push obavještenja nisu podešena na serveru (nedostaje javni ključ). Kontaktirajte podršku da se uključi za
-          produkciju.
-        </p>
+      <div className="rounded-xl border border-amber-200 bg-amber-50/90 p-4 text-sm text-amber-950">
+        Push na serveru nije podešen (nedostaje javni ključ). Kontaktirajte podršku za produkciju.
       </div>
     );
   }
@@ -162,14 +125,14 @@ export function HandymanPushNotificationsCard() {
 
   if (showCompact) {
     return (
-      <div className="rounded-xl border-2 border-amber-200/90 bg-amber-50/95 p-4 shadow-sm md:p-5">
+      <div className="rounded-xl border-2 border-amber-200/90 bg-amber-50/95 p-4 shadow-sm">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex min-w-0 items-start gap-2">
             <Bell className="mt-0.5 h-5 w-5 shrink-0 text-amber-700" aria-hidden />
             <div>
-              <p className="text-sm font-semibold text-amber-950">Obavještenja trenutno nijesu uključena</p>
+              <p className="text-sm font-semibold text-amber-950">Obavještenja nisu uključena</p>
               <p className="mt-1 text-xs leading-relaxed text-amber-900/90">
-                Ako želite brže reagovati na nove zahtjeve, uključite obavještenja.
+                Uključite push da brže vidite nove zahtjeve i prijave koje čekaju pregled.
               </p>
             </div>
           </div>
@@ -191,15 +154,10 @@ export function HandymanPushNotificationsCard() {
                 setUiModeState("full");
               }}
             >
-              Prikaži ponovo
+              Prikaži više
             </button>
           </div>
         </div>
-        {permission === "denied" && (
-          <p className="mt-3 text-sm font-medium text-red-900">
-            Dozvola je odbijena. Podešavanja preglednika → ovaj sajt → dozvoli obavještenja, pa pokušajte ponovo.
-          </p>
-        )}
         {error && (
           <p className="mt-2 text-sm text-red-700" role="alert">
             {error}
@@ -210,21 +168,21 @@ export function HandymanPushNotificationsCard() {
   }
 
   return (
-    <div className="rounded-2xl border-2 border-amber-400/70 bg-gradient-to-br from-amber-50 via-white to-orange-50/90 p-4 shadow-lg ring-1 ring-amber-400/30 md:p-6">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+    <div className="rounded-xl border-2 border-amber-300/80 bg-gradient-to-br from-amber-50 via-white to-slate-50/80 p-4 shadow-md md:p-5">
+      <div className="flex items-start gap-2">
+        <Bell className="mt-0.5 h-6 w-6 shrink-0 text-amber-600" aria-hidden />
         <div className="min-w-0">
-          <div className="flex items-center gap-2">
-            <Bell className="h-6 w-6 shrink-0 text-amber-600" aria-hidden />
-            <h2 className="font-display text-lg font-bold tracking-tight text-brand-navy md:text-xl">{TITLE}</h2>
-          </div>
-          <p className="mt-2 text-sm leading-relaxed text-slate-800 md:text-[15px]">{BODY}</p>
+          <h2 className="font-display text-base font-bold text-brand-navy md:text-lg">Push za admin panel</h2>
+          <p className="mt-2 text-sm leading-relaxed text-slate-800">
+            Uključite obavještenja da odmah vidite nove zahtjeve i prijave majstora koje čekaju pregled. Možete ih kasnije
+            isključiti u podešavanjima preglednika za ovaj sajt.
+          </p>
         </div>
       </div>
 
       {permission === "denied" && (
         <p className="mt-3 text-sm font-medium text-red-900">
-          Dozvola za obavještenja je odbijena. Na telefonu: Podešavanja preglednika → ovaj sajt → dozvoli obavještenja, pa
-          se vratite ovdje i pokušajte ponovo.
+          Dozvola je odbijena. Podešavanja preglednika → ovaj sajt → dozvoli obavještenja, pa pokušajte ponovo.
         </p>
       )}
 
@@ -234,13 +192,13 @@ export function HandymanPushNotificationsCard() {
         </p>
       )}
 
-      <div className="mt-5 flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
+      <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
         <Button
           type="button"
           onClick={() => void handleEnable()}
           disabled={busy || permission === "denied"}
           size="lg"
-          className="w-full touch-manipulation bg-amber-600 text-[15px] font-bold text-white hover:bg-amber-700 sm:w-auto sm:min-w-[240px]"
+          className="w-full bg-amber-600 font-bold text-white hover:bg-amber-700 sm:w-auto"
         >
           {busy ? (
             <>
@@ -250,7 +208,7 @@ export function HandymanPushNotificationsCard() {
           ) : (
             <>
               <Bell className="mr-2 h-5 w-5" aria-hidden />
-              Uključi obavještenja za nove poslove
+              Uključi push obavještenja
             </>
           )}
         </Button>
@@ -258,7 +216,7 @@ export function HandymanPushNotificationsCard() {
           type="button"
           onClick={handleLater}
           disabled={busy}
-          className="w-full touch-manipulation py-3 text-center text-sm font-semibold text-slate-600 underline-offset-2 hover:text-slate-900 hover:underline sm:w-auto sm:px-4"
+          className="w-full py-2 text-center text-sm font-semibold text-slate-600 underline-offset-2 hover:text-slate-900 hover:underline sm:w-auto sm:px-4"
         >
           Kasnije
         </button>

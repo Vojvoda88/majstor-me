@@ -89,7 +89,9 @@ export function AdminShell({ adminRole, session, pendingReview, children }: Prop
             <span className="hidden sm:inline"> ({roleLabel})</span>
           </span>
 
-          <div className="flex shrink-0 items-center gap-2 sm:gap-4">
+          <div className="flex min-w-0 shrink-0 items-center gap-2 sm:gap-3">
+            <AdminPendingHeaderBadge counts={pendingReview} />
+            <NotificationsDropdown />
             <Link
               href="/"
               className="whitespace-nowrap text-xs font-medium text-[#64748B] hover:text-[#0F172A] sm:text-sm"
