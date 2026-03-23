@@ -9,6 +9,7 @@ import { HandymanCard } from "@/components/lists/handyman-card";
 import { DEFAULT_PAGE_SIZE } from "@/lib/constants";
 import { cityLocative } from "@/lib/slugs";
 import { buildSeoCombinedIntroParagraph, type SeoCombinedParsed } from "@/lib/seo-landing-copy";
+import { getPrioritySeoLandingContent } from "@/lib/seo-landing-priority-copy";
 
 type Handyman = {
   id: string;
@@ -20,12 +21,14 @@ type Handyman = {
 };
 
 export function SeoLandingContent({
+  slug,
   displayName,
   internalCategory,
   cityName,
   citySlug,
   categorySlug,
 }: {
+  slug: string;
   displayName: string;
   internalCategory: string;
   cityName: string;
@@ -49,7 +52,8 @@ export function SeoLandingContent({
     cityDisplayName: cityName,
     internalCategory,
   };
-  const intro = buildSeoCombinedIntroParagraph(parsed);
+  const priority = getPrioritySeoLandingContent(slug);
+  const intro = priority?.intro ?? buildSeoCombinedIntroParagraph(parsed);
 
   useEffect(() => {
     setPage(1);
@@ -142,6 +146,19 @@ export function SeoLandingContent({
             >
               Sve usluge u {cityName}
             </Link>
+            {priority && (
+              <>
+                <span className="hidden text-slate-300 sm:inline" aria-hidden>
+                  |
+                </span>
+                <Link
+                  href={createUrl}
+                  className="font-semibold text-blue-700 underline underline-offset-2 hover:text-blue-900"
+                >
+                  Zahtjev za {displayName.toLowerCase()} u {cityName}
+                </Link>
+              </>
+            )}
           </p>
 
           <div className="mb-6 flex flex-wrap gap-4">
@@ -236,29 +253,25 @@ export function SeoLandingContent({
           <section className="mt-10 rounded-2xl border border-white bg-white p-6 shadow-sm sm:p-8">
             <h2 className="mb-4 text-lg font-bold text-slate-900">Često postavljana pitanja</h2>
             <div className="space-y-5 text-sm leading-relaxed text-slate-600">
-              <div>
-                <h3 className="font-semibold text-slate-800">
-                  Koliko košta {displayName.toLowerCase()} u {cityNameLocative}?
-                </h3>
-                <p>
-                  Cijena zavisi od vrste posla i materijala. Na BrziMajstor.ME možete dobiti više ponuda pa uporediti prije
-                  angažmana.
-                </p>
-              </div>
-              <div>
-                <h3 className="font-semibold text-slate-800">Kada mogu očekivati odgovor?</h3>
-                <p>
-                  Zavisi od dostupnosti majstora. U zahtjevu navedite kada vam odgovara dolazak — majstori odgovaraju kad
-                  mogu.
-                </p>
-              </div>
-              <div>
-                <h3 className="font-semibold text-slate-800">Šta vidim na profilu majstora?</h3>
-                <p>
-                  Ocjene i broj recenzija od ranijih korisnika, kad postoje. Na profilu možete vidjeti i kategorije koje
-                  majstor nudi.
-                </p>
-              </div>
+              {(priority?.faq ?? [
+                {
+                  q: `Koliko košta ${displayName.toLowerCase()} u ${cityNameLocative}?`,
+                  a: "Cijena zavisi od vrste posla i materijala. Na BrziMajstor.ME možete dobiti više ponuda pa uporediti prije angažmana.",
+                },
+                {
+                  q: "Kada mogu očekivati odgovor?",
+                  a: "Zavisi od dostupnosti majstora. U zahtjevu navedite kada vam odgovara dolazak — majstori odgovaraju kad mogu.",
+                },
+                {
+                  q: "Šta vidim na profilu majstora?",
+                  a: "Ocjene i broj recenzija od ranijih korisnika, kad postoje. Na profilu možete vidjeti i kategorije koje majstor nudi.",
+                },
+              ]).map((item, i) => (
+                <div key={i}>
+                  <h3 className="font-semibold text-slate-800">{item.q}</h3>
+                  <p>{item.a}</p>
+                </div>
+              ))}
             </div>
           </section>
         </div>

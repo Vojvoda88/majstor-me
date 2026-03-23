@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { parseCategoryCitySlug } from "@/lib/slugs";
 import { getSiteUrl } from "@/lib/site-url";
 import { getSeoLandingStaticParams } from "@/lib/seo-landing-config";
+import { getPrioritySeoLandingContent } from "@/lib/seo-landing-priority-copy";
 import {
   buildSeoCanonical,
   buildSeoLandingDescription,
@@ -31,8 +32,9 @@ export async function generateMetadata({
   }
   const base = getSiteUrl();
   const canonical = buildSeoCanonical(base, slug);
-  const title = buildSeoLandingTitle(parsed);
-  const description = buildSeoLandingDescription(parsed);
+  const priority = getPrioritySeoLandingContent(slug);
+  const title = priority?.metaTitle ?? buildSeoLandingTitle(parsed);
+  const description = priority?.metaDescription ?? buildSeoLandingDescription(parsed);
 
   return {
     title,
@@ -82,6 +84,7 @@ export default async function SeoLandingPage({
       />
       <Suspense fallback={<div className="min-h-screen bg-slate-100 p-8">Učitavanje...</div>}>
         <SeoLandingContent
+          slug={slug}
           displayName={parsed.categoryDisplayName}
           internalCategory={parsed.internalCategory}
           cityName={parsed.cityDisplayName}
