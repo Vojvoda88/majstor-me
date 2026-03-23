@@ -1,6 +1,6 @@
 import { MetadataRoute } from "next";
 import { getSiteUrl } from "@/lib/site-url";
-import { POPULAR_CATEGORIES } from "@/lib/categories";
+import { PUBLIC_CATEGORY_LISTING } from "@/lib/categories";
 import { HOMEPAGE_CITIES } from "@/lib/homepage-data";
 import { getSeoLandingStaticParams } from "@/lib/seo-landing-config";
 
@@ -27,7 +27,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${base}/register`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.5 },
   ];
 
-  const categoryPages: MetadataRoute.Sitemap = POPULAR_CATEGORIES.map((c) => ({
+  const categoryPages: MetadataRoute.Sitemap = PUBLIC_CATEGORY_LISTING.map((c) => ({
     url: `${base}/category/${c.slug}`,
     lastModified: new Date(),
     changeFrequency: "weekly" as const,
@@ -50,7 +50,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }));
 
   /** Dodatne kombinacije kategorija × gradova (dugi rep) — dedupe sa seoCore42 */
-  const seoExtended: MetadataRoute.Sitemap = POPULAR_CATEGORIES.flatMap((cat) =>
+  const seoExtended: MetadataRoute.Sitemap = PUBLIC_CATEGORY_LISTING.flatMap((cat) =>
     HOMEPAGE_CITIES.map((city) => ({
       url: `${base}/${cat.slug}-${city.slug}`,
       lastModified: new Date(),

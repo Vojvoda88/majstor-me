@@ -5,7 +5,7 @@ import { ArrowRight, Droplets, Zap, Grid3X3, Wind, Hammer, Sparkles } from "luci
 import { CategoryTile } from "./category-tile";
 
 import { getCategoryImageUrl } from "@/lib/category-images";
-import { CATEGORY_CONFIG } from "@/lib/categories";
+import { ACTIVE_PUBLIC_CATEGORY_COUNT } from "@/lib/categories";
 
 /** Samo 6 kartica na homepage — ostatak na /categories (kraći scroll, jasniji ritam). */
 const CATEGORIES = [
@@ -69,8 +69,8 @@ export function CategoriesGrid() {
           href="/categories"
           className="inline-flex shrink-0 items-center gap-2 self-start rounded-2xl border border-slate-200/90 bg-white px-4 py-2.5 text-sm font-bold text-brand-navy shadow-sm transition hover:border-blue-200 hover:bg-blue-50/80 md:px-5 md:py-3 md:text-[15px]"
         >
-          Pogledaj sve kategorije
-          <span className="tabular-nums text-slate-500">({CATEGORY_CONFIG.length})</span>
+            Pogledaj sve kategorije
+          <span className="tabular-nums text-slate-500">({ACTIVE_PUBLIC_CATEGORY_COUNT})</span>
           <ArrowRight className="h-4 w-4 shrink-0" />
         </Link>
       </div>

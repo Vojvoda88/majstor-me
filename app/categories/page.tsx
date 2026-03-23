@@ -3,8 +3,12 @@ import Image from "next/image";
 import type { Metadata } from "next";
 import { PublicHeader } from "@/components/layout/PublicHeader";
 import { PublicFooter } from "@/components/layout/PublicFooter";
-import { CATEGORY_CONFIG } from "@/lib/categories";
-import { REQUEST_CATEGORY_FALLBACK } from "@/lib/constants";
+import {
+  ACTIVE_PUBLIC_CATEGORY_COUNT,
+  CATEGORY_CONFIG,
+  REQUEST_CATEGORY_FALLBACK,
+  REQUEST_CATEGORY_FALLBACK_DISPLAY,
+} from "@/lib/categories";
 import { getCategoryImageUrl } from "@/lib/category-images";
 import { ArrowRight } from "lucide-react";
 import { getSiteUrl } from "@/lib/site-url";
@@ -40,8 +44,8 @@ export default function CategoriesPage() {
             Sve kategorije
           </h1>
           <p className="mt-4 max-w-2xl text-base leading-relaxed text-slate-600 md:text-lg">
-            {CATEGORY_CONFIG.length} kategorija — pronađite majstora za svaki posao. Odaberite uslugu i pregledajte
-            profile.
+            {ACTIVE_PUBLIC_CATEGORY_COUNT} glavnih kategorija usluga — pronađite majstora za posao. Odaberite uslugu i
+            pregledajte profile.
           </p>
           <p className="mt-3 max-w-2xl text-sm text-slate-600">
             <Link
@@ -50,7 +54,8 @@ export default function CategoriesPage() {
             >
               Ne vidiš svoju uslugu?
             </Link>{" "}
-            Objavi zahtjev, opiši posao u opisu — ne mora tačno odgovarati nazivu kategorije.
+            U formi za zahtjev birate „{REQUEST_CATEGORY_FALLBACK_DISPLAY}“ — to nije posebna kartica u listi ispod; opišite
+            posao u opisu.
           </p>
           <div className="mt-8 rounded-2xl border border-slate-200/90 bg-white/80 p-4 md:p-5">
             <p className="text-xs font-bold uppercase tracking-wider text-slate-500">Gradovi</p>

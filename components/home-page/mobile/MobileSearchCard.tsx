@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { MapPin, Layers } from "lucide-react";
 import { CITIES } from "@/lib/constants";
-import { POPULAR_CATEGORIES } from "@/lib/categories";
+import { PUBLIC_CATEGORY_LISTING } from "@/lib/categories";
 
 export function MobileSearchCard() {
   const router = useRouter();
@@ -53,7 +53,7 @@ export function MobileSearchCard() {
             className="h-12 w-full appearance-none rounded-xl border border-[#E2E8F0] bg-white pl-10 pr-4 text-[#0F172A] focus:border-[#2563EB] focus:outline-none focus:ring-2 focus:ring-[#2563EB]/20"
           >
             <option value="">Izaberite kategoriju</option>
-            {POPULAR_CATEGORIES.map((cat) => (
+            {PUBLIC_CATEGORY_LISTING.map((cat) => (
               <option key={cat.slug} value={cat.internalCategory}>
                 {cat.displayName}
               </option>

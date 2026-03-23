@@ -15,7 +15,7 @@ export const SEO_LANDING_CITIES = [
   "kotor",
 ] as const;
 
-/** Isti skup slugova kao javni CATEGORY_CONFIG (usklađeno) */
+/** Isti skup slugova kao javni listing (CATEGORY_CONFIG / PUBLIC_CATEGORY_LISTING) */
 export const SEO_LANDING_CATEGORIES = CATEGORY_CONFIG.map((c) => c.slug);
 
 export type SeoLandingCitySlug = (typeof SEO_LANDING_CITIES)[number];

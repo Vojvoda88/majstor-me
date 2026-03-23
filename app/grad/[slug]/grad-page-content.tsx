@@ -7,7 +7,7 @@ import { PublicHeader } from "@/components/layout/PublicHeader";
 import { PublicFooter } from "@/components/layout/PublicFooter";
 import { Wrench, ChevronLeft, ChevronRight } from "lucide-react";
 import { HandymanCard } from "@/components/lists/handyman-card";
-import { POPULAR_CATEGORIES } from "@/lib/categories";
+import { PUBLIC_CATEGORY_LISTING } from "@/lib/categories";
 import { DEFAULT_PAGE_SIZE } from "@/lib/constants";
 import { cityLocative } from "@/lib/slugs";
 
@@ -225,7 +225,7 @@ export function GradPageContent({
           </h2>
 
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
-            {POPULAR_CATEGORIES.map((cat) => (
+            {PUBLIC_CATEGORY_LISTING.map((cat) => (
               <Link
                 key={cat.slug}
                 href={`/${cat.slug}-${slug}`}

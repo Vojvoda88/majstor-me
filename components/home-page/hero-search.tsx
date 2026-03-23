@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { ChevronDown, Search } from "lucide-react";
 import { CITIES } from "@/lib/constants";
 import {
-  POPULAR_CATEGORIES,
+  PUBLIC_CATEGORY_LISTING,
   REQUEST_CATEGORY_FALLBACK,
   REQUEST_CATEGORY_FALLBACK_DISPLAY,
 } from "@/lib/categories";
@@ -57,7 +57,7 @@ export function HeroSearch() {
             aria-label="Odaberi kategoriju"
           >
             <option value="">Odaberi kategoriju</option>
-            {POPULAR_CATEGORIES.map((cat) => (
+            {PUBLIC_CATEGORY_LISTING.map((cat) => (
               <option key={cat.slug} value={cat.internalCategory}>
                 {cat.displayName}
               </option>

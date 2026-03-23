@@ -11,7 +11,10 @@ export const REQUEST_CATEGORY_FALLBACK = "Ne vidim svoju uslugu" as const;
 /** Prikaz u formama / hero / notifikacijama (konzistentan label) */
 export const REQUEST_CATEGORY_FALLBACK_DISPLAY = "Ostalo / Ne vidim svoju uslugu" as const;
 
-/** 15 aktivnih poslovnih kategorija (isti skup za request/create, profil majstora, javni listing) */
+/**
+ * 15 glavnih usluga (javni listing /category/[slug], /categories, hero select).
+ * + 1 kontrolisani fallback u formi (REQUEST_CATEGORY_FALLBACK) — nije javna kartica.
+ */
 export const ACTIVE_INTERNAL_CATEGORY_NAMES = [
   "Vodoinstalater",
   "Električar",
@@ -72,6 +75,12 @@ export const REQUEST_CREATE_CATEGORY_CHOICES = [
   REQUEST_CATEGORY_FALLBACK,
 ] as const;
 
+/** Broj usluga sa javnim karticama (bez „Ostalo / Ne vidim svoju uslugu“). Izvor za isti broj u cijelom javnom UI-u. */
+export const ACTIVE_PUBLIC_CATEGORY_COUNT = ACTIVE_INTERNAL_CATEGORY_NAMES.length;
+
+/** Ukupno opcija u formi za kategoriju (15 usluga + fallback). */
+export const REQUEST_FORM_CATEGORY_OPTION_COUNT = REQUEST_CREATE_CATEGORY_CHOICES.length;
+
 export type CategoryConfig = {
   slug: string;
   displayName: string;
@@ -85,7 +94,8 @@ export type CategoryConfig = {
 };
 
 /**
- * Kanonski redoslijed — 15 javnih + legacy slugovi za stare URL-ove / istoriju.
+ * Kanonski redoslijed — 15 aktivnih usluga (publicListing) + legacy slugovi za stare URL-ove / istoriju.
+ * Legacy unosi (npr. „Moler / gipsar“) imaju publicListing: false — ne ulaze u CATEGORY_CONFIG.
  */
 export const CATEGORY_CONFIG_FULL: CategoryConfig[] = [
   {
@@ -243,8 +253,17 @@ export const CATEGORY_CONFIG_FULL: CategoryConfig[] = [
   },
 ];
 
-/** Javni listing (homepage, /categories) — samo aktivni fokus */
+/** Javni listing (homepage, /categories, hero) — samo aktivni fokus; dužina === ACTIVE_PUBLIC_CATEGORY_COUNT */
 export const CATEGORY_CONFIG: CategoryConfig[] = CATEGORY_CONFIG_FULL.filter((c) => c.publicListing);
+
+if (CATEGORY_CONFIG.length !== ACTIVE_PUBLIC_CATEGORY_COUNT) {
+  throw new Error(
+    `lib/categories: CATEGORY_CONFIG.length (${CATEGORY_CONFIG.length}) must equal ACTIVE_PUBLIC_CATEGORY_COUNT (${ACTIVE_PUBLIC_CATEGORY_COUNT})`
+  );
+}
+
+/** Isti skup kao CATEGORY_CONFIG (naziv „popular“ je historijski; koristi CATEGORY_CONFIG ili PUBLIC_CATEGORY_LISTING). */
+export const PUBLIC_CATEGORY_LISTING: CategoryConfig[] = CATEGORY_CONFIG;
 
 export const POPULAR_CATEGORIES = CATEGORY_CONFIG;
 
