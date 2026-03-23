@@ -119,6 +119,21 @@ export function GradPageContent({
             <span className="font-medium text-slate-900">{cityName}</span>
           </nav>
 
+          <div className="mb-6 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-slate-600">
+            <Link href="/categories" className="font-medium text-blue-700 hover:underline">
+              Sve kategorije
+            </Link>
+            <span className="text-slate-300" aria-hidden>
+              |
+            </span>
+            <Link
+              href={`/request/create?city=${encodeURIComponent(cityName)}`}
+              className="font-medium text-blue-700 hover:underline"
+            >
+              Objavi zahtjev u {cityName}
+            </Link>
+          </div>
+
           {cityImage && (
             <div className="relative mb-6 h-48 overflow-hidden rounded-2xl">
               <Image

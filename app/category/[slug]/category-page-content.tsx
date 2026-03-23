@@ -185,6 +185,20 @@ export function CategoryPageContent({
                 </>
               ) : null}
             </p>
+            <p className="mt-4 text-sm text-slate-600">
+              <Link
+                href={`/request/create?category=${encodeURIComponent(internalCategory)}`}
+                className="font-semibold text-blue-700 underline-offset-2 hover:underline"
+              >
+                Zahtjev za ovu vrstu posla
+              </Link>
+              <span className="mx-2 text-slate-300" aria-hidden>
+                ·
+              </span>
+              <Link href="/categories" className="font-medium text-slate-600 hover:text-blue-700 hover:underline">
+                Sve kategorije
+              </Link>
+            </p>
           </header>
 
           {/* Toolbar */}

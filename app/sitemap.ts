@@ -2,28 +2,19 @@ import { MetadataRoute } from "next";
 import { getSiteUrl } from "@/lib/site-url";
 import { PUBLIC_CATEGORY_LISTING } from "@/lib/categories";
 import { HOMEPAGE_CITIES } from "@/lib/homepage-data";
-import { getSeoLandingStaticParams } from "@/lib/seo-landing-config";
+import { SEO_LANDING_CITIES } from "@/lib/seo-landing-config";
 
-/** Jedinstveni URL-evi (42 SEO core + proširena kombinatorika bez duplikata) */
-function dedupeSitemapByUrl(entries: MetadataRoute.Sitemap): MetadataRoute.Sitemap {
-  const seen = new Set<string>();
-  const out: MetadataRoute.Sitemap = [];
-  for (const e of entries) {
-    if (seen.has(e.url)) continue;
-    seen.add(e.url);
-    out.push(e);
-  }
-  return out;
-}
+/** Gradovi iz SEO FAZE 3 (kombinovane rute u generateStaticParams) — viši prioritet u sitemapu */
+const SEO_CORE_CITY_SLUGS = new Set<string>(SEO_LANDING_CITIES);
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = getSiteUrl();
 
   const staticPages: MetadataRoute.Sitemap = [
     { url: base, lastModified: new Date(), changeFrequency: "weekly", priority: 1 },
-    { url: `${base}/categories`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.9 },
-    { url: `${base}/request/create`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.8 },
-    { url: `${base}/instaliraj`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.55 },
+    { url: `${base}/categories`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.92 },
+    { url: `${base}/request/create`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.85 },
+    { url: `${base}/instaliraj`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.5 },
   ];
 
   const categoryPages: MetadataRoute.Sitemap = PUBLIC_CATEGORY_LISTING.map((c) => ({
@@ -37,28 +28,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     url: `${base}/grad/${c.slug}`,
     lastModified: new Date(),
     changeFrequency: "weekly" as const,
-    priority: 0.7,
+    priority: 0.75,
   }));
 
-  /** Eksplicitno 42 SEO landing URL-a (glavna strategija) — uvijek u sitemapu */
-  const seoCore42: MetadataRoute.Sitemap = getSeoLandingStaticParams().map(({ slug }) => ({
-    url: `${base}/${slug}`,
-    lastModified: new Date(),
-    changeFrequency: "weekly" as const,
-    priority: 0.85,
-  }));
-
-  /** Dodatne kombinacije kategorija × gradova (dugi rep) — dedupe sa seoCore42 */
-  const seoExtended: MetadataRoute.Sitemap = PUBLIC_CATEGORY_LISTING.flatMap((cat) =>
+  /**
+   * Kombinovane rute: jedan prolaz kategorija × gradova (homepage lista).
+   * Viši prioritet za gradove koji su u core SEO setu (7 gradova × kategorije).
+   */
+  const seoCombinedPages: MetadataRoute.Sitemap = PUBLIC_CATEGORY_LISTING.flatMap((cat) =>
     HOMEPAGE_CITIES.map((city) => ({
       url: `${base}/${cat.slug}-${city.slug}`,
       lastModified: new Date(),
       changeFrequency: "weekly" as const,
-      priority: 0.72,
+      priority: SEO_CORE_CITY_SLUGS.has(city.slug) ? 0.84 : 0.7,
     }))
   );
-
-  const seoLandingPages = dedupeSitemapByUrl([...seoCore42, ...seoExtended]);
 
   let handymanPages: MetadataRoute.Sitemap = [];
   try {
@@ -72,11 +56,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       url: `${base}/handyman/${u.id}`,
       lastModified: new Date(),
       changeFrequency: "weekly" as const,
-      priority: 0.6,
+      priority: 0.55,
     }));
   } catch {
-    // Skip handyman pages if DB unavailable at build
+    /* build bez DB */
   }
 
-  return [...staticPages, ...categoryPages, ...cityPages, ...seoLandingPages, ...handymanPages];
+  return [...staticPages, ...categoryPages, ...cityPages, ...seoCombinedPages, ...handymanPages];
 }

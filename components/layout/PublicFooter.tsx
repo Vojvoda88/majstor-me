@@ -7,6 +7,7 @@ const FOOTER_LINKS = [
   { href: "/#kako-radi", label: "Kako funkcioniše" },
   { href: "/register?type=majstor", label: "Za majstore" },
   { href: "/#faq", label: "Česta pitanja" },
+  { href: "/instaliraj", label: "Instaliraj aplikaciju" },
 ] as const;
 
 /**
