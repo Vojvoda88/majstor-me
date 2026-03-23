@@ -16,7 +16,7 @@ import { FAQ_ITEMS } from "@/lib/faq-data";
 const siteUrl = getSiteUrl();
 
 const homeDescription =
-  "Povezivanje korisnika sa majstorima u Crnoj Gori. Objavite zahtjev jednom — besplatno za korisnike — javljaju se majstori kojima posao odgovara; uporedite ponude i ocjene prije odluke.";
+  "Povezivanje korisnika sa majstorima u Crnoj Gori. Objavite zahtjev besplatno — javljaju se majstori kojima posao odgovara; ponude i ocjene vidite uz svoj zahtjev kada stignu.";
 
 /** Naslov koristi template iz root layout-a: „… | BrziMajstor.ME“ */
 export const metadata: Metadata = {

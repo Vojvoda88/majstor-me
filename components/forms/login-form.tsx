@@ -206,7 +206,7 @@ function LoginFormInner() {
           <p className="mt-4 text-center text-sm text-[#64748B]">
             Nemate nalog?{" "}
             <Link href="/register" className="font-medium text-[#2563EB] underline-offset-4 hover:underline">
-              Registrujte se
+              Otvorite registraciju
             </Link>
           </p>
         </form>

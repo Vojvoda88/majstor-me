@@ -15,7 +15,7 @@ export function FAQ() {
           Često postavljana pitanja
         </h2>
         <p className="mt-3 max-w-2xl text-[15px] font-medium leading-relaxed text-slate-700 sm:mt-4 sm:text-base">
-          Brzi odgovori prije nego što objavite zahtjev ili se registrujete kao majstor.
+          Kratki odgovori prije nego što objavite zahtjev ili otvorite registraciju majstora.
         </p>
       </div>
 

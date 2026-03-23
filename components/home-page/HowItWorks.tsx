@@ -30,8 +30,8 @@ const USER_STEPS = [
   {
     n: 3,
     icon: CheckCircle2,
-    title: "Uporedite i izaberite",
-    desc: "Više ponuda na jednom mjestu — uporedite cijene i utiske, pa birajte u svom ritmu.",
+    title: "Pregledajte ponude i birajte",
+    desc: "Kad stignu ponude uz vaš zahtjev, uporedite ih i izaberete majstora koji vam odgovara — u svom ritmu.",
   },
 ] as const;
 

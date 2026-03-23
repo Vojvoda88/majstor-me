@@ -43,10 +43,10 @@ export function CTAForMasters() {
               <ArrowRight className="h-5 w-5" />
             </Link>
             <Link
-              href="#majstor-krediti"
+              href="#kako-radi-majstore"
               className="inline-flex min-h-[52px] items-center justify-center rounded-2xl border-2 border-slate-200 bg-white px-8 text-base font-semibold text-brand-navy transition hover:border-slate-300 hover:bg-slate-50 active:scale-[0.99]"
             >
-              Kako rade krediti
+              Kako radi za majstore
             </Link>
           </div>
         </div>

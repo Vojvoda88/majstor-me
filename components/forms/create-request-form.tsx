@@ -138,7 +138,8 @@ export function CreateRequestForm({ initialCategory, initialCity }: CreateReques
       <CardHeader className="border-b border-slate-100/80 bg-gradient-to-r from-slate-50/80 to-white px-5 sm:px-8 sm:py-8">
         <CardTitle className="font-display text-xl text-brand-navy sm:text-2xl">Detalji zahtjeva</CardTitle>
         <CardDescription className="mt-2 text-sm leading-relaxed text-slate-600 sm:text-base">
-          Vaš zahtjev je besplatan. Nakon slanja dobijate ponude od više majstora, a vi sami odlučujete da li i koga ćete angažovati.
+          Objava je besplatna. Nakon što zahtjev bude odobren, majstori koji vide posao mogu poslati ponude — vi birate
+          da li i koga angažujete.
         </CardDescription>
       </CardHeader>
       <CardContent className="px-5 pb-8 pt-6 sm:px-8">

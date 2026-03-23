@@ -46,7 +46,7 @@ export const metadata: Metadata = {
     template: "%s | BrziMajstor.ME",
   },
   description:
-    "Povezivanje korisnika sa majstorima u Crnoj Gori. Objavite zahtjev jednom — besplatno za korisnike — javljaju se majstori kojima posao odgovara; uporedite ponude i ocjene prije odluke.",
+    "Povezivanje korisnika sa majstorima u Crnoj Gori. Objavite zahtjev besplatno — javljaju se majstori kojima posao odgovara; ponude i ocjene vidite uz svoj zahtjev kada stignu.",
   keywords: [
     "majstori Crna Gora",
     "vodoinstalater Podgorica",

@@ -10,14 +10,14 @@ const baseUrl = getSiteUrl();
 export const metadata: Metadata = {
   title: "Pošalji zahtjev majstoru",
   description:
-    "Objavite besplatan zahtjev za majstora u Crnoj Gori – vodoinstalater, električar, klima servis i druge usluge. Primite brze ponude od provjerenih majstora.",
+    "Objavite besplatan zahtjev za majstora u Crnoj Gori – vodoinstalater, električar, klima servis i druge usluge. Zainteresovani majstori šalju ponude nakon što zahtjev bude odobren.",
   alternates: {
     canonical: `${baseUrl}/request/create`,
   },
   openGraph: {
     title: "Pošalji zahtjev majstoru | BrziMajstor.ME",
     description:
-      "Jednim zahtjevom dobijate više ponuda od provjerenih majstora u Crnoj Gori. Objavite posao besplatno i izaberite ponudu koja vam najviše odgovara.",
+      "Jednim zahtjevom javljaju se majstori kojima posao odgovara. Objava je besplatna; ponude pregledate uz zahtjev kad stignu.",
     url: `${baseUrl}/request/create`,
     siteName: "BrziMajstor.ME",
     type: "website",
@@ -51,8 +51,8 @@ export default function CreateRequestPage(props: { searchParams?: CreateRequestS
             Opis posla za majstora
           </h1>
           <p className="mt-4 text-base leading-relaxed text-slate-600 md:text-lg">
-            Napišite šta vam treba – vodoinstalater, električar, klima servis ili druga usluga. Vaš zahtjev je
-            besplatan, a ponude stižu direktno od provjerenih majstora.
+            Napišite šta vam treba — vodoinstalater, električar, klima servis ili druga usluga. Objava zahtjeva je
+            besplatna; nakon odobrenja, zainteresovani majstori mogu poslati ponude.
           </p>
           <div className="mt-6 grid gap-3 rounded-3xl border border-slate-200/80 bg-white p-4 text-xs text-slate-700 shadow-marketplace-sm md:grid-cols-3 md:gap-4 md:p-5 md:text-sm">
             <div className="flex items-start gap-2">
@@ -60,9 +60,9 @@ export default function CreateRequestPage(props: { searchParams?: CreateRequestS
                 <ShieldCheck className="h-3.5 w-3.5" />
               </span>
               <p>
-                <span className="font-semibold">Provjereni majstori</span>
+                <span className="font-semibold">Ocjene na profilu</span>
                 <br />
-                Profili sa ocjenama i recenzijama korisnika.
+                Kod majstora na platformi vide se ocjene i utisci korisnika.
               </p>
             </div>
             <div className="flex items-start gap-2">
@@ -70,9 +70,9 @@ export default function CreateRequestPage(props: { searchParams?: CreateRequestS
                 <Zap className="h-3.5 w-3.5" />
               </span>
               <p>
-                <span className="font-semibold">Brze ponude</span>
+                <span className="font-semibold">Ponude nakon odobrenja</span>
                 <br />
-                Ponude stižu u kratkom roku nakon objave.
+                Zahtjev prvo pregleda administrator; zatim majstori mogu odgovoriti.
               </p>
             </div>
             <div className="flex items-start gap-2">
