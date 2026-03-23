@@ -1,6 +1,8 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { CITY_SLUGS, cityLocative } from "@/lib/slugs";
+import { getPublicHandymenList } from "@/lib/handymen-listing";
+import { DEFAULT_PAGE_SIZE } from "@/lib/constants";
 
 export const revalidate = 3600;
 import { HOMEPAGE_CITIES } from "@/lib/homepage-data";
@@ -23,7 +25,7 @@ export async function generateMetadata({
   const nameLocative = cityLocative(name);
   const base = getSiteUrl();
   const title = `Majstori u ${nameLocative}`;
-  const description = `Pronađite provjerene majstore u ${nameLocative} – vodoinstalater, električar, klima servis i druge usluge u ${name}. Pregledajte ponude ili objavite besplatan zahtjev.`;
+  const description = `Pregled majstora u ${nameLocative} — vodoinstalater, električar, klima servis i druge usluge. Pogledajte profile ili objavite besplatan zahtjev i sačekajte ponude.`;
 
   return {
     title,
@@ -50,11 +52,24 @@ export default async function GradPage({
 
   const cityImage = HOMEPAGE_CITIES.find((c) => c.slug === slug)?.image;
 
+  let initialListing = null as Awaited<ReturnType<typeof getPublicHandymenList>> | null;
+  try {
+    initialListing = await getPublicHandymenList({
+      city: name,
+      sortBy: "rating",
+      page: 1,
+      limit: DEFAULT_PAGE_SIZE,
+    });
+  } catch {
+    initialListing = null;
+  }
+
   return (
     <GradPageContent
       cityName={name}
       slug={slug}
       cityImage={cityImage}
+      initialListing={initialListing}
     />
   );
 }

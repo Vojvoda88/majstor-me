@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getCategoryBySlug } from "@/lib/categories";
+import { getPublicHandymenList } from "@/lib/handymen-listing";
+import { DEFAULT_PAGE_SIZE } from "@/lib/constants";
 
 export const revalidate = 3600;
 import { getSiteUrl } from "@/lib/site-url";
@@ -58,12 +60,27 @@ export default async function CategoryPage({
   const config = getCategoryBySlug(slug);
   if (!config) notFound();
 
+  let initialListing =
+    null as Awaited<ReturnType<typeof getPublicHandymenList>> | null;
+  try {
+    initialListing = await getPublicHandymenList({
+      category: config.internalCategory,
+      city: initialCity || undefined,
+      sortBy: "rating",
+      page: 1,
+      limit: DEFAULT_PAGE_SIZE,
+    });
+  } catch {
+    initialListing = null;
+  }
+
   return (
     <CategoryPageContent
       displayName={config.displayName}
       internalCategory={config.internalCategory}
       slug={slug}
       initialCity={initialCity}
+      initialListing={initialListing}
     />
   );
 }

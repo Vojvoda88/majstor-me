@@ -9,9 +9,11 @@ import { StickyBottomCTA } from "@/components/layout/StickyBottomCTA";
 import { MobileFilterSheet } from "@/components/category/MobileFilterSheet";
 import { CategoryHandymanCard } from "@/components/lists/CategoryHandymanCard";
 import { HandymanMapView } from "@/components/map/handyman-map-view";
+import { LandingValueBlock } from "@/components/landing/landing-value-block";
 import { Wrench, MapPin, List, ChevronLeft, ChevronRight, SlidersHorizontal } from "lucide-react";
 import { CITIES, DEFAULT_PAGE_SIZE } from "@/lib/constants";
 import { HOMEPAGE_CITIES } from "@/lib/homepage-data";
+import type { PublicHandymenListResult } from "@/lib/handymen-listing";
 
 type Handyman = {
   id: string;
@@ -34,27 +36,31 @@ export function CategoryPageContent({
   internalCategory,
   slug,
   initialCity,
+  initialListing,
 }: {
   displayName: string;
   internalCategory: string;
   slug: string;
   /** Grad iz ?city= prosleđen sa servera – izbjegava useSearchParams + Suspense zaglavljivanje */
   initialCity: string;
+  /** Prva stranica sa servera — puni prvi render prije klijentskog fetch-a */
+  initialListing: PublicHandymenListResult | null;
 }) {
   const router = useRouter();
   const pathname = usePathname();
-  const [handymen, setHandymen] = useState<Handyman[]>([]);
+  const [handymen, setHandymen] = useState<Handyman[]>(initialListing?.items ?? []);
   const [cityFilter, setCityFilter] = useState<string>(initialCity);
   const [sortBy, setSortBy] = useState<"rating" | "reviews">("rating");
   const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [total, setTotal] = useState(0);
-  const [loading, setLoading] = useState(true);
+  const [totalPages, setTotalPages] = useState(initialListing?.totalPages ?? 1);
+  const [total, setTotal] = useState(initialListing?.total ?? 0);
+  const [loading, setLoading] = useState(!initialListing);
   const [viewMode, setViewMode] = useState<"list" | "map">("list");
   const [filterSheetOpen, setFilterSheetOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [reloadToken, setReloadToken] = useState(0);
   const loadGenRef = useRef(0);
+  const skipFirstClientFetch = useRef(!!initialListing);
 
   const setCityFilterAndUrl = useCallback(
     (next: string) => {
@@ -130,7 +136,7 @@ export function CategoryPageContent({
       controller.abort();
       window.clearTimeout(timeoutId);
     };
-  }, [internalCategory, cityFilter, sortBy, page, reloadToken]);
+  }, [internalCategory, cityFilter, sortBy, page, reloadToken, initialCity]);
 
   const sortLabel = sortBy === "rating" ? "Po ocjeni" : "Po broju recenzija";
 
@@ -217,24 +223,11 @@ export function CategoryPageContent({
             {/* List / Map content */}
             <div className="min-w-0">
               {loading ? (
-                <div className="min-h-[320px] space-y-5 rounded-3xl border border-slate-200/80 bg-white p-6 shadow-marketplace-sm">
-                  <div className="flex items-center gap-3 text-sm font-semibold text-slate-500">
-                    <span className="h-4 w-4 animate-pulse rounded-full bg-blue-200" />
-                    Učitavanje majstora…
-                  </div>
-                  {[1, 2, 3].map((i) => (
-                    <div
-                      key={i}
-                      className="animate-pulse overflow-hidden rounded-2xl border border-slate-100 bg-slate-50"
-                    >
-                      <div className="h-40 bg-slate-200/80 lg:h-48" />
-                      <div className="space-y-3 p-5">
-                        <div className="h-6 w-1/2 rounded-lg bg-slate-200" />
-                        <div className="h-4 w-1/3 rounded bg-slate-200" />
-                        <div className="h-10 w-full rounded-xl bg-slate-200" />
-                      </div>
-                    </div>
-                  ))}
+                <div className="rounded-2xl border border-slate-200/80 bg-white/95 px-5 py-4 text-sm text-slate-600 shadow-sm">
+                  <span className="inline-flex items-center gap-2 font-medium text-slate-500">
+                    <span className="h-2 w-2 animate-pulse rounded-full bg-blue-500" aria-hidden />
+                    Učitavanje liste…
+                  </span>
                 </div>
               ) : error ? (
                 <div className="overflow-hidden rounded-3xl border border-red-200/80 bg-gradient-to-br from-red-50 to-white p-10 text-center shadow-marketplace-sm">

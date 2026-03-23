@@ -5,11 +5,13 @@ import Link from "next/link";
 import Image from "next/image";
 import { PublicHeader } from "@/components/layout/PublicHeader";
 import { PublicFooter } from "@/components/layout/PublicFooter";
+import { LandingValueBlock } from "@/components/landing/landing-value-block";
 import { Wrench, ChevronLeft, ChevronRight } from "lucide-react";
 import { HandymanCard } from "@/components/lists/handyman-card";
 import { PUBLIC_CATEGORY_LISTING } from "@/lib/categories";
 import { DEFAULT_PAGE_SIZE } from "@/lib/constants";
 import { cityLocative } from "@/lib/slugs";
+import type { PublicHandymenListResult } from "@/lib/handymen-listing";
 
 type Handyman = {
   id: string;
@@ -24,23 +26,31 @@ export function GradPageContent({
   cityName,
   slug,
   cityImage,
+  initialListing,
 }: {
   cityName: string;
   slug: string;
   cityImage?: string;
+  initialListing: PublicHandymenListResult | null;
 }) {
-  const [handymen, setHandymen] = useState<Handyman[]>([]);
+  const [handymen, setHandymen] = useState<Handyman[]>(initialListing?.items ?? []);
   const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [total, setTotal] = useState(0);
-  const [loading, setLoading] = useState(true);
+  const [totalPages, setTotalPages] = useState(initialListing?.totalPages ?? 1);
+  const [total, setTotal] = useState(initialListing?.total ?? 0);
+  const [loading, setLoading] = useState(!initialListing);
   const [error, setError] = useState<string | null>(null);
   const [reloadToken, setReloadToken] = useState(0);
   const loadGenRef = useRef(0);
+  const skipFirstClientFetch = useRef(!!initialListing);
 
   const cityNameLocative = cityLocative(cityName);
 
   useEffect(() => {
+    if (skipFirstClientFetch.current && page === 1 && reloadToken === 0) {
+      skipFirstClientFetch.current = false;
+      return;
+    }
+
     const gen = ++loadGenRef.current;
     let cancelled = false;
     const controller = new AbortController();
@@ -132,30 +142,40 @@ export function GradPageContent({
             </h1>
           )}
 
-          <p className="mb-6 max-w-2xl text-sm text-slate-600 sm:text-base">
-            Pregled provjerenih majstora koji rade u gradu <span className="font-medium text-slate-900">{cityName}</span>.
-            Ako ne pronađete odgovarajućeg majstora, uvijek možete objaviti besplatan zahtjev i dobiti nove ponude.
+          <p className="mb-6 max-w-2xl text-sm leading-relaxed text-slate-600 sm:text-base">
+            Profili majstora koji rade u <span className="font-medium text-slate-900">{cityName}</span>. Pogledajte ocjene
+            i kontakt, ili objavite jedan zahtjev i sačekajte ponude — bez zvanja više brojeva redom.
           </p>
 
-          <h2 className="mb-4 text-lg font-bold text-slate-900">
-            Majstori u ovom gradu
-          </h2>
+          <LandingValueBlock
+            heading={`Tražite majstora u ${cityNameLocative}?`}
+            href={`/request/create?city=${encodeURIComponent(cityName)}`}
+          />
+
+          <h2 className="mb-3 text-lg font-bold text-slate-900">Usluge po kategorijama u {cityName}</h2>
+          <p className="mb-4 max-w-2xl text-sm text-slate-600">
+            Odaberite vrstu usluge — prikazuje se pregled za taj grad i kategoriju.
+          </p>
+          <div className="mb-10 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
+            {PUBLIC_CATEGORY_LISTING.map((cat) => (
+              <Link
+                key={cat.slug}
+                href={`/${cat.slug}-${slug}`}
+                className="rounded-xl border border-white bg-white px-4 py-3 text-center text-sm font-medium text-slate-700 shadow-sm transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700"
+              >
+                {cat.displayName}
+              </Link>
+            ))}
+          </div>
+
+          <h2 className="mb-4 text-lg font-bold text-slate-900">Majstori u ovom gradu</h2>
 
           {loading ? (
-            <div className="mb-12 min-h-[280px] space-y-4 rounded-3xl border border-slate-200/80 bg-white p-6 shadow-marketplace-sm">
-              <p className="flex items-center gap-2 text-sm font-semibold text-slate-500">
-                <span className="h-4 w-4 animate-pulse rounded-full bg-blue-200" />
-                Učitavanje majstora…
-              </p>
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {[1, 2, 3].map((i) => (
-                  <div key={i} className="animate-pulse rounded-2xl border border-slate-100 bg-slate-50 p-5">
-                    <div className="mx-auto mb-4 h-16 w-16 rounded-full bg-slate-200" />
-                    <div className="h-5 w-3/4 rounded bg-slate-200" />
-                    <div className="mt-2 h-4 w-1/2 rounded bg-slate-200" />
-                  </div>
-                ))}
-              </div>
+            <div className="mb-10 rounded-2xl border border-slate-200/80 bg-white/95 px-5 py-4 text-sm text-slate-600 shadow-sm">
+              <span className="inline-flex items-center gap-2 font-medium text-slate-500">
+                <span className="h-2 w-2 animate-pulse rounded-full bg-blue-500" aria-hidden />
+                Učitavanje liste…
+              </span>
             </div>
           ) : error ? (
             <div className="mb-12 rounded-3xl border border-red-200/80 bg-gradient-to-br from-red-50 to-white p-10 text-center shadow-marketplace-sm">
@@ -219,22 +239,6 @@ export function GradPageContent({
               )}
             </>
           )}
-
-          <h2 className="mb-4 text-lg font-bold text-slate-900">
-            Kategorije dostupne u {cityName}
-          </h2>
-
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
-            {PUBLIC_CATEGORY_LISTING.map((cat) => (
-              <Link
-                key={cat.slug}
-                href={`/${cat.slug}-${slug}`}
-                className="rounded-xl border border-white bg-white px-4 py-3 text-center font-medium text-slate-700 shadow-sm transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700"
-              >
-                {cat.displayName}
-              </Link>
-            ))}
-          </div>
         </div>
       </div>
       <PublicFooter />
