@@ -6,7 +6,6 @@ import { useEffect, useMemo } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useMutation } from "@tanstack/react-query";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -135,18 +134,17 @@ export function CreateRequestForm({ initialCategory, initialCity }: CreateReques
   return (
   <>
     <Card className="w-full overflow-hidden rounded-[1.75rem] border border-slate-200/80 bg-white shadow-marketplace">
-      <CardHeader className="border-b border-slate-100/80 bg-gradient-to-r from-slate-50/80 to-white px-5 sm:px-8 sm:py-8">
-        <CardTitle className="font-display text-xl text-brand-navy sm:text-2xl">Detalji zahtjeva</CardTitle>
-        <CardDescription className="mt-2 text-sm leading-relaxed text-slate-600 sm:text-base">
-          Objava je besplatna. Nakon što zahtjev bude odobren, majstori koji vide posao mogu poslati ponude — vi birate
-          da li i koga angažujete.
+      <CardHeader className="border-b border-slate-100/80 bg-gradient-to-r from-slate-50/80 to-white px-5 py-5 sm:px-8 sm:py-6">
+        <CardTitle className="font-display text-lg text-brand-navy sm:text-xl">Podaci za zahtjev</CardTitle>
+        <CardDescription className="mt-1.5 text-sm text-slate-600">
+          Polja označena zvjezdicom (*) su obavezna.
         </CardDescription>
       </CardHeader>
-      <CardContent className="px-5 pb-8 pt-6 sm:px-8">
+      <CardContent className="px-5 pb-8 pt-5 sm:px-8">
         <form
           id="create-request-form"
           onSubmit={handleSubmit((data) => mutation.mutate(data))}
-          className="space-y-5"
+          className="space-y-4 sm:space-y-5"
           data-testid="create-request-form"
         >
           {mutation.error && (
@@ -154,85 +152,63 @@ export function CreateRequestForm({ initialCategory, initialCity }: CreateReques
               {(mutation.error as Error).message || "Došlo je do greške prilikom slanja zahtjeva. Pokušajte ponovo."}
             </div>
           )}
-          <div className="space-y-3">
-            <Label htmlFor="requesterName">Ime *</Label>
-            <Input
-              id="requesterName"
-              placeholder="Vaše ime"
-              {...register("requesterName")}
-            />
-            {errors.requesterName && (
-              <p className="text-sm text-destructive">{errors.requesterName.message}</p>
-            )}
-          </div>
-          <div className="space-y-3">
-            <Label htmlFor="requesterPhone">Broj telefona *</Label>
-            <Input
-              id="requesterPhone"
-              type="tel"
-              placeholder="+382 69 123 456"
-              {...register("requesterPhone")}
-            />
-            {errors.requesterPhone && (
-              <p className="text-sm text-destructive">{errors.requesterPhone.message}</p>
-            )}
-          </div>
-          <div className="space-y-3">
-            <Label htmlFor="category">Kategorija</Label>
+
+          <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Posao</p>
+
+          <div className="space-y-2">
+            <Label htmlFor="category">Kategorija *</Label>
             <select
               id="category"
               className="select-premium"
               {...register("category")}
             >
-              <option value="">Odaberite...</option>
+              <option value="">Odaberite…</option>
               {categorySelectOptions.map((cat) => (
                 <option key={cat} value={cat}>
                   {displayLabelForRequestCategory(cat)}
                 </option>
               ))}
             </select>
-            <p className="text-xs leading-relaxed text-slate-500">
-              Ne vidiš tačnu uslugu? Izaberi „Ostalo“ i u opisu napiši šta ti treba.
+            <p className="text-xs text-slate-500">
+              Nema tačne stavke? Izaberite „Ostalo / Ne vidim svoju uslugu“ i opišite u polju ispod.
             </p>
             {errors.category && (
               <p className="text-sm text-destructive">{errors.category.message}</p>
             )}
           </div>
-          <div className="space-y-3">
-            <Label htmlFor="title">Naslov problema *</Label>
+          <div className="space-y-2">
+            <Label htmlFor="title">Kratki naslov *</Label>
             <Input
               id="title"
-              placeholder="Kratak naslov šta vam treba"
+              placeholder="Npr. curenje slavine u kuhinji"
               {...register("title")}
             />
             {errors.title && (
               <p className="text-sm text-destructive">{errors.title.message}</p>
             )}
           </div>
-          <div className="space-y-3">
-            <Label htmlFor="description">Opis problema ili posla *</Label>
+          <div className="space-y-2">
+            <Label htmlFor="description">Opis posla *</Label>
             <Textarea
               id="description"
-              placeholder="Opišite šta vam treba: šta je pokvareno, dimenzije, kada vam treba, itd. Detaljniji opis = bolje ponude."
-              rows={5}
-              className="min-h-[120px] text-base"
+              placeholder="Šta treba uraditi, gdje, rok ako je bitan. Što jasnije — to bolje ponude."
+              rows={4}
+              className="min-h-[100px] text-base"
               {...register("description")}
             />
-            <p className="text-xs text-slate-500">
-              Telefon, email i adresu unesite u posebna polja ispod – ne u opis.
-            </p>
+            <p className="text-xs text-slate-500">Bez telefona i emaila u tekstu — koristite polja za kontakt ispod.</p>
             {errors.description && (
               <p className="text-sm text-destructive">{errors.description.message}</p>
             )}
           </div>
-          <div className="space-y-3">
-            <Label htmlFor="city">Grad</Label>
+          <div className="space-y-2">
+            <Label htmlFor="city">Grad *</Label>
             <select
               id="city"
               className="select-premium"
               {...register("city")}
             >
-              <option value="">Svi gradovi</option>
+              <option value="">Odaberite grad</option>
               {CITIES.map((c) => (
                 <option key={c} value={c}>{c}</option>
               ))}
@@ -241,40 +217,73 @@ export function CreateRequestForm({ initialCategory, initialCity }: CreateReques
               <p className="text-sm text-destructive">{errors.city.message}</p>
             )}
           </div>
-          <div className="space-y-3">
-            <Label htmlFor="requesterEmail">Email (opciono)</Label>
+
+          <div className="border-t border-slate-100 pt-4 sm:pt-5">
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Kontakt</p>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="requesterName">Vaše ime *</Label>
+            <Input
+              id="requesterName"
+              placeholder="Ime"
+              autoComplete="name"
+              {...register("requesterName")}
+            />
+            {errors.requesterName && (
+              <p className="text-sm text-destructive">{errors.requesterName.message}</p>
+            )}
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="requesterPhone">Telefon *</Label>
+            <Input
+              id="requesterPhone"
+              type="tel"
+              placeholder="+382 69 123 456"
+              autoComplete="tel"
+              {...register("requesterPhone")}
+            />
+            {errors.requesterPhone && (
+              <p className="text-sm text-destructive">{errors.requesterPhone.message}</p>
+            )}
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="requesterEmail">Email</Label>
             <Input
               id="requesterEmail"
               type="email"
-              placeholder="email@primjer.me"
+              placeholder="Opciono"
+              autoComplete="email"
               {...register("requesterEmail")}
             />
             {errors.requesterEmail && (
               <p className="text-sm text-destructive">{errors.requesterEmail.message}</p>
             )}
           </div>
-          <div className="space-y-3">
-            <Label htmlFor="address">Adresa (opciono)</Label>
+          <div className="space-y-2">
+            <Label htmlFor="address">Adresa</Label>
             <Input
               id="address"
-              placeholder="Ulica i broj"
+              placeholder="Opciono — ulica i broj"
               {...register("address")}
             />
           </div>
-          <div className="space-y-3">
-            <Label htmlFor="photos">Slike (opciono)</Label>
+
+          <div className="border-t border-slate-100 pt-4 sm:pt-5">
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Dodatno</p>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="photos">Slike</Label>
             <RequestPhotosEditor
               photos={photos}
               onChange={(p) => setValue("photos", p)}
             />
+            <p className="text-xs text-slate-500">Ako pomažu da se posao bolje razumije.</p>
           </div>
           <div className="space-y-2">
             <Label htmlFor="urgency">Hitnost</Label>
-            <select
-              id="urgency"
-              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-              {...register("urgency")}
-            >
+            <select id="urgency" className="select-premium" {...register("urgency")}>
               {URGENCY_OPTIONS.map((opt) => (
                 <option key={opt.value} value={opt.value}>
                   {opt.label}
@@ -282,12 +291,12 @@ export function CreateRequestForm({ initialCategory, initialCity }: CreateReques
               ))}
             </select>
             {urgencyHint && (
-              <p className="mt-2 text-xs leading-relaxed text-slate-600">{urgencyHint}</p>
+              <p className="text-xs leading-relaxed text-slate-600">{urgencyHint}</p>
             )}
           </div>
-          <p className="text-xs text-slate-500">
-            Nakon slanja, zahtjev prvo pregleda administrator. Kada bude odobren, majstori će moći da odgovore. Vi
-            odlučujete da li ćete nekoga angažovati — bez obaveze.
+
+          <p className="rounded-xl bg-slate-50 px-3 py-2.5 text-xs leading-relaxed text-slate-600">
+            Nakon slanja: kratki admin pregled, zatim ponude ako odobre. Vi birate da li i koga angažujete.
           </p>
           <button
             type="submit"

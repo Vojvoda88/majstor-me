@@ -17,17 +17,17 @@ export const URGENCY_OPTIONS = [
   {
     value: "HITNO_DANAS",
     label: "Hitno danas",
-    hint: "Potreban majstor još danas — oglas ide na vrh liste i brže se vidi.",
+    hint: "Potreban još danas — oglas se vidi prije.",
   },
   {
     value: "U_NAREDNA_2_DANA",
     label: "Hitno (u narednih 7 dana)",
-    hint: "Treba u kratkom roku (do sedam dana), ali ne nužno danas.",
+    hint: "U roku do sedam dana, ne nužno danas.",
   },
   {
     value: "NIJE_HITNO",
     label: "Nije hitno / fleksibilno",
-    hint: "Kad god vam odgovara — bez pritiska, majstori se javljaju kad mogu.",
+    hint: "Kad vama odgovara.",
   },
 ] as const;
 

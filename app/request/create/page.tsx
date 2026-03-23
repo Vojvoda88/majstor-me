@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { CreateRequestForm } from "@/components/forms/create-request-form";
 import { PremiumMobileHeader } from "@/components/layout/PremiumMobileHeader";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
-import { ShieldCheck, Star, Zap } from "lucide-react";
 import { getSiteUrl } from "@/lib/site-url";
 
 const baseUrl = getSiteUrl();
@@ -45,47 +44,14 @@ export default function CreateRequestPage(props: { searchParams?: CreateRequestS
           ]}
         />
 
-        <header className="mb-8 md:mb-10">
-          <p className="mb-2 text-xs font-bold uppercase tracking-widest text-blue-700">Korak 1 od 1</p>
-          <h1 className="font-display text-2xl font-bold tracking-tight text-brand-navy md:text-4xl">
-            Opis posla za majstora
+        <header className="mb-6 md:mb-8">
+          <h1 className="font-display text-2xl font-bold tracking-tight text-brand-navy md:text-3xl">
+            Objavi zahtjev
           </h1>
-          <p className="mt-4 text-base leading-relaxed text-slate-600 md:text-lg">
-            Napišite šta vam treba — vodoinstalater, električar, klima servis ili druga usluga. Objava zahtjeva je
-            besplatna; nakon odobrenja, zainteresovani majstori mogu poslati ponude.
+          <p className="mt-3 text-[15px] leading-relaxed text-slate-600 md:text-base">
+            Objava je besplatna. Opišite posao što jasnije — jedan zahtjev umjesto više poziva. Administrator prvo
+            pregleda zahtjev, zatim zainteresovani majstori mogu poslati ponude.
           </p>
-          <div className="mt-6 grid gap-3 rounded-3xl border border-slate-200/80 bg-white p-4 text-xs text-slate-700 shadow-marketplace-sm md:grid-cols-3 md:gap-4 md:p-5 md:text-sm">
-            <div className="flex items-start gap-2">
-              <span className="mt-0.5 rounded-lg bg-emerald-50 p-1.5 text-emerald-700">
-                <ShieldCheck className="h-3.5 w-3.5" />
-              </span>
-              <p>
-                <span className="font-semibold">Ocjene na profilu</span>
-                <br />
-                Kod majstora na platformi vide se ocjene i utisci korisnika.
-              </p>
-            </div>
-            <div className="flex items-start gap-2">
-              <span className="mt-0.5 rounded-lg bg-sky-50 p-1.5 text-sky-700">
-                <Zap className="h-3.5 w-3.5" />
-              </span>
-              <p>
-                <span className="font-semibold">Ponude nakon odobrenja</span>
-                <br />
-                Zahtjev prvo pregleda administrator; zatim majstori mogu odgovoriti.
-              </p>
-            </div>
-            <div className="flex items-start gap-2">
-              <span className="mt-0.5 rounded-lg bg-amber-50 p-1.5 text-amber-700">
-                <Star className="h-3.5 w-3.5" />
-              </span>
-              <p>
-                <span className="font-semibold">Bez obaveze</span>
-                <br />
-                Pregledajte ponude i izaberite majstora koji vam najviše odgovara.
-              </p>
-            </div>
-          </div>
         </header>
 
         <CreateRequestForm
