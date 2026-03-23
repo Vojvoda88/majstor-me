@@ -78,6 +78,10 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
   },
+  /** Standardni PWA tag; smanjuje deprecation upozorenje uz apple-mobile-web-app-capable iz appleWebApp. */
+  other: {
+    "mobile-web-app-capable": "yes",
+  },
 };
 
 export const viewport: Viewport = {

@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { requireAdminPermission } from "@/lib/admin/auth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
@@ -99,7 +100,17 @@ export default async function AdminRequestsPage({
         <p className="mt-1 text-sm text-[#64748B]">Svi zahtjevi / leadovi</p>
       </div>
 
-      <RequestFilters />
+      {/** useSearchParams u RequestFilters zahtijeva Suspense — inače RSC digest na mobilnom/admin. */}
+      <Suspense
+        fallback={
+          <div
+            className="h-[120px] animate-pulse rounded-lg border border-[#E2E8F0] bg-[#F8FAFC]"
+            aria-hidden
+          />
+        }
+      >
+        <RequestFilters />
+      </Suspense>
 
       <div className="flex flex-wrap gap-2">
         <span className="text-sm text-[#64748B]">Status:</span>
@@ -163,7 +174,9 @@ export default async function AdminRequestsPage({
                     <td className="py-3 pr-4">{r.requesterName ?? r.user?.name ?? "Guest"}</td>
                     <td className="py-3 pr-4">{r.city}</td>
                     <td className="py-3 pr-4">{r.category}</td>
-                    <td className="max-w-[150px] truncate py-3 pr-4">{r.title ?? r.description.slice(0, 30)}</td>
+                    <td className="max-w-[150px] truncate py-3 pr-4">
+                      {r.title ?? (r.description ?? "").slice(0, 30)}
+                    </td>
                     <td className="py-3 pr-4 text-[#64748B]">{new Date(r.createdAt).toLocaleDateString("sr")}</td>
                     <td className="py-3 pr-4">
                       <Badge
