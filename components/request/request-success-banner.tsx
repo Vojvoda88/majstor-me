@@ -44,7 +44,7 @@ export function RequestSuccessBanner({
                 šalju ponude.
               </p>
               <p className="mt-2 text-sm leading-relaxed text-emerald-800">
-                Bićete obaviješteni u aplikaciji kada zahtjev bude pregledan i odobren.
+                Status možete pratiti na ovoj stranici. Ako ste prijavljeni, obavještenja su i u vašem nalogu.
               </p>
               {urgentPriority && (
                 <p className="mt-2 text-sm font-medium text-emerald-900">
