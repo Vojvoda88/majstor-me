@@ -5,7 +5,6 @@ import { PublicHeader } from "@/components/layout/PublicHeader";
 import { PublicFooter } from "@/components/layout/PublicFooter";
 import { Hero } from "@/components/home-page/Hero";
 import { StatsStrip } from "@/components/home-page/StatsStrip";
-import { HomeConversionBand } from "@/components/home-page/HomeConversionBand";
 import { WhyMajstorSection } from "@/components/home-page/WhyMajstorSection";
 import { CategoriesGrid } from "@/components/home-page/CategoriesGrid";
 import { HowItWorksForUsers, HowItWorksForHandymen } from "@/components/home-page/HowItWorks";
@@ -57,9 +56,6 @@ export default function HomePage() {
       <div className="pt-2 md:pt-8">
         <Hero />
         <StatsStrip />
-        <div className="mt-5 md:mt-10">
-          <HomeConversionBand />
-        </div>
       </div>
 
       <div className="mx-auto max-w-6xl px-4 py-8 sm:px-5 md:px-6 md:py-16">

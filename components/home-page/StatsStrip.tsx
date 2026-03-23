@@ -8,7 +8,6 @@ import {
   MapPin,
   ClipboardList,
   MapPinned,
-  Layers,
   BadgeCheck,
   CheckCircle2,
 } from "lucide-react";
@@ -52,13 +51,6 @@ const TRUST_FALLBACK: TrustStat[] = [
     icon: MapPinned,
     title: "Lokalno",
     description: "Povezivanje s majstorima iz grada i okoline.",
-    badgeClass: "bg-slate-100 text-brand-navy ring-1 ring-slate-200/80",
-  },
-  {
-    kind: "trust",
-    icon: Layers,
-    title: "Različite usluge",
-    description: "Od instalacije do zanatskih radova na jednom mjestu.",
     badgeClass: "bg-slate-100 text-brand-navy ring-1 ring-slate-200/80",
   },
   {

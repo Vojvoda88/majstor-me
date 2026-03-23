@@ -8,8 +8,6 @@ import {
   ChevronRight,
   UserPlus,
   Unlock,
-  Coins,
-  Eye,
   Smartphone,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
@@ -21,57 +19,43 @@ const USER_STEPS = [
     n: 1,
     icon: FileText,
     title: "Objavite šta vam treba",
-    desc: "Jedan jasan opis, grad, po želji slike. Objava zahtjeva je besplatna.",
+    desc: "Kratak opis, grad, po želji slike — objava je besplatna.",
   },
   {
     n: 2,
     icon: MessageSquare,
     title: "Javljaju vam se majstori",
-    desc: "Ne zovete vi njih redom — oni se javljaju vama. Brže do ponuda, bez traženja brojeva.",
+    desc: "Ne zovete vi njih redom; oni se javljaju vama kad im posao odgovara.",
   },
   {
     n: 3,
     icon: CheckCircle2,
     title: "Uporedite i izaberite",
-    desc: "Više ponuda na jednom mjestu. Uporedite cijene i utiske, pa izaberite ko vam odgovara — bez pritiska.",
+    desc: "Više ponuda na jednom mjestu — uporedite cijene i utiske, pa birajte u svom ritmu.",
   },
 ] as const;
 
-/** Copy za sekciju „Kako radi za majstore“ — fiksiran tekst (premium kartice ispod). */
+/** Copy za sekciju „Kako radi za majstore“ — tri koraka (bez ponavljanja CTA bloka ispod). */
 const HANDYMAN_STEPS = [
   {
     n: 1,
     icon: UserPlus,
-    title: "Napravite profil besplatno",
-    desc: "Registracija je potpuno besplatna. Nema pretplate i nema mjesečnih troškova.",
-    featured: false as const,
-  },
-  {
-    n: 2,
-    icon: Coins,
-    title: "1000 kredita za početak",
-    desc: "Dobijate 1000 kredita odmah nakon registracije. To vam je dovoljno za prvih 5 standardnih ponuda.",
+    title: "Profil besplatno + 1000 kredita",
+    desc: "Bez pretplate. Na startu dobijate 1000 kredita — dovoljno za prvih pet standardnih ponuda.",
     featured: true as const,
   },
   {
-    n: 3,
+    n: 2,
     icon: Smartphone,
-    title: "ODMAH dobijate obavještenje kada se pojavi posao za vas",
-    desc: "Kada neko objavi da mu treba majstor za posao kojim se bavite, odmah dobijate obavještenje na telefonu i možete među prvima da pogledate posao.",
+    title: "Obavještenje kad stigne posao za vas",
+    desc: "Kada neko objavi posao u vašoj branši, šaljemo obavještenje da brzo pregledate zahtjev.",
     featured: false as const,
   },
   {
-    n: 4,
-    icon: Eye,
-    title: "Posao prvo pogledate besplatno",
-    desc: "Opis, slike i detalje vidite bez plaćanja. Ako vam posao ne odgovara, samo pređete dalje.",
-    featured: false as const,
-  },
-  {
-    n: 5,
+    n: 3,
     icon: Unlock,
-    title: "Kad vam odgovara, otključate kontakt i šaljete ponudu",
-    desc: "Za standardan posao kontakt otključavate već od oko 2 €. Nakon toga možete poslati ponudu kroz platformu ili direktno pozvati korisnika.",
+    title: "Pregled besplatno, kontakt kad odgovara",
+    desc: "Opis i slike vidite prije plaćanja. Ako vam odgovara, otključate kontakt i šaljete ponudu (standardno oko 2 €).",
     featured: false as const,
   },
 ] as const;
@@ -276,7 +260,7 @@ export function HowItWorksForUsers() {
           Kako radi za korisnike
         </h2>
         <p className="mx-auto mt-3 max-w-2xl text-[15px] font-medium leading-relaxed text-slate-600 sm:text-base md:text-lg">
-          Tri koraka. Brzo, jasno, bez zvanja redom — objava zahtjeva je besplatna.
+          Tri koraka — objava zahtjeva je besplatna.
         </p>
       </div>
       <div className="mx-auto mt-8 max-w-6xl md:mt-10">
@@ -303,24 +287,12 @@ export function HowItWorksForHandymen() {
           Kako radi za majstore
         </h2>
         <p className="mx-auto mt-4 max-w-2xl text-[15px] font-medium leading-relaxed text-slate-600 sm:text-base md:text-lg">
-          Napravite profil besplatno, dobijate 1000 kredita za početak i birajte poslove koji vam odgovaraju.
-        </p>
-        <p className="mx-auto mt-2 max-w-2xl text-base font-semibold tracking-tight text-slate-800 md:text-lg">
-          1 kredit = 1 cent.
+          Besplatna registracija, 1000 kredita za start, birate poslove koji vam odgovaraju.
         </p>
       </div>
       <div className="mx-auto mt-10 max-w-6xl px-4 sm:px-5 md:mt-12">
         <HandymanStepGrid steps={HANDYMAN_STEPS} />
         <HandymanStepGridMobile steps={HANDYMAN_STEPS} />
-
-        <div
-          id="majstor-krediti"
-          className="mx-auto mt-10 max-w-2xl border-t border-slate-200/80 pt-8 text-center md:mt-12 md:pt-10"
-        >
-          <p className="text-[15px] font-medium leading-relaxed text-slate-700 md:text-base">
-            Bez pretplate. Plaćate samo kada želite da konkurišete za posao.
-          </p>
-        </div>
       </div>
     </section>
   );

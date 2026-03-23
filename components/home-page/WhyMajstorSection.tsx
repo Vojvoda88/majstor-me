@@ -1,23 +1,16 @@
-import Link from "next/link";
-import { ArrowRight, MapPin, ShieldCheck, Sparkles } from "lucide-react";
+import { MapPin, Sparkles } from "lucide-react";
 
 const BENEFITS = [
   {
     id: "01",
-    title: "Provjereni majstori iz CG",
-    body: "Ocjene i iskustva stvarnih korisnika — lakše je uporediti i izabrati pravog čovjeka za posao.",
-    icon: ShieldCheck,
-  },
-  {
-    id: "02",
-    title: "Majstori iz vašeg grada",
-    body: "Ne tražite redom po telefonu — javljaju se oni kojima posao odgovara, iz vaše okoline.",
+    title: "Lokalno, uporedno, bez zvanja redom",
+    body: "Ocjene i ponude — javljaju se majstori kojima posao odgovara, iz vaše okoline.",
     icon: MapPin,
   },
   {
-    id: "03",
+    id: "02",
     title: "Besplatno za vas",
-    body: "Zahtjev objavljujete bez naknade; ponude gledate kad vama odgovara, bez obaveze prihvatanja.",
+    body: "Zahtjev objavljujete bez naknade; ponude gledate kad vama odgovara.",
     icon: Sparkles,
   },
 ];
@@ -36,8 +29,7 @@ export function WhyMajstorSection() {
             Zašto BrziMajstor.ME?
           </h2>
           <p className="relative mt-4 max-w-lg text-[15px] leading-relaxed text-slate-100/95 sm:mt-6 md:text-base">
-            Marketplace povezuje vas sa majstorima u Crnoj Gori: jedan zahtjev, više ponuda, sve na jednom mjestu — od sitnih popravki
-            do većih radova.
+            Jedan zahtjev, više ponuda — od sitnih popravki do većih radova, u Crnoj Gori.
           </p>
           <div className="relative mt-8 grid gap-2.5 border-t border-white/10 pt-8 sm:grid-cols-2 sm:gap-3 md:mt-10 md:pt-10">
             <div className="rounded-2xl border border-white/10 bg-white/[0.07] px-4 py-4 backdrop-blur-sm">
@@ -49,13 +41,6 @@ export function WhyMajstorSection() {
               <p className="mt-2 text-sm font-semibold leading-snug">Ponude direktno od majstora</p>
             </div>
           </div>
-          <Link
-            href="/register"
-            className="relative mt-10 inline-flex items-center gap-2 text-sm font-bold text-amber-300 transition hover:text-amber-200"
-          >
-            Registruj se besplatno
-            <ArrowRight className="h-4 w-4" />
-          </Link>
         </div>
 
         <ul className="flex flex-col gap-3.5 md:gap-6">
@@ -77,13 +62,6 @@ export function WhyMajstorSection() {
             </li>
           ))}
         </ul>
-      </div>
-
-      <div className="mt-8 flex items-start gap-3 rounded-2xl border border-emerald-200/80 bg-gradient-to-r from-emerald-50 to-white px-5 py-4 text-emerald-950 shadow-sm md:mt-14 md:items-center md:gap-4 md:px-8 md:py-6">
-        <ShieldCheck className="mt-0.5 h-6 w-6 shrink-0 text-emerald-600 md:mt-0" />
-        <p className="text-sm font-semibold leading-relaxed md:text-base">
-          Sve ponude stižu direktno od majstora — BrziMajstor.ME ne uzima proviziju od korisnika.
-        </p>
       </div>
     </section>
   );

@@ -16,21 +16,21 @@ export function CTAForMasters() {
           </h3>
           <p className="mx-auto mt-4 max-w-2xl text-[15px] leading-relaxed text-slate-600 sm:text-base md:text-lg">
             <strong className="font-semibold text-slate-800">Bez pretplate.</strong> Novi majstori dobijaju{" "}
-            <strong className="font-semibold text-brand-navy">1000 kredita za početak</strong> — to obično znači{" "}
-            <strong className="font-semibold text-brand-navy">prvih 5 standardnih ponuda</strong> (standardni posao = 200 kredita).{" "}
-            <strong className="font-semibold text-slate-800">Plaćate samo kada želite kontakt za posao koji vam odgovara.</strong> Kada vam posao odgovara, otključate kontakt i zatim birate kako ćete se javiti — kroz ponudu ili direktno telefonom.
+            <strong className="font-semibold text-brand-navy">1000 kredita za početak</strong> — obično dovoljno za{" "}
+            <strong className="font-semibold text-brand-navy">prvih pet standardnih ponuda</strong> (standardni posao = 200 kredita).{" "}
+            Plaćate samo kada otključate kontakt za posao koji vam odgovara.
           </p>
 
-          <div className="mx-auto mt-6 flex max-w-md flex-wrap items-center justify-center gap-2 text-xs font-medium text-slate-600 sm:text-sm">
+          <div
+            id="majstor-krediti"
+            className="mx-auto mt-6 flex max-w-md flex-wrap items-center justify-center gap-2 text-xs font-medium text-slate-600 sm:text-sm"
+          >
             <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-200/90 bg-white/90 px-3 py-1.5 shadow-sm">
               <Coins className="h-3.5 w-3.5 text-blue-600" aria-hidden />
               1 kredit = 1 cent
             </span>
             <span className="max-w-[100%] rounded-full border border-slate-200/90 bg-white/90 px-2.5 py-1.5 text-center shadow-sm sm:px-3">
               Standardna ponuda za manje od 2 €
-            </span>
-            <span className="max-w-[100%] rounded-full border border-slate-200/90 bg-white/90 px-2.5 py-1.5 text-center shadow-sm sm:px-3">
-              Bez mjesečne članarine
             </span>
           </div>
 

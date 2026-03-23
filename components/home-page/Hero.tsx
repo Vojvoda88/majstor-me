@@ -9,7 +9,6 @@ import { HERO_IMAGE } from "@/lib/homepage-data";
 const TRUST = [
   { icon: Sparkles, label: "Besplatno za korisnike" },
   { icon: Zap, label: "Jedan zahtjev, više ponuda" },
-  { icon: ShieldCheck, label: "Bez zvanja redom" },
 ];
 
 export function Hero() {
@@ -46,7 +45,7 @@ export function Hero() {
           </span>
         </h1>
         <p className="mx-auto mb-7 max-w-xl text-[15px] font-medium leading-relaxed text-slate-200/95 sm:text-base md:mb-10 md:text-lg md:leading-relaxed">
-          Opišite posao jednom — javljaju se majstori kojima odgovara vaš zahtjev. Bez zvanja redom, bez naknade za korisnike.
+          Opišite posao jednom — javljaju se majstori kojima odgovara vaš zahtjev. Bez naknade za korisnike.
         </p>
 
         <div className="mx-auto max-w-2xl">
@@ -64,17 +63,9 @@ export function Hero() {
             href="/#kako-radi-majstore"
             className="inline-flex h-14 min-h-[52px] items-center justify-center rounded-2xl border border-white/25 bg-white/10 px-6 text-base font-semibold text-white backdrop-blur-md transition hover:bg-white/15 active:scale-[0.98] md:px-8"
           >
-            Radite kao majstor? Pogledajte kako funkcioniše
+            Kako radi za majstore
           </Link>
         </div>
-        <p className="mt-4 text-center">
-          <Link
-            href="/categories"
-            className="text-sm font-semibold text-white/85 underline decoration-white/30 underline-offset-4 transition hover:text-white"
-          >
-            Pregled kategorija
-          </Link>
-        </p>
 
         <div className="mt-6 flex flex-wrap items-center justify-center gap-2 sm:gap-3 md:mt-10 md:gap-4">
           {TRUST.map(({ icon: Icon, label }) => (
@@ -92,7 +83,7 @@ export function Hero() {
             href="/register?type=majstor"
             className="inline-block min-h-[44px] touch-manipulation text-sm font-semibold text-amber-200/95 underline decoration-amber-400/45 underline-offset-4 transition hover:text-white active:opacity-90"
           >
-            Spremni ste odmah? Registrujte se kao majstor →
+            Registrujte se kao majstor →
           </Link>
         </p>
       </div>
