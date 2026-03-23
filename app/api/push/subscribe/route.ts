@@ -22,9 +22,9 @@ export async function POST(request: Request) {
         { status: 401 }
       );
     }
-    if (session.user.role !== "HANDYMAN" && session.user.role !== "USER") {
+    if (session.user.role !== "HANDYMAN" && session.user.role !== "USER" && session.user.role !== "ADMIN") {
       return NextResponse.json(
-        { success: false, error: "Obavještenja na ovom uređaju dostupna su prijavljenim korisnicima i majstorima" },
+        { success: false, error: "Obavještenja na ovom uređaju dostupna su prijavljenim korisnicima, majstorima i administratorima" },
         { status: 403 }
       );
     }
@@ -56,6 +56,12 @@ export async function POST(request: Request) {
         auth: parsed.data.keys.auth,
         userAgent,
       },
+    });
+
+    console.info("[push] subscribe saved", {
+      userId: session.user.id,
+      role: session.user.role,
+      endpointPrefix: parsed.data.endpoint.slice(0, 56),
     });
 
     return NextResponse.json({ success: true });

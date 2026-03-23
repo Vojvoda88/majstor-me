@@ -4,9 +4,9 @@ import { useCallback, useEffect, useState } from "react";
 import { Bell, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
-  getPushReadyState,
+  getPushUiState,
   requestPermissionAndSubscribe,
-  type PushReadyState,
+  type PushUiState,
 } from "@/lib/push-client";
 
 const DISMISS_UNTIL_KEY = "bm_handyman_push_dismiss_until_ms";
@@ -40,7 +40,7 @@ const BODY =
  * Majstor: eksplicitno uključivanje push obavještenja (nakon klika, ne automatski).
  */
 export function HandymanPushNotificationsCard() {
-  const [status, setStatus] = useState<PushReadyState | { kind: "loading" }>({ kind: "loading" });
+  const [status, setStatus] = useState<PushUiState | { kind: "loading" }>({ kind: "loading" });
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [dismissed, setDismissedState] = useState(false);
@@ -48,7 +48,7 @@ export function HandymanPushNotificationsCard() {
   const vapid = typeof process !== "undefined" ? process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY : undefined;
 
   const refresh = useCallback(async () => {
-    const s = await getPushReadyState(vapid);
+    const s = await getPushUiState(vapid);
     setStatus(s);
   }, [vapid]);
 
@@ -93,7 +93,10 @@ export function HandymanPushNotificationsCard() {
   }
 
   const enabled =
-    status.kind === "ready" && status.permission === "granted" && status.subscribed;
+    status.kind === "ready" &&
+    status.permission === "granted" &&
+    status.subscribed &&
+    status.serverSubscriptionCount > 0;
 
   if (enabled) {
     return (

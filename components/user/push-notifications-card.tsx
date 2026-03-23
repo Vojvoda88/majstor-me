@@ -4,23 +4,23 @@ import { useCallback, useEffect, useState } from "react";
 import { Bell, BellOff, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
-  getPushReadyState,
+  getPushUiState,
   requestPermissionAndSubscribe,
-  type PushReadyState,
+  type PushUiState,
 } from "@/lib/push-client";
 
 /**
  * Korisnik: uključivanje push obavještenja kada stigne nova ponuda na zahtjev.
  */
 export function UserPushNotificationsCard() {
-  const [status, setStatus] = useState<PushReadyState | { kind: "loading" }>({ kind: "loading" });
+  const [status, setStatus] = useState<PushUiState | { kind: "loading" }>({ kind: "loading" });
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const vapid = typeof process !== "undefined" ? process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY : undefined;
 
   const refresh = useCallback(async () => {
-    setStatus(await getPushReadyState(vapid));
+    setStatus(await getPushUiState(vapid));
   }, [vapid]);
 
   useEffect(() => {
@@ -69,8 +69,9 @@ export function UserPushNotificationsCard() {
     );
   }
 
-  const { permission, subscribed } = status;
-  const enabled = permission === "granted" && subscribed;
+  const { permission, subscribed, serverSubscriptionCount } = status;
+  const enabled =
+    permission === "granted" && subscribed && serverSubscriptionCount > 0;
 
   return (
     <div className="rounded-xl border border-emerald-100 bg-gradient-to-br from-white to-emerald-50/30 p-4 shadow-sm md:p-5">

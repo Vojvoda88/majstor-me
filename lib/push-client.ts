@@ -90,8 +90,45 @@ export type SubscribeResult =
   | { ok: true }
   | { ok: false; reason: "permission_denied" | "server_error" | "subscribe_failed"; message?: string };
 
+/** Broj pretplata za trenutnog korisnika u bazi (0 ako nije sačuvano ili niste prijavljeni). */
+export async function fetchServerPushSubscriptionCount(): Promise<number> {
+  try {
+    const res = await fetch("/api/push/status", { credentials: "include" });
+    const j = (await res.json().catch(() => ({}))) as { success?: boolean; data?: { count?: number } };
+    if (j.success && typeof j.data?.count === "number") return j.data.count;
+  } catch {
+    /* ignore */
+  }
+  return 0;
+}
+
+export type PushUiReadyState = {
+  kind: "ready";
+  permission: NotificationPermission;
+  subscribed: boolean;
+  /** Koliko pretplata ima ovaj nalog na serveru — UI „uključeno“ samo ako je >0 i lokalno subscribed */
+  serverSubscriptionCount: number;
+};
+
+export type PushUiState =
+  | { kind: "loading" }
+  | { kind: "no_vapid" }
+  | { kind: "unsupported"; reason: string }
+  | PushUiReadyState;
+
+/**
+ * Lokalno stanje + broj pretplata na serveru (za iskreno „uključeno“ bez lažnog zelenog stanja).
+ */
+export async function getPushUiState(vapidPublicKey: string | undefined): Promise<PushUiState> {
+  const base = await getPushReadyState(vapidPublicKey);
+  if (base.kind !== "ready") return base;
+  const serverSubscriptionCount = await fetchServerPushSubscriptionCount();
+  return { ...base, serverSubscriptionCount };
+}
+
 /**
  * Traži dozvolu (ako treba), pretplaćuje PushManager i šalje ključeve na /api/push/subscribe.
+ * Ako server ne sačuva, lokalna pretplata se otkazuje da UI ne prikaže lažno „uključeno“.
  */
 export async function requestPermissionAndSubscribe(vapidPublicKey: string): Promise<SubscribeResult> {
   if (!browserSupportsWebPush()) {
@@ -112,12 +149,14 @@ export async function requestPermissionAndSubscribe(vapidPublicKey: string): Pro
     }
     let sub = await reg.pushManager.getSubscription();
     if (!sub) {
+      console.info("[push-client] pushManager.subscribe() …");
       sub = await reg.pushManager.subscribe({
         userVisibleOnly: true,
         applicationServerKey: urlBase64ToUint8Array(vapidPublicKey) as BufferSource,
       });
     }
     const json = sub.toJSON();
+    console.info("[push-client] POST /api/push/subscribe …", { endpointPrefix: (json.endpoint ?? "").slice(0, 48) });
     const res = await fetch("/api/push/subscribe", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -128,12 +167,20 @@ export async function requestPermissionAndSubscribe(vapidPublicKey: string): Pro
     });
     if (!res.ok) {
       const j = (await res.json().catch(() => ({}))) as { error?: string };
+      console.warn("[push-client] subscribe save failed", { httpStatus: res.status, error: j.error });
+      try {
+        await sub.unsubscribe();
+        console.info("[push-client] local subscription unsubscribed after failed server save");
+      } catch (u) {
+        console.warn("[push-client] unsubscribe after failed save failed", u);
+      }
       return {
         ok: false,
         reason: "server_error",
         message: j.error ?? "Podešavanja nisu sačuvana. Pokušajte ponovo.",
       };
     }
+    console.info("[push-client] subscribe save ok");
     return { ok: true };
   } catch (e) {
     return {

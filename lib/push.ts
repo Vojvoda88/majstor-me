@@ -3,6 +3,7 @@
  * Zahtijeva VAPID keys u .env: VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY
  */
 import webpush from "web-push";
+import type { PrismaClient } from "@prisma/client";
 
 let vapidConfigured = false;
 let vapidMissingLogged = false;
@@ -27,12 +28,28 @@ export type PushPayload = {
   tag?: string;
 };
 
+function readWebPushStatusCode(e: unknown): number | undefined {
+  if (typeof e === "object" && e !== null && "statusCode" in e) {
+    const n = Number((e as { statusCode?: number }).statusCode);
+    return Number.isFinite(n) ? n : undefined;
+  }
+  return undefined;
+}
+
+export type PushSendResult = { ok: true } | { ok: false; statusCode?: number };
+
+/**
+ * Jedna isporuka; vraća status HTTP od push servisa (410/404 → čisti DB u sendPushToUser).
+ */
 export async function sendPushNotification(
   subscription: { endpoint: string; keys: { p256dh: string; auth: string } },
   payload: PushPayload
-): Promise<boolean> {
+): Promise<PushSendResult> {
   ensureVapid();
-  if (!vapidConfigured) return false;
+  if (!vapidConfigured) {
+    console.warn("[push] send skipped: VAPID not configured", { endpointPrefix: subscription.endpoint.slice(0, 48) });
+    return { ok: false };
+  }
 
   try {
     const base = process.env.NEXTAUTH_URL ?? process.env.NEXT_PUBLIC_SITE_URL ?? "https://brzimajstor.me";
@@ -54,26 +71,30 @@ export async function sendPushNotification(
       }),
       { TTL: 86400 }
     );
-    return true;
+    return { ok: true };
   } catch (e) {
+    const statusCode = readWebPushStatusCode(e);
     const msg = e instanceof Error ? e.message : String(e);
-    const status = typeof e === "object" && e !== null && "statusCode" in e ? String((e as { statusCode?: number }).statusCode) : "";
     console.warn("[push] sendNotification failed", {
-      statusCode: status || undefined,
+      statusCode: statusCode ?? undefined,
       message: msg.slice(0, 300),
       endpointPrefix: subscription.endpoint.slice(0, 48),
     });
-    return false;
+    return { ok: false, statusCode };
   }
 }
 
 export type SendPushTrace = { requestId?: string };
 
+/** HTTP statusi kod kojih push servis kaže da pretplata više ne važi — brišemo red u DB. */
+const STALE_PUSH_STATUS_CODES = new Set([404, 410]);
+
 /**
  * Pošalji push svim pretplatama određenog korisnika.
+ * Jedna nevaljana pretplata se briše; ostale se i dalje šalju.
  */
 export async function sendPushToUser(
-  prisma: { pushSubscription: { findMany: (args: { where: { userId: string } }) => Promise<Array<{ endpoint: string; p256dh: string; auth: string }>> } },
+  prisma: Pick<PrismaClient, "pushSubscription">,
   userId: string,
   payload: PushPayload,
   trace?: SendPushTrace
@@ -85,14 +106,38 @@ export async function sendPushToUser(
     userId,
     requestId: trace?.requestId,
     subscriptionCount: subs.length,
+    title: payload.title,
   });
   let sent = 0;
   for (const sub of subs) {
-    const ok = await sendPushNotification(
+    const result = await sendPushNotification(
       { endpoint: sub.endpoint, keys: { p256dh: sub.p256dh, auth: sub.auth } },
       payload
     );
-    if (ok) sent++;
+    if (result.ok) {
+      sent++;
+      console.info("[push] delivery ok", {
+        userId,
+        requestId: trace?.requestId,
+        endpointPrefix: sub.endpoint.slice(0, 48),
+      });
+      continue;
+    }
+    const code = result.statusCode;
+    if (code !== undefined && STALE_PUSH_STATUS_CODES.has(code)) {
+      await prisma.pushSubscription.deleteMany({ where: { endpoint: sub.endpoint } });
+      console.info("[push] removed stale subscription after failed delivery", {
+        userId,
+        statusCode: code,
+        endpointPrefix: sub.endpoint.slice(0, 48),
+      });
+    } else {
+      console.warn("[push] delivery failed (subscription kept)", {
+        userId,
+        statusCode: code,
+        endpointPrefix: sub.endpoint.slice(0, 48),
+      });
+    }
   }
   if (subs.length > 0) {
     console.info("[push] sendPushToUser result", {
@@ -103,7 +148,7 @@ export async function sendPushToUser(
     });
   }
   if (subs.length > 0 && sent === 0) {
-    console.warn("[push] sendPushToUser: 0/OK deliveries for user", {
+    console.warn("[push] sendPushToUser: 0 successful deliveries", {
       userId,
       requestId: trace?.requestId,
       subscriptionCount: subs.length,
