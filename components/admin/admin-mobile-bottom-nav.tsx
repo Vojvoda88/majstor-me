@@ -36,7 +36,7 @@ type Props = {
 };
 
 export function AdminMobileBottomNav({ adminRole, hidden = false, pendingTotal = 0 }: Props) {
-  const pathname = usePathname();
+  const pathname = usePathname() ?? "";
 
   const visible = ITEMS.filter((item) => hasPermission(adminRole, item.permission));
 

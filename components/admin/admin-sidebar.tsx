@@ -61,7 +61,8 @@ type SidebarProps = {
 };
 
 export function AdminSidebar({ adminRole, pendingReview, mobileOpen = false, onClose }: SidebarProps) {
-  const pathname = usePathname();
+  /** Pathname kontekst može biti null prije mounta — .startsWith na null ruši cijeli admin shell. */
+  const pathname = usePathname() ?? "";
 
   const visibleItems = NAV_ITEMS.filter((item) =>
     hasPermission(adminRole, item.permission as Parameters<typeof hasPermission>[1])

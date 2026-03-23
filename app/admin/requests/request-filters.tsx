@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { CITIES, REQUEST_CATEGORIES } from "@/lib/constants";
@@ -9,12 +9,21 @@ import { CITIES, REQUEST_CATEGORIES } from "@/lib/constants";
 export function RequestFilters() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [search, setSearch] = useState(searchParams.get("search") ?? "");
-  const [city, setCity] = useState(searchParams.get("city") ?? "");
-  const [category, setCategory] = useState(searchParams.get("category") ?? "");
+  /** Dok router nije spreman, useSearchParams može vratiti null — .get() na null ruši render (RSC digest). */
+  const sp = searchParams ?? new URLSearchParams();
+  const [search, setSearch] = useState(() => sp.get("search") ?? "");
+  const [city, setCity] = useState(() => sp.get("city") ?? "");
+  const [category, setCategory] = useState(() => sp.get("category") ?? "");
+
+  useEffect(() => {
+    if (!searchParams) return;
+    setSearch(searchParams.get("search") ?? "");
+    setCity(searchParams.get("city") ?? "");
+    setCategory(searchParams.get("category") ?? "");
+  }, [searchParams]);
 
   const apply = useCallback(() => {
-    const params = new URLSearchParams(searchParams.toString());
+    const params = new URLSearchParams(sp.toString());
     if (search) params.set("search", search);
     else params.delete("search");
     if (city) params.set("city", city);
@@ -22,7 +31,7 @@ export function RequestFilters() {
     if (category) params.set("category", category);
     else params.delete("category");
     router.push(`/admin/requests?${params.toString()}`);
-  }, [search, city, category, router, searchParams]);
+  }, [search, city, category, router, sp]);
 
   return (
     <div className="flex flex-wrap items-end gap-2 rounded-lg border border-[#E2E8F0] bg-white p-3">
