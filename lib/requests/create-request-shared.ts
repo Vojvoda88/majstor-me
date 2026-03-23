@@ -4,6 +4,7 @@ import { REQUEST_CATEGORIES, MAX_REQUESTS_PER_DAY } from "@/lib/constants";
 import { validateRequestTextFields } from "@/lib/contact-sanitization";
 import { zodErrorToString } from "@/lib/api-response";
 import { trackFunnelEvent } from "@/lib/funnel-events";
+import { generateGuestAccessSecret } from "@/lib/guest-request-token";
 
 export const createRequestSchema = z.object({
   requesterName: z.string().min(2, "Unesite ime"),
@@ -20,7 +21,15 @@ export const createRequestSchema = z.object({
 });
 
 export type CreateRequestSharedResult =
-  | { ok: true; data: Record<string, unknown> & { id: string; handymenNotified: number } }
+  | {
+      ok: true;
+      data: {
+        id: string;
+        handymenNotified: number;
+        /** Samo guest: tajni link za praćenje (ne čuva se u bazi). */
+        guestAccessToken?: string;
+      };
+    }
   | { ok: false; error: string; status: number };
 
 /**
@@ -89,13 +98,18 @@ export async function createRequestShared(
     select: { phone: true },
   });
   const isBlacklisted = blacklistedPhones.some((b) => b.phone.replace(/\D/g, "") === phoneNorm);
+
+  const guestSecret = isGuest ? generateGuestAccessSecret() : null;
+  const { requesterName, title, requesterPhone, requesterEmail, ...rest } = parsed.data;
+  const emailTrimmed = requesterEmail?.trim() || undefined;
+
   if (isBlacklisted) {
     const reqSpam = await prisma.request.create({
       data: {
         userId: isGuest ? null : session!.user!.id,
         requesterName: isGuest ? parsed.data.requesterName : undefined,
         requesterPhone: parsed.data.requesterPhone,
-        requesterEmail: isGuest ? (parsed.data.requesterEmail?.trim() || undefined) : undefined,
+        requesterEmail: isGuest ? emailTrimmed : undefined,
         title: parsed.data.title ?? undefined,
         category: parsed.data.category,
         subcategory: parsed.data.subcategory,
@@ -105,18 +119,18 @@ export async function createRequestShared(
         urgency: parsed.data.urgency,
         photos: parsed.data.photos ?? [],
         adminStatus: "SPAM",
+        guestAccessTokenHash: guestSecret?.hash,
       },
     });
     return {
       ok: true,
-      data: { ...reqSpam, handymenNotified: 0 },
+      data: {
+        id: reqSpam.id,
+        handymenNotified: 0,
+        ...(isGuest && guestSecret ? { guestAccessToken: guestSecret.plain } : {}),
+      },
     };
   }
-
-  const crypto = await import("crypto");
-  const requesterToken = isGuest ? crypto.randomBytes(32).toString("hex") : undefined;
-  const { requesterName, title, requesterPhone, requesterEmail, ...rest } = parsed.data;
-  const emailTrimmed = requesterEmail?.trim() || undefined;
 
   const req = await prisma.request.create({
     data: {
@@ -124,7 +138,7 @@ export async function createRequestShared(
       requesterName: isGuest ? requesterName : undefined,
       requesterPhone: requesterPhone,
       requesterEmail: isGuest ? emailTrimmed : undefined,
-      requesterToken: requesterToken ?? undefined,
+      guestAccessTokenHash: guestSecret?.hash,
       title: title ?? undefined,
       ...rest,
       description: descTrimmed,
@@ -143,12 +157,23 @@ export async function createRequestShared(
     urgency: req.urgency,
   });
 
+  if (isGuest && guestSecret) {
+    const { sendGuestRequestTrackingEmail } = await import("@/lib/email");
+    void sendGuestRequestTrackingEmail({
+      toEmail: emailTrimmed,
+      category: req.category,
+      city: req.city,
+      title: req.title ?? req.category,
+      guestPlainToken: guestSecret.plain,
+    });
+  }
+
   return {
     ok: true,
     data: {
-      ...req,
-      requesterToken: requesterToken ?? undefined,
+      id: req.id,
       handymenNotified: 0,
+      ...(isGuest && guestSecret ? { guestAccessToken: guestSecret.plain } : {}),
     },
   };
 }

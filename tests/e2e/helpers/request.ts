@@ -47,9 +47,11 @@ export async function createRequestAndWaitForRedirect(page: Page): Promise<strin
   await fillCreateRequestForm(page);
   await submitCreateRequestForm(page);
   /** Slanje ide kroz server action (createRequestAction), ne nužno POST /api/requests. */
-  await page.waitForURL(/\/request\/[^/]+/, { timeout: 25_000 });
+  await page.waitForURL(/\/(request-access\/[a-f0-9]+|request\/[^/?#]+)/i, { timeout: 25_000 });
   const url = page.url();
+  const access = url.match(/\/request-access\/([^/?#]+)/i);
+  if (access) return access[1];
   const match = url.match(/\/request\/([^/?#]+)/);
-  if (!match) throw new Error("Expected redirect to /request/[id], got " + url);
+  if (!match) throw new Error("Expected redirect to /request-access/... or /request/[id], got " + url);
   return match[1];
 }

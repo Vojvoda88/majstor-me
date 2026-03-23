@@ -119,8 +119,15 @@ export function CreateRequestForm({ initialCategory, initialCity }: CreateReques
     },
     onSuccess: (data) => {
       const notified = data.handymenNotified ?? 0;
-      const token = data.requesterToken ? `&token=${encodeURIComponent(data.requesterToken)}` : "";
-      router.push(`/request/${data.id}?created=1${notified > 0 ? `&notified=${notified}` : ""}${token}`);
+      const parts = ["created=1"];
+      if (notified > 0) parts.push(`notified=${notified}`);
+      const qs = parts.join("&");
+      const guest = typeof data.guestAccessToken === "string" ? data.guestAccessToken : null;
+      if (guest) {
+        router.push(`/request-access/${encodeURIComponent(guest)}?${qs}`);
+      } else {
+        router.push(`/request/${data.id}?${qs}`);
+      }
       router.refresh();
     },
   });

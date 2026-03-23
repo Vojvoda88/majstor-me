@@ -10,9 +10,12 @@ type AdminStatus = string | null | undefined;
 export function RequestSuccessBanner({
   adminStatus,
   urgency,
+  guestTracking,
 }: {
   adminStatus: AdminStatus;
   urgency: UrgencyLevel;
+  /** Guest / privatni link — jači savjet da se link sačuva. */
+  guestTracking?: boolean;
 }) {
   const searchParams = useSearchParams();
   const created = searchParams.get("created") === "1";
@@ -44,7 +47,16 @@ export function RequestSuccessBanner({
                 šalju ponude.
               </p>
               <p className="mt-2 text-sm leading-relaxed text-emerald-800">
-                Status možete pratiti na ovoj stranici. Ako ste prijavljeni, obavještenja su i u vašem nalogu.
+                {guestTracking ? (
+                  <>
+                    Status zahtjeva možete pratiti preko privatnog linka ispod. Sačuvajte ovaj link kako biste kasnije
+                    vidjeli ponude i status zahtjeva.
+                  </>
+                ) : (
+                  <>
+                    Status možete pratiti na ovoj stranici. Ako ste prijavljeni, obavještenja su i u vašem nalogu.
+                  </>
+                )}
               </p>
               {urgentPriority && (
                 <p className="mt-2 text-sm font-medium text-emerald-900">
@@ -75,7 +87,7 @@ export function RequestSuccessBanner({
               className="h-12 min-h-[44px] w-full gap-1 border-emerald-300 text-emerald-800 sm:h-9 sm:min-h-0 sm:w-auto"
             >
               <Share2 className="h-4 w-4" />
-              Podijeli zahtjev (kopiraj link)
+              {guestTracking ? "Sačuvaj link za praćenje (kopiraj)" : "Podijeli zahtjev (kopiraj link)"}
             </Button>
           </div>
         </div>

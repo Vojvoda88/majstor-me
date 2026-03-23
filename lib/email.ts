@@ -141,6 +141,43 @@ export async function sendJobCompletedEmail(
   }
 }
 
+/**
+ * Guest korisnik: link za praćenje zahtjeva (samo ako je ostavljen email i Resend je podešen).
+ */
+export async function sendGuestRequestTrackingEmail(opts: {
+  toEmail?: string | null;
+  category: string;
+  city: string;
+  title: string;
+  guestPlainToken: string;
+}) {
+  const { toEmail, category, city, title, guestPlainToken } = opts;
+  const to = toEmail?.trim();
+  if (!to) return;
+  const resend = getResend();
+  if (!resend) return;
+  const baseUrl = (process.env.NEXTAUTH_URL ?? "https://brzimajstor.me").replace(/\/$/, "");
+  const link = `${baseUrl}/request-access/${guestPlainToken}`;
+
+  try {
+    await resend.emails.send({
+      from,
+      to,
+      subject: `Vaš zahtjev: ${title}`,
+      html: `
+        <p>Zdravo,</p>
+        <p>Primili smo vaš zahtjev za <strong>${category}</strong> (${city}).</p>
+        <p>Status zahtjeva i ponude možete pratiti na ovom privatnom linku:</p>
+        <p><a href="${link}">Pratite zahtjev →</a></p>
+        <p>Sačuvajte link — ne dijelite ga javno.</p>
+        <p>— BrziMajstor.ME</p>
+      `,
+    });
+  } catch {
+    // Silently fail - email non-critical
+  }
+}
+
 export async function sendNewReviewEmail(
   handymanId: string,
   rating: number,

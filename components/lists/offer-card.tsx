@@ -24,7 +24,7 @@ export function OfferCard({
   offer,
   isOwner,
   requestStatus,
-  requesterToken,
+  guestAccessToken,
 }: {
   offer: {
     id: string;
@@ -52,7 +52,7 @@ export function OfferCard({
   };
   isOwner: boolean;
   requestStatus: string;
-  requesterToken?: string | null;
+  guestAccessToken?: string | null;
 }) {
   const router = useRouter();
   const profile = offer.handyman.handymanProfile;
@@ -63,7 +63,7 @@ export function OfferCard({
       const res = await fetch(`/api/offers/${offer.id}/accept`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(requesterToken ? { token: requesterToken } : {}),
+        body: JSON.stringify(guestAccessToken ? { token: guestAccessToken } : {}),
       });
       const json = await res.json();
       const msg = typeof json?.error === "string" ? json.error : "Greška pri prihvatanju";

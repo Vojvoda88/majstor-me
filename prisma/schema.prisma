@@ -348,7 +348,8 @@ model Request {
   requesterName   String?       @map("requester_name") // za guest
   requesterPhone  String?       @map("requester_phone") // skriven dok ne otključa
   requesterEmail  String?       @map("requester_email") // opciono
-  requesterToken  String?       @unique @map("requester_token")
+  // guest pristup: SHA-256 heks tajnog linka (plain se ne čuva u bazi)
+  guestAccessTokenHash String? @unique @map("guest_access_token_hash")
   adminStatus     RequestAdminStatus? @default(PENDING_REVIEW) @map("admin_status")
   deletedAt       DateTime?     @map("deleted_at")
   createdAt       DateTime      @default(now()) @map("created_at")

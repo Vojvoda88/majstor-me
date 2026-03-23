@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth";
 import { sendOfferAcceptedEmail } from "@/lib/email";
 import { createNotification } from "@/lib/notifications";
 import { logError } from "@/lib/logger";
+import { guestPlainTokenMatchesHash } from "@/lib/guest-request-token";
 
 export const dynamic = "force-dynamic";
 
@@ -31,10 +32,10 @@ export async function POST(
     let isOwner = false;
     if (req.userId && session?.user?.id === req.userId) {
       isOwner = true;
-    } else if (!req.userId && req.requesterToken) {
+    } else if (!req.userId && req.guestAccessTokenHash) {
       const body = await request.json().catch(() => ({}));
       const token = (body as { token?: string }).token;
-      isOwner = token === req.requesterToken;
+      isOwner = guestPlainTokenMatchesHash(token, req.guestAccessTokenHash);
     }
 
     if (!isOwner) {
