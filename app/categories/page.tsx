@@ -19,7 +19,7 @@ import { CITY_SLUGS } from "@/lib/slugs";
 const baseUrl = getSiteUrl();
 
 const categoriesDescription =
-  "Pregledajte sve kategorije usluga u Crnoj Gori – vodoinstalater, električar, klima servis, keramičar i druge. Brzo pronađite pravog majstora za svaki posao.";
+  "Sve kategorije majstora u Crnoj Gori — od vode i struje do klime i čišćenja. Otvorite uslugu ili pošaljite zahtjev.";
 
 export const metadata: Metadata = {
   title: "Majstori po kategorijama",
@@ -29,11 +29,15 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "Majstori po kategorijama | BrziMajstor.ME",
-    description:
-      "Pregledajte sve kategorije usluga u Crnoj Gori i pronađite provjerenog majstora – od vodoinstalatera i električara do selidbi i čišćenja.",
+    description: categoriesDescription,
     url: `${baseUrl}/categories`,
     siteName: "BrziMajstor.ME",
     type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Majstori po kategorijama | BrziMajstor.ME",
+    description: categoriesDescription,
   },
 };
 

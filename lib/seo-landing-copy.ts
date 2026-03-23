@@ -10,7 +10,7 @@ export function categoryMetaTitle(displayName: string): string {
 }
 
 export function categoryMetaDescription(displayName: string): string {
-  return `${displayName}: pregled profila u ovoj kategoriji (cijela Crna Gora). Birajte grad filterom, uporedite ocjene ili pošaljite jedan besplatan zahtjev i sačekajte ponude.`;
+  return `${displayName} u Crnoj Gori: profili majstora, filter po gradu, besplatan zahtjev ako želite ponude od više strana.`;
 }
 
 export function gradMetaTitle(cityLocative: string): string {
@@ -18,7 +18,7 @@ export function gradMetaTitle(cityLocative: string): string {
 }
 
 export function gradMetaDescription(cityLocative: string, cityName: string): string {
-  return `Majstori u ${cityLocative} (${cityName}): više kategorija na jednom mjestu — profili sa ocjenama i recenzijama, ili jedan zahtjev za ponude. Nema obaveze da odmah birate izvođača.`;
+  return `${cityName}: majstori po kategorijama na jednom mjestu — profili sa ocjenama ili jedan zahtjev za ponude. Bez obaveze da odmah birate izvođača.`;
 }
 
 /** Isti oblik kao rezultat `parseCategoryCitySlug` */
@@ -40,7 +40,7 @@ export function buildSeoLandingDescription(parsed: SeoCombinedParsed): string {
   const gen = cityGenitive(parsed.cityDisplayName);
 
   const byCategory: Record<string, string> = {
-    vodoinstalater: `Vodoinstalater u ${loc}: pregled profila i opcija za besplatan zahtjev. Opišite curenje, zamjenu ili instalaciju — majstori koji mogu da odgovore šalju ponude; možete uporediti prije odluke.`,
+    vodoinstalater: `Vodoinstalater u ${loc}: profili ispod ili besplatan zahtjev — opišite curenje, zamjenu ili instalaciju i uporedite ponude.`,
     elektricar: `Električar u ${loc} za instalacije, priključenje ili popravke. Profili ispod; ako želite više ponuda, jedan zahtjev ide majstorima iz ${gen} koji rade tu vrstu posla.`,
     "klima-servis": `Klima servis u ${loc}: montaža, punjenje, servis. Pregledajte profile ili objavite zahtjev ako želite više ponuda za isti posao.`,
     keramicar: `Keramičar u ${loc} za kupatila, pločice i završne radove. Lista ispod; jedan zahtjev šalje opis majstorima ako želite da vam se jave više njih.`,

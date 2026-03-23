@@ -45,6 +45,11 @@ export async function generateMetadata({
       siteName: "BrziMajstor.ME",
       type: "website",
     },
+    twitter: {
+      card: "summary_large_image",
+      title: `${title} | BrziMajstor.ME`,
+      description,
+    },
   };
 }
 

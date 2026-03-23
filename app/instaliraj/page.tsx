@@ -8,14 +8,14 @@ import { getSiteUrl } from "@/lib/site-url";
 const baseUrl = getSiteUrl();
 
 export const metadata: Metadata = {
-  title: "Instaliraj aplikaciju",
+  title: "Instaliraj aplikaciju (PWA)",
   description:
-    "Dodaj BrziMajstor.ME na početni ekran (PWA) — brži pristup; nije u App Store / Play Store.",
+    "Dodaj BrziMajstor.ME na početni ekran — brži pristup. Nije u App Store / Play Store.",
   alternates: { canonical: `${baseUrl}/instaliraj` },
   openGraph: {
     title: "Instaliraj aplikaciju | BrziMajstor.ME",
     description:
-      "Web aplikacija na početnom ekranu — pun ekran kao obična aplikacija.",
+      "PWA na početnom ekranu: pun ekran, kao obična aplikacija.",
     url: `${baseUrl}/instaliraj`,
     siteName: "BrziMajstor.ME",
     type: "website",
@@ -23,8 +23,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary",
     title: "Instaliraj aplikaciju | BrziMajstor.ME",
-    description:
-      "Dodaj BrziMajstor.ME na početni ekran telefona kao PWA.",
+    description: "Dodaj BrziMajstor.ME na telefon kao PWA.",
   },
 };
 

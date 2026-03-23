@@ -23,7 +23,7 @@ export function organizationEntity(siteUrl: string): Record<string, unknown> {
     name: "BrziMajstor.ME",
     url: root,
     description:
-      "Platforma za povezivanje korisnika sa majstorima i serviserima u Crnoj Gori — objava zahtjeva i pregled ponuda.",
+      "BrziMajstor.ME — besplatna objava zahtjeva za majstore u Crnoj Gori i pregled ponuda uz zahtjev.",
     areaServed: { "@type": "Country", name: "Crna Gora" },
   };
 }

@@ -39,6 +39,11 @@ export async function generateMetadata({
       siteName: "BrziMajstor.ME",
       type: "website",
     },
+    twitter: {
+      card: "summary_large_image",
+      title: ogTitle,
+      description,
+    },
   };
 }
 

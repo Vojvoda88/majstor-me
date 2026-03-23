@@ -29,16 +29,22 @@ export async function generateMetadata({
   const title = gradMetaTitle(nameLocative);
   const description = gradMetaDescription(nameLocative, name);
 
+  const twTitle = `${title} | BrziMajstor.ME`;
   return {
     title,
     description,
     alternates: { canonical: `${base}/grad/${slug}` },
     openGraph: {
-      title: `${title} | BrziMajstor.ME`,
+      title: twTitle,
       description,
       url: `${base}/grad/${slug}`,
       siteName: "BrziMajstor.ME",
       type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: twTitle,
+      description,
     },
   };
 }
