@@ -139,12 +139,12 @@ export default async function HandymanDashboardPage({
   const onboarding = calcProfileCompletion(profile, profile?.user);
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-6 sm:px-6 sm:py-8">
+    <div className="mx-auto max-w-5xl px-4 py-5 sm:px-6 sm:py-8">
       {profile.workerStatus === "PENDING_REVIEW" && <HandymanPendingReviewBanner />}
       {onboarding.percent < 100 && (
         <OnboardingBanner percent={onboarding.percent} steps={onboarding.steps} className="mb-6" />
       )}
-      <div className="mb-6">
+      <div className="mb-5">
         <HandymanPushNotificationsCard />
       </div>
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">

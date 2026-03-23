@@ -71,7 +71,7 @@ export function AdminShell({ adminRole, session, pendingReview, children }: Prop
       />
 
       <div className="flex min-h-screen w-full min-w-0 flex-col lg:pl-64">
-        <header className="sticky top-0 z-30 flex min-h-16 shrink-0 items-center gap-2 border-b border-[#E2E8F0] bg-white px-3 py-2 sm:px-6">
+        <header className="sticky top-0 z-30 flex min-h-16 shrink-0 flex-wrap items-center gap-x-2 gap-y-1.5 border-b border-[#E2E8F0] bg-white px-3 py-2 sm:gap-x-3 sm:px-6">
           <button
             type="button"
             className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-[#E2E8F0] bg-white text-[#0F172A] lg:hidden"
@@ -89,7 +89,7 @@ export function AdminShell({ adminRole, session, pendingReview, children }: Prop
             <span className="hidden sm:inline"> ({roleLabel})</span>
           </span>
 
-          <div className="flex min-w-0 shrink-0 items-center gap-2 sm:gap-3">
+          <div className="flex min-w-0 shrink-0 items-center gap-1.5 sm:gap-3">
             <AdminPendingHeaderBadge counts={pendingReview} />
             <NotificationsDropdown />
             <Link

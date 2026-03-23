@@ -58,7 +58,7 @@ export default function HomePage() {
         <StatsStrip />
       </div>
 
-      <div className="mx-auto max-w-6xl px-4 py-8 sm:px-5 md:px-6 md:py-16">
+      <div className="mx-auto max-w-6xl px-4 py-6 sm:px-5 md:px-6 md:py-16">
         <div className="animate-fade-up" style={{ animationDelay: "0.05s", animationFillMode: "both" }}>
           <HowItWorksForUsers />
         </div>

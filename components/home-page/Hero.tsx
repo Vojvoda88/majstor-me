@@ -13,7 +13,7 @@ const TRUST = [
 
 export function Hero() {
   return (
-    <section className="relative flex min-h-[min(88dvh,620px)] w-full items-center justify-center overflow-hidden px-4 pb-14 pt-[max(5.5rem,env(safe-area-inset-top)+4.25rem)] text-white sm:px-5 md:min-h-[720px] md:pb-24 md:pt-32">
+    <section className="relative flex min-h-[min(88dvh,620px)] w-full items-center justify-center overflow-hidden px-4 pb-12 pt-[max(5.25rem,env(safe-area-inset-top)+4rem)] text-white sm:px-5 md:min-h-[720px] md:pb-24 md:pt-32">
       <Image
         src={HERO_IMAGE}
         alt="Majstor na poslu"
@@ -67,7 +67,7 @@ export function Hero() {
           </Link>
         </div>
 
-        <div className="mt-6 flex flex-wrap items-center justify-center gap-2 sm:gap-3 md:mt-10 md:gap-4">
+        <div className="mt-5 flex flex-wrap items-center justify-center gap-2 sm:gap-3 md:mt-10 md:gap-4">
           {TRUST.map(({ icon: Icon, label }) => (
             <span
               key={label}

@@ -52,7 +52,7 @@ function setUiMode(mode: UiMode): void {
 
 const TITLE = "Ne propusti nove zahtjeve";
 const BODY =
-  "Uključite obavještenja na ovom uređaju — čim se pojavi posao koji odgovara vašoj usluci i gradu, dobijate obavještenje. Možete odmah otvoriti zahtjev i poslati ponudu.";
+  "Uključite obavještenja na ovom uređaju: čim stigne posao koji odgovara vašoj usluci i gradu, dobijate push i možete odmah otvoriti zahtjev.";
 
 /**
  * Majstor: eksplicitno uključivanje push obavještenja. Nakon „Kasnije“ ostaje vidljiv kompaktan blok (nije „jedna šansa“).
@@ -122,8 +122,7 @@ export function HandymanPushNotificationsCard() {
         <div className="flex flex-wrap items-center gap-2">
           <span className="inline-flex h-2.5 w-2.5 shrink-0 rounded-full bg-emerald-500" aria-hidden />
           <p className="text-sm font-semibold text-emerald-900">
-            Obavještenja su uključena — šaljemo push kada stigne novi zahtjev koji vam odgovara (nakon što zahtjev prođe u
-            sistem).
+            Obavještenja su uključena — push stiže kad zahtjev koji vam odgovara uđe u sistem.
           </p>
         </div>
       </div>

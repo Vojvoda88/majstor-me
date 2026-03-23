@@ -35,7 +35,7 @@ export function HandymanCreditsPill() {
       href="/dashboard/handyman/credits"
       id="credits"
       className={cn(
-        "inline-flex max-w-[7rem] items-center gap-1.5 rounded-full border px-2.5 py-1.5 text-sm font-semibold tabular-nums transition sm:max-w-none sm:px-3",
+        "inline-flex max-w-[6.25rem] items-center gap-1 rounded-full border px-2 py-1.5 text-[13px] font-semibold tabular-nums transition sm:max-w-none sm:gap-1.5 sm:px-3 sm:text-sm",
         low
           ? "border-amber-300/90 bg-amber-50 text-amber-950 shadow-sm"
           : "border-slate-200 bg-white text-slate-800 hover:border-slate-300"

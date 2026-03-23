@@ -309,7 +309,7 @@ export function CreateRequestForm({ initialCategory, initialCity }: CreateReques
         </form>
       </CardContent>
     </Card>
-    <div className="fixed inset-x-0 bottom-0 z-[60] border-t border-[#E2E8F0] bg-[rgba(255,255,255,0.92)] px-4 pt-3 pb-[calc(env(safe-area-inset-bottom,0px)+12px)] shadow-[0_-8px_24px_rgba(15,23,42,0.08)] backdrop-blur-[16px] md:hidden">
+    <div className="fixed inset-x-0 bottom-0 z-[60] border-t border-[#E2E8F0] bg-[rgba(255,255,255,0.94)] px-4 pt-3 pb-[calc(env(safe-area-inset-bottom,0px)+12px)] shadow-sticky backdrop-blur-[16px] md:hidden">
       <button
         type="submit"
         form="create-request-form"

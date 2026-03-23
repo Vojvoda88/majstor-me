@@ -34,9 +34,9 @@ export default function CreateRequestPage(props: { searchParams?: CreateRequestS
   const params = props.searchParams ?? {};
 
   return (
-    <div className="min-h-screen bg-brand-page pb-28 pt-16 md:pb-10 md:pt-20">
+    <div className="min-h-screen bg-brand-page pb-[max(7rem,calc(env(safe-area-inset-bottom,0px)+5.5rem))] pt-16 md:pb-10 md:pt-20">
       <PremiumMobileHeader />
-      <div className="mx-auto max-w-[430px] px-4 py-8 md:max-w-2xl md:py-10">
+      <div className="mx-auto max-w-[430px] px-4 py-6 md:max-w-2xl md:py-10">
         <Breadcrumbs
           items={[
             { label: "Početna", href: "/" },

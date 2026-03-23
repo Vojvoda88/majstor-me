@@ -150,18 +150,18 @@ export function InstallCTA() {
         aria-hidden
       />
       <div
-        className="pointer-events-auto fixed bottom-[max(0.75rem,env(safe-area-inset-bottom))] left-3 right-3 z-[95] mx-auto max-w-md rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xl sm:left-1/2 sm:right-auto sm:w-full sm:-translate-x-1/2"
+        className="pointer-events-auto fixed bottom-[max(0.75rem,env(safe-area-inset-bottom))] left-3 right-3 z-[95] mx-auto max-w-md rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xl sm:left-1/2 sm:right-auto sm:w-full sm:-translate-x-1/2 sm:p-5"
         role="dialog"
         aria-modal="true"
         aria-labelledby="pwa-entry-title"
       >
-        <div className="flex items-start justify-between gap-2">
+        <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <h2 id="pwa-entry-title" className="font-display text-lg font-bold tracking-tight text-brand-navy">
+            <h2 id="pwa-entry-title" className="font-display text-base font-bold tracking-tight text-brand-navy sm:text-lg">
               Preuzmi aplikaciju
             </h2>
-            <p className="mt-1 text-sm leading-snug text-slate-600">
-              Brži pristup sa početnog ekrana i obavještenja o ponudama i zahtjevima.
+            <p className="mt-1.5 text-[13px] leading-snug text-slate-600 sm:text-sm">
+              Ikonica na početnom ekranu i obavještenja o ponudama i zahtjevima.
             </p>
           </div>
           <button
@@ -174,7 +174,7 @@ export function InstallCTA() {
           </button>
         </div>
 
-        <div className="mt-4 flex flex-col gap-2">
+        <div className="mt-4 flex flex-col gap-2.5">
           {installReady ? (
             <button
               type="button"
