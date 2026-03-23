@@ -103,6 +103,9 @@ model User {
   passwordHash  String   @map("password_hash")
   city          String?
   emailVerified DateTime? @map("email_verified")
+  // SHA-256 heks tokena za potvrdu emaila (password registracija)
+  emailVerificationTokenHash String? @unique @map("email_verification_token_hash")
+  emailVerificationExpiresAt DateTime? @map("email_verification_expires_at")
   phoneVerified DateTime? @map("phone_verified")
   suspendedAt   DateTime? @map("suspended_at")
   bannedAt      DateTime? @map("banned_at")

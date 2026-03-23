@@ -30,13 +30,14 @@ async function main() {
   const admin = await prisma.user.upsert({
     where: { email: adminEmail },
     // Uvijek uskladi lozinku sa seedom (Test123!) da E2E / lokalni smoke ne padaju na starom hash-u
-    update: { role: "ADMIN", name: "Admin Korisnik", passwordHash: password },
+    update: { role: "ADMIN", name: "Admin Korisnik", passwordHash: password, emailVerified: new Date() },
     create: {
       email: adminEmail,
       name: "Admin Korisnik",
       passwordHash: password,
       role: "ADMIN",
       city: "Nikšić",
+      emailVerified: new Date(),
     },
   });
   await prisma.handymanProfile.deleteMany({ where: { userId: admin.id } });
@@ -51,7 +52,7 @@ async function main() {
   const users = await Promise.all([
     prisma.user.upsert({
       where: { email: "marko@test.me" },
-      update: {},
+      update: { emailVerified: new Date() },
       create: {
         email: "marko@test.me",
         name: "Marko Marković",
@@ -59,17 +60,19 @@ async function main() {
         role: "USER",
         city: "Nikšić",
         phone: "+382 69 123 456",
+        emailVerified: new Date(),
       },
     }),
     prisma.user.upsert({
       where: { email: "ana@test.me" },
-      update: {},
+      update: { emailVerified: new Date() },
       create: {
         email: "ana@test.me",
         name: "Ana Jovanović",
         passwordHash: password,
         role: "USER",
         city: "Nikšić",
+        emailVerified: new Date(),
       },
     }),
     prisma.user.upsert({
@@ -90,7 +93,7 @@ async function main() {
   const handymanUsers = await Promise.all([
     prisma.user.upsert({
       where: { email: "majstor.vodoinstalater@test.me" },
-      update: {},
+      update: { emailVerified: new Date() },
       create: {
         email: "majstor.vodoinstalater@test.me",
         name: "Miloš Vodoinstalater",
@@ -98,17 +101,19 @@ async function main() {
         role: "HANDYMAN",
         city: "Nikšić",
         phone: "+382 69 111 222",
+        emailVerified: new Date(),
       },
     }),
     prisma.user.upsert({
       where: { email: "majstor.elektricar@test.me" },
-      update: {},
+      update: { emailVerified: new Date() },
       create: {
         email: "majstor.elektricar@test.me",
         name: "Nikola Električar",
         passwordHash: password,
         role: "HANDYMAN",
         city: "Nikšić",
+        emailVerified: new Date(),
       },
     }),
     prisma.user.upsert({
@@ -125,24 +130,26 @@ async function main() {
     }),
     prisma.user.upsert({
       where: { email: "majstor.ciscenje@test.me" },
-      update: {},
+      update: { emailVerified: new Date() },
       create: {
         email: "majstor.ciscenje@test.me",
         name: "Jelena Čišćenje",
         passwordHash: password,
         role: "HANDYMAN",
         city: "Nikšić",
+        emailVerified: new Date(),
       },
     }),
     prisma.user.upsert({
       where: { email: "majstor.klima@test.me" },
-      update: {},
+      update: { emailVerified: new Date() },
       create: {
         email: "majstor.klima@test.me",
         name: "Stefan Klima Servis",
         passwordHash: password,
         role: "HANDYMAN",
         city: "Nikšić",
+        emailVerified: new Date(),
       },
     }),
   ]);

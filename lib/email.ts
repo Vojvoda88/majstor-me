@@ -178,6 +178,33 @@ export async function sendGuestRequestTrackingEmail(opts: {
   }
 }
 
+/**
+ * Link za potvrdu emaila nakon password registracije.
+ */
+export async function sendEmailVerificationEmail(to: string, name: string, plainToken: string) {
+  const resend = getResend();
+  if (!resend) return;
+  const baseUrl = (process.env.NEXTAUTH_URL ?? "https://brzimajstor.me").replace(/\/$/, "");
+  const link = `${baseUrl}/verify-email?token=${encodeURIComponent(plainToken)}`;
+
+  try {
+    await resend.emails.send({
+      from,
+      to,
+      subject: "Potvrdite email adresu — BrziMajstor.ME",
+      html: `
+        <p>Zdravo${name ? ` ${name.split(/\s+/)[0]}` : ""},</p>
+        <p>Potvrdite email adresu kako biste nastavili korištenje naloga.</p>
+        <p><a href="${link}">Potvrdi email →</a></p>
+        <p>Link važi 24 sata. Ako niste vi tražili registraciju, zanemarite ovu poruku.</p>
+        <p>— BrziMajstor.ME</p>
+      `,
+    });
+  } catch {
+    // Silently fail - email non-critical for UX copy; korisnik i dalje vidi poruku na loginu
+  }
+}
+
 export async function sendNewReviewEmail(
   handymanId: string,
   rating: number,

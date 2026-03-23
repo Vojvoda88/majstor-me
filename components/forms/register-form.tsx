@@ -1,13 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { PasswordField } from "@/components/ui/password-field";
 import { Label } from "@/components/ui/label";
 import {
   Card,
@@ -94,22 +94,7 @@ export function RegisterForm({
       return;
     }
 
-    const signInResult = await signIn("credentials", {
-      email: payload.email,
-      password: payload.password,
-      redirect: false,
-    });
-
-    if (signInResult?.error) {
-      router.push("/login");
-      return;
-    }
-
-    if (role === "HANDYMAN") {
-      router.push("/dashboard/handyman");
-    } else {
-      router.push("/request/create");
-    }
+    router.push("/login?registered=1");
     router.refresh();
   }
 
@@ -193,10 +178,10 @@ export function RegisterForm({
           </div>
           <div className="space-y-3">
             <Label htmlFor="password">Lozinka</Label>
-            <Input
+            <PasswordField
               id="password"
-              type="password"
               placeholder="Min. 6 karaktera"
+              autoComplete="new-password"
               {...register("password")}
             />
             {errors.password && (

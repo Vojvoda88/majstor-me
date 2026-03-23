@@ -84,6 +84,24 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
+    /**
+     * Password (credentials): bez potvrđenog emaila nema sesije.
+     * OAuth (npr. Google) kada se doda: provider !== credentials → ne primjenjuj ovo pravilo.
+     */
+    async signIn({ user, account }) {
+      if (account?.provider === "credentials" && user?.id) {
+        const { prisma } = await import("@/lib/db");
+        const u = await prisma.user.findUnique({
+          where: { id: user.id as string },
+          select: { emailVerified: true, email: true },
+        });
+        if (u && u.emailVerified == null) {
+          const email = encodeURIComponent(u.email ?? "");
+          return `/login?error=unverified&email=${email}`;
+        }
+      }
+      return true;
+    },
     async jwt({ token, user }) {
       if (user) {
         const u = user as { id?: string; role?: string; email?: string; name?: string | null };
