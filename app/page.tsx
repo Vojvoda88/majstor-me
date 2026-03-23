@@ -22,6 +22,9 @@ const homeDescription =
 export const metadata: Metadata = {
   title: "Marketplace majstora u Crnoj Gori",
   description: homeDescription,
+  alternates: {
+    canonical: siteUrl,
+  },
   openGraph: {
     title: "Marketplace majstora u Crnoj Gori | BrziMajstor.ME",
     description: homeDescription,

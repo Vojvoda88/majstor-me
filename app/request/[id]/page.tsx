@@ -1,9 +1,14 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { guestPlainTokenMatchesHash } from "@/lib/guest-request-token";
 import { requestDetailInclude } from "@/lib/requests/request-detail-include";
 import { SiteHeader } from "@/components/layout/site-header";
 import { RequestDetailView } from "@/components/request/request-detail-view";
+
+export const metadata: Metadata = {
+  robots: { index: false, follow: false },
+};
 
 export const dynamic = "force-dynamic";
 

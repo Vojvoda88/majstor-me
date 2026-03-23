@@ -3,10 +3,29 @@ import Link from "next/link";
 import { PublicHeader } from "@/components/layout/PublicHeader";
 import { PublicFooter } from "@/components/layout/PublicFooter";
 import { InstallHints } from "@/components/pwa/install-hints";
+import { getSiteUrl } from "@/lib/site-url";
+
+const baseUrl = getSiteUrl();
 
 export const metadata: Metadata = {
   title: "Instaliraj aplikaciju",
-  description: "Dodaj BrziMajstor.ME na početni ekran telefona — brži pristup kao aplikacija.",
+  description:
+    "Dodaj BrziMajstor.ME na početni ekran (PWA) — brži pristup; nije u App Store / Play Store.",
+  alternates: { canonical: `${baseUrl}/instaliraj` },
+  openGraph: {
+    title: "Instaliraj aplikaciju | BrziMajstor.ME",
+    description:
+      "Web aplikacija na početnom ekranu — pun ekran kao obična aplikacija.",
+    url: `${baseUrl}/instaliraj`,
+    siteName: "BrziMajstor.ME",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "Instaliraj aplikaciju | BrziMajstor.ME",
+    description:
+      "Dodaj BrziMajstor.ME na početni ekran telefona kao PWA.",
+  },
 };
 
 export default function InstalirajPage() {

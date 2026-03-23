@@ -10,7 +10,8 @@ import { RegisterMajstorSignOutCta } from "@/components/auth/register-majstor-si
 export const metadata: Metadata = {
   title: "Registracija",
   description:
-    "Kreirajte nalog kao korisnik (objava zahtjeva je besplatna) ili kao majstor (bez pretplate; krediti za kontakt).",
+    "Novi nalog: korisnik (besplatna objava zahtjeva) ili majstor (bez pretplate; krediti za otključavanje kontakta).",
+  robots: { index: false, follow: true },
 };
 
 export const dynamic = "force-dynamic";

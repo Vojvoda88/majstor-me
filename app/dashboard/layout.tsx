@@ -1,6 +1,11 @@
+import type { Metadata } from "next";
 import { AppProviders } from "@/app/app-providers";
 import { PremiumMobileHeader } from "@/components/layout/PremiumMobileHeader";
 import { MobileBottomNav } from "@/components/layout/mobile-bottom-nav";
+
+export const metadata: Metadata = {
+  robots: { index: false, follow: false },
+};
 
 /**
  * SessionProvider je već u root layoutu (app/layout.tsx). Dupli <Providers> ovdje

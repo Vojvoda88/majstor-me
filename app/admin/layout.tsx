@@ -1,7 +1,12 @@
+import type { Metadata } from "next";
 import { AppProviders } from "@/app/app-providers";
 import { AdminShell } from "@/components/admin/admin-shell";
 import { requireAdmin } from "@/lib/admin/auth";
 import { getAdminPendingReviewCounts } from "@/lib/admin-pending-counts";
+
+export const metadata: Metadata = {
+  robots: { index: false, follow: false },
+};
 
 export const dynamic = "force-dynamic";
 
