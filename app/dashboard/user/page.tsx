@@ -106,6 +106,16 @@ export default async function UserDashboardPage() {
                       >
                         {STATUS_LABELS[req.status]}
                       </Badge>
+                      {req.status === "OPEN" && req.adminStatus === "PENDING_REVIEW" && (
+                        <Badge variant="outline" className="border-amber-300 bg-amber-50 text-amber-900">
+                          Čeka pregled administratora
+                        </Badge>
+                      )}
+                      {req.status === "OPEN" && req.adminStatus === "DISTRIBUTED" && (
+                        <Badge variant="outline" className="border-emerald-200 bg-emerald-50 text-emerald-800">
+                          Odobren — majstori mogu odgovoriti
+                        </Badge>
+                      )}
                       <UrgencyBadge urgency={req.urgency} />
                       <span className="flex items-center gap-1 text-sm text-[#64748B]">
                         <MapPin className="h-4 w-4" />

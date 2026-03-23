@@ -83,19 +83,6 @@ export default async function RequestDetailPage({
 
   if (!req) notFound();
 
-  let handymenNotified = 0;
-  try {
-    handymenNotified = await prisma.handymanProfile.count({
-      where: {
-        workerCategories: {
-          some: { category: { name: req.category } },
-        },
-      },
-    });
-  } catch {
-    // ignore
-  }
-
   const isOwner =
     (req.userId && session?.user?.id === req.userId) ||
     (!req.userId && !!req.requesterToken && token === req.requesterToken);
@@ -152,7 +139,7 @@ export default async function RequestDetailPage({
         </Link>
 
       {isOwner && (
-        <RequestSuccessBanner requestId={id} handymenNotified={handymenNotified} />
+        <RequestSuccessBanner adminStatus={req.adminStatus} urgency={req.urgency} />
       )}
 
       <Card className="rounded-xl bg-white shadow-sm transition hover:shadow-md">
@@ -195,9 +182,14 @@ export default async function RequestDetailPage({
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
-          {isOwner && req.status === "OPEN" && handymenNotified > 0 && (
+          {isOwner && req.status === "OPEN" && req.adminStatus === "PENDING_REVIEW" && (
+            <p className="rounded-lg border border-amber-200 bg-amber-50/90 px-3 py-2 text-sm text-amber-950">
+              Zahtjev čeka pregled administratora. Nakon odobrenja, majstori će moći da vide zahtjev i da šalju ponude.
+            </p>
+          )}
+          {isOwner && req.status === "OPEN" && req.adminStatus === "DISTRIBUTED" && (
             <p className="rounded-lg bg-emerald-50 px-3 py-2 text-sm text-emerald-800">
-              Obavijestili smo {handymenNotified} majstora u vašoj oblasti koji mogu poslati ponude.
+              Zahtjev je odobren i prosleđen majstorima. Uskoro možete očekivati ponude.
             </p>
           )}
           <div>

@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { HandymanRequestList } from "./handyman-request-list";
 import { OnboardingBanner } from "@/components/handyman/onboarding-banner";
 import { HandymanPushNotificationsCard } from "@/components/handyman/push-notifications-card";
+import { HandymanPendingReviewBanner } from "@/components/handyman/handyman-pending-review-banner";
 import { calcProfileCompletion } from "@/lib/handyman-onboarding";
 import { isCreditsRequired, LOW_CREDITS_THRESHOLD } from "@/lib/credits";
 import { REQUEST_CATEGORY_FALLBACK } from "@/lib/constants";
@@ -65,7 +66,8 @@ export default async function HandymanDashboardPage({
           <CardHeader>
             <CardTitle className="text-xl">Profil majstora</CardTitle>
             <CardDescription>
-              Izaberite kategorije i gradove u kojima nudite usluge prije nego što možete pregledati zahtjeve.
+              Prijava je primljena. Popunite profil (kategorije, grad) i sačuvajte — nakon toga profil ide na pregled
+              administratora. Bićete obaviješteni kada profil bude odobren.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -138,6 +140,7 @@ export default async function HandymanDashboardPage({
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-6 sm:px-6 sm:py-8">
+      {profile.workerStatus === "PENDING_REVIEW" && <HandymanPendingReviewBanner />}
       {onboarding.percent < 100 && (
         <OnboardingBanner percent={onboarding.percent} steps={onboarding.steps} className="mb-6" />
       )}
