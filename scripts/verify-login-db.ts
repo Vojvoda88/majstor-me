@@ -20,9 +20,23 @@ async function main() {
   const normalized = emailArg.trim().toLowerCase();
   console.log("DATABASE_URL host (bez lozinke):", maskUrl(process.env.DATABASE_URL));
 
-  const byUnique = await prisma.user.findUnique({ where: { email: normalized } });
+  const userSelect = {
+    id: true,
+    email: true,
+    role: true,
+    passwordHash: true,
+    emailVerified: true,
+    suspendedAt: true,
+    bannedAt: true,
+  } as const;
+
+  const byUnique = await prisma.user.findUnique({
+    where: { email: normalized },
+    select: userSelect,
+  });
   const byInsensitive = await prisma.user.findFirst({
     where: { email: { equals: normalized, mode: "insensitive" } },
+    select: userSelect,
   });
 
   console.log(JSON.stringify({

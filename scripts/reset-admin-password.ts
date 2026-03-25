@@ -36,6 +36,7 @@ async function main() {
   const email = emailArg.trim().toLowerCase();
   const user = await prisma.user.findFirst({
     where: { email: { equals: email, mode: "insensitive" } },
+    select: { id: true, email: true, role: true, name: true },
   });
 
   const passwordHash = await hash(newPassword, 12);

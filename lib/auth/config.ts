@@ -43,9 +43,23 @@ export const authOptions: NextAuthOptions = {
          * (npr. stariji unos sa velikim slovima) — PostgreSQL unique je case-sensitive.
          * Case-insensitive lookup pokriva i novi (lowercase) i legacy zapis.
          */
+        /**
+         * Eksplicitan select: ako produkcijska baza nije primijenila migracije za
+         * email_verification_* kolone, findFirst bez select-a baca P2022 i ruši login.
+         */
         const user = await prisma.user.findFirst({
           where: {
             email: { equals: email, mode: "insensitive" },
+          },
+          select: {
+            id: true,
+            email: true,
+            name: true,
+            passwordHash: true,
+            role: true,
+            emailVerified: true,
+            suspendedAt: true,
+            bannedAt: true,
           },
         });
 
