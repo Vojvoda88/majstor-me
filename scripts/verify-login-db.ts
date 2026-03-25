@@ -40,6 +40,29 @@ async function main() {
     return;
   }
 
+  const adminProfile = await prisma.adminProfile.findUnique({
+    where: { userId: user.id },
+    select: { id: true, adminRole: true },
+  });
+
+  console.log(
+    JSON.stringify(
+      {
+        step: "userRow",
+        id: user.id,
+        emailInDb: user.email,
+        role: user.role,
+        emailVerified: user.emailVerified ? user.emailVerified.toISOString() : null,
+        suspendedAt: user.suspendedAt ? user.suspendedAt.toISOString() : null,
+        bannedAt: user.bannedAt ? user.bannedAt.toISOString() : null,
+        hasAdminProfile: !!adminProfile,
+        adminRole: adminProfile?.adminRole ?? null,
+      },
+      null,
+      2
+    )
+  );
+
   const hashLen = user.passwordHash?.length ?? 0;
   console.log(JSON.stringify({
     step: "passwordHash",
@@ -54,7 +77,19 @@ async function main() {
 
   const ok = await compare(passwordArg, user.passwordHash);
   console.log(JSON.stringify({ step: "bcrypt.compare", ok }, null, 2));
-  console.log(ok ? "RESULT: lozinka OK — authorize bi trebalo da prođe" : "RESULT: lozinka NE odgovara hash-u — 401");
+
+  if (user.suspendedAt || user.bannedAt) {
+    console.log(
+      "RESULT: nalog je suspended/banned — authorize vraća null (isto kao pogrešna lozinka u UI)"
+    );
+    return;
+  }
+
+  console.log(
+    ok
+      ? "RESULT: lozinka OK — authorize bi trebalo da prođe (signIn/JWT zatim odlučuju sesiju)"
+      : "RESULT: lozinka NE odgovara hash-u — 401"
+  );
 }
 
 function maskUrl(url: string | undefined): string {

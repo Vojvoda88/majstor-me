@@ -25,6 +25,23 @@ const loginSchema = z.object({
 
 type LoginFormData = z.infer<typeof loginSchema>;
 
+function messageForAuthErrorCode(code: string): string | null {
+  switch (code) {
+    case "Configuration":
+      return "Konfiguracija prijave je neispravna (provjerite NEXTAUTH_URL / NEXTAUTH_SECRET na serveru).";
+    case "Callback":
+    case "OAuthCallback":
+      return "Greška pri obradi prijave. Pokušajte ponovo za nekoliko sekundi.";
+    case "Verification":
+    case "EmailSignin":
+      return "Verifikacija emaila nije uspjela. Pokušajte ponovo.";
+    case "SessionRequired":
+      return "Sesija je istekla. Prijavite se ponovo.";
+    default:
+      return null;
+  }
+}
+
 function LoginFormInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -71,11 +88,20 @@ function LoginFormInner() {
     setResendMsg(null);
     if (!unverifiedFromUrl) setInfo(null);
 
-    const result = await signIn("credentials", {
-      email: data.email.trim().toLowerCase(),
-      password: data.password,
-      redirect: false,
-    });
+    let result: Awaited<ReturnType<typeof signIn>>;
+    try {
+      result = await signIn("credentials", {
+        email: data.email.trim().toLowerCase(),
+        password: data.password,
+        redirect: false,
+      });
+    } catch (e) {
+      console.error("[login] signIn threw", e);
+      setError(
+        "Greška pri prijavi (klijent). Osvježite stranicu i pokušajte ponovo; ako se ponavlja, javite podršci."
+      );
+      return;
+    }
 
     /**
      * NextAuth sa redirect:false: kad signIn callback vrati URL sa ?error=unverified,
@@ -95,7 +121,11 @@ function LoginFormInner() {
       } else if (authError === "AccessDenied") {
         setError("Pristup je odbijen.");
       } else if (authError) {
-        setError("Prijava nije uspjela. Pokušajte ponovo.");
+        const specific = messageForAuthErrorCode(authError);
+        setError(
+          specific ??
+            `Prijava nije uspjela (kod: ${authError}). Pokušajte ponovo ili kontaktirajte podršku.`
+        );
       } else {
         setError("Pogrešan email ili lozinka");
       }
