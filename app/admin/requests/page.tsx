@@ -1,5 +1,12 @@
 import { Suspense } from "react";
 import { requireAdminPermission } from "@/lib/admin/auth";
+import { AdminRouteLoadError } from "@/lib/admin/admin-ssr-fallback";
+import {
+  adminPaginationPage,
+  firstQueryString,
+  prismaErrorCode,
+  resolveAdminSearchParams,
+} from "@/lib/admin/admin-ssr-params";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
@@ -27,18 +34,6 @@ const ADMIN_STATUS_LABELS: Record<string, string> = {
 
 const PAGE_SIZE = 25;
 
-/** Next.js searchParams vrijednosti mogu biti string | string[] — .trim() na nizu ruši SSR (TypeError). */
-function firstQueryString(v: string | string[] | undefined): string | undefined {
-  if (v === undefined) return undefined;
-  if (Array.isArray(v)) return v[0];
-  return v;
-}
-
-function paginationParams(pageRaw: string | undefined) {
-  const p = Math.max(1, parseInt(String(pageRaw ?? "1"), 10) || 1);
-  return { page: p, skip: (p - 1) * PAGE_SIZE, take: PAGE_SIZE };
-}
-
 /** Samo kolone potrebne za listu — izbjegava P2022 kad DB nema novije kolone koje puni Prisma model. */
 const REQUEST_LIST_SELECT = {
   id: true,
@@ -64,52 +59,6 @@ type AdminRequestsSnapshot = {
   page: number;
 };
 
-function AdminRequestsLoadError({
-  message,
-  code,
-  snapshot,
-}: {
-  message: string;
-  code?: string;
-  snapshot: AdminRequestsSnapshot;
-}) {
-  return (
-    <div className="space-y-4">
-      <div>
-        <h1 className="text-2xl font-bold text-[#0F172A]">Zahtjevi</h1>
-        <p className="mt-1 text-sm text-[#64748B]">Greška pri učitavanju (server)</p>
-      </div>
-      <Card className="border-amber-200 bg-amber-50/90">
-        <CardHeader>
-          <CardTitle className="text-amber-950">Ne možemo učitati listu zahtjeva</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-3 text-sm text-amber-950">
-          <p>
-            Stranica nije pala u prazan error boundary — detalji su u server logu (prefiks{" "}
-            <code className="rounded bg-amber-100 px-1">[AdminRequestsSSR]</code>).
-          </p>
-          {code && (
-            <p>
-              <span className="font-medium">Kod:</span> {code}
-            </p>
-          )}
-          <p className="whitespace-pre-wrap break-words font-mono text-xs">{message}</p>
-          <p className="text-xs text-amber-900/90">
-            <span className="font-medium">Filteri (debug):</span> {JSON.stringify(snapshot)}
-          </p>
-          <p className="text-xs text-amber-900/90">
-            Ako je greška tipa P2022 (nepostojeća kolona), pokrenite migracije na produkciji (
-            <code className="rounded bg-amber-100 px-1">prisma migrate deploy</code>).
-          </p>
-          <Link href="/admin/requests" className="inline-block font-medium text-[#2563EB] underline">
-            Osvježi bez filtera
-          </Link>
-        </CardContent>
-      </Card>
-    </div>
-  );
-}
-
 export default async function AdminRequestsPage({
   searchParams,
 }: {
@@ -124,13 +73,13 @@ export default async function AdminRequestsPage({
   try {
     const { prisma } = await import("@/lib/db");
 
-    const raw = await Promise.resolve(searchParams ?? {});
+    const raw = await resolveAdminSearchParams(searchParams);
     const statusFilter = firstQueryString(raw.status);
     const adminStatusFilter = firstQueryString(raw.adminStatus);
     const cityFilter = firstQueryString(raw.city);
     const categoryFilter = firstQueryString(raw.category);
     const searchQ = firstQueryString(raw.search)?.trim();
-    const { page, skip, take } = paginationParams(firstQueryString(raw.page));
+    const { page, skip, take } = adminPaginationPage(firstQueryString(raw.page), PAGE_SIZE);
 
     snapshot = {
       statusFilter,
@@ -347,10 +296,7 @@ export default async function AdminRequestsPage({
     );
   } catch (err) {
     const e = err instanceof Error ? err : new Error(String(err));
-    const prismaCode =
-      err && typeof err === "object" && "code" in err && typeof (err as { code: unknown }).code === "string"
-        ? (err as { code: string }).code
-        : undefined;
+    const prismaCode = prismaErrorCode(err);
     console.error("[AdminRequestsSSR] fatal", {
       snapshot,
       message: e.message,
@@ -359,10 +305,14 @@ export default async function AdminRequestsPage({
       prismaCode,
     });
     return (
-      <AdminRequestsLoadError
+      <AdminRouteLoadError
+        routeTitle="Zahtjevi"
+        cardTitle="Ne možemo učitati listu zahtjeva"
+        logPrefix="[AdminRequestsSSR]"
         message={e.message}
         code={prismaCode}
-        snapshot={snapshot}
+        snapshot={snapshot as unknown as Record<string, unknown>}
+        resetHref="/admin/requests"
       />
     );
   }
