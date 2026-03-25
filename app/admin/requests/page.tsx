@@ -27,25 +27,34 @@ const ADMIN_STATUS_LABELS: Record<string, string> = {
 
 const PAGE_SIZE = 25;
 
-function paginationParams(params: Record<string, string | undefined>) {
-  const p = Math.max(1, parseInt(String(params.page ?? "1"), 10) || 1);
+/** Next.js searchParams vrijednosti mogu biti string | string[] — .trim() na nizu ruši SSR (TypeError). */
+function firstQueryString(v: string | string[] | undefined): string | undefined {
+  if (v === undefined) return undefined;
+  if (Array.isArray(v)) return v[0];
+  return v;
+}
+
+function paginationParams(pageRaw: string | undefined) {
+  const p = Math.max(1, parseInt(String(pageRaw ?? "1"), 10) || 1);
   return { page: p, skip: (p - 1) * PAGE_SIZE, take: PAGE_SIZE };
 }
 
 export default async function AdminRequestsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ status?: string; adminStatus?: string; city?: string; category?: string; search?: string; page?: string }>;
+  searchParams:
+    | Promise<Record<string, string | string[] | undefined>>
+    | Record<string, string | string[] | undefined>;
 }) {
   await requireAdminPermission("requests");
   const { prisma } = await import("@/lib/db");
-  const params = await searchParams;
-  const statusFilter = params.status as string | undefined;
-  const adminStatusFilter = params.adminStatus as string | undefined;
-  const cityFilter = params.city;
-  const categoryFilter = params.category;
-  const searchQ = params.search?.trim();
-  const { page, skip, take } = paginationParams(params);
+  const raw = await Promise.resolve(searchParams ?? {});
+  const statusFilter = firstQueryString(raw.status);
+  const adminStatusFilter = firstQueryString(raw.adminStatus);
+  const cityFilter = firstQueryString(raw.city);
+  const categoryFilter = firstQueryString(raw.category);
+  const searchQ = firstQueryString(raw.search)?.trim();
+  const { page, skip, take } = paginationParams(firstQueryString(raw.page));
 
   const where: Record<string, unknown> = {};
   if (statusFilter && ["OPEN", "IN_PROGRESS", "COMPLETED", "CANCELLED"].includes(statusFilter)) {
