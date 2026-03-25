@@ -77,13 +77,28 @@ function LoginFormInner() {
       redirect: false,
     });
 
-    if (result?.url?.includes("unverified")) {
-      router.replace(result.url);
+    /**
+     * NextAuth sa redirect:false: kad signIn callback vrati URL sa ?error=unverified,
+     * klijent postavlja result.error = "unverified" i result.url = null (ne puni url kad postoji error).
+     * Stari kod je provjeravao samo result.url — zato je unverified uvijek padao u granu "pogrešna lozinka".
+     */
+    const authError = result?.error;
+    if (authError === "unverified" || result?.url?.includes("unverified")) {
+      const emailParam = encodeURIComponent(data.email.trim().toLowerCase());
+      router.replace(result?.url?.includes("unverified") ? (result.url as string) : `/login?error=unverified&email=${emailParam}`);
       return;
     }
 
     if (result?.error || result?.ok === false) {
-      setError("Pogrešan email ili lozinka");
+      if (authError === "CredentialsSignin") {
+        setError("Pogrešan email ili lozinka");
+      } else if (authError === "AccessDenied") {
+        setError("Pristup je odbijen.");
+      } else if (authError) {
+        setError("Prijava nije uspjela. Pokušajte ponovo.");
+      } else {
+        setError("Pogrešan email ili lozinka");
+      }
       if (searchParams.get("error") === "unverified") {
         router.replace("/login");
       }

@@ -93,9 +93,13 @@ export const authOptions: NextAuthOptions = {
         const { prisma } = await import("@/lib/db");
         const u = await prisma.user.findUnique({
           where: { id: user.id as string },
-          select: { emailVerified: true, email: true },
+          select: { emailVerified: true, email: true, role: true },
         });
         if (u && u.emailVerified == null) {
+          /** Admin nalozi često nemaju emailVerified (seed/ručno); blokada bi ih zaključala na mobilnom dok desktop drži staru sesiju. */
+          if (u.role === "ADMIN") {
+            return true;
+          }
           const email = encodeURIComponent(u.email ?? "");
           return `/login?error=unverified&email=${email}`;
         }
