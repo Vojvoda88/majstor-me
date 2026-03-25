@@ -9,41 +9,11 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
+import { ADMIN_HANDYMAN_LIST_SELECT } from "@/lib/admin/admin-prisma-selects";
 
 export const dynamic = "force-dynamic";
 
 const PAGE_SIZE = 25;
-
-/**
- * Samo polja potrebna za listu — izbjegava P2022 kad DB zaostaje za Prisma šemom
- * (npr. nedostajuće kolone na users / handyman_profiles).
- */
-const HANDYMAN_LIST_USER_SELECT = {
-  id: true,
-  name: true,
-  phone: true,
-  email: true,
-  city: true,
-  suspendedAt: true,
-  bannedAt: true,
-  createdAt: true,
-  handymanProfile: {
-    select: {
-      cities: true,
-      workerStatus: true,
-      verifiedStatus: true,
-      creditsBalance: true,
-      workerCategories: {
-        select: {
-          category: { select: { name: true } },
-        },
-      },
-    },
-  },
-  _count: {
-    select: { offers: true },
-  },
-} as const;
 
 type HandymenSnapshot = {
   statusFilter?: string;
@@ -102,7 +72,7 @@ export default async function AdminHandymenPage({
       [handymen, total] = await Promise.all([
         prisma.user.findMany({
           where,
-          select: HANDYMAN_LIST_USER_SELECT,
+          select: ADMIN_HANDYMAN_LIST_SELECT,
           orderBy: { createdAt: "desc" },
           skip,
           take,

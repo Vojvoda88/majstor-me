@@ -33,3 +33,21 @@ export function prismaErrorCode(err: unknown): string | undefined {
   }
   return undefined;
 }
+
+/** Jedinstveni oblik server loga za admin SSR (Vercel Functions). */
+export function logAdminSsrFatal(
+  prefix: string,
+  phase: string,
+  snapshot: unknown,
+  err: unknown
+): void {
+  const e = err instanceof Error ? err : new Error(String(err));
+  console.error(`${prefix} fatal`, {
+    phase,
+    snapshot,
+    prismaCode: prismaErrorCode(err),
+    message: e.message,
+    name: e.name,
+    stack: e.stack,
+  });
+}

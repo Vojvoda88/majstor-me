@@ -1,4 +1,6 @@
 import { requireAdminPermission } from "@/lib/admin/auth";
+import { AdminRouteLoadError } from "@/lib/admin/admin-ssr-fallback";
+import { logAdminSsrFatal, prismaErrorCode } from "@/lib/admin/admin-ssr-params";
 import { resolveModerationTab } from "@/lib/admin/moderation-tab";
 import { ModerationTabs } from "./moderation-tabs";
 import { PendingRequestsList } from "./pending-requests-list";
@@ -16,7 +18,25 @@ export default async function ModerationPage({
     | Record<string, string | string[] | undefined>;
 }) {
   await requireAdminPermission("moderation");
-  const tab = await resolveModerationTab(searchParams);
+
+  let tab: Awaited<ReturnType<typeof resolveModerationTab>>;
+  try {
+    tab = await resolveModerationTab(searchParams);
+  } catch (err) {
+    const e = err instanceof Error ? err : new Error(String(err));
+    logAdminSsrFatal("[AdminModerationSSR]", "resolveModerationTab", {}, err);
+    return (
+      <AdminRouteLoadError
+        routeTitle="Moderation"
+        cardTitle="Ne možemo učitati tab parametar"
+        logPrefix="[AdminModerationSSR]"
+        message={e.message}
+        code={prismaErrorCode(err)}
+        snapshot={{}}
+        resetHref="/admin/moderation"
+      />
+    );
+  }
 
   return (
     <div className="space-y-6">

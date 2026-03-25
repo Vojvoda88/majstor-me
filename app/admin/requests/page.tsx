@@ -12,6 +12,7 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { RequestFilters } from "./request-filters";
 import { RestoreButtonInline } from "./restore-button-inline";
+import { ADMIN_REQUEST_LIST_SELECT } from "@/lib/admin/admin-prisma-selects";
 
 export const dynamic = "force-dynamic";
 
@@ -128,7 +129,7 @@ export default async function AdminRequestsPage({
       [requests, total] = await Promise.all([
         prisma.request.findMany({
           where,
-          select: REQUEST_LIST_SELECT,
+          select: ADMIN_REQUEST_LIST_SELECT,
           orderBy: { createdAt: "desc" },
           skip,
           take,
