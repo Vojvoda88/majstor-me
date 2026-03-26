@@ -10,14 +10,34 @@ export default async function AdminUserDetailPage({ params }: { params: Promise<
   const { id } = await params;
   const { prisma } = await import("@/lib/db");
 
-  const user = await prisma.user.findUnique({
-    where: { id, role: "USER" },
-    include: {
-      requests: { orderBy: { createdAt: "desc" }, take: 20 },
-      reportsMade: { take: 5 },
-      reportsAgainst: { take: 5 },
-    },
-  });
+  let user;
+  try {
+    user = await prisma.user.findUnique({
+      where: { id, role: "USER" },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        phone: true,
+        city: true,
+        suspendedAt: true,
+        bannedAt: true,
+        requests: {
+          orderBy: { createdAt: "desc" },
+          take: 20,
+          select: {
+            id: true,
+            category: true,
+            city: true,
+            createdAt: true,
+          },
+        },
+      },
+    });
+  } catch (e) {
+    console.error("[AdminUsers] error", e);
+    throw e;
+  }
 
   if (!user) notFound();
 

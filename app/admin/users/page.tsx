@@ -18,18 +18,34 @@ export default async function AdminUsersPage({
   const page = Math.max(1, parseInt(String(params.page ?? "1"), 10) || 1);
   const skip = (page - 1) * PAGE_SIZE;
 
-  const [users, total] = await Promise.all([
-    prisma.user.findMany({
-      where: { role: "USER" },
-      include: {
-        _count: { select: { requests: true } },
-      },
-      orderBy: { createdAt: "desc" },
-      skip,
-      take: PAGE_SIZE,
-    }),
-    prisma.user.count({ where: { role: "USER" } }),
-  ]);
+  let users;
+  let total: number;
+  try {
+    [users, total] = await Promise.all([
+      prisma.user.findMany({
+        where: { role: "USER" },
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          phone: true,
+          city: true,
+          role: true,
+          suspendedAt: true,
+          bannedAt: true,
+          createdAt: true,
+          _count: { select: { requests: true } },
+        },
+        orderBy: { createdAt: "desc" },
+        skip,
+        take: PAGE_SIZE,
+      }),
+      prisma.user.count({ where: { role: "USER" } }),
+    ]);
+  } catch (e) {
+    console.error("[AdminUsers] error", e);
+    throw e;
+  }
   const totalPages = Math.ceil(total / PAGE_SIZE) || 1;
 
   return (
