@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { requireAdminApi } from "@/lib/admin/api-auth";
 import { createAuditLog } from "@/lib/admin/audit";
+import { prismaErrorCode } from "@/lib/admin/admin-ssr-params";
 
 export const dynamic = "force-dynamic";
 
@@ -22,7 +23,10 @@ export async function POST(
     const parsed = bodySchema.safeParse(body);
     const reason = parsed.success ? parsed.data.reason : undefined;
 
-    const request = await prisma.request.findUnique({ where: { id } });
+    const request = await prisma.request.findUnique({
+      where: { id },
+      select: { id: true, adminStatus: true },
+    });
 
     if (!request) {
       return NextResponse.json({ success: false, error: "Zahtjev nije pronađen" }, { status: 404 });
@@ -35,19 +39,27 @@ export async function POST(
       );
     }
 
-    await prisma.request.update({
-      where: { id },
-      data: { adminStatus: "DELETED", deletedAt: new Date() },
-    });
-
-    const adminProfile = await prisma.adminProfile.findUnique({
-      where: { userId: auth.session.user.id },
-      select: { adminRole: true },
-    });
+    try {
+      await prisma.request.update({
+        where: { id },
+        data: { adminStatus: "DELETED", deletedAt: new Date() },
+        select: { id: true },
+      });
+    } catch (updateErr) {
+      if (prismaErrorCode(updateErr) === "P2022") {
+        await prisma.request.update({
+          where: { id },
+          data: { adminStatus: "DELETED" },
+          select: { id: true },
+        });
+      } else {
+        throw updateErr;
+      }
+    }
 
     await createAuditLog(prisma, {
       adminId: auth.session.user.id,
-      adminRole: adminProfile?.adminRole ?? "SUPER_ADMIN",
+      adminRole: auth.adminRole,
       actionType: "REJECT_REQUEST",
       entityType: "request",
       entityId: id,

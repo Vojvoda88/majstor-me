@@ -34,30 +34,27 @@ export async function POST(
       await prisma.request.update({
         where: { id },
         data: { adminStatus: "DELETED", deletedAt: new Date() },
+        select: { id: true },
       });
     } catch (updateErr) {
       const uc = prismaErrorCode(updateErr);
       if (uc === "P2022") {
-        console.warn("[AdminApiDeleteRequest] P2022 on update (npr. nedostaje deleted_at), retry samo adminStatus", {
+        console.warn("[AdminRequestDeleteAPI] P2022 on update (npr. nedostaje deleted_at), retry samo adminStatus", {
           requestId: id,
         });
         await prisma.request.update({
           where: { id },
           data: { adminStatus: "DELETED" },
+          select: { id: true },
         });
       } else {
         throw updateErr;
       }
     }
 
-    const adminProfile = await prisma.adminProfile.findUnique({
-      where: { userId: auth.session.user.id },
-      select: { adminRole: true },
-    });
-
     await createAuditLog(prisma, {
       adminId: auth.session.user.id,
-      adminRole: adminProfile?.adminRole ?? "SUPER_ADMIN",
+      adminRole: auth.adminRole,
       actionType: "DELETE",
       entityType: "request",
       entityId: id,
@@ -68,13 +65,20 @@ export async function POST(
   } catch (error) {
     const code = prismaErrorCode(error);
     const msg = error instanceof Error ? error.message : String(error);
-    console.error("[AdminApiDeleteRequest] POST failed", {
+    console.error("[AdminRequestDeleteAPI] POST failed", {
       requestId: id,
       prismaCode: code,
       message: msg,
     });
     return NextResponse.json(
-      { success: false, error: "Greška", code: code ?? undefined },
+      {
+        success: false,
+        error:
+          code === "P2022"
+            ? "Neusklađena šema baze (kolona). Kontaktirajte podršku."
+            : "Greška pri brisanju zahtjeva.",
+        code: code ?? undefined,
+      },
       { status: 500 }
     );
   }

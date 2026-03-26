@@ -21,7 +21,7 @@ export async function POST(
 
     const request = await prisma.request.findUnique({
       where: { id },
-      include: { offers: { select: { id: true } } },
+      select: { id: true, adminStatus: true },
     });
 
     if (!request) {
@@ -45,6 +45,7 @@ export async function POST(
     await prisma.request.update({
       where: { id },
       data: { adminStatus: "DISTRIBUTED" },
+      select: { id: true },
     });
 
     const jobId = await createDistributionJob(prisma, id);

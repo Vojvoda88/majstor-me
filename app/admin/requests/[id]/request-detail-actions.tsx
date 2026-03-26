@@ -40,7 +40,9 @@ export function RequestDetailActions({
         }
         router.refresh();
       } else {
-        alert(data.error ?? "Greška");
+        const err = typeof data.error === "string" ? data.error : "Greška";
+        const code = typeof (data as { code?: string }).code === "string" ? ` [${(data as { code: string }).code}]` : "";
+        alert(`${err}${code}`);
       }
     } catch {
       alert("Greška");

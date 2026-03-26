@@ -17,7 +17,10 @@ export async function POST(
   try {
     const { prisma } = await import("@/lib/db");
 
-    const request = await prisma.request.findUnique({ where: { id } });
+    const request = await prisma.request.findUnique({
+      where: { id },
+      select: { id: true },
+    });
 
     if (!request) {
       return NextResponse.json({ success: false, error: "Zahtjev nije pronađen" }, { status: 404 });
@@ -32,16 +35,12 @@ export async function POST(
     await prisma.request.update({
       where: { id },
       data: { adminStatus: "SPAM" },
-    });
-
-    const adminProfile = await prisma.adminProfile.findUnique({
-      where: { userId: auth.session.user.id },
-      select: { adminRole: true },
+      select: { id: true },
     });
 
     await createAuditLog(prisma, {
       adminId: auth.session.user.id,
-      adminRole: adminProfile?.adminRole ?? "SUPER_ADMIN",
+      adminRole: auth.adminRole,
       actionType: "MARK_SPAM",
       entityType: "request",
       entityId: id,

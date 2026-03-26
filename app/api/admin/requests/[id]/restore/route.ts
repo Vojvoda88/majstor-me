@@ -16,7 +16,10 @@ export async function POST(
   try {
     const { prisma } = await import("@/lib/db");
 
-    const request = await prisma.request.findUnique({ where: { id } });
+    const request = await prisma.request.findUnique({
+      where: { id },
+      select: { id: true, adminStatus: true },
+    });
 
     if (!request) {
       return NextResponse.json({ success: false, error: "Zahtjev nije pronađen" }, { status: 404 });
@@ -32,6 +35,7 @@ export async function POST(
     await prisma.request.update({
       where: { id },
       data: { adminStatus: "PENDING_REVIEW", deletedAt: null },
+      select: { id: true },
     });
 
     await createAuditLog(prisma, {
