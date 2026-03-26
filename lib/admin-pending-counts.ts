@@ -1,4 +1,5 @@
 import { cache } from "react";
+import { prismaWhereHandymanPendingReviewKpi } from "@/lib/admin/admin-handyman-filters";
 
 export type AdminPendingReviewCounts = {
   pendingRequests: number;
@@ -20,7 +21,7 @@ export const getAdminPendingReviewCounts = cache(async (): Promise<AdminPendingR
 
   const [pendingRequests, pendingHandymen, urgentPendingRequests] = await Promise.all([
     prisma.request.count({ where: openPendingRequestWhere }),
-    prisma.handymanProfile.count({ where: { workerStatus: "PENDING_REVIEW" } }),
+    prisma.handymanProfile.count({ where: prismaWhereHandymanPendingReviewKpi() }),
     prisma.request.count({
       where: {
         ...openPendingRequestWhere,

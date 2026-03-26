@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AdminRouteLoadError } from "@/lib/admin/admin-ssr-fallback";
 import { ADMIN_HANDYMAN_MODERATION_LIST_SELECT } from "@/lib/admin/admin-prisma-selects";
 import { logAdminSsrFatal, prismaErrorCode } from "@/lib/admin/admin-ssr-params";
+import { prismaWhereHandymanEmailNotDemo } from "@/lib/demo-email";
 import { WorkerModerationActions } from "./worker-moderation-actions";
 
 export const dynamic = "force-dynamic";
@@ -13,6 +14,7 @@ export async function PendingWorkersList() {
     const handymen = await prisma.user.findMany({
       where: {
         role: "HANDYMAN",
+        ...prismaWhereHandymanEmailNotDemo(),
         handymanProfile: {
           workerStatus: "PENDING_REVIEW",
         },

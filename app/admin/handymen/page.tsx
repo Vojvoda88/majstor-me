@@ -9,7 +9,9 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
+import { prismaWhereAdminHandymanUserBase } from "@/lib/admin/admin-handyman-filters";
 import { ADMIN_HANDYMAN_LIST_SELECT } from "@/lib/admin/admin-prisma-selects";
+import type { Prisma } from "@prisma/client";
 
 export const dynamic = "force-dynamic";
 
@@ -52,9 +54,13 @@ export default async function AdminHandymenPage({
       console.warn("[AdminHandymenSSR] start", snapshot);
     }
 
-    const where: Record<string, unknown> = { role: "HANDYMAN" };
+    const where: Prisma.UserWhereInput = {
+      ...prismaWhereAdminHandymanUserBase(),
+    };
     if (statusFilter && ["PENDING_REVIEW", "ACTIVE", "SUSPENDED", "BANNED"].includes(statusFilter)) {
-      where.handymanProfile = { workerStatus: statusFilter };
+      where.handymanProfile = {
+        workerStatus: statusFilter as "PENDING_REVIEW" | "ACTIVE" | "SUSPENDED" | "BANNED",
+      };
     }
     if (cityFilter) where.city = cityFilter;
     if (searchQ) {

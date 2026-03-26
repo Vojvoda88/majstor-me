@@ -1,3 +1,5 @@
+import { prismaWhereHandymanProfileActiveKpi } from "@/lib/admin/admin-handyman-filters";
+import { prismaWhereHandymanEmailNotDemo } from "@/lib/demo-email";
 import { getAdminPendingReviewCounts } from "@/lib/admin-pending-counts";
 import { AdminPushEntryCard } from "@/components/admin/admin-push-entry-card";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -57,8 +59,28 @@ async function loadDashboardData() {
   const all = await Promise.all([
     runTimed ? withTiming("requestsToday", () => prisma.request.count({ where: { createdAt: { gte: todayStart } } })) : prisma.request.count({ where: { createdAt: { gte: todayStart } } }).then((r) => ({ result: r, label: "", ms: 0 })),
     runTimed ? withTiming("requestsWeek", () => prisma.request.count({ where: { createdAt: { gte: weekStart } } })) : prisma.request.count({ where: { createdAt: { gte: weekStart } } }).then((r) => ({ result: r, label: "", ms: 0 })),
-    runTimed ? withTiming("handymenToday", () => prisma.handymanProfile.count({ where: { createdAt: { gte: todayStart } } })) : prisma.handymanProfile.count({ where: { createdAt: { gte: todayStart } } }).then((r) => ({ result: r, label: "", ms: 0 })),
-    runTimed ? withTiming("handymenActive", () => prisma.handymanProfile.count()) : prisma.handymanProfile.count().then((r) => ({ result: r, label: "", ms: 0 })),
+    runTimed
+      ? withTiming("handymenToday", () =>
+          prisma.handymanProfile.count({
+            where: {
+              createdAt: { gte: todayStart },
+              user: { ...prismaWhereHandymanEmailNotDemo() },
+            },
+          })
+        )
+      : prisma.handymanProfile
+          .count({
+            where: {
+              createdAt: { gte: todayStart },
+              user: { ...prismaWhereHandymanEmailNotDemo() },
+            },
+          })
+          .then((r) => ({ result: r, label: "", ms: 0 })),
+    runTimed
+      ? withTiming("handymenActive", () => prisma.handymanProfile.count({ where: prismaWhereHandymanProfileActiveKpi() }))
+      : prisma.handymanProfile
+          .count({ where: prismaWhereHandymanProfileActiveKpi() })
+          .then((r) => ({ result: r, label: "", ms: 0 })),
     runTimed ? withTiming("offersCount", () => prisma.offer.count()) : prisma.offer.count().then((r) => ({ result: r, label: "", ms: 0 })),
     runTimed ? withTiming("contactUnlocksCount", () => prisma.requestContactUnlock.count()) : prisma.requestContactUnlock.count().then((r) => ({ result: r, label: "", ms: 0 })),
     runTimed ? withTiming("reportsPending", () => prisma.report.count({ where: { status: "PENDING" } })) : prisma.report.count({ where: { status: "PENDING" } }).then((r) => ({ result: r, label: "", ms: 0 })),
@@ -185,8 +207,13 @@ export default async function AdminDashboardPage() {
   const statCards = [
     { label: "Novi zahtjevi danas", value: requestsToday, href: "/admin/requests" },
     { label: "Novi zahtjevi ove sedmice", value: requestsWeek, href: "/admin/requests" },
-    { label: "Novi majstori danas", value: handymenToday, href: "/admin/handymen" },
-    { label: "Aktivni majstori", value: handymenActive, href: "/admin/handymen" },
+    { label: "Novi majstori danas", value: handymenToday, href: "/admin/handymen", sub: "profili reg. danas, bez test emaila" },
+    {
+      label: "Aktivni majstori",
+      value: handymenActive,
+      href: "/admin/handymen?status=ACTIVE",
+      sub: "ACTIVE + javno vidljivi (nije demo)",
+    },
     { label: "Poslane ponude", value: offersCount, href: "/admin/offers" },
     { label: "Otključanja kontakta", value: contactUnlocksCount },
     { label: "Prijave na čekanju", value: reportsPending, href: "/admin/moderation" },
