@@ -16,9 +16,21 @@ export function WorkerModerationActions({ handymanId }: { handymanId: string }) 
       const res = await fetch(`/api/admin/handymen/${handymanId}${path}`, {
         method: "POST",
       });
-      const data = await res.json();
+      const text = await res.text();
+      let data: { success?: boolean; error?: string; code?: string; detail?: string };
+      try {
+        data = JSON.parse(text) as typeof data;
+      } catch {
+        alert(`Greška (${res.status}): ${text.slice(0, 240)}`);
+        return;
+      }
       if (data.success) router.refresh();
-      else alert(data.error ?? "Greška");
+      else {
+        const err = typeof data.error === "string" ? data.error : "Greška";
+        const code = typeof data.code === "string" ? ` [${data.code}]` : "";
+        const detail = typeof data.detail === "string" ? `\n${data.detail.slice(0, 300)}` : "";
+        alert(`${err}${code}${detail}`);
+      }
     } catch {
       alert("Greška");
     } finally {
