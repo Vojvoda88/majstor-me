@@ -18,13 +18,24 @@ export async function requireAdminApi(permission: Permission): Promise<
     return { ok: false, response: NextResponse.json({ success: false, error: "Nemate pristup" }, { status: 403 }) };
   }
 
-  const { prisma } = await import("@/lib/db");
-  const adminProfile = await prisma.adminProfile.findUnique({
-    where: { userId: session.user.id },
-    select: { adminRole: true },
-  });
-
-  const adminRole = (adminProfile?.adminRole ?? "SUPER_ADMIN") as AdminRole;
+  let adminRole: AdminRole;
+  try {
+    const { prisma } = await import("@/lib/db");
+    const adminProfile = await prisma.adminProfile.findUnique({
+      where: { userId: session.user.id },
+      select: { adminRole: true },
+    });
+    adminRole = (adminProfile?.adminRole ?? "SUPER_ADMIN") as AdminRole;
+  } catch (e) {
+    console.error("[requireAdminApi] prisma adminProfile failed", e);
+    return {
+      ok: false,
+      response: NextResponse.json(
+        { success: false, error: "Greška pri provjeri admin profila.", code: "ADMIN_PROFILE_DB" },
+        { status: 500 }
+      ),
+    };
+  }
 
   if (!hasPermission(adminRole, permission)) {
     return { ok: false, response: NextResponse.json({ success: false, error: "Nemate dozvolu" }, { status: 403 }) };

@@ -28,11 +28,24 @@ export function RequestDetailActions({
         headers: { "Content-Type": "application/json" },
         body: "{}",
       });
-      const data = await res.json();
+      const text = await res.text();
+      let data: {
+        success?: boolean;
+        error?: string;
+        code?: string;
+        detail?: string;
+        data?: { refundCount?: number; totalCreditsRefunded?: number; alreadyRefunded?: boolean };
+      };
+      try {
+        data = JSON.parse(text) as typeof data;
+      } catch {
+        alert(`Greška (${res.status}): ${text.slice(0, 240)}`);
+        return;
+      }
       if (data.success) {
         if (path === "/spam" && data.data) {
           const r = data.data;
-          if (r.refundCount > 0) {
+          if ((r.refundCount ?? 0) > 0) {
             alert(`Zahtjev označen kao spam. Refundirano: ${r.refundCount} majstor(a), ukupno ${r.totalCreditsRefunded} kredita.`);
           } else if (r.alreadyRefunded) {
             alert("Zahtjev označen kao spam. (Refund je već bio izvršen ranije.)");
@@ -41,8 +54,9 @@ export function RequestDetailActions({
         router.refresh();
       } else {
         const err = typeof data.error === "string" ? data.error : "Greška";
-        const code = typeof (data as { code?: string }).code === "string" ? ` [${(data as { code: string }).code}]` : "";
-        alert(`${err}${code}`);
+        const code = typeof data.code === "string" ? ` [${data.code}]` : "";
+        const detail = typeof data.detail === "string" ? `\n${data.detail.slice(0, 300)}` : "";
+        alert(`${err}${code}${detail}`);
       }
     } catch {
       alert("Greška");
