@@ -6,6 +6,7 @@ import { auth } from "@/lib/auth";
 import { sendJobCompletedEmail } from "@/lib/email";
 import { logError } from "@/lib/logger";
 import { zodErrorToString } from "@/lib/api-response";
+import { isApprovedForHandymen } from "@/lib/request-approval-gates";
 
 const PRIVATE_REQUEST_DETAIL_SELECT = {
   id: true,
@@ -83,11 +84,11 @@ export async function GET(
 
     const isAdmin = session?.user?.role === "ADMIN";
     const isOwner = !!(session?.user?.id && req.user?.id && session.user.id === req.user.id);
-    const isPubliclyVisible =
-      req.deletedAt == null &&
-      req.adminStatus !== "SPAM" &&
-      req.adminStatus !== "DELETED" &&
-      req.status === "OPEN";
+    const isPubliclyVisible = isApprovedForHandymen({
+      status: req.status,
+      adminStatus: req.adminStatus,
+      deletedAt: req.deletedAt,
+    });
 
     if (!isAdmin && !isOwner && !isPubliclyVisible) {
       return NextResponse.json(

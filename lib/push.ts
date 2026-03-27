@@ -28,6 +28,19 @@ export type PushPayload = {
   tag?: string;
 };
 
+function toAppRelativePath(link: string | undefined): string {
+  if (!link?.trim()) return "/";
+  const raw = link.trim();
+  if (raw.startsWith("/")) return raw;
+  try {
+    const parsed = new URL(raw);
+    const path = `${parsed.pathname}${parsed.search}${parsed.hash}`;
+    return path.startsWith("/") ? path : `/${path}`;
+  } catch {
+    return raw.startsWith("/") ? raw : `/${raw}`;
+  }
+}
+
 function readWebPushStatusCode(e: unknown): number | undefined {
   if (typeof e === "object" && e !== null && "statusCode" in e) {
     const n = Number((e as { statusCode?: number }).statusCode);
@@ -52,8 +65,7 @@ export async function sendPushNotification(
   }
 
   try {
-    const base = process.env.NEXTAUTH_URL ?? process.env.NEXT_PUBLIC_SITE_URL ?? "https://brzimajstor.me";
-    const link = payload.link?.startsWith("/") ? `${base}${payload.link}` : payload.link ?? base;
+    const link = toAppRelativePath(payload.link);
 
     await webpush.sendNotification(
       {

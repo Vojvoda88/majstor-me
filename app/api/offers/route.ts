@@ -12,6 +12,7 @@ import { logError } from "@/lib/logger";
 import { trackFunnelEvent } from "@/lib/funnel-events";
 import { zodErrorToString } from "@/lib/api-response";
 import { workerHasCategoryForRequest } from "@/lib/categories";
+import { isApprovedForHandymen } from "@/lib/request-approval-gates";
 
 const PRICE_TYPES_ALL = [
   "PO_DOGOVORU",
@@ -139,11 +140,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Novi zahtjevi korisnika imaju PENDING_REVIEW; javni tok mora dozvoliti ponude bez čekanja admina.
-    // Blokiramo samo eksplicitno zabranjene statuse.
-    if (req.adminStatus === "SPAM" || req.adminStatus === "DELETED") {
+    if (!isApprovedForHandymen({
+      status: req.status,
+      adminStatus: req.adminStatus,
+      deletedAt: req.deletedAt,
+    })) {
       return NextResponse.json(
-        { success: false, error: "Ovaj zahtjev ne prihvata ponude." },
+        { success: false, error: "Zahtjev još nije odobren za distribuciju majstorima." },
         { status: 400 }
       );
     }

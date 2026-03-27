@@ -87,7 +87,6 @@ export default async function HandymanDashboardPage({
         { adminStatus: "DISTRIBUTED" },
         { adminStatus: "HAS_OFFERS" },
         { adminStatus: "CONTACT_UNLOCKED" },
-        { adminStatus: null },
       ],
     };
     if (category) {

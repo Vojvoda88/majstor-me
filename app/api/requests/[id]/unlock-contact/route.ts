@@ -7,6 +7,7 @@ import {
   createUnlockAndSpendCreditsAtomic,
 } from "@/lib/credits";
 import { trackFunnelEvent } from "@/lib/funnel-events";
+import { isApprovedForHandymen } from "@/lib/request-approval-gates";
 
 export const dynamic = "force-dynamic";
 
@@ -48,16 +49,13 @@ export async function POST(
       );
     }
 
-    if (req.status !== "OPEN") {
+    if (!isApprovedForHandymen({
+      status: req.status,
+      adminStatus: req.adminStatus,
+      deletedAt: req.deletedAt,
+    })) {
       return NextResponse.json(
-        { success: false, error: "Ovaj zahtjev više ne prihvata kontakte" },
-        { status: 400 }
-      );
-    }
-
-    if (req.adminStatus === "SPAM" || req.adminStatus === "DELETED") {
-      return NextResponse.json(
-        { success: false, error: "Ovaj zahtjev ne prihvata kontakte." },
+        { success: false, error: "Zahtjev još nije odobren za distribuciju majstorima." },
         { status: 400 }
       );
     }

@@ -1,4 +1,5 @@
 import { Resend } from "resend";
+import { getSiteUrl } from "@/lib/site-url";
 
 function getResend() {
   const key = process.env.RESEND_API_KEY;
@@ -7,6 +8,7 @@ function getResend() {
 }
 
 const from = process.env.EMAIL_FROM ?? "BrziMajstor.ME <onboarding@resend.dev>";
+const appBaseUrl = getSiteUrl().replace(/\/$/, "");
 
 async function getUserEmail(userId: string): Promise<string | null> {
   const { prisma } = await import("@/lib/db");
@@ -28,8 +30,7 @@ export async function sendNewRequestEmail(
   const to = await getUserEmail(handymanId);
   if (!to) return;
 
-  const baseUrl = process.env.NEXTAUTH_URL ?? "https://brzimajstor.me";
-  const link = `${baseUrl}/request/${requestId}`;
+  const link = `${appBaseUrl}/request/${requestId}`;
 
   try {
     await resend.emails.send({
@@ -66,8 +67,7 @@ export async function sendNewOfferEmail(
     : requesterEmail?.trim() || null;
   if (!to) return;
 
-  const baseUrl = process.env.NEXTAUTH_URL ?? "https://brzimajstor.me";
-  const link = `${baseUrl}/request`;
+  const link = `${appBaseUrl}/request`;
 
   try {
     await resend.emails.send({
@@ -106,7 +106,7 @@ export async function sendOfferAcceptedEmail(
         <p>Zdravo,</p>
         <p><strong>${userName}</strong> je prihvatio vašu ponudu za <strong>${requestCategory}</strong>.</p>
         <p>Kontaktirajte korisnika i zaključite posao.</p>
-        <p><a href="${process.env.NEXTAUTH_URL}/dashboard/handyman">Dashboard →</a></p>
+        <p><a href="${appBaseUrl}/dashboard/handyman">Dashboard →</a></p>
         <p>— BrziMajstor.ME</p>
       `,
     });
@@ -156,8 +156,7 @@ export async function sendGuestRequestTrackingEmail(opts: {
   if (!to) return;
   const resend = getResend();
   if (!resend) return;
-  const baseUrl = (process.env.NEXTAUTH_URL ?? "https://brzimajstor.me").replace(/\/$/, "");
-  const link = `${baseUrl}/request-access/${guestPlainToken}`;
+  const link = `${appBaseUrl}/request-access/${guestPlainToken}`;
 
   try {
     await resend.emails.send({
@@ -184,8 +183,7 @@ export async function sendGuestRequestTrackingEmail(opts: {
 export async function sendEmailVerificationEmail(to: string, name: string, plainToken: string) {
   const resend = getResend();
   if (!resend) return;
-  const baseUrl = (process.env.NEXTAUTH_URL ?? "https://brzimajstor.me").replace(/\/$/, "");
-  const link = `${baseUrl}/verify-email?token=${encodeURIComponent(plainToken)}`;
+  const link = `${appBaseUrl}/verify-email?token=${encodeURIComponent(plainToken)}`;
 
   try {
     await resend.emails.send({
@@ -223,7 +221,7 @@ export async function sendNewReviewEmail(
       html: `
         <p>Zdravo,</p>
         <p>Dobili ste novu recenziju (${rating}/5) za posao <strong>${requestCategory}</strong>.</p>
-        <p><a href="${process.env.NEXTAUTH_URL}/dashboard/handyman">Pogledaj profil →</a></p>
+        <p><a href="${appBaseUrl}/dashboard/handyman">Pogledaj profil →</a></p>
         <p>— BrziMajstor.ME</p>
       `,
     });

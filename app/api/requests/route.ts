@@ -49,7 +49,6 @@ export async function GET(request: Request) {
         { adminStatus: "DISTRIBUTED" },
         { adminStatus: "HAS_OFFERS" },
         { adminStatus: "CONTACT_UNLOCKED" },
-        { adminStatus: null },
       ],
     };
     if (category) where.category = category;

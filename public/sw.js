@@ -44,21 +44,34 @@ self.addEventListener("push", (event) => {
   event.waitUntil(self.registration.showNotification(data.title, options));
 });
 
+function normalizeNotificationTarget(raw) {
+  const fallback = `${self.location.origin}/`;
+  if (!raw || typeof raw !== "string") return fallback;
+  try {
+    const parsed = new URL(raw, self.location.origin);
+    const path = `${parsed.pathname}${parsed.search}${parsed.hash}`;
+    return `${self.location.origin}${path.startsWith("/") ? path : `/${path}`}`;
+  } catch (_) {
+    if (raw.startsWith("/")) return `${self.location.origin}${raw}`;
+    return fallback;
+  }
+}
+
 self.addEventListener("notificationclick", (event) => {
   event.notification.close();
-  const url = event.notification.data?.url || "/";
+  const targetUrl = normalizeNotificationTarget(event.notification.data?.url || "/");
   event.waitUntil(
     self.clients.matchAll({ type: "window", includeUncontrolled: true }).then((clientList) => {
       for (const client of clientList) {
         if (client.url.includes(self.location.origin) && "focus" in client) {
           if ("navigate" in client && typeof client.navigate === "function") {
-            return client.navigate(url).then((c) => (c ? c.focus() : undefined));
+            return client.navigate(targetUrl).then((c) => (c ? c.focus() : undefined));
           }
           return client.focus();
         }
       }
       if (self.clients.openWindow) {
-        return self.clients.openWindow(url);
+        return self.clients.openWindow(targetUrl);
       }
     })
   );

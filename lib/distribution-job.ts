@@ -5,6 +5,7 @@
 
 import type { PrismaClient } from "@prisma/client";
 import { distributeRequestToHandymen } from "./request-distribution";
+import { canDistributeRequestToHandymen } from "./request-approval-gates";
 
 const MAX_ATTEMPTS = 3;
 
@@ -53,6 +54,32 @@ export async function processDistributionJob(jobId: string): Promise<boolean> {
         attempts: job.attempts + 1,
         processedAt: new Date(),
       },
+    });
+    return false;
+  }
+
+  if (
+    !canDistributeRequestToHandymen({
+      status: request.status,
+      adminStatus: request.adminStatus,
+      deletedAt: request.deletedAt,
+    })
+  ) {
+    await prisma.distributionJob.update({
+      where: { id: jobId },
+      data: {
+        status: "FAILED",
+        lastError: "Request is not approved for handyman distribution",
+        attempts: job.attempts + 1,
+        processedAt: new Date(),
+      },
+    });
+    console.warn("[DistributionJob] Blocked by approval gate", {
+      jobId,
+      requestId: request.id,
+      status: request.status,
+      adminStatus: request.adminStatus,
+      deletedAt: !!request.deletedAt,
     });
     return false;
   }

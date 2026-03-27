@@ -5,6 +5,7 @@ import { guestPlainTokenMatchesHash } from "@/lib/guest-request-token";
 import { requestDetailInclude } from "@/lib/requests/request-detail-include";
 import { SiteHeader } from "@/components/layout/site-header";
 import { RequestDetailView } from "@/components/request/request-detail-view";
+import { isApprovedForHandymen } from "@/lib/request-approval-gates";
 
 export const metadata: Metadata = {
   robots: { index: false, follow: false },
@@ -34,6 +35,13 @@ export default async function RequestDetailPage({
   const isOwner =
     (req.userId && session?.user?.id === req.userId) ||
     (!req.userId && guestPlainTokenMatchesHash(token, req.guestAccessTokenHash));
+  const isAdmin = session?.user?.role === "ADMIN";
+  const canPubliclyView = isApprovedForHandymen({
+    status: req.status,
+    adminStatus: req.adminStatus,
+    deletedAt: req.deletedAt,
+  });
+  if (!isOwner && !isAdmin && !canPubliclyView) notFound();
 
   return (
     <div className="min-h-screen bg-brand-page">
