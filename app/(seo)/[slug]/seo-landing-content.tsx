@@ -201,15 +201,26 @@ export function SeoLandingContent({
           ) : handymen.length === 0 ? (
             <div className="rounded-2xl border border-white bg-white p-12 text-center shadow-sm">
               <Wrench className="mx-auto mb-4 h-12 w-12 text-slate-300" />
-              <p className="text-slate-600">
-                Trenutno nema {displayName.toLowerCase()}a u {cityNameLocative}.
+              <p className="text-lg font-semibold text-slate-900">
+                Trenutno nema aktivnih majstora za uslugu {displayName.toLowerCase()} u {cityNameLocative}.
               </p>
-              <Link
-                href={createUrl}
-                className="mt-4 inline-block font-medium text-blue-600 hover:underline"
-              >
-                Objavi zahtjev
-              </Link>
+              <p className="mt-3 text-sm text-slate-600">
+                Pošaljite zahtjev i nakon kratkog pregleda dobijate ponude majstora koji mogu preuzeti posao.
+              </p>
+              <div className="mt-5 flex flex-col items-stretch justify-center gap-3 sm:flex-row">
+                <Link
+                  href={createUrl}
+                  className="inline-flex h-11 items-center justify-center rounded-xl bg-[#2563eb] px-5 text-sm font-semibold text-white transition hover:bg-[#1d4ed8]"
+                >
+                  Objavi zahtjev
+                </Link>
+                <Link
+                  href={`/grad/${citySlug}`}
+                  className="inline-flex h-11 items-center justify-center rounded-xl border border-slate-200 px-5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+                >
+                  Sve usluge u {cityName}
+                </Link>
+              </div>
             </div>
           ) : (
             <>

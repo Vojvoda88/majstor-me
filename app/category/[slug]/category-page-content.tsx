@@ -83,6 +83,11 @@ export function CategoryPageContent({
   }, [internalCategory, cityFilter, sortBy]);
 
   useEffect(() => {
+    if (skipFirstClientFetch.current && page === 1 && reloadToken === 0 && sortBy === "rating") {
+      skipFirstClientFetch.current = false;
+      return;
+    }
+
     const gen = ++loadGenRef.current;
     let cancelled = false;
     const controller = new AbortController();
@@ -254,11 +259,12 @@ export function CategoryPageContent({
             {/* List / Map content */}
             <div className="min-w-0">
               {loading ? (
-                <div className="rounded-2xl border border-slate-200/80 bg-white/95 px-5 py-4 text-sm text-slate-600 shadow-sm">
-                  <span className="inline-flex items-center gap-2 font-medium text-slate-500">
-                    <span className="h-2 w-2 animate-pulse rounded-full bg-blue-500" aria-hidden />
-                    Učitavanje liste…
-                  </span>
+                <div className="rounded-2xl border border-slate-200/80 bg-white/95 p-5 text-sm text-slate-600 shadow-sm">
+                  <div className="mb-3 h-4 w-40 animate-pulse rounded bg-slate-200" />
+                  <div className="space-y-2">
+                    <div className="h-3 w-full animate-pulse rounded bg-slate-200" />
+                    <div className="h-3 w-5/6 animate-pulse rounded bg-slate-200" />
+                  </div>
                 </div>
               ) : error ? (
                 <div className="overflow-hidden rounded-3xl border border-red-200/80 bg-gradient-to-br from-red-50 to-white p-10 text-center shadow-marketplace-sm">
@@ -275,17 +281,27 @@ export function CategoryPageContent({
                 <div className="overflow-hidden rounded-3xl border border-slate-200/80 bg-white p-10 text-center shadow-marketplace-sm md:p-14">
                   <Wrench className="mx-auto mb-5 h-14 w-14 text-slate-300" />
                   <p className="text-lg font-semibold text-brand-navy">
-                    Nema majstora za ovu kategoriju u izabranom gradu.
+                    Trenutno nema aktivnih majstora za ovu kategoriju{cityFilter ? ` u gradu ${cityFilter}` : ""}.
                   </p>
                   <p className="mt-3 text-sm leading-relaxed text-slate-600">
-                    Objavite besplatan zahtjev – dobijate ponude od više majstora, bez obaveze.
+                    Pošaljite jedan zahtjev i nakon kratkog pregleda dobijate ponude majstora koji pokrivaju ovaj posao.
                   </p>
-                  <Link
-                    href={`/request/create?category=${encodeURIComponent(internalCategory)}${cityFilter ? `&city=${encodeURIComponent(cityFilter)}` : ""}`}
-                    className="mt-8 inline-flex h-14 min-h-[52px] items-center justify-center rounded-2xl bg-gradient-to-br from-[#2563eb] to-[#1d4ed8] px-10 text-base font-bold text-white shadow-btn-cta transition hover:brightness-105"
-                  >
-                    Objavi besplatan zahtjev
-                  </Link>
+                  <div className="mt-8 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center">
+                    <Link
+                      href={`/request/create?category=${encodeURIComponent(internalCategory)}${cityFilter ? `&city=${encodeURIComponent(cityFilter)}` : ""}`}
+                      className="inline-flex h-14 min-h-[52px] items-center justify-center rounded-2xl bg-gradient-to-br from-[#2563eb] to-[#1d4ed8] px-10 text-base font-bold text-white shadow-btn-cta transition hover:brightness-105"
+                    >
+                      Objavi besplatan zahtjev
+                    </Link>
+                    {cityFilter ? (
+                      <Link
+                        href={`/grad/${cityToSlug(cityFilter)}`}
+                        className="inline-flex h-14 min-h-[52px] items-center justify-center rounded-2xl border border-slate-200 bg-white px-6 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+                      >
+                        Pogledaj sve usluge u {cityFilter}
+                      </Link>
+                    ) : null}
+                  </div>
                 </div>
               ) : (
                 <>
