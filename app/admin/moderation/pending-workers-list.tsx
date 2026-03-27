@@ -31,7 +31,23 @@ export async function PendingWorkersList({
           </p>
         </CardHeader>
         <CardContent>
-          <div className="overflow-x-auto">
+          <div className="space-y-3 md:hidden">
+            {handymen.map((u) => (
+              <div key={u.id} className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm">
+                <p className="truncate text-sm font-semibold text-slate-900">{u.name}</p>
+                <p className="mt-0.5 text-xs text-slate-500">{u.email}</p>
+                <p className="mt-0.5 text-xs text-slate-500">{u.phone ?? "-"} · {u.city ?? "-"}</p>
+                <p className="mt-1 text-xs text-slate-500">
+                  Kategorije: {u.handymanProfile?.workerCategories?.map((wc) => wc.category.name).join(", ") ?? "-"}
+                </p>
+                <p className="mt-1 text-xs text-slate-500">{new Date(u.createdAt).toLocaleDateString("sr")}</p>
+                <div className="mt-3">
+                  <WorkerModerationActions handymanId={u.id} canWriteWorkers={canWriteWorkers} />
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="hidden overflow-x-auto md:block">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b text-left">

@@ -105,7 +105,7 @@ export default async function AdminHandymenPage({
     const pageLink = (p: number) => `/admin/handymen${queryStr ? `?${queryStr}&page=${p}` : `?page=${p}`}`;
 
     return (
-      <div className="space-y-6">
+      <div className="space-y-5 sm:space-y-6">
         <div>
           <h1 className="text-2xl font-bold text-[#0F172A]">Majstori</h1>
           <p className="mt-1 text-sm text-[#64748B]">Upravljanje majstorima platforme</p>
@@ -136,12 +136,50 @@ export default async function AdminHandymenPage({
           ))}
         </div>
 
-        <Card>
+        <Card className="overflow-hidden rounded-2xl border-slate-200/90">
           <CardHeader>
             <CardTitle>Lista majstora ({total})</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="overflow-x-auto">
+            <div className="space-y-3 md:hidden">
+              {withProfile.map((h) => {
+                const hp = h.handymanProfile!;
+                const isSuspended = !!h.suspendedAt;
+                const isBanned = !!h.bannedAt;
+                return (
+                  <div key={h.id} className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="min-w-0">
+                        <p className="truncate text-sm font-semibold text-slate-900">{h.name}</p>
+                        <p className="truncate text-xs text-slate-500">{h.email}</p>
+                        <p className="mt-0.5 text-xs text-slate-500">{h.phone ?? "-"} · {h.city ?? hp.cities[0] ?? "-"}</p>
+                      </div>
+                      {hp.workerStatus === "BANNED" || isBanned ? (
+                        <Badge variant="destructive">Banned</Badge>
+                      ) : hp.workerStatus === "SUSPENDED" || isSuspended ? (
+                        <Badge variant="secondary">Suspendovan</Badge>
+                      ) : hp.workerStatus === "PENDING_REVIEW" ? (
+                        <Badge variant="outline">Na čekanju</Badge>
+                      ) : (
+                        <Badge variant="success">Aktivan</Badge>
+                      )}
+                    </div>
+                    <div className="mt-2 flex flex-wrap gap-2 text-xs text-slate-600">
+                      <span>Verif: {hp.verifiedStatus}</span>
+                      <span>Kategorije: {hp.workerCategories.length}</span>
+                      <span>Krediti: {hp.creditsBalance}</span>
+                      <span>Ponude: {h._count.offers}</span>
+                    </div>
+                    <div className="mt-3">
+                      <Link href={`/admin/handymen/${h.id}`} className="text-sm font-medium text-[#2563EB] hover:underline">
+                        Detalji
+                      </Link>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            <div className="hidden overflow-x-auto md:block">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b text-left">
@@ -160,7 +198,6 @@ export default async function AdminHandymenPage({
                 <tbody>
                   {withProfile.map((h) => {
                     const hp = h.handymanProfile!;
-                    const cats = hp.workerCategories.map((wc) => wc.category.name);
                     const isSuspended = !!h.suspendedAt;
                     const isBanned = !!h.bannedAt;
                     return (
@@ -193,7 +230,7 @@ export default async function AdminHandymenPage({
                             {hp.verifiedStatus}
                           </Badge>
                         </td>
-                        <td className="py-3 pr-4">{cats.length}</td>
+                        <td className="py-3 pr-4">{hp.workerCategories.length}</td>
                         <td className="py-3 pr-4">{hp.creditsBalance}</td>
                         <td className="py-3 pr-4">{h._count.offers}</td>
                         <td className="py-3">

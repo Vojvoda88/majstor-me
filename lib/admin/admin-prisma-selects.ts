@@ -16,8 +16,20 @@ export const ADMIN_REQUEST_LIST_SELECT = {
   createdAt: true,
   status: true,
   user: { select: { name: true } },
-  offers: { select: { id: true } },
-  contactUnlocks: { select: { id: true } },
+  _count: { select: { offers: true, contactUnlocks: true } },
+} as const;
+
+/** Moderation request liste (pending/spam) — bez suvišnih relacija i countova. */
+export const ADMIN_REQUEST_MODERATION_LIST_SELECT = {
+  id: true,
+  requesterName: true,
+  requesterPhone: true,
+  city: true,
+  category: true,
+  title: true,
+  description: true,
+  createdAt: true,
+  user: { select: { name: true } },
 } as const;
 
 /** Lista majstora /admin/handymen */
@@ -36,11 +48,7 @@ export const ADMIN_HANDYMAN_LIST_SELECT = {
       workerStatus: true,
       verifiedStatus: true,
       creditsBalance: true,
-      workerCategories: {
-        select: {
-          category: { select: { name: true } },
-        },
-      },
+      workerCategories: { select: { id: true } },
     },
   },
   _count: {

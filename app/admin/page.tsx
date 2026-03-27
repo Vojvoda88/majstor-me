@@ -57,8 +57,6 @@ async function loadDashboardData() {
   const runTimed = process.env.NODE_ENV === "development" || process.env.ADMIN_DASHBOARD_TIMING === "1";
 
   const all = await Promise.all([
-    runTimed ? withTiming("requestsToday", () => prisma.request.count({ where: { createdAt: { gte: todayStart } } })) : prisma.request.count({ where: { createdAt: { gte: todayStart } } }).then((r) => ({ result: r, label: "", ms: 0 })),
-    runTimed ? withTiming("requestsWeek", () => prisma.request.count({ where: { createdAt: { gte: weekStart } } })) : prisma.request.count({ where: { createdAt: { gte: weekStart } } }).then((r) => ({ result: r, label: "", ms: 0 })),
     runTimed
       ? withTiming("handymenToday", () =>
           prisma.handymanProfile.count({
@@ -77,50 +75,85 @@ async function loadDashboardData() {
           })
           .then((r) => ({ result: r, label: "", ms: 0 })),
     runTimed
-      ? withTiming("handymenActive", () => prisma.handymanProfile.count({ where: prismaWhereHandymanProfileActiveKpi() }))
+      ? withTiming("handymenActive", () =>
+          prisma.handymanProfile.count({ where: prismaWhereHandymanProfileActiveKpi() })
+        )
       : prisma.handymanProfile
           .count({ where: prismaWhereHandymanProfileActiveKpi() })
           .then((r) => ({ result: r, label: "", ms: 0 })),
-    runTimed ? withTiming("offersCount", () => prisma.offer.count()) : prisma.offer.count().then((r) => ({ result: r, label: "", ms: 0 })),
-    runTimed ? withTiming("contactUnlocksCount", () => prisma.requestContactUnlock.count()) : prisma.requestContactUnlock.count().then((r) => ({ result: r, label: "", ms: 0 })),
-    runTimed ? withTiming("reportsPending", () => prisma.report.count({ where: { status: "PENDING" } })) : prisma.report.count({ where: { status: "PENDING" } }).then((r) => ({ result: r, label: "", ms: 0 })),
-    runTimed ? withTiming("creditsToday", () => prisma.creditTransaction.count({ where: { createdAt: { gte: todayStart }, amount: { lt: 0 }, type: "CONTACT_UNLOCK" } })) : prisma.creditTransaction.count({ where: { createdAt: { gte: todayStart }, amount: { lt: 0 }, type: "CONTACT_UNLOCK" } }).then((r) => ({ result: r, label: "", ms: 0 })),
-    runTimed ? withTiming("creditsWeek", () => prisma.creditTransaction.count({ where: { createdAt: { gte: weekStart }, amount: { lt: 0 } } })) : prisma.creditTransaction.count({ where: { createdAt: { gte: weekStart }, amount: { lt: 0 } } }).then((r) => ({ result: r, label: "", ms: 0 })),
-    runTimed ? withTiming("creditsMonth", () => prisma.creditTransaction.count({ where: { createdAt: { gte: monthStart }, amount: { lt: 0 } } })) : prisma.creditTransaction.count({ where: { createdAt: { gte: monthStart }, amount: { lt: 0 } } }).then((r) => ({ result: r, label: "", ms: 0 })),
     runTimed
-      ? withTiming("requestsLast7Days", () =>
-          prisma.request.findMany({
-            where: { createdAt: { gte: dayRanges[0].start } },
-            select: { createdAt: true },
+      ? withTiming("offersCount", () => prisma.offer.count())
+      : prisma.offer.count().then((r) => ({ result: r, label: "", ms: 0 })),
+    runTimed
+      ? withTiming("contactUnlocksCount", () => prisma.requestContactUnlock.count())
+      : prisma.requestContactUnlock.count().then((r) => ({ result: r, label: "", ms: 0 })),
+    runTimed
+      ? withTiming("reportsPending", () => prisma.report.count({ where: { status: "PENDING" } }))
+      : prisma.report.count({ where: { status: "PENDING" } }).then((r) => ({ result: r, label: "", ms: 0 })),
+    runTimed
+      ? withTiming("creditsToday", () =>
+          prisma.creditTransaction.count({
+            where: { createdAt: { gte: todayStart }, amount: { lt: 0 }, type: "CONTACT_UNLOCK" },
           })
         )
-      : prisma.request
-          .findMany({
-            where: { createdAt: { gte: dayRanges[0].start } },
-            select: { createdAt: true },
-          })
+      : prisma.creditTransaction
+          .count({ where: { createdAt: { gte: todayStart }, amount: { lt: 0 }, type: "CONTACT_UNLOCK" } })
           .then((r) => ({ result: r, label: "", ms: 0 })),
+    runTimed
+      ? withTiming("creditsWeek", () =>
+          prisma.creditTransaction.count({ where: { createdAt: { gte: weekStart }, amount: { lt: 0 } } })
+        )
+      : prisma.creditTransaction
+          .count({ where: { createdAt: { gte: weekStart }, amount: { lt: 0 } } })
+          .then((r) => ({ result: r, label: "", ms: 0 })),
+    runTimed
+      ? withTiming("creditsMonth", () =>
+          prisma.creditTransaction.count({ where: { createdAt: { gte: monthStart }, amount: { lt: 0 } } })
+        )
+      : prisma.creditTransaction
+          .count({ where: { createdAt: { gte: monthStart }, amount: { lt: 0 } } })
+          .then((r) => ({ result: r, label: "", ms: 0 })),
+    runTimed
+      ? withTiming("requestsByDay", () =>
+          prisma.$queryRaw<Array<{ day: Date; count: bigint | number }>>`
+            SELECT date_trunc('day', "created_at") AS day, COUNT(*) AS count
+            FROM "requests"
+            WHERE "created_at" >= ${dayRanges[0].start}
+            GROUP BY 1
+          `
+        )
+      : prisma.$queryRaw<Array<{ day: Date; count: bigint | number }>>`
+          SELECT date_trunc('day', "created_at") AS day, COUNT(*) AS count
+          FROM "requests"
+          WHERE "created_at" >= ${dayRanges[0].start}
+          GROUP BY 1
+        `.then((r) => ({ result: r, label: "", ms: 0 })),
   ]);
 
   const getResult = (i: number): unknown => ("result" in all[i] ? (all[i] as { result: unknown }).result : all[i]);
-  const requestsToday = getResult(0) as number;
-  const requestsWeek = getResult(1) as number;
-  const handymenToday = getResult(2) as number;
-  const handymenActive = getResult(3) as number;
-  const offersCount = getResult(4) as number;
-  const contactUnlocksCount = getResult(5) as number;
-  const reportsPending = getResult(6) as number;
-  const creditsToday = getResult(7) as number;
-  const creditsWeek = getResult(8) as number;
-  const creditsMonth = getResult(9) as number;
-  const requestsLast7 = getResult(10) as Array<{ createdAt: Date }>;
+  const handymenToday = getResult(0) as number;
+  const handymenActive = getResult(1) as number;
+  const offersCount = getResult(2) as number;
+  const contactUnlocksCount = getResult(3) as number;
+  const reportsPending = getResult(4) as number;
+  const creditsToday = getResult(5) as number;
+  const creditsWeek = getResult(6) as number;
+  const creditsMonth = getResult(7) as number;
+  const requestsByDayRows = getResult(8) as Array<{ day: Date; count: bigint | number }>;
+  const requestsByDayMap = new Map(
+    requestsByDayRows.map((r) => [new Date(r.day).toDateString(), Number(r.count)])
+  );
   const requestsByDay = dayRanges.map(({ start, end, label }) => ({
     label,
-    count: requestsLast7.filter((r) => r.createdAt >= start && r.createdAt < end).length,
+    count: requestsByDayMap.get(start.toDateString()) ?? 0,
   }));
+  const requestsToday = requestsByDay.at(-1)?.count ?? 0;
+  const requestsWeek = requestsByDay.reduce((sum, d) => sum + d.count, 0);
 
   if (runTimed && "ms" in all[0]) {
-    const timings = all.slice(0, 11).filter((x) => typeof (x as { ms?: number }).ms === "number") as { result: unknown; label: string; ms: number }[];
+    const timings = all
+      .slice(0, 9)
+      .filter((x) => typeof (x as { ms?: number }).ms === "number") as { result: unknown; label: string; ms: number }[];
     const slowest = timings.length ? timings.reduce((a, b) => (a.ms >= b.ms ? a : b)) : null;
     console.info("[AdminDashboard] Query batch total (wall) ms:", Date.now() - (typeof (global as unknown as { __adminDashboardStart?: number }).__adminDashboardStart === "number" ? (global as unknown as { __adminDashboardStart: number }).__adminDashboardStart : 0));
     if (slowest) console.info("[AdminDashboard] Slowest query:", slowest.label, slowest.ms, "ms");

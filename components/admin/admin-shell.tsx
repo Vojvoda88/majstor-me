@@ -71,35 +71,35 @@ export function AdminShell({ adminRole, session, pendingReview, children }: Prop
       />
 
       <div className="flex min-h-screen w-full min-w-0 flex-col lg:pl-64">
-        <header className="sticky top-0 z-30 flex min-h-16 shrink-0 flex-wrap items-center gap-x-2 gap-y-1.5 border-b border-[#E2E8F0] bg-white px-3 py-2 sm:gap-x-3 sm:px-6">
-          <button
-            type="button"
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-[#E2E8F0] bg-white text-[#0F172A] lg:hidden"
-            aria-expanded={mobileOpen}
-            aria-controls="admin-sidebar-nav"
-            aria-label={mobileOpen ? "Zatvori meni" : "Otvori meni"}
-            onClick={() => setMobileOpen((o) => !o)}
-          >
-            {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-          </button>
-
-          <span className="min-w-0 flex-1 text-xs text-[#64748B] sm:text-sm">
-            <span className="hidden sm:inline">Prijavljeni ste kao </span>
-            <strong className="text-[#0F172A]">{session.user?.name}</strong>
-            <span className="hidden sm:inline"> ({roleLabel})</span>
-          </span>
-
-          <div className="flex min-w-0 shrink-0 items-center gap-1.5 sm:gap-3">
-            <AdminPendingHeaderBadge counts={pendingReview} />
-            <NotificationsDropdown />
-            <Link
-              href="/"
-              className="whitespace-nowrap text-xs font-medium text-[#64748B] hover:text-[#0F172A] sm:text-sm"
+        <header className="sticky top-0 z-30 shrink-0 border-b border-[#E2E8F0] bg-white/95 px-3 py-2.5 backdrop-blur supports-[backdrop-filter]:bg-white/90 sm:px-6">
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[#E2E8F0] bg-white text-[#0F172A] lg:hidden"
+              aria-expanded={mobileOpen}
+              aria-controls="admin-sidebar-nav"
+              aria-label={mobileOpen ? "Zatvori meni" : "Otvori meni"}
+              onClick={() => setMobileOpen((o) => !o)}
             >
+              {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </button>
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-sm font-semibold text-[#0F172A]">Admin panel</p>
+              <p className="truncate text-[11px] text-[#64748B] sm:text-xs">
+                {session.user?.name} · {roleLabel}
+              </p>
+            </div>
+            <div className="flex shrink-0 items-center gap-1.5 sm:gap-2.5">
+              <NotificationsDropdown />
+              <AdminSignOutButton />
+            </div>
+          </div>
+          <div className="mt-2 flex items-center justify-between gap-2">
+            <AdminPendingHeaderBadge counts={pendingReview} />
+            <Link href="/" className="shrink-0 text-xs font-medium text-[#64748B] hover:text-[#0F172A]">
               <span className="sm:hidden">Sajt</span>
               <span className="hidden sm:inline">← Javna stranica</span>
             </Link>
-            <AdminSignOutButton />
           </div>
         </header>
 
