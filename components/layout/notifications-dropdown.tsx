@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -20,6 +20,13 @@ export function NotificationsDropdown() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [panelStyle, setPanelStyle] = useState<{
+    top: number;
+    left: number;
+    width: number;
+    maxHeight: number;
+  } | null>(null);
+  const buttonRef = useRef<HTMLButtonElement | null>(null);
 
   const fetchNotifications = async () => {
     setLoading(true);
@@ -35,6 +42,41 @@ export function NotificationsDropdown() {
   useEffect(() => {
     fetchNotifications();
   }, []);
+
+  const computePanelStyle = useCallback(() => {
+    const button = buttonRef.current;
+    if (!button) return;
+
+    const rect = button.getBoundingClientRect();
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    const gutter = 12;
+    const isMobile = vw < 640;
+    const width = isMobile ? Math.min(vw - gutter * 2, 420) : 320;
+    const top = Math.min(rect.bottom + 10, vh - 220);
+    const idealLeft = rect.right - width;
+    const left = Math.max(gutter, Math.min(idealLeft, vw - width - gutter));
+    const maxHeight = Math.max(220, vh - top - gutter);
+
+    setPanelStyle({ top, left, width, maxHeight });
+  }, []);
+
+  useEffect(() => {
+    if (!open) return;
+    computePanelStyle();
+    const onChange = () => computePanelStyle();
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    window.addEventListener("resize", onChange);
+    window.addEventListener("scroll", onChange, true);
+    window.addEventListener("keydown", onKeyDown);
+    return () => {
+      window.removeEventListener("resize", onChange);
+      window.removeEventListener("scroll", onChange, true);
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, [computePanelStyle, open]);
 
   const markAsRead = async (id: string) => {
     await fetch(`/api/notifications/${id}/read`, { method: "POST" });
@@ -53,11 +95,15 @@ export function NotificationsDropdown() {
   return (
     <div className="relative">
       <Button
+        ref={buttonRef}
         variant="ghost"
         size="icon"
         onClick={() => {
           setOpen(!open);
-          if (!open) fetchNotifications();
+          if (!open) {
+            fetchNotifications();
+            computePanelStyle();
+          }
         }}
         className="relative h-10 min-h-[44px] w-10"
       >
@@ -71,26 +117,37 @@ export function NotificationsDropdown() {
       {open && (
         <>
           <div
-            className="fixed inset-0 z-40"
+            className="fixed inset-0 z-40 bg-slate-900/10 backdrop-blur-[1px]"
             onClick={() => setOpen(false)}
             aria-hidden
           />
-          <div className="absolute right-0 top-full z-50 mt-2 w-[calc(100vw-2rem)] max-w-sm overflow-hidden rounded-xl border border-slate-200 bg-white shadow-lg sm:w-80">
-            <div className="flex items-center justify-between border-b border-slate-100 px-4 py-2">
-              <span className="font-semibold text-slate-900">Notifikacije</span>
+          <div
+            className="fixed z-50 overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-[0_20px_48px_rgba(15,23,42,0.2)]"
+            style={{
+              top: panelStyle?.top ?? 68,
+              left: panelStyle?.left ?? 12,
+              width: panelStyle?.width ?? 320,
+              maxHeight: panelStyle?.maxHeight ?? 420,
+            }}
+          >
+            <div className="flex items-center justify-between gap-3 border-b border-slate-100 px-4 py-3">
+              <span className="text-sm font-semibold tracking-tight text-slate-900">Notifikacije</span>
               {unreadCount > 0 && (
                 <button
                   type="button"
                   onClick={markAllRead}
-                  className="text-xs text-blue-600 hover:underline"
+                  className="shrink-0 text-xs font-medium text-blue-600 hover:underline"
                 >
                   Označi sve kao pročitano
                 </button>
               )}
             </div>
-            <div className="max-h-80 overflow-y-auto">
+            <div
+              className="overflow-y-auto overscroll-contain p-1.5"
+              style={{ maxHeight: Math.max(160, (panelStyle?.maxHeight ?? 420) - 52) }}
+            >
               {loading ? (
-                <div className="p-4 text-center text-sm text-slate-500">
+                <div className="p-5 text-center text-sm text-slate-500">
                   Učitavanje...
                 </div>
               ) : notifications.length === 0 ? (
@@ -111,8 +168,8 @@ export function NotificationsDropdown() {
                       if (!n.read) markAsRead(n.id);
                       setOpen(false);
                     }}
-                    className={`block min-h-[56px] border-b border-slate-50 px-4 py-3 text-left transition hover:bg-slate-50 ${
-                      !n.read ? "bg-blue-50/50" : ""
+                    className={`block min-h-[56px] rounded-xl px-3.5 py-3 text-left transition hover:bg-slate-50 ${
+                      !n.read ? "bg-blue-50/70" : ""
                     }`}
                   >
                     <p className="font-medium text-slate-900">{n.title}</p>
