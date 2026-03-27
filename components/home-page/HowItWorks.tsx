@@ -86,16 +86,13 @@ function StepGrid({
               >
                 <step.icon className="h-5 w-5 md:h-6 md:w-6" strokeWidth={2} />
               </span>
-              <span className="hidden min-h-[1.85rem] min-w-[1.85rem] items-center justify-center rounded-full border border-slate-200 bg-slate-900 px-2.5 text-xs font-bold tabular-nums text-white shadow-sm md:inline-flex">
-                {step.n}
-              </span>
             </div>
             <div className="min-w-0 flex-1">
               <div className="flex items-start justify-between gap-2">
                 <h3 className="min-w-0 break-words font-display text-[17px] font-bold leading-snug text-slate-900 md:mt-2 md:text-[18px]">
                   {step.title}
                 </h3>
-                <span className="inline-flex min-h-[1.85rem] min-w-[1.85rem] shrink-0 items-center justify-center rounded-full border border-slate-200 bg-slate-900 px-2.5 text-xs font-bold tabular-nums text-white shadow-sm md:hidden">
+                <span className="inline-flex min-h-[1.85rem] min-w-[1.85rem] shrink-0 items-center justify-center rounded-full border border-slate-200 bg-slate-900 px-2.5 text-xs font-bold tabular-nums text-white shadow-sm">
                   {step.n}
                 </span>
               </div>
