@@ -5,6 +5,7 @@ import { parseCategoryCitySlug } from "@/lib/slugs";
 import { getSiteUrl } from "@/lib/site-url";
 import { getSeoLandingStaticParams } from "@/lib/seo-landing-config";
 import { getPrioritySeoLandingContent } from "@/lib/seo-landing-priority-copy";
+import { getPublicHandymenList } from "@/lib/handymen-listing";
 import {
   buildSeoCanonical,
   buildSeoLandingDescription,
@@ -76,6 +77,12 @@ export default async function SeoLandingPage({
     description,
     parsed,
   });
+  const initialListing = await getPublicHandymenList({
+    category: parsed.internalCategory,
+    city: parsed.cityDisplayName,
+    sortBy: "rating",
+    page: 1,
+  }).catch(() => null);
 
   return (
     <>
@@ -83,7 +90,17 @@ export default async function SeoLandingPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <Suspense fallback={<div className="min-h-screen bg-slate-100 p-8">Učitavanje...</div>}>
+      <Suspense
+        fallback={
+          <div className="min-h-screen bg-slate-100 p-8">
+            <div className="mx-auto max-w-6xl space-y-3">
+              <div className="h-7 w-72 animate-pulse rounded bg-slate-200" />
+              <div className="h-4 w-full animate-pulse rounded bg-slate-200" />
+              <div className="h-4 w-5/6 animate-pulse rounded bg-slate-200" />
+            </div>
+          </div>
+        }
+      >
         <SeoLandingContent
           slug={slug}
           displayName={parsed.categoryDisplayName}
@@ -91,6 +108,7 @@ export default async function SeoLandingPage({
           cityName={parsed.cityDisplayName}
           citySlug={parsed.citySlug}
           categorySlug={parsed.categorySlug}
+          initialListing={initialListing}
         />
       </Suspense>
     </>

@@ -45,7 +45,8 @@ export function Hero() {
           </span>
         </h1>
         <p className="mx-auto mb-7 max-w-xl text-[15px] font-medium leading-relaxed text-slate-200/95 sm:text-base md:mb-10 md:text-lg md:leading-relaxed">
-          Opišite posao jednom — javljaju se majstori kojima odgovara vaš zahtjev. Bez naknade za korisnike.
+          Opišite posao jednom — nakon kratkog admin pregleda, zahtjev ide majstorima kojima odgovara. Bez naknade za
+          korisnike.
         </p>
 
         <div className="mx-auto max-w-2xl">

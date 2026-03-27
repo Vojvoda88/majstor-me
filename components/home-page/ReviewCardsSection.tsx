@@ -44,7 +44,7 @@ export function ReviewCardsSection() {
           Istaknuti majstori
         </h2>
         <p className="mt-2 max-w-2xl text-[15px] font-medium leading-relaxed text-slate-700 sm:mt-3 sm:text-base md:text-lg">
-          Primjeri dobrih ocjena i iskustva — tako znate šta možete očekivati kad birate majstora.
+          Profili sa javnim ocjenama i recenzijama — lakše uporedite prije nego što odlučite.
         </p>
       </div>
 
@@ -76,7 +76,7 @@ export function ReviewCardsSection() {
                   <p className="mt-1 text-sm font-semibold text-amber-200/95">{h.specialty}</p>
                   <span className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-emerald-500/15 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-emerald-200 ring-1 ring-emerald-400/30">
                     <CheckCircle2 className="h-3.5 w-3.5" />
-                    Primjer profila
+                    Javni profil
                   </span>
                 </div>
               </div>

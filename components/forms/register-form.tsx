@@ -141,7 +141,9 @@ export function RegisterForm({
             </div>
             {role === "HANDYMAN" && (
               <div className="rounded-lg border border-amber-100 bg-amber-50/70 px-3 py-2.5 text-xs leading-relaxed text-slate-700">
-                <strong className="font-semibold text-slate-800">Za majstore:</strong> Pregledate poslove bez plaćanja. Kada želite broj korisnika, trošite kredite. Cijena zavisi od hitnosti i detalja posla.
+                <strong className="font-semibold text-slate-800">Za majstore:</strong> Poslije registracije profil ide na
+                kratak admin pregled. Nakon odobrenja profil je aktivan, poslovi su vidljivi, a krediti se troše tek kada
+                želite broj korisnika.
               </div>
             )}
           </div>

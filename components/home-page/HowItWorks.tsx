@@ -24,14 +24,14 @@ const USER_STEPS = [
   {
     n: 2,
     icon: MessageSquare,
-    title: "Javljaju vam se majstori",
-    desc: "Ne zovete vi njih redom; oni se javljaju vama kad im posao odgovara.",
+    title: "Kratak admin pregled, pa distribucija",
+    desc: "Zahtjev prvo ide na brzu provjeru, zatim se prikazuje odgovarajućim majstorima.",
   },
   {
     n: 3,
     icon: CheckCircle2,
     title: "Pregledajte ponude i birajte",
-    desc: "Kad stignu ponude uz vaš zahtjev, uporedite ih i izaberete majstora koji vam odgovara — u svom ritmu.",
+    desc: "Kada stignu ponude, uporedite ih i izaberite majstora koji vam odgovara — u svom ritmu.",
   },
 ] as const;
 
@@ -40,22 +40,22 @@ const HANDYMAN_STEPS = [
   {
     n: 1,
     icon: UserPlus,
-    title: "Profil besplatno + 1000 kredita",
-    desc: "Bez pretplate. Na startu dobijate 1000 kredita — dovoljno za prvih pet standardnih ponuda.",
+    title: "Besplatan profil i onboarding",
+    desc: "Registracija je besplatna. Nakon pregleda profila od admina otvarate puni pristup poslovima.",
     featured: true as const,
   },
   {
     n: 2,
     icon: Smartphone,
-    title: "Obavještenje kad stigne posao za vas",
-    desc: "Kada neko objavi posao u vašoj branši, šaljemo obavještenje da brzo pregledate zahtjev.",
+    title: "Obavještenja za odobrene poslove",
+    desc: "Kada je zahtjev odobren i relevantan za vašu branšu/lokaciju, dobijate obavještenje.",
     featured: false as const,
   },
   {
     n: 3,
     icon: Unlock,
     title: "Pregled besplatno, kontakt kad odgovara",
-    desc: "Opis i slike vidite prije plaćanja. Ako vam odgovara, otključate kontakt i šaljete ponudu (standardno oko 2 €).",
+    desc: "Opis i slike vidite prije plaćanja. Ako vam posao odgovara, otključavate kontakt i šaljete ponudu.",
     featured: false as const,
   },
 ] as const;
@@ -287,7 +287,7 @@ export function HowItWorksForHandymen() {
           Kako radi za majstore
         </h2>
         <p className="mx-auto mt-4 max-w-2xl text-[15px] font-medium leading-relaxed text-slate-600 sm:text-base md:text-lg">
-          Besplatna registracija, 1000 kredita za start, birate poslove koji vam odgovaraju.
+          Besplatna registracija, jasan proces odobrenja i poslovi koji stižu po vašoj branši.
         </p>
       </div>
       <div className="mx-auto mt-10 max-w-6xl px-4 sm:px-5 md:mt-12">

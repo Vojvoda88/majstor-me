@@ -43,11 +43,6 @@ const FAQ = nextDynamic(
   { loading: () => <div className="min-h-[220px] animate-pulse rounded-2xl bg-slate-100 md:min-h-[280px]" /> }
 );
 
-const ReviewCardsSection = nextDynamic(
-  () => import("@/components/home-page/ReviewCardsSection").then((m) => m.ReviewCardsSection),
-  { loading: () => <div className="min-h-[260px] animate-pulse rounded-2xl bg-slate-100 md:min-h-[320px]" /> }
-);
-
 export default function HomePage() {
   const structuredData = buildHomeJsonLdGraph(FAQ_ITEMS);
   return (
@@ -73,15 +68,12 @@ export default function HomePage() {
           <CategoriesGrid />
         </div>
         <div className="animate-fade-up" style={{ animationDelay: "0.18s", animationFillMode: "both" }}>
-          <ReviewCardsSection />
-        </div>
-        <div className="animate-fade-up" style={{ animationDelay: "0.22s", animationFillMode: "both" }}>
           <WhyMajstorSection />
         </div>
-        <div className="animate-fade-up" style={{ animationDelay: "0.26s", animationFillMode: "both" }}>
+        <div className="animate-fade-up" style={{ animationDelay: "0.22s", animationFillMode: "both" }}>
           <FAQ />
         </div>
-        <div className="animate-fade-up" style={{ animationDelay: "0.28s", animationFillMode: "both" }}>
+        <div className="animate-fade-up" style={{ animationDelay: "0.26s", animationFillMode: "both" }}>
           <SeoLandingLinks />
         </div>
       </div>

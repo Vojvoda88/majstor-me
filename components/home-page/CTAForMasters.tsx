@@ -12,13 +12,12 @@ export function CTAForMasters() {
         <div className="relative mx-auto max-w-3xl text-center md:max-w-4xl">
           <p className="text-xs font-bold uppercase tracking-[0.2em] text-slate-500">Za majstore</p>
           <h3 id="cta-majstor-naslov" className="mt-3 font-display text-2xl font-bold tracking-tight text-brand-navy sm:text-3xl md:text-[2rem]">
-            Uđite besplatno. Počnite sa 1000 kredita.
+            Uđite besplatno. Aktivirajte profil i birajte poslove.
           </h3>
           <p className="mx-auto mt-4 max-w-2xl text-[15px] leading-relaxed text-slate-600 sm:text-base md:text-lg">
-            <strong className="font-semibold text-slate-800">Bez pretplate.</strong> Novi majstori dobijaju{" "}
-            <strong className="font-semibold text-brand-navy">1000 kredita za početak</strong> — obično dovoljno za{" "}
-            <strong className="font-semibold text-brand-navy">prvih pet standardnih ponuda</strong> (standardni posao = 200 kredita).{" "}
-            Plaćate samo kada otključate kontakt za posao koji vam odgovara.
+            <strong className="font-semibold text-slate-800">Bez pretplate.</strong> Poslove pregledate bez plaćanja, a
+            kredite trošite tek kada želite da otključate kontakt za konkretan posao. Detalji paketa i cijena su
+            transparentni prije svake kupovine.
           </p>
 
           <div
@@ -27,10 +26,10 @@ export function CTAForMasters() {
           >
             <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-200/90 bg-white/90 px-3 py-1.5 shadow-sm">
               <Coins className="h-3.5 w-3.5 text-blue-600" aria-hidden />
-              1 kredit = 1 cent
+              Krediti se troše samo na otključavanje kontakta
             </span>
             <span className="max-w-[100%] rounded-full border border-slate-200/90 bg-white/90 px-2.5 py-1.5 text-center shadow-sm sm:px-3">
-              Standardna ponuda za manje od 2 €
+              Nema pretplate ni skrivenih troškova
             </span>
           </div>
 

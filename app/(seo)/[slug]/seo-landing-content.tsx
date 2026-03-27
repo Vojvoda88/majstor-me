@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { PublicHeader } from "@/components/layout/PublicHeader";
 import { PublicFooter } from "@/components/layout/PublicFooter";
@@ -10,6 +10,7 @@ import { DEFAULT_PAGE_SIZE } from "@/lib/constants";
 import { cityLocative } from "@/lib/slugs";
 import { buildSeoCombinedIntroParagraph, type SeoCombinedParsed } from "@/lib/seo-landing-copy";
 import { getPrioritySeoLandingContent } from "@/lib/seo-landing-priority-copy";
+import type { PublicHandymenListResult } from "@/lib/handymen-listing";
 
 type Handyman = {
   id: string;
@@ -27,6 +28,7 @@ export function SeoLandingContent({
   cityName,
   citySlug,
   categorySlug,
+  initialListing,
 }: {
   slug: string;
   displayName: string;
@@ -34,13 +36,14 @@ export function SeoLandingContent({
   cityName: string;
   citySlug: string;
   categorySlug: string;
+  initialListing: PublicHandymenListResult | null;
 }) {
-  const [handymen, setHandymen] = useState<Handyman[]>([]);
+  const [handymen, setHandymen] = useState<Handyman[]>(initialListing?.items ?? []);
   const [sortBy, setSortBy] = useState<"rating" | "reviews">("rating");
   const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [total, setTotal] = useState(0);
-  const [loading, setLoading] = useState(true);
+  const [totalPages, setTotalPages] = useState(initialListing?.totalPages ?? 1);
+  const [total, setTotal] = useState(initialListing?.total ?? 0);
+  const [loading, setLoading] = useState(!initialListing);
   const [error, setError] = useState<string | null>(null);
   const [reloadToken, setReloadToken] = useState(0);
 
@@ -55,12 +58,18 @@ export function SeoLandingContent({
   const priority = getPrioritySeoLandingContent(slug);
   const intro = priority?.intro ?? buildSeoCombinedIntroParagraph(parsed);
 
+  const skipFirstClientFetch = useRef(!!initialListing);
+
   useEffect(() => {
     setPage(1);
   }, [internalCategory, cityName, sortBy]);
 
   useEffect(() => {
     let cancelled = false;
+    if (skipFirstClientFetch.current && page === 1 && reloadToken === 0 && sortBy === "rating") {
+      skipFirstClientFetch.current = false;
+      return;
+    }
 
     async function fetchHandymen() {
       setLoading(true);
@@ -173,7 +182,11 @@ export function SeoLandingContent({
           </div>
 
           {loading ? (
-            <p className="py-12 text-center text-slate-500">Učitavanje...</p>
+            <div className="space-y-3 rounded-2xl border border-slate-200/80 bg-white p-6 text-sm text-slate-500 shadow-sm">
+              <div className="h-4 w-1/2 animate-pulse rounded bg-slate-200" />
+              <div className="h-4 w-full animate-pulse rounded bg-slate-200" />
+              <div className="h-4 w-4/5 animate-pulse rounded bg-slate-200" />
+            </div>
           ) : error ? (
             <div className="rounded-2xl border border-red-100 bg-red-50 p-12 text-center shadow-sm">
               <p className="text-sm font-medium text-red-800">{error}</p>

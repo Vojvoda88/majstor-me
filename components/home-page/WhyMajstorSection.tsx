@@ -4,7 +4,7 @@ const BENEFITS = [
   {
     id: "01",
     title: "Lokalno, uporedno, bez zvanja redom",
-    body: "Ocjene i ponude — javljaju se majstori kojima posao odgovara, iz vaše okoline.",
+    body: "Nakon kratke provjere zahtjeva, ponude šalju majstori kojima posao odgovara iz vaše okoline.",
     icon: MapPin,
   },
   {
