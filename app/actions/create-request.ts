@@ -1,7 +1,7 @@
 "use server";
 
 import { auth } from "@/lib/auth";
-import { createRequestShared } from "@/lib/requests/create-request-shared";
+import { createRequestShared, logRequestCreateSubmitFatal } from "@/lib/requests/create-request-shared";
 
 export type CreateRequestActionResult =
   | { ok: true; data: { id: string; handymenNotified: number; guestAccessToken?: string } }
@@ -31,7 +31,7 @@ export async function createRequestAction(body: unknown): Promise<CreateRequestA
     console.info("[RequestCreateSubmit] action_success", { requestId: result.data.id });
     return { ok: true, data: result.data };
   } catch (e) {
-    console.error("[RequestCreateSubmit] action_fatal", e);
+    logRequestCreateSubmitFatal("step_action_outer_catch", e);
     return {
       ok: false,
       error: "Greška pri snimanju zahtjeva. Pokušajte ponovo za nekoliko trenutaka.",

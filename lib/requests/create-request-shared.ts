@@ -9,6 +9,34 @@ import { zodErrorToString } from "@/lib/api-response";
 import { trackFunnelEvent } from "@/lib/funnel-events";
 import { generateGuestAccessSecret } from "@/lib/guest-request-token";
 
+/** Jedan red u Vercel logu — tačan uzrok bez nagađanja. */
+export function logRequestCreateSubmitFatal(step: string, err: unknown): void {
+  if (err instanceof Prisma.PrismaClientKnownRequestError) {
+    console.error("[RequestCreateSubmit] fatal", {
+      step,
+      prismaCode: err.code,
+      meta: err.meta,
+      message: err.message.slice(0, 800),
+    });
+    return;
+  }
+  if (err instanceof Prisma.PrismaClientValidationError) {
+    console.error("[RequestCreateSubmit] fatal", {
+      step,
+      kind: "PrismaClientValidationError",
+      message: err.message.slice(0, 800),
+    });
+    return;
+  }
+  const e = err instanceof Error ? err : new Error(String(err));
+  console.error("[RequestCreateSubmit] fatal", {
+    step,
+    name: e.name,
+    message: e.message.slice(0, 800),
+    stack: process.env.NODE_ENV === "development" ? e.stack?.slice(0, 1200) : undefined,
+  });
+}
+
 export const createRequestSchema = z.object({
   requesterName: z.string().min(2, "Unesite ime"),
   title: z.string().min(3, "Naslov mora imati najmanje 3 karaktera"),
@@ -69,23 +97,34 @@ async function prismaRequestCreateSafe(
     if (e.code === "P2002") {
       console.warn("[RequestCreateSubmit] db_guest_hash_unique_retry");
       const newSecret = generateGuestAccessSecret();
-      const row = await prisma.request.create({
-        data: { ...data, guestAccessTokenHash: newSecret.hash },
-        select: { id: true },
-      });
-      return { id: row.id, guestPlainOut: newSecret.plain };
+      try {
+        const row = await prisma.request.create({
+          data: { ...data, guestAccessTokenHash: newSecret.hash },
+          select: { id: true },
+        });
+        return { id: row.id, guestPlainOut: newSecret.plain };
+      } catch (e2) {
+        logRequestCreateSubmitFatal("step_db_prisma_create_after_p2002_retry", e2);
+        throw e2;
+      }
     }
 
     if (e.code === "P2022") {
       console.warn("[RequestCreateSubmit] db_guest_hash_column_retry_without_hash", { meta: e.meta });
       const { guestAccessTokenHash: _h, ...rest } = data;
-      const row = await prisma.request.create({
-        data: { ...rest, guestAccessTokenHash: null },
-        select: { id: true },
-      });
-      return { id: row.id, guestPlainOut: null };
+      try {
+        const row = await prisma.request.create({
+          data: { ...rest, guestAccessTokenHash: null },
+          select: { id: true },
+        });
+        return { id: row.id, guestPlainOut: null };
+      } catch (e2) {
+        logRequestCreateSubmitFatal("step_db_prisma_create_after_p2022_retry", e2);
+        throw e2;
+      }
     }
 
+    logRequestCreateSubmitFatal("step_db_prisma_create_guest_unhandled_code", e);
     throw e;
   }
 }
@@ -99,6 +138,7 @@ export async function createRequestShared(
   body: unknown
 ): Promise<CreateRequestSharedResult> {
   try {
+    console.info("[RequestCreateSubmit] step_enter", { step: "step_db_import" });
     const { prisma } = await import("@/lib/db");
     const isGuest = !session?.user?.id;
 
@@ -109,6 +149,7 @@ export async function createRequestShared(
     if (!isGuest) {
       const yesterday = new Date();
       yesterday.setDate(yesterday.getDate() - 1);
+      console.info("[RequestCreateSubmit] step_enter", { step: "step_db_rate_limit_count" });
       const requestCount = await prisma.request.count({
         where: {
           userId: session!.user!.id,
@@ -144,6 +185,7 @@ export async function createRequestShared(
 
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
+    console.info("[RequestCreateSubmit] step_enter", { step: "step_db_duplicate_check" });
     const duplicate = isGuest
       ? null
       : await prisma.request.findFirst({
@@ -168,7 +210,7 @@ export async function createRequestShared(
     const emailTrimmed = requesterEmail?.trim() || undefined;
 
     if (isBlacklisted) {
-      console.info("[RequestCreateSubmit] db_create_spam_start");
+      console.info("[RequestCreateSubmit] step_enter", { step: "step_db_request_create_spam" });
       const spamData: Prisma.RequestUncheckedCreateInput = {
         userId: isGuest ? null : session!.user!.id,
         requesterName: isGuest ? parsed.data.requesterName : undefined,
@@ -209,7 +251,7 @@ export async function createRequestShared(
       adminStatus: "PENDING_REVIEW",
     };
 
-    console.info("[RequestCreateSubmit] db_create_start");
+    console.info("[RequestCreateSubmit] step_enter", { step: "step_db_request_create_pending" });
     const created = await prismaRequestCreateSafe(prisma, createData, guestSecret?.plain ?? null);
     console.info("[RequestCreateSubmit] db_create_ok", { id: created.id });
 
@@ -259,9 +301,7 @@ export async function createRequestShared(
       },
     };
   } catch (e) {
-    const msg = e instanceof Error ? e.message : String(e);
-    const code = e instanceof Prisma.PrismaClientKnownRequestError ? e.code : undefined;
-    console.error("[RequestCreateSubmit] fatal", { code, message: msg.slice(0, 500) });
+    logRequestCreateSubmitFatal("step_outer_catch", e);
     return {
       ok: false,
       error: "Greška pri snimanju zahtjeva. Pokušajte ponovo za nekoliko trenutaka.",
