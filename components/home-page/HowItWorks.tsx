@@ -191,9 +191,17 @@ export function HowItWorksForUsers() {
         <div className={cn(userWrap, "shadow-[0_22px_55px_-40px_rgba(15,23,42,0.45)]")}>
           <StepGrid steps={USER_STEPS} colsClass="md:grid-cols-3" />
         </div>
-        <p className="mx-auto mt-6 max-w-2xl text-center text-sm text-slate-500 md:text-[15px]">
-          Dobijate više ponuda bez zvanja redom — sve na jednom mjestu.
-        </p>
+        <div className="mx-auto mt-6 max-w-2xl text-center">
+          <p className="text-sm text-slate-500 md:text-[15px]">
+            Dobijate više ponuda bez zvanja redom — sve na jednom mjestu.
+          </p>
+          <Link
+            href="/kako-radi-korisnici"
+            className="mt-3 inline-flex items-center rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+          >
+            Detaljno za korisnike
+          </Link>
+        </div>
       </div>
     </section>
   );
@@ -242,6 +250,14 @@ export function HowItWorksForHandymen() {
               Pogledaj kako izgleda zahtjev
             </Link>
           </div>
+          <p className="mt-4 text-center">
+            <Link
+              href="/kako-radi-majstori"
+              className="inline-flex items-center rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+            >
+              Detaljno o poslovima i kreditima
+            </Link>
+          </p>
         </div>
       </div>
     </section>
