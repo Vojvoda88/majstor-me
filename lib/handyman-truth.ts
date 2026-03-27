@@ -52,6 +52,7 @@ export function prismaWhereHandymanProfileActiveTruth(): Prisma.HandymanProfileW
   return {
     workerStatus: "ACTIVE",
     user: {
+      role: "HANDYMAN",
       bannedAt: null,
       suspendedAt: null,
       ...prismaWhereHandymanEmailNotDemo(),
@@ -62,7 +63,7 @@ export function prismaWhereHandymanProfileActiveTruth(): Prisma.HandymanProfileW
 export function prismaWhereHandymanProfilePendingTruth(): Prisma.HandymanProfileWhereInput {
   return {
     workerStatus: "PENDING_REVIEW",
-    user: { ...prismaWhereHandymanEmailNotDemo() },
+    user: { role: "HANDYMAN", ...prismaWhereHandymanEmailNotDemo() },
   };
 }
 
