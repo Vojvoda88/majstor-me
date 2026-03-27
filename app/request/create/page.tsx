@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import { CreateRequestForm } from "@/components/forms/create-request-form";
 import { PremiumMobileHeader } from "@/components/layout/PremiumMobileHeader";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
+import { parseRequestCreateSearchParams } from "@/lib/request-create-query";
 import { getSiteUrl } from "@/lib/site-url";
 
 const baseUrl = getSiteUrl();
@@ -32,13 +33,29 @@ export const metadata: Metadata = {
 
 export const dynamic = "force-dynamic";
 
-type CreateRequestSearchParams = {
-  category?: string;
-  city?: string;
-};
+/**
+ * Next 15: `searchParams` je Promise; Next 14: običan objekat.
+ * Oba slučaja: `await Promise.resolve(searchParams)` + normalizacija string | string[].
+ */
+export default async function CreateRequestPage(props: {
+  searchParams?: Promise<Record<string, string | string[] | undefined>> | Record<string, string | string[] | undefined>;
+}) {
+  let initialCategory: string | undefined;
+  let initialCity: string | undefined;
 
-export default function CreateRequestPage(props: { searchParams?: CreateRequestSearchParams }) {
-  const params = props.searchParams ?? {};
+  try {
+    const raw = await Promise.resolve(props.searchParams ?? {});
+    const parsed = parseRequestCreateSearchParams(raw);
+    initialCategory = parsed.initialCategory;
+    initialCity = parsed.initialCity;
+    console.info("[RequestCreateSSR]", {
+      ok: true,
+      hasCategory: Boolean(initialCategory),
+      hasCity: Boolean(initialCity),
+    });
+  } catch (e) {
+    console.error("[RequestCreateSSR] parse_failed", e);
+  }
 
   return (
     <div className="min-h-screen bg-brand-page pb-[max(7rem,calc(env(safe-area-inset-bottom,0px)+5.5rem))] pt-16 md:pb-10 md:pt-20">
@@ -72,7 +89,7 @@ export default function CreateRequestPage(props: { searchParams?: CreateRequestS
             </div>
           }
         >
-          <CreateRequestForm initialCategory={params.category} initialCity={params.city} />
+          <CreateRequestForm initialCategory={initialCategory} initialCity={initialCity} />
         </Suspense>
       </div>
     </div>

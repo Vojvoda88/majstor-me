@@ -379,9 +379,10 @@ export function isCategorySlugValid(slug: string): boolean {
 }
 
 export function displayLabelForRequestCategory(internalCategory: string): string {
-  if (internalCategory === REQUEST_CATEGORY_FALLBACK) {
+  const s = typeof internalCategory === "string" ? internalCategory : String(internalCategory ?? "");
+  if (s === REQUEST_CATEGORY_FALLBACK) {
     return REQUEST_CATEGORY_FALLBACK_DISPLAY;
   }
-  const found = CATEGORY_CONFIG_FULL.find((c) => c.internalCategory === internalCategory);
-  return found?.displayName ?? internalCategory;
+  const found = CATEGORY_CONFIG_FULL.find((c) => c.internalCategory === s);
+  return found?.displayName ?? s;
 }

@@ -60,11 +60,17 @@ type CreateRequestFormProps = {
   initialCity?: string;
 };
 
+function coerceQueryString(v: unknown): string {
+  if (typeof v === "string") return v;
+  if (Array.isArray(v) && typeof v[0] === "string") return v[0];
+  return "";
+}
+
 export function CreateRequestForm({ initialCategory, initialCity }: CreateRequestFormProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const urlCategory = searchParams.get("category") ?? initialCategory ?? "";
-  const urlCity = searchParams.get("city") ?? initialCity ?? "";
+  const urlCategory = coerceQueryString(searchParams.get("category") ?? initialCategory ?? "");
+  const urlCity = coerceQueryString(searchParams.get("city") ?? initialCity ?? "");
 
   const {
     register,
