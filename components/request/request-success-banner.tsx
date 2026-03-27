@@ -1,6 +1,7 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
 import { CheckCircle2, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { UrgencyLevel } from "@prisma/client";
@@ -19,12 +20,50 @@ export function RequestSuccessBanner({
 }) {
   const searchParams = useSearchParams();
   const created = searchParams.get("created") === "1";
+  const [copyState, setCopyState] = useState<"idle" | "ok" | "error">("idle");
 
   if (!created) return null;
 
-  const copyLink = () => {
-    if (typeof window !== "undefined" && navigator.clipboard) {
-      navigator.clipboard.writeText(window.location.href);
+  const guestTrackingLink = useMemo(() => {
+    if (typeof window === "undefined") return null;
+    return window.location.href;
+  }, []);
+
+  useEffect(() => {
+    if (!guestTracking) return;
+    if (typeof window === "undefined") return;
+    const link = window.location.href;
+    window.localStorage.setItem("bm:lastGuestRequestLink", link);
+    window.localStorage.setItem("bm:lastGuestRequestSavedAt", String(Date.now()));
+  }, [guestTracking]);
+
+  useEffect(() => {
+    if (copyState === "idle") return;
+    const t = window.setTimeout(() => setCopyState("idle"), 2200);
+    return () => window.clearTimeout(t);
+  }, [copyState]);
+
+  const copyLink = async () => {
+    if (typeof window === "undefined") return;
+    const text = guestTrackingLink ?? window.location.href;
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        ta.style.position = "fixed";
+        ta.style.opacity = "0";
+        document.body.appendChild(ta);
+        ta.focus();
+        ta.select();
+        const copied = document.execCommand("copy");
+        document.body.removeChild(ta);
+        if (!copied) throw new Error("COPY_FAILED");
+      }
+      setCopyState("ok");
+    } catch {
+      setCopyState("error");
     }
   };
 
@@ -87,8 +126,22 @@ export function RequestSuccessBanner({
               className="h-12 min-h-[44px] w-full gap-1 border-emerald-300 text-emerald-800 sm:h-9 sm:min-h-0 sm:w-auto"
             >
               <Share2 className="h-4 w-4" />
-              {guestTracking ? "Sačuvaj link za praćenje (kopiraj)" : "Podijeli zahtjev (kopiraj link)"}
+              {copyState === "ok"
+                ? "Kopirano"
+                : guestTracking
+                  ? "Sačuvaj link za praćenje (kopiraj)"
+                  : "Podijeli zahtjev (kopiraj link)"}
             </Button>
+            {copyState === "ok" && (
+              <p className="mt-2 text-xs font-medium text-emerald-800">
+                Link je kopiran. Sačuvajte ga za kasniji povratak.
+              </p>
+            )}
+            {copyState === "error" && (
+              <p className="mt-2 text-xs font-medium text-amber-900">
+                Kopiranje nije uspjelo. Ručno kopirajte adresu iz browser trake.
+              </p>
+            )}
           </div>
         </div>
       </div>

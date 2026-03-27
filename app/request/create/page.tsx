@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { CreateRequestForm } from "@/components/forms/create-request-form";
 import { PremiumMobileHeader } from "@/components/layout/PremiumMobileHeader";
+import { GuestRequestReturnCard } from "@/components/request/guest-request-return-card";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { parseRequestCreateSearchParams } from "@/lib/request-create-query";
 import { getSiteUrl } from "@/lib/site-url";
@@ -77,6 +78,7 @@ export default async function CreateRequestPage(props: {
             pregleda zahtjev, zatim zainteresovani majstori mogu poslati ponude.
           </p>
         </header>
+        <GuestRequestReturnCard />
 
         <Suspense
           fallback={

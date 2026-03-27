@@ -9,7 +9,9 @@ import { Prisma } from "@prisma/client";
 import { getCreditsForLead } from "@/lib/lead-tier";
 
 export function isCreditsRequired(): boolean {
-  return process.env.CREDITS_REQUIRED === "true";
+  const raw = (process.env.CREDITS_REQUIRED ?? "").trim().toLowerCase();
+  if (raw === "false" || raw === "0" || raw === "off") return false;
+  return true;
 }
 
 /** Prag ispod kojeg prikazujemo upozorenje "malo kredita" (ispod ~1,5 standardna otključavanja) */
@@ -143,6 +145,23 @@ export async function createUnlockAndSpendCreditsAtomic(
         });
       } catch (e) {
         if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
+          if (chargeCredits) {
+            const charged = await tx.creditTransaction.findFirst({
+              where: {
+                handymanId,
+                referenceId: requestId,
+                type: "CONTACT_UNLOCK",
+              },
+              select: { id: true },
+            });
+            if (!charged) {
+              return {
+                ok: false,
+                error: "Kontakt je već otključan, ali naplata nije evidentirana. Kontaktirajte podršku.",
+                balance,
+              } as const;
+            }
+          }
           return { ok: true, balanceAfter: balance, alreadyUnlocked: true } as const;
         }
         throw e;

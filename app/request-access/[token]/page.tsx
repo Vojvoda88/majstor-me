@@ -5,6 +5,7 @@ import { hashGuestAccessToken } from "@/lib/guest-request-token";
 import { requestDetailInclude } from "@/lib/requests/request-detail-include";
 import { SiteHeader } from "@/components/layout/site-header";
 import { RequestDetailView } from "@/components/request/request-detail-view";
+import { GuestAccessPersist } from "@/components/request/guest-access-persist";
 
 export const dynamic = "force-dynamic";
 
@@ -59,6 +60,7 @@ export default async function GuestRequestAccessPage({ params }: { params: Promi
     <div className="min-h-screen bg-brand-page">
       <SiteHeader />
       <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 sm:py-10">
+        <GuestAccessPersist token={token} />
         <RequestDetailView
           req={req}
           session={session}
