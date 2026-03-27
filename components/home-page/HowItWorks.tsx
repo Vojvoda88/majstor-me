@@ -8,6 +8,7 @@ import {
   UserPlus,
   Unlock,
   Smartphone,
+  ArrowRight,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -59,8 +60,8 @@ const HANDYMAN_STEPS = [
   },
 ] as const;
 
-const cardShell =
-  "flex min-h-full flex-col rounded-3xl border border-slate-100/95 bg-white p-6 shadow-[0_4px_24px_-12px_rgba(15,23,42,0.08)] ring-1 ring-slate-100/60 lg:p-7";
+const userCardShell =
+  "group relative flex min-h-full flex-col overflow-hidden rounded-[1.35rem] border border-slate-200/80 bg-white p-5 shadow-[0_14px_36px_-22px_rgba(15,23,42,0.28)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_20px_40px_-22px_rgba(15,23,42,0.35)] sm:p-6";
 
 function StepGrid({
   steps,
@@ -70,10 +71,14 @@ function StepGrid({
   colsClass: string;
 }) {
   return (
-    <div className={cn("grid gap-5 md:gap-6", colsClass)}>
+    <div className={cn("grid gap-4 sm:gap-5 md:gap-6", colsClass)}>
       {steps.map((step) => (
-        <div key={step.n} className={cardShell}>
-          <div className="flex items-start gap-4 md:block">
+        <article key={step.n} className={userCardShell}>
+          <div
+            className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-sky-500/70 via-blue-500/65 to-indigo-500/60 opacity-85"
+            aria-hidden
+          />
+          <div className="relative flex items-start gap-4">
             <div className="flex items-start justify-between gap-3 md:block">
               <span
                 className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-sky-50/90 text-brand-navy ring-1 ring-sky-100/70 md:h-12 md:w-12 md:rounded-2xl"
@@ -81,23 +86,23 @@ function StepGrid({
               >
                 <step.icon className="h-5 w-5 md:h-6 md:w-6" strokeWidth={2} />
               </span>
-              <span className="hidden min-h-[1.75rem] min-w-[1.75rem] items-center justify-center rounded-full bg-brand-navy/90 px-2.5 text-xs font-bold tabular-nums text-white shadow-sm md:inline-flex">
+              <span className="hidden min-h-[1.85rem] min-w-[1.85rem] items-center justify-center rounded-full border border-slate-200 bg-slate-900 px-2.5 text-xs font-bold tabular-nums text-white shadow-sm md:inline-flex">
                 {step.n}
               </span>
             </div>
             <div className="min-w-0 flex-1">
               <div className="flex items-start justify-between gap-2">
-                <h3 className="min-w-0 break-words font-display text-[17px] font-bold leading-snug text-brand-navy md:mt-4 md:text-base lg:text-[17px]">
+                <h3 className="min-w-0 break-words font-display text-[17px] font-bold leading-snug text-slate-900 md:mt-2 md:text-[18px]">
                   {step.title}
                 </h3>
-                <span className="inline-flex min-h-[1.75rem] min-w-[1.75rem] shrink-0 items-center justify-center rounded-full bg-brand-navy/90 px-2.5 text-xs font-bold tabular-nums text-white shadow-sm md:hidden">
+                <span className="inline-flex min-h-[1.85rem] min-w-[1.85rem] shrink-0 items-center justify-center rounded-full border border-slate-200 bg-slate-900 px-2.5 text-xs font-bold tabular-nums text-white shadow-sm md:hidden">
                   {step.n}
                 </span>
               </div>
-              <p className="mt-1.5 text-[14px] leading-relaxed text-slate-600 sm:mt-2 sm:text-[15px]">{step.desc}</p>
+              <p className="mt-2 text-[14px] leading-relaxed text-slate-600 sm:text-[15px]">{step.desc}</p>
             </div>
           </div>
-        </div>
+        </article>
       ))}
     </div>
   );
@@ -116,14 +121,14 @@ type HandymanStep = {
 function handymanCardClass(featured: boolean): string {
   if (featured) {
     return cn(
-      "relative flex min-h-full flex-col overflow-hidden rounded-2xl p-6 md:p-8",
-      "border-2 border-slate-900/[0.07] bg-gradient-to-b from-white via-slate-50/30 to-white",
-      "shadow-[0_16px_48px_-12px_rgba(15,23,42,0.14)] ring-1 ring-slate-900/[0.04]"
+      "relative flex min-h-full flex-col overflow-hidden rounded-2xl p-5 md:p-7",
+      "border border-slate-200/80 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white",
+      "shadow-[0_22px_52px_-24px_rgba(15,23,42,0.6)]"
     );
   }
   return cn(
-    "flex min-h-full flex-col rounded-2xl border border-slate-200/85 bg-white p-6 md:p-7",
-    "shadow-[0_2px_12px_-4px_rgba(15,23,42,0.06)] transition-shadow duration-200 hover:shadow-[0_4px_20px_-4px_rgba(15,23,42,0.09)]"
+    "flex min-h-full flex-col rounded-2xl border border-slate-200/85 bg-white p-5 md:p-6",
+    "shadow-[0_14px_34px_-24px_rgba(15,23,42,0.35)] transition-shadow duration-200 hover:shadow-[0_20px_40px_-22px_rgba(15,23,42,0.42)]"
   );
 }
 
@@ -134,19 +139,19 @@ function HandymanStepGrid({ steps }: { steps: readonly HandymanStep[] }) {
         <div key={step.n} className={handymanCardClass(step.featured)}>
           {step.featured && (
             <div
-              className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-slate-700 via-slate-900 to-slate-700 opacity-90"
+              className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-amber-300/70 via-amber-400/80 to-amber-300/70 opacity-95"
               aria-hidden
             />
           )}
           {step.featured && (
-            <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">Glavni benefit</p>
+            <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.2em] text-amber-200/90">Glavni benefit</p>
           )}
           <div className="flex items-start gap-4">
             <span
               className={cn(
                 "inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl md:h-12 md:w-12",
                 step.featured
-                  ? "bg-slate-900 text-white shadow-inner shadow-black/10"
+                  ? "bg-white/15 text-white shadow-inner shadow-black/20 ring-1 ring-white/20"
                   : "bg-slate-100 text-brand-navy ring-1 ring-slate-200/80"
               )}
               aria-hidden
@@ -156,13 +161,15 @@ function HandymanStepGrid({ steps }: { steps: readonly HandymanStep[] }) {
             <div className="min-w-0 flex-1">
               <h3
                 className={cn(
-                  "font-display font-bold leading-snug text-slate-900",
+                  "font-display font-bold leading-snug",
                   step.featured ? "text-[17px] md:text-xl" : "text-[17px] md:text-[17px]"
                 )}
               >
                 {step.title}
               </h3>
-              <p className="mt-3 text-sm leading-relaxed text-slate-600 md:text-[15px]">{step.desc}</p>
+              <p className={cn("mt-3 text-sm leading-relaxed md:text-[15px]", step.featured ? "text-slate-100/95" : "text-slate-600")}>
+                {step.desc}
+              </p>
             </div>
           </div>
         </div>
@@ -175,15 +182,16 @@ export function HowItWorksForUsers() {
   return (
     <section id="kako-radi" className="scroll-mt-24 py-10 md:py-16">
       <div className="mx-auto max-w-3xl text-center md:max-w-none">
-        <h2 className="font-display text-[1.6rem] font-bold tracking-tight text-brand-navy sm:text-3xl md:text-4xl">
+        <p className="text-xs font-bold uppercase tracking-[0.2em] text-sky-700">Za korisnike</p>
+        <h2 className="mt-2 font-display text-[1.6rem] font-bold tracking-tight text-brand-navy sm:text-3xl md:text-4xl">
           Kako radi za korisnike
         </h2>
         <p className="mx-auto mt-3 max-w-2xl text-[15px] font-medium leading-relaxed text-slate-600 sm:text-base md:text-lg">
-          Tri koraka — objava zahtjeva je besplatna.
+          Tri jasna koraka od objave do izbora ponude. Bez zvanja redom, bez gužve.
         </p>
       </div>
       <div className="mx-auto mt-8 max-w-6xl md:mt-10">
-        <div className={userWrap}>
+        <div className={cn(userWrap, "shadow-[0_22px_55px_-40px_rgba(15,23,42,0.45)]")}>
           <StepGrid steps={USER_STEPS} colsClass="md:grid-cols-3" />
         </div>
         <p className="mx-auto mt-6 max-w-2xl text-center text-sm text-slate-500 md:text-[15px]">
@@ -198,20 +206,59 @@ export function HowItWorksForHandymen() {
   return (
     <section
       id="kako-radi-majstore"
-      className="scroll-mt-24 border-t border-slate-200/60 bg-gradient-to-b from-slate-50/40 via-white to-white py-12 md:py-20"
+      className="scroll-mt-24 border-t border-slate-200/60 bg-gradient-to-b from-slate-100/60 via-white to-white py-12 md:py-20"
     >
-      <div className="mx-auto max-w-3xl px-4 text-center sm:px-5 md:max-w-none">
-        <h2 className="font-display text-[1.6rem] font-bold tracking-tight text-brand-navy sm:text-3xl md:text-4xl">
-          Kako radi za majstore
-        </h2>
-        <p className="mx-auto mt-4 max-w-2xl text-[15px] font-medium leading-relaxed text-slate-600 sm:text-base md:text-lg">
-          Besplatna registracija, jasan proces odobrenja i poslovi koji stižu po vašoj branši.
-        </p>
-      </div>
-      <div className="mx-auto mt-10 max-w-6xl px-4 sm:px-5 md:mt-12">
-        <HandymanStepGrid steps={HANDYMAN_STEPS} />
+      <div className="mx-auto max-w-6xl px-4 sm:px-5">
+        <div className="rounded-[1.7rem] border border-slate-200/80 bg-white p-5 shadow-[0_22px_58px_-42px_rgba(15,23,42,0.45)] sm:p-7 md:p-9">
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div className="max-w-2xl">
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-slate-500">Za majstore</p>
+              <h2 className="mt-2 font-display text-[1.65rem] font-bold tracking-tight text-slate-900 sm:text-3xl md:text-4xl">
+                Kako radi za majstore
+              </h2>
+              <p className="mt-3 text-[15px] font-medium leading-relaxed text-slate-600 sm:text-base md:text-lg">
+                Besplatan onboarding, jasna pravila i relevantni poslovi tek nakon odobrenja.
+              </p>
+            </div>
+            <div className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3.5 py-1.5 text-xs font-semibold text-slate-600">
+              <ShieldTruth />
+              Bez pretplate • Bez skrivenih troškova
+            </div>
+          </div>
+
+          <div className="mx-auto mt-8 max-w-6xl md:mt-10">
+            <HandymanStepGrid steps={HANDYMAN_STEPS} />
+          </div>
+
+          <div className="mt-8 flex flex-col items-stretch gap-3 sm:flex-row sm:justify-center sm:gap-4">
+            <Link
+              href="/register?type=majstor"
+              className="inline-flex min-h-[52px] items-center justify-center gap-2 rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 px-8 text-base font-bold text-brand-navy shadow-[0_14px_36px_-10px_rgba(245,158,11,0.45)] transition hover:brightness-105 active:scale-[0.99]"
+            >
+              Registruj se kao majstor
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+            <Link
+              href="/request/create"
+              className="inline-flex min-h-[52px] items-center justify-center rounded-2xl border-2 border-slate-200 bg-white px-8 text-base font-semibold text-slate-800 transition hover:border-slate-300 hover:bg-slate-50 active:scale-[0.99]"
+            >
+              Pogledaj kako izgleda zahtjev
+            </Link>
+          </div>
+        </div>
       </div>
     </section>
+  );
+}
+
+function ShieldTruth() {
+  return (
+    <span
+      aria-hidden
+      className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-slate-900 text-[10px] font-bold text-white"
+    >
+      ✓
+    </span>
   );
 }
 
