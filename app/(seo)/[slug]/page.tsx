@@ -1,5 +1,4 @@
 import { notFound } from "next/navigation";
-import { Suspense } from "react";
 import type { Metadata } from "next";
 import { parseCategoryCitySlug } from "@/lib/slugs";
 import { getSiteUrl } from "@/lib/site-url";
@@ -90,27 +89,15 @@ export default async function SeoLandingPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <Suspense
-        fallback={
-          <div className="min-h-screen bg-slate-100 p-8">
-            <div className="mx-auto max-w-6xl space-y-3">
-              <div className="h-7 w-72 animate-pulse rounded bg-slate-200" />
-              <div className="h-4 w-full animate-pulse rounded bg-slate-200" />
-              <div className="h-4 w-5/6 animate-pulse rounded bg-slate-200" />
-            </div>
-          </div>
-        }
-      >
-        <SeoLandingContent
-          slug={slug}
-          displayName={parsed.categoryDisplayName}
-          internalCategory={parsed.internalCategory}
-          cityName={parsed.cityDisplayName}
-          citySlug={parsed.citySlug}
-          categorySlug={parsed.categorySlug}
-          initialListing={initialListing}
-        />
-      </Suspense>
+      <SeoLandingContent
+        slug={slug}
+        displayName={parsed.categoryDisplayName}
+        internalCategory={parsed.internalCategory}
+        cityName={parsed.cityDisplayName}
+        citySlug={parsed.citySlug}
+        categorySlug={parsed.categorySlug}
+        initialListing={initialListing}
+      />
     </>
   );
 }
