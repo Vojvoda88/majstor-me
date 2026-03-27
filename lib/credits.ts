@@ -119,6 +119,13 @@ export async function createUnlockAndSpendCreditsAtomic(
   }
 ): Promise<UnlockContactAtomicResult> {
   const { handymanId, requestId, creditsRequired, chargeCredits } = input;
+  console.info("[UnlockContactAPI]", {
+    step: "tx_start",
+    requestId,
+    handymanId,
+    chargeCredits,
+    creditsRequired,
+  });
 
   try {
     return await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
@@ -140,6 +147,7 @@ export async function createUnlockAndSpendCreditsAtomic(
       }
 
       try {
+        console.info("[UnlockContactAPI]", { step: "unlock_create_start", requestId, handymanId });
         await tx.requestContactUnlock.create({
           data: { requestId, handymanId },
         });
@@ -168,10 +176,12 @@ export async function createUnlockAndSpendCreditsAtomic(
       }
 
       if (!chargeCredits) {
+        console.info("[UnlockContactAPI]", { step: "tx_success", requestId, handymanId, charged: false });
         return { ok: true, balanceAfter: null, alreadyUnlocked: false } as const;
       }
 
-      const rows = await tx.$queryRaw<Array<{ balance_before: number; balance_after: number }>>`
+      console.info("[UnlockContactAPI]", { step: "debit_start", requestId, handymanId, creditsRequired });
+      const rows = await tx.$queryRaw<Array<{ balance_before: bigint | number; balance_after: bigint | number }>>`
         UPDATE "handyman_profiles"
         SET "credits_balance" = "credits_balance" - ${creditsRequired}
         WHERE "user_id" = ${handymanId}
@@ -185,7 +195,11 @@ export async function createUnlockAndSpendCreditsAtomic(
         throw new Error("INSUFFICIENT_CREDITS_RACE");
       }
 
-      const { balance_before, balance_after } = rows[0];
+      const balanceBefore = Number(rows[0].balance_before);
+      const balanceAfter = Number(rows[0].balance_after);
+      if (!Number.isFinite(balanceBefore) || !Number.isFinite(balanceAfter)) {
+        throw new Error("INVALID_CREDIT_BALANCE_NUMBER");
+      }
 
       await tx.creditTransaction.create({
         data: {
@@ -193,12 +207,20 @@ export async function createUnlockAndSpendCreditsAtomic(
           amount: -creditsRequired,
           type: "CONTACT_UNLOCK",
           referenceId: requestId,
-          balanceBefore: balance_before,
-          balanceAfter: balance_after,
+          balanceBefore,
+          balanceAfter,
         },
       });
+      console.info("[UnlockContactAPI]", {
+        step: "tx_success",
+        requestId,
+        handymanId,
+        charged: true,
+        balanceBefore,
+        balanceAfter,
+      });
 
-      return { ok: true, balanceAfter: balance_after, alreadyUnlocked: false } as const;
+      return { ok: true, balanceAfter, alreadyUnlocked: false } as const;
     });
   } catch (e) {
     if (e instanceof Error && e.message === "INSUFFICIENT_CREDITS_RACE") {
@@ -208,6 +230,12 @@ export async function createUnlockAndSpendCreditsAtomic(
         balance: 0,
       };
     }
+    console.error("[UnlockContactAPI]", {
+      step: "fatal",
+      requestId,
+      handymanId,
+      message: e instanceof Error ? e.message : String(e),
+    });
     throw e;
   }
 }

@@ -15,6 +15,9 @@ export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const log = (step: string, meta?: Record<string, unknown>) => {
+    console.info("[UnlockContactAPI]", { step, ...(meta ?? {}) });
+  };
   try {
     const { prisma } = await import("@/lib/db");
     const session = await authFromNextRequest(request);
@@ -31,6 +34,7 @@ export async function POST(
         { status: 403 }
       );
     }
+    log("auth_ok", { userId: session.user.id, role: session.user.role });
 
     const { id: requestId } = await params;
 
@@ -48,6 +52,12 @@ export async function POST(
         { status: 404 }
       );
     }
+    log("request_found", {
+      requestId,
+      status: req.status,
+      adminStatus: req.adminStatus,
+      deletedAt: !!req.deletedAt,
+    });
 
     if (!isApprovedForHandymen({
       status: req.status,
@@ -70,6 +80,8 @@ export async function POST(
         { status: 403 }
       );
     }
+    log("handyman_ok", { userId: session.user.id, workerStatus: profile?.workerStatus ?? null });
+    log("guard_ok", { requestId, userId: session.user.id });
 
     const alreadyUnlocked = req.contactUnlocks.length > 0;
     const requesterName = req.requesterName ?? req.user?.name ?? null;
@@ -131,6 +143,12 @@ export async function POST(
         { status: 402 }
       );
     }
+    log("tx_success", {
+      requestId,
+      userId: session.user.id,
+      alreadyUnlocked: unlockResult.alreadyUnlocked,
+      balanceAfter: unlockResult.balanceAfter,
+    });
 
     void trackFunnelEvent(
       prisma,
@@ -152,6 +170,12 @@ export async function POST(
       },
     });
   } catch (error) {
+    const e = error instanceof Error ? error : new Error(String(error));
+    console.error("[UnlockContactAPI]", {
+      step: "fatal",
+      message: e.message,
+      stack: process.env.NODE_ENV === "development" ? e.stack?.slice(0, 1200) : undefined,
+    });
     logError("Unlock contact error", error);
     return NextResponse.json(
       { success: false, error: "Greška pri uzimanju kontakta" },
