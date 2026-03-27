@@ -1,45 +1,36 @@
 /**
  * Kriterijumi za uključivanje `/handyman/[id]` u sitemap (indeks vrijedan profil, bez SEO šuma).
- * Javna stranica profila može ostati dostupna i za one koji ne zadovoljavaju ovo — samo ne idu u sitemap.
+ * Bazira se na `prismaWhereUserActiveHandymanTruth` (jedan izvor istine za „aktivnog majstora“),
+ * uz dodatne SEO/quality uslove — uži podskup od javnog listinga.
  */
 import type { Prisma } from "@prisma/client";
-import { prismaWhereHandymanEmailNotDemo } from "@/lib/demo-email";
+import { prismaWhereUserActiveHandymanTruth } from "@/lib/handyman-truth";
 
 /**
- * Profil ulazi u sitemap ako je:
- * - HANDYMAN, nije suspendovan/banovan
- * - email nije demo (@local.majstor.demo) ni test seed (@test.me)
- * - workerStatus ACTIVE
- * - bar jedna kategorija
+ * Profil ulazi u sitemap ako zadovoljava aktivnu istinu PLUS:
+ * - neprazno ime
  * - bar jedna lokacija: `User.city` ili neprazan `HandymanProfile.cities`
- * - bar jedan signal sadržaja: recenzija, završen posao preko platforme, neprazan bio, ili galerija slika
+ * - bar jedna kategorija
+ * - bar jedan signal sadržaja: recenzija, završen posao, bio, ili galerija
  */
 export function prismaWhereHandymanSitemapEligible(): Prisma.UserWhereInput {
   return {
-    role: "HANDYMAN",
-    bannedAt: null,
-    suspendedAt: null,
     AND: [
-      prismaWhereHandymanEmailNotDemo(),
+      prismaWhereUserActiveHandymanTruth(),
       { NOT: { name: { equals: "" } } },
       {
         OR: [{ city: { not: null } }, { handymanProfile: { cities: { isEmpty: false } } }],
       },
       {
         handymanProfile: {
-          AND: [
-            { workerStatus: "ACTIVE" },
-            { workerCategories: { some: {} } },
+          workerCategories: { some: {} },
+          OR: [
+            { reviewCount: { gte: 1 } },
+            { completedJobsCount: { gte: 1 } },
             {
-              OR: [
-                { reviewCount: { gte: 1 } },
-                { completedJobsCount: { gte: 1 } },
-                {
-                  AND: [{ bio: { not: null } }, { NOT: { bio: { equals: "" } } }],
-                },
-                { galleryImages: { isEmpty: false } },
-              ],
+              AND: [{ bio: { not: null } }, { NOT: { bio: { equals: "" } } }],
             },
+            { galleryImages: { isEmpty: false } },
           ],
         },
       },

@@ -5,7 +5,7 @@ import { dbCategoryNamesForDistributionFilter, getInternalCategory } from "@/lib
 import { DEFAULT_PAGE_SIZE } from "@/lib/constants";
 import { getCityCoords } from "@/lib/cities";
 import { calcHandymanScore } from "@/lib/handyman-score";
-import { prismaWhereHandymanEmailNotDemo } from "@/lib/demo-email";
+import { prismaWhereUserActiveHandymanWithProfileExtra } from "@/lib/handyman-truth";
 
 const MAX_HANDYMEN_LOAD = 200;
 const MAX_PAGE_SIZE = 50;
@@ -72,20 +72,15 @@ export async function getPublicHandymenList(params: {
 
   const resolvedCategory = categoryParam ? (getInternalCategory(categoryParam) ?? categoryParam) : null;
   const categoryDbNames = resolvedCategory ? dbCategoryNamesForDistributionFilter(resolvedCategory) : null;
-  const baseWhere = {
-    role: "HANDYMAN" as const,
-    bannedAt: null,
-    suspendedAt: null,
-    ...prismaWhereHandymanEmailNotDemo(),
-    handymanProfile: {
-      workerStatus: "ACTIVE" as const,
-      ...(categoryDbNames && {
-        workerCategories: {
-          some: { category: { name: { in: categoryDbNames } } },
-        },
-      }),
-    },
-  };
+  const baseWhere = prismaWhereUserActiveHandymanWithProfileExtra(
+    categoryDbNames
+      ? {
+          workerCategories: {
+            some: { category: { name: { in: categoryDbNames } } },
+          },
+        }
+      : {}
+  );
 
   const useDbPagination = !city && (sortBy === "rating" || sortBy === "reviews");
   let items: UserWithProfile[];

@@ -1,4 +1,8 @@
 import { NextResponse } from "next/server";
+import {
+  prismaWhereHandymanProfileActiveTruth,
+  prismaWhereUserActiveHandymanTruth,
+} from "@/lib/handyman-truth";
 
 export const revalidate = 60;
 
@@ -33,7 +37,7 @@ export async function GET() {
         distinct: ["city"],
       }),
       prisma.user.findMany({
-        where: { role: "HANDYMAN", city: { not: null } },
+        where: { ...prismaWhereUserActiveHandymanTruth(), city: { not: null } },
         select: { city: true },
         distinct: ["city"],
       }),

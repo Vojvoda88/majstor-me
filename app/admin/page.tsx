@@ -1,5 +1,5 @@
 import { prismaWhereHandymanProfileActiveKpi } from "@/lib/admin/admin-handyman-filters";
-import { prismaWhereHandymanEmailNotDemo } from "@/lib/demo-email";
+import { prismaWhereHandymanProfileActiveTruth } from "@/lib/handyman-truth";
 import { getAdminPendingReviewCounts } from "@/lib/admin-pending-counts";
 import { AdminPushEntryCard } from "@/components/admin/admin-push-entry-card";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -64,7 +64,7 @@ async function loadDashboardData() {
           prisma.handymanProfile.count({
             where: {
               createdAt: { gte: todayStart },
-              user: { ...prismaWhereHandymanEmailNotDemo() },
+              ...prismaWhereHandymanProfileActiveTruth(),
             },
           })
         )
@@ -72,7 +72,7 @@ async function loadDashboardData() {
           .count({
             where: {
               createdAt: { gte: todayStart },
-              user: { ...prismaWhereHandymanEmailNotDemo() },
+              ...prismaWhereHandymanProfileActiveTruth(),
             },
           })
           .then((r) => ({ result: r, label: "", ms: 0 })),

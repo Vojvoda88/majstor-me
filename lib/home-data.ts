@@ -3,9 +3,11 @@
  * Koristi se u app/page.tsx umjesto client fetcha – omogućuje ISR/cache bez force-dynamic.
  */
 
-import { getDistanceBetweenCities } from "@/lib/distance";
 import { calcHandymanScore } from "@/lib/handyman-score";
-import { prismaWhereHandymanEmailNotDemo } from "@/lib/demo-email";
+import {
+  prismaWhereHandymanProfileActiveTruth,
+  prismaWhereUserActiveHandymanTruth,
+} from "@/lib/handyman-truth";
 
 export type PlatformStats = {
   /** Registrovani klijenti (role USER) */
@@ -33,12 +35,12 @@ export async function getPlatformStats(): Promise<PlatformStats> {
   try {
     const { prisma } = await import("@/lib/db");
     const [handymanCount, completedCount, reviewAgg, citiesRows, hmCitiesRows, userCount] = await Promise.all([
-      prisma.handymanProfile.count(),
+      prisma.handymanProfile.count({ where: prismaWhereHandymanProfileActiveTruth() }),
       prisma.request.count({ where: { status: "COMPLETED" } }),
       prisma.review.aggregate({ _avg: { rating: true }, _count: true }),
       prisma.request.findMany({ select: { city: true }, distinct: ["city"] }),
       prisma.user.findMany({
-        where: { role: "HANDYMAN", city: { not: null } },
+        where: { ...prismaWhereUserActiveHandymanTruth(), city: { not: null } },
         select: { city: true },
         distinct: ["city"],
       }),
@@ -69,15 +71,7 @@ export async function getTopHandymenForHome(limit: number = 3): Promise<HomeHand
   try {
     const { prisma } = await import("@/lib/db");
     const users = await prisma.user.findMany({
-      where: {
-        role: "HANDYMAN",
-        bannedAt: null,
-        suspendedAt: null,
-        ...prismaWhereHandymanEmailNotDemo(),
-        handymanProfile: {
-          workerStatus: "ACTIVE",
-        },
-      },
+      where: prismaWhereUserActiveHandymanTruth(),
       include: {
         handymanProfile: {
           include: { workerCategories: { include: { category: true } } },
