@@ -8,14 +8,19 @@ import { Button } from "@/components/ui/button";
 export function RequestModerationActions({
   requestId,
   requesterPhone,
+  canWriteRequests,
+  canTrustSafety,
 }: {
   requestId: string;
   requesterPhone: string | null;
+  canWriteRequests: boolean;
+  canTrustSafety: boolean;
 }) {
   const router = useRouter();
   const [loading, setLoading] = useState<string | null>(null);
 
   const action = async (path: string, method = "POST") => {
+    if (!canWriteRequests) return;
     if (loading) return;
     setLoading(path);
     try {
@@ -44,6 +49,7 @@ export function RequestModerationActions({
   };
 
   const blacklist = async () => {
+    if (!canWriteRequests || !canTrustSafety) return;
     if (!requesterPhone || !confirm(`Blacklistovati ${requesterPhone}?`)) return;
     setLoading("blacklist");
     try {
@@ -67,48 +73,52 @@ export function RequestModerationActions({
 
   return (
     <div className="flex flex-wrap items-center gap-1">
-      <Button
-        size="sm"
-        variant="default"
-        onClick={() => action("/approve")}
-        disabled={!!loading}
-        className="h-7 text-xs"
-      >
-        Approve
-      </Button>
       <Link href={`/admin/requests/${requestId}`}>
         <Button size="sm" variant="outline" className="h-7 text-xs">
           Edit
         </Button>
       </Link>
-      <Button
-        size="sm"
-        variant="outline"
-        onClick={() => action("/reject")}
-        disabled={!!loading}
-        className="h-7 text-xs"
-      >
-        Reject
-      </Button>
-      <Button
-        size="sm"
-        variant="outline"
-        onClick={() => action("/spam")}
-        disabled={!!loading}
-        className="h-7 text-xs"
-      >
-        Spam
-      </Button>
-      <Button
-        size="sm"
-        variant="outline"
-        onClick={() => action("/delete")}
-        disabled={!!loading}
-        className="h-7 text-xs"
-      >
-        Delete
-      </Button>
-      {requesterPhone && (
+      {canWriteRequests && (
+        <>
+          <Button
+            size="sm"
+            variant="default"
+            onClick={() => action("/approve")}
+            disabled={!!loading}
+            className="h-7 text-xs"
+          >
+            Approve
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => action("/reject")}
+            disabled={!!loading}
+            className="h-7 text-xs"
+          >
+            Reject
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => action("/spam")}
+            disabled={!!loading}
+            className="h-7 text-xs"
+          >
+            Spam
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => action("/delete")}
+            disabled={!!loading}
+            className="h-7 text-xs"
+          >
+            Delete
+          </Button>
+        </>
+      )}
+      {requesterPhone && canTrustSafety && canWriteRequests && (
         <Button
           size="sm"
           variant="destructive"

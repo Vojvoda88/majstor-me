@@ -12,7 +12,13 @@ function requestTitlePreview(title: string | null | undefined, description: stri
   return s.length > 40 ? `${s.slice(0, 40)}…` : s;
 }
 
-export async function PendingRequestsList() {
+export async function PendingRequestsList({
+  canWriteRequests,
+  canTrustSafety,
+}: {
+  canWriteRequests: boolean;
+  canTrustSafety: boolean;
+}) {
   try {
     const { prisma } = await import("@/lib/db");
 
@@ -69,6 +75,8 @@ export async function PendingRequestsList() {
                       <RequestModerationActions
                         requestId={r.id}
                         requesterPhone={r.requesterPhone}
+                        canWriteRequests={canWriteRequests}
+                        canTrustSafety={canTrustSafety}
                       />
                     </td>
                   </tr>

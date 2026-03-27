@@ -66,8 +66,9 @@ export default async function SeoLandingPage({
 
   const base = getSiteUrl();
   const canonicalUrl = buildSeoCanonical(base, slug);
-  const title = buildSeoLandingTitle(parsed);
-  const description = buildSeoLandingDescription(parsed);
+  const priority = getPrioritySeoLandingContent(slug);
+  const title = priority?.metaTitle ?? buildSeoLandingTitle(parsed);
+  const description = priority?.metaDescription ?? buildSeoLandingDescription(parsed);
   const jsonLd = buildSeoLandingJsonLd({
     canonicalUrl,
     siteUrl: base.replace(/\/$/, ""),

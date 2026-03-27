@@ -139,6 +139,7 @@ export async function distributeRequestToHandymen(params: DistributeRequestParam
       title: notifyMsg,
       body: bodyTrim,
       link,
+      idempotencyKey: `new-job:${requestId}:${h.id}`,
     }))
   );
   console.info("[distribution] NEW_JOB notifications insert attempted", {

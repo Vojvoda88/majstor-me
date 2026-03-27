@@ -14,13 +14,14 @@ export async function createNotification(
   userId: string,
   type: NotificationType,
   title: string,
-  opts?: { body?: string; link?: string }
+  opts?: { body?: string; link?: string; idempotencyKey?: string }
 ) {
   try {
     await prisma.notification.create({
       data: {
         userId,
         type,
+        idempotencyKey: opts?.idempotencyKey,
         title,
         body: opts?.body,
         link: opts?.link,
@@ -33,14 +34,22 @@ export async function createNotification(
 
 /** Bulk insert za distribuciju – jedna DB operacija umjesto N. */
 export async function createNotificationsBulk(
-  items: { userId: string; type: NotificationType; title: string; body?: string | null; link?: string | null }[]
+  items: {
+    userId: string;
+    type: NotificationType;
+    title: string;
+    body?: string | null;
+    link?: string | null;
+    idempotencyKey?: string | null;
+  }[]
 ) {
   if (items.length === 0) return;
   try {
     await prisma.notification.createMany({
-      data: items.map(({ userId, type, title, body, link }) => ({
+      data: items.map(({ userId, type, title, body, link, idempotencyKey }) => ({
         userId,
         type,
+        idempotencyKey: idempotencyKey ?? null,
         title,
         body: body ?? null,
         link: link ?? null,
@@ -56,7 +65,11 @@ export async function createNotificationsBulk(
     // Fallback: pojedinačno (non-blocking)
     await Promise.allSettled(
       items.map((item) =>
-        createNotification(item.userId, item.type, item.title, { body: item.body ?? undefined, link: item.link ?? undefined })
+        createNotification(item.userId, item.type, item.title, {
+          body: item.body ?? undefined,
+          link: item.link ?? undefined,
+          idempotencyKey: item.idempotencyKey ?? undefined,
+        })
       )
     );
   }

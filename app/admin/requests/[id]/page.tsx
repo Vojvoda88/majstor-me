@@ -10,6 +10,7 @@ import { MarkAsBypassAttemptButton } from "@/components/admin/mark-as-bypass-but
 import { AdminRouteLoadError } from "@/lib/admin/admin-ssr-fallback";
 import { ADMIN_REQUEST_DETAIL_SELECT } from "@/lib/admin/admin-prisma-selects";
 import { logAdminSsrFatal, prismaErrorCode } from "@/lib/admin/admin-ssr-params";
+import { hasPermission } from "@/lib/admin/permissions";
 
 export const dynamic = "force-dynamic";
 
@@ -31,7 +32,7 @@ const STATUS_LABELS: Record<string, string> = {
 };
 
 export default async function AdminRequestDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  await requireAdminPermission("requests");
+  const { adminRole } = await requireAdminPermission("requests");
 
   const { id } = await params;
   const snapshot = { requestId: id };
@@ -64,6 +65,9 @@ export default async function AdminRequestDetailPage({ params }: { params: Promi
   if (!req) notFound();
 
   const requesterName = req.requesterName ?? req.user?.name ?? "Guest";
+  const canWriteRequests = hasPermission(adminRole, "requests_write");
+  const canTrustSafety = hasPermission(adminRole, "trust_safety");
+  const canModeratePending = req.adminStatus === "PENDING_REVIEW" || req.adminStatus == null;
 
   return (
       <div className="space-y-6">
@@ -132,7 +136,7 @@ export default async function AdminRequestDetailPage({ params }: { params: Promi
           </CardContent>
         </Card>
 
-        {req.adminStatus !== "SPAM" && req.adminStatus !== "DELETED" && (
+        {canModeratePending && canWriteRequests && (
           <Card>
             <CardHeader>
               <CardTitle className="text-base">Anti-bypass</CardTitle>
@@ -141,7 +145,7 @@ export default async function AdminRequestDetailPage({ params }: { params: Promi
               </p>
             </CardHeader>
             <CardContent>
-              <MarkAsBypassAttemptButton requestId={req.id} canMark={true} />
+              <MarkAsBypassAttemptButton requestId={req.id} canMark />
             </CardContent>
           </Card>
         )}
@@ -184,11 +188,13 @@ export default async function AdminRequestDetailPage({ params }: { params: Promi
 
         {req.adminStatus === "DELETED" && <RestoreRequestButton requestId={req.id} />}
 
-        {req.adminStatus === "PENDING_REVIEW" && (
+        {canModeratePending && (
           <RequestDetailActions
             requestId={req.id}
             requesterPhone={req.requesterPhone}
             adminStatus={req.adminStatus}
+            canWriteRequests={canWriteRequests}
+            canTrustSafety={canTrustSafety}
           />
         )}
 

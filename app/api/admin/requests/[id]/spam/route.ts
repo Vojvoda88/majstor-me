@@ -9,7 +9,7 @@ export async function POST(
   _req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const auth = await requireAdminApi("requests");
+  const auth = await requireAdminApi("requests_write");
   if (!auth.ok) return auth.response;
 
   const { id } = await params;
@@ -19,11 +19,18 @@ export async function POST(
 
     const request = await prisma.request.findUnique({
       where: { id },
-      select: { id: true },
+      select: { id: true, adminStatus: true },
     });
 
     if (!request) {
       return NextResponse.json({ success: false, error: "Zahtjev nije pronađen" }, { status: 404 });
+    }
+
+    if (!["PENDING_REVIEW", null].includes(request.adminStatus)) {
+      return NextResponse.json(
+        { success: false, error: "Spam oznaka je dozvoljena samo za zahtjeve na čekanju." },
+        { status: 400 }
+      );
     }
 
     const refundResult = await refundCreditsForSpamRequest(

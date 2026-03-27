@@ -80,14 +80,29 @@ export default async function HandymanDashboardPage({
     );
   }
 
-    const where: Record<string, unknown> = { status: "OPEN" };
+    const where: Record<string, unknown> = {
+      status: "OPEN",
+      deletedAt: null,
+      OR: [
+        { adminStatus: "DISTRIBUTED" },
+        { adminStatus: "HAS_OFFERS" },
+        { adminStatus: "CONTACT_UNLOCKED" },
+        { adminStatus: null },
+      ],
+    };
     if (category) {
       where.category = category;
     } else if (profile.categories.length > 0) {
-      where.OR = [
+      where.AND = [
+        { OR: (where.OR as unknown[]) },
+        {
+          OR: [
         { category: { in: profile.categories } },
         { category: REQUEST_CATEGORY_FALLBACK },
+          ],
+        },
       ];
+      delete where.OR;
     }
     if (city) where.city = city;
     // Bez city filtra: majstori vide sve zahtjeve; sa city: samo taj grad

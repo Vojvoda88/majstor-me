@@ -7,7 +7,11 @@ import { WorkerModerationActions } from "./worker-moderation-actions";
 
 export const dynamic = "force-dynamic";
 
-export async function PendingWorkersList() {
+export async function PendingWorkersList({
+  canWriteWorkers,
+}: {
+  canWriteWorkers: boolean;
+}) {
   try {
     const { prisma } = await import("@/lib/db");
 
@@ -56,7 +60,7 @@ export async function PendingWorkersList() {
                       {new Date(u.createdAt).toLocaleDateString("sr")}
                     </td>
                     <td className="py-3">
-                      <WorkerModerationActions handymanId={u.id} />
+                      <WorkerModerationActions handymanId={u.id} canWriteWorkers={canWriteWorkers} />
                     </td>
                   </tr>
                 ))}

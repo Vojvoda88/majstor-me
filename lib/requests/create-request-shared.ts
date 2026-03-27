@@ -199,17 +199,24 @@ export async function createRequestShared(
       return { ok: false, error: "Već ste objavili isti zahtjev danas", status: 400 };
     }
 
+    const { requesterName, title, requesterPhone, requesterEmail, ...rest } = parsed.data;
+    const emailTrimmed = requesterEmail?.trim() || undefined;
     const phoneNorm = parsed.data.requesterPhone.replace(/\D/g, "");
+    const emailNorm = (emailTrimmed ?? session?.user?.email ?? "").trim().toLowerCase();
     const blacklistedPhones = await prisma.blacklistedPhone.findMany({
       select: { phone: true },
     });
+    const blacklistedEmails = await prisma.blacklistedEmail.findMany({
+      select: { email: true },
+    });
     const isBlacklisted = blacklistedPhones.some((b) => b.phone.replace(/\D/g, "") === phoneNorm);
+    const isEmailBlacklisted =
+      emailNorm.length > 0 &&
+      blacklistedEmails.some((b) => b.email.trim().toLowerCase() === emailNorm);
 
     let guestSecret = isGuest ? generateGuestAccessSecret() : null;
-    const { requesterName, title, requesterPhone, requesterEmail, ...rest } = parsed.data;
-    const emailTrimmed = requesterEmail?.trim() || undefined;
 
-    if (isBlacklisted) {
+    if (isBlacklisted || isEmailBlacklisted) {
       console.info("[RequestCreateSubmit] step_enter", { step: "step_db_request_create_spam" });
       const spamData: Prisma.RequestUncheckedCreateInput = {
         userId: isGuest ? null : session!.user!.id,

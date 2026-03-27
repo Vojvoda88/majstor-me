@@ -1,4 +1,5 @@
 import { requireAdminPermission } from "@/lib/admin/auth";
+import { hasPermission } from "@/lib/admin/permissions";
 import { AdminRouteLoadError } from "@/lib/admin/admin-ssr-fallback";
 import { logAdminSsrFatal, prismaErrorCode } from "@/lib/admin/admin-ssr-params";
 import { resolveModerationTab } from "@/lib/admin/moderation-tab";
@@ -17,7 +18,7 @@ export default async function ModerationPage({
     | Promise<Record<string, string | string[] | undefined>>
     | Record<string, string | string[] | undefined>;
 }) {
-  await requireAdminPermission("moderation");
+  const { adminRole } = await requireAdminPermission("moderation");
 
   let tab: Awaited<ReturnType<typeof resolveModerationTab>>;
   try {
@@ -49,8 +50,13 @@ export default async function ModerationPage({
 
       <ModerationTabs currentTab={tab} />
 
-      {tab === "requests" && <PendingRequestsList />}
-      {tab === "workers" && <PendingWorkersList />}
+      {tab === "requests" && (
+        <PendingRequestsList
+          canWriteRequests={hasPermission(adminRole, "requests_write")}
+          canTrustSafety={hasPermission(adminRole, "trust_safety")}
+        />
+      )}
+      {tab === "workers" && <PendingWorkersList canWriteWorkers={hasPermission(adminRole, "workers_write")} />}
       {tab === "reports" && <ReportedItemsList />}
       {tab === "spam" && <SpamList />}
     </div>

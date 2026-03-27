@@ -5,11 +5,18 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 
-export function WorkerModerationActions({ handymanId }: { handymanId: string }) {
+export function WorkerModerationActions({
+  handymanId,
+  canWriteWorkers,
+}: {
+  handymanId: string;
+  canWriteWorkers: boolean;
+}) {
   const router = useRouter();
   const [loading, setLoading] = useState<string | null>(null);
 
   const action = async (path: string) => {
+    if (!canWriteWorkers) return;
     if (loading) return;
     setLoading(path);
     try {
@@ -40,42 +47,46 @@ export function WorkerModerationActions({ handymanId }: { handymanId: string }) 
 
   return (
     <div className="flex flex-wrap items-center gap-1">
-      <Button
-        size="sm"
-        variant="default"
-        onClick={() => action("/approve")}
-        disabled={!!loading}
-        className="h-7 text-xs"
-      >
-        Approve
-      </Button>
-      <Button
-        size="sm"
-        variant="outline"
-        onClick={() => action("/reject")}
-        disabled={!!loading}
-        className="h-7 text-xs"
-      >
-        Reject
-      </Button>
-      <Button
-        size="sm"
-        variant="outline"
-        onClick={() => action("/suspend")}
-        disabled={!!loading}
-        className="h-7 text-xs"
-      >
-        Suspend
-      </Button>
-      <Button
-        size="sm"
-        variant="destructive"
-        onClick={() => action("/ban")}
-        disabled={!!loading}
-        className="h-7 text-xs"
-      >
-        Ban
-      </Button>
+      {canWriteWorkers && (
+        <>
+          <Button
+            size="sm"
+            variant="default"
+            onClick={() => action("/approve")}
+            disabled={!!loading}
+            className="h-7 text-xs"
+          >
+            Approve
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => action("/reject")}
+            disabled={!!loading}
+            className="h-7 text-xs"
+          >
+            Reject
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => action("/suspend")}
+            disabled={!!loading}
+            className="h-7 text-xs"
+          >
+            Suspend
+          </Button>
+          <Button
+            size="sm"
+            variant="destructive"
+            onClick={() => action("/ban")}
+            disabled={!!loading}
+            className="h-7 text-xs"
+          >
+            Ban
+          </Button>
+        </>
+      )}
       <Link href={`/admin/handymen/${handymanId}`}>
         <Button size="sm" variant="outline" className="h-7 text-xs">
           Edit

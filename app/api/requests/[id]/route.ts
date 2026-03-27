@@ -7,6 +7,56 @@ import { sendJobCompletedEmail } from "@/lib/email";
 import { logError } from "@/lib/logger";
 import { zodErrorToString } from "@/lib/api-response";
 
+const PRIVATE_REQUEST_DETAIL_SELECT = {
+  id: true,
+  category: true,
+  subcategory: true,
+  title: true,
+  description: true,
+  city: true,
+  urgency: true,
+  status: true,
+  adminStatus: true,
+  deletedAt: true,
+  createdAt: true,
+  user: { select: { id: true, name: true, city: true } },
+  offers: {
+    select: {
+      id: true,
+      status: true,
+      createdAt: true,
+      handyman: {
+        select: {
+          id: true,
+          name: true,
+          city: true,
+          handymanProfile: {
+            select: {
+              ratingAvg: true,
+              reviewCount: true,
+              verifiedStatus: true,
+            },
+          },
+        },
+      },
+    },
+  },
+  review: {
+    select: {
+      id: true,
+      rating: true,
+      comment: true,
+      createdAt: true,
+      reviewer: { select: { id: true, name: true } },
+    },
+  },
+  requesterName: true,
+  requesterPhone: true,
+  requesterEmail: true,
+  address: true,
+  photos: true,
+} as const;
+
 const patchRequestSchema = z.object({
   status: z.enum(["COMPLETED", "CANCELLED"]),
 });
@@ -18,32 +68,10 @@ export async function GET(
   try {
     const { prisma } = await import("@/lib/db");
     const { id } = await params;
+    const session = await auth();
     const req = await prisma.request.findUnique({
       where: { id },
-      include: {
-        user: { select: { id: true, name: true, city: true } },
-        offers: {
-          include: {
-            handyman: {
-              select: {
-                id: true,
-                name: true,
-                city: true,
-                handymanProfile: {
-                  select: {
-                    bio: true,
-                    ratingAvg: true,
-                    reviewCount: true,
-                    verifiedStatus: true,
-                    workerCategories: { include: { category: true } },
-                  },
-                },
-              },
-            },
-          },
-        },
-        review: true,
-      },
+      select: PRIVATE_REQUEST_DETAIL_SELECT,
     });
 
     if (!req) {
@@ -53,7 +81,42 @@ export async function GET(
       );
     }
 
-    return NextResponse.json({ success: true, data: req });
+    const isAdmin = session?.user?.role === "ADMIN";
+    const isOwner = !!(session?.user?.id && req.user?.id && session.user.id === req.user.id);
+    const isPubliclyVisible =
+      req.deletedAt == null &&
+      req.adminStatus !== "SPAM" &&
+      req.adminStatus !== "DELETED" &&
+      req.status === "OPEN";
+
+    if (!isAdmin && !isOwner && !isPubliclyVisible) {
+      return NextResponse.json(
+        { success: false, error: "Zahtjev nije pronađen" },
+        { status: 404 }
+      );
+    }
+
+    if (isAdmin || isOwner) {
+      return NextResponse.json({ success: true, data: req });
+    }
+
+    const safeData = {
+      id: req.id,
+      category: req.category,
+      subcategory: req.subcategory,
+      title: req.title,
+      description: req.description,
+      city: req.city,
+      urgency: req.urgency,
+      status: req.status,
+      adminStatus: req.adminStatus,
+      createdAt: req.createdAt,
+      user: req.user ? { id: req.user.id, name: req.user.name, city: req.user.city } : null,
+      offers: req.offers,
+      review: req.review,
+    };
+
+    return NextResponse.json({ success: true, data: safeData });
   } catch (error) {
     logError("GET request error", error);
     return NextResponse.json(

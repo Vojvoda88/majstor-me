@@ -414,6 +414,7 @@ model Offer {
 
   @@index([requestId])
   @@index([handymanId])
+  @@unique([requestId, handymanId])
   @@index([status])
   @@index([createdAt])
   @@map("offers")
@@ -500,6 +501,7 @@ model Notification {
   id        String   @id @default(cuid())
   userId    String   @map("user_id")
   type      String   // NEW_OFFER, OFFER_ACCEPTED, NEW_MESSAGE, NEW_REVIEW, VERIFIED
+  idempotencyKey String? @unique @map("idempotency_key")
   title     String
   body      String?  @db.Text
   link      String?

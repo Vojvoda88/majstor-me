@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { z } from "zod";
+import { Prisma } from "@prisma/client";
 
 export const dynamic = "force-dynamic";
 import { authFromNextRequest } from "@/lib/auth";
@@ -188,21 +189,32 @@ export async function POST(request: NextRequest) {
       select: { name: true },
     });
 
-    const offer = await prisma.offer.create({
-      data: {
-        requestId,
-        handymanId: session.user.id,
-        priceType,
-        priceValue: priceValue ?? undefined,
-        priceTypeOtherLabel: priceTypeOtherLabel?.trim() || undefined,
-        availabilityWindow: availabilityWindow?.trim() || undefined,
-        includedInPrice: includedInPrice?.trim() || undefined,
-        extraNote: extraNote?.trim() || undefined,
-        message: message ?? undefined,
-        proposedDate: proposedDate ? new Date(proposedDate) : undefined,
-        proposedArrival: proposedArrival?.trim() || undefined,
-      },
-    });
+    let offer;
+    try {
+      offer = await prisma.offer.create({
+        data: {
+          requestId,
+          handymanId: session.user.id,
+          priceType,
+          priceValue: priceValue ?? undefined,
+          priceTypeOtherLabel: priceTypeOtherLabel?.trim() || undefined,
+          availabilityWindow: availabilityWindow?.trim() || undefined,
+          includedInPrice: includedInPrice?.trim() || undefined,
+          extraNote: extraNote?.trim() || undefined,
+          message: message ?? undefined,
+          proposedDate: proposedDate ? new Date(proposedDate) : undefined,
+          proposedArrival: proposedArrival?.trim() || undefined,
+        },
+      });
+    } catch (e) {
+      if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
+        return NextResponse.json(
+          { success: false, error: "Već ste poslali ponudu na ovaj zahtjev" },
+          { status: 400 }
+        );
+      }
+      throw e;
+    }
 
     if (hasUnlocked) {
       void trackFunnelEvent(

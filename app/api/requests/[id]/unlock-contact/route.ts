@@ -3,9 +3,8 @@ import { authFromNextRequest } from "@/lib/auth";
 import { logError } from "@/lib/logger";
 import {
   isCreditsRequired,
-  hasEnoughCreditsForUnlock,
-  spendCreditsForContactUnlock,
   getCreditsRequiredForLead,
+  createUnlockAndSpendCreditsAtomic,
 } from "@/lib/credits";
 import { trackFunnelEvent } from "@/lib/funnel-events";
 
@@ -49,6 +48,31 @@ export async function POST(
       );
     }
 
+    if (req.status !== "OPEN") {
+      return NextResponse.json(
+        { success: false, error: "Ovaj zahtjev više ne prihvata kontakte" },
+        { status: 400 }
+      );
+    }
+
+    if (req.adminStatus === "SPAM" || req.adminStatus === "DELETED") {
+      return NextResponse.json(
+        { success: false, error: "Ovaj zahtjev ne prihvata kontakte." },
+        { status: 400 }
+      );
+    }
+
+    const profile = await prisma.handymanProfile.findUnique({
+      where: { userId: session.user.id },
+      select: { workerStatus: true },
+    });
+    if (profile?.workerStatus && profile.workerStatus !== "ACTIVE") {
+      return NextResponse.json(
+        { success: false, error: "Vaš profil još nije odobren. Sačekajte odobrenje admina." },
+        { status: 403 }
+      );
+    }
+
     const alreadyUnlocked = req.contactUnlocks.length > 0;
     const requesterName = req.requesterName ?? req.user?.name ?? null;
     const phone = req.requesterPhone ?? req.user?.phone ?? null;
@@ -85,25 +109,6 @@ export async function POST(
       phoneVerified: req.user?.phoneVerified != null,
     });
 
-    if (isCreditsRequired()) {
-      const { ok, balance } = await hasEnoughCreditsForUnlock(
-        prisma,
-        session.user.id,
-        creditsRequired
-      );
-      if (!ok) {
-        return NextResponse.json(
-          {
-            success: false,
-            error: `Nemate dovoljno kredita. Ovaj kontakt košta ${creditsRequired} kredita. Imate: ${balance}.`,
-            needsCredits: true,
-            creditsRequired,
-          },
-          { status: 402 }
-        );
-      }
-    }
-
     if (!phone) {
       return NextResponse.json(
         { success: false, error: "Korisnik nije unio broj telefona" },
@@ -111,27 +116,23 @@ export async function POST(
       );
     }
 
-    if (isCreditsRequired()) {
-      const spent = await spendCreditsForContactUnlock(
-        prisma,
-        session.user.id,
-        requestId,
-        creditsRequired
-      );
-      if (!spent.ok) {
-        return NextResponse.json(
-          { success: false, error: spent.error, needsCredits: true },
-          { status: 402 }
-        );
-      }
-    }
-
-    await prisma.requestContactUnlock.create({
-      data: {
-        requestId,
-        handymanId: session.user.id,
-      },
+    const unlockResult = await createUnlockAndSpendCreditsAtomic(prisma, {
+      handymanId: session.user.id,
+      requestId,
+      creditsRequired,
+      chargeCredits: isCreditsRequired(),
     });
+    if (!unlockResult.ok) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: unlockResult.error,
+          needsCredits: true,
+          creditsRequired,
+        },
+        { status: 402 }
+      );
+    }
 
     void trackFunnelEvent(
       prisma,
@@ -148,7 +149,8 @@ export async function POST(
         requesterName,
         email,
         isVerified,
-        creditsSpent: isCreditsRequired() ? creditsRequired : 0,
+        creditsSpent: isCreditsRequired() && !unlockResult.alreadyUnlocked ? creditsRequired : 0,
+        alreadyUnlocked: unlockResult.alreadyUnlocked,
       },
     });
   } catch (error) {

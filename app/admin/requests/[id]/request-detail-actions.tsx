@@ -9,15 +9,19 @@ export function RequestDetailActions({
   requestId,
   requesterPhone,
   adminStatus,
+  canWriteRequests,
+  canTrustSafety,
 }: {
   requestId: string;
   requesterPhone: string | null;
   adminStatus: string | null;
+  canWriteRequests: boolean;
+  canTrustSafety: boolean;
 }) {
   const router = useRouter();
   const [loading, setLoading] = useState<string | null>(null);
 
-  const canAct = adminStatus === "PENDING_REVIEW" || !adminStatus;
+  const canAct = canWriteRequests && (adminStatus === "PENDING_REVIEW" || !adminStatus);
 
   const action = async (path: string) => {
     if (!canAct || loading) return;
@@ -66,6 +70,7 @@ export function RequestDetailActions({
   };
 
   const blacklist = async () => {
+    if (!canTrustSafety) return;
     if (!requesterPhone || !confirm(`Blacklistovati ${requesterPhone}?`)) return;
     setLoading("blacklist");
     try {
@@ -110,7 +115,7 @@ export function RequestDetailActions({
         <Button variant="outline" onClick={() => action("/delete")} disabled={!!loading}>
           Delete
         </Button>
-        {requesterPhone && (
+        {requesterPhone && canTrustSafety && (
           <Button variant="destructive" onClick={blacklist} disabled={!!loading}>
             Blacklist phone
           </Button>

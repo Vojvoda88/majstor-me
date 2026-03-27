@@ -23,7 +23,7 @@ export async function POST(
 
   try {
     console.info("[AdminRequestDeleteAPI] step_require_auth", { requestId, adminUserId });
-    const auth = await requireAdminApi("requests");
+    const auth = await requireAdminApi("requests_write");
     if (!auth.ok) return auth.response;
 
     adminUserId = auth.session.user.id;

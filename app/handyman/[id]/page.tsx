@@ -21,6 +21,7 @@ import { cityToSlug } from "@/lib/slugs";
 import { getSiteUrl } from "@/lib/site-url";
 import { localBusinessJsonLd } from "@/lib/json-ld";
 import { AVATAR_IMAGE_FALLBACK } from "@/lib/homepage-data";
+import { prismaWhereUserActiveHandymanTruth } from "@/lib/handyman-truth";
 
 export const dynamic = "force-dynamic";
 
@@ -31,8 +32,8 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { id } = await params;
   const { prisma } = await import("@/lib/db");
-  const user = await prisma.user.findUnique({
-    where: { id, role: "HANDYMAN" },
+  const user = await prisma.user.findFirst({
+    where: { id, ...prismaWhereUserActiveHandymanTruth() },
     include: {
       handymanProfile: { include: { workerCategories: { include: { category: true } } } },
     },
@@ -81,8 +82,8 @@ export default async function HandymanProfilePage({
   const { id } = await params;
 
   const { prisma } = await import("@/lib/db");
-  const user = await prisma.user.findUnique({
-    where: { id, role: "HANDYMAN" },
+  const user = await prisma.user.findFirst({
+    where: { id, ...prismaWhereUserActiveHandymanTruth() },
     include: {
       handymanProfile: { include: { workerCategories: { include: { category: true } } } },
       reviewsReceived: {
