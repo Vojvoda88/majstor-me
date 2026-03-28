@@ -42,12 +42,9 @@ export function PublicHeader() {
   useEffect(() => {
     if (!menuOpen) return;
     const prevBody = document.body.style.overflow;
-    const prevHtml = document.documentElement.style.overflow;
     document.body.style.overflow = "hidden";
-    document.documentElement.style.overflow = "hidden";
     return () => {
       document.body.style.overflow = prevBody;
-      document.documentElement.style.overflow = prevHtml;
     };
   }, [menuOpen]);
 
@@ -190,15 +187,15 @@ export function PublicHeader() {
 
   const mobileDrawer =
     menuOpen && mounted ? (
-      <div className="md:hidden">
+      <>
         <button
           type="button"
           aria-label="Zatvori meni"
           onClick={() => setMenuOpen(false)}
-          className="fixed inset-0 z-[500] h-[100dvh] w-full bg-slate-950/55 backdrop-blur-sm"
+          className="fixed inset-0 z-[9998] h-[100dvh] min-h-[100dvh] w-full bg-slate-950/60 backdrop-blur-[3px] md:hidden"
         />
         <aside
-          className="fixed right-0 top-0 z-[510] flex h-[100dvh] max-h-[100dvh] w-[min(92vw,23.5rem)] flex-col border-l border-slate-200/90 bg-white shadow-[0_22px_55px_-15px_rgba(15,23,42,0.5)]"
+          className="fixed right-0 top-0 z-[9999] flex h-[100dvh] max-h-[100dvh] w-[min(92vw,23.5rem)] flex-col border-l border-slate-200/90 bg-white shadow-[0_22px_55px_-15px_rgba(15,23,42,0.5)] md:hidden"
           data-testid="mobile-nav"
           aria-modal="true"
           role="dialog"
@@ -340,7 +337,7 @@ export function PublicHeader() {
             )}
           </nav>
         </aside>
-      </div>
+      </>
     ) : null;
 
   return (
