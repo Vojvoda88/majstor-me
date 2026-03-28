@@ -49,7 +49,7 @@ const HANDYMAN_STEPS = [
     n: 2,
     icon: Smartphone,
     title: "Obavještenja za poslove koji vam odgovaraju",
-    desc: "Kada oglas prođe provjeru i pase vašoj branši i zoni, dobijate obavještenje.",
+    desc: "Bez pretplate — plaćate samo kada vam posao odgovara.",
     featured: false as const,
   },
   {
