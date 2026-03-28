@@ -8,7 +8,6 @@ import { StatsStrip } from "@/components/home-page/StatsStrip";
 import { WhyMajstorSection } from "@/components/home-page/WhyMajstorSection";
 import { CategoriesGrid } from "@/components/home-page/CategoriesGrid";
 import { HowItWorksForUsers, HowItWorksForHandymen } from "@/components/home-page/HowItWorks";
-import { CTAForMasters } from "@/components/home-page/CTAForMasters";
 import { SeoLandingLinks } from "@/components/home-page/SeoLandingLinks";
 import { buildHomeJsonLdGraph } from "@/lib/json-ld";
 import { FAQ_ITEMS } from "@/lib/faq-data";
@@ -61,19 +60,16 @@ export default function HomePage() {
         <div className="animate-fade-up" style={{ animationDelay: "0.08s", animationFillMode: "both" }}>
           <HowItWorksForHandymen />
         </div>
-        <div className="animate-fade-up" style={{ animationDelay: "0.1s", animationFillMode: "both" }}>
-          <CTAForMasters />
-        </div>
-        <div className="animate-fade-up" style={{ animationDelay: "0.14s", animationFillMode: "both" }}>
+        <div className="animate-fade-up" style={{ animationDelay: "0.12s", animationFillMode: "both" }}>
           <CategoriesGrid />
         </div>
-        <div className="animate-fade-up" style={{ animationDelay: "0.18s", animationFillMode: "both" }}>
+        <div className="animate-fade-up" style={{ animationDelay: "0.16s", animationFillMode: "both" }}>
           <WhyMajstorSection />
         </div>
-        <div className="animate-fade-up" style={{ animationDelay: "0.22s", animationFillMode: "both" }}>
+        <div className="animate-fade-up" style={{ animationDelay: "0.2s", animationFillMode: "both" }}>
           <FAQ />
         </div>
-        <div className="animate-fade-up" style={{ animationDelay: "0.26s", animationFillMode: "both" }}>
+        <div className="animate-fade-up" style={{ animationDelay: "0.24s", animationFillMode: "both" }}>
           <SeoLandingLinks />
         </div>
       </div>

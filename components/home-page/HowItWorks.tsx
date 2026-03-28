@@ -236,7 +236,14 @@ export function HowItWorksForHandymen() {
             <HandymanStepGrid steps={HANDYMAN_STEPS} />
           </div>
 
-          <div className="mt-8 flex flex-col items-stretch gap-3 sm:flex-row sm:justify-center sm:gap-4">
+          <div className="mt-7 rounded-2xl border border-slate-200/80 bg-slate-50/70 px-4 py-4 text-center sm:px-6">
+            <p className="text-sm leading-relaxed text-slate-600 sm:text-[15px]">
+              Kredite koristite samo kada želite da otključate kontakt za konkretan posao. Nema pretplate i nema
+              skrivenih troškova.
+            </p>
+          </div>
+
+          <div className="mt-6 flex flex-col items-stretch gap-3 sm:items-center">
             <Link
               href="/register?type=majstor"
               className="inline-flex min-h-[52px] items-center justify-center gap-2 rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 px-8 text-base font-bold text-brand-navy shadow-[0_14px_36px_-10px_rgba(245,158,11,0.45)] transition hover:brightness-105 active:scale-[0.99]"
@@ -244,14 +251,8 @@ export function HowItWorksForHandymen() {
               Registruj se kao majstor
               <ArrowRight className="h-4 w-4" />
             </Link>
-            <Link
-              href="/request/create"
-              className="inline-flex min-h-[52px] items-center justify-center rounded-2xl border-2 border-slate-200 bg-white px-8 text-base font-semibold text-slate-800 transition hover:border-slate-300 hover:bg-slate-50 active:scale-[0.99]"
-            >
-              Pogledaj kako izgleda zahtjev
-            </Link>
           </div>
-          <p className="mt-4 text-center">
+          <p className="mt-3 text-center">
             <Link
               href="/kako-radi-majstori"
               className="inline-flex items-center rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
