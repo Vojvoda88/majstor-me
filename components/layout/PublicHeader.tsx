@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
 import { Button } from "@/components/ui/button";
@@ -14,12 +15,15 @@ import { cn } from "@/lib/utils";
  */
 export function PublicHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [hash, setHash] = useState("");
   const pathname = usePathname();
   const { data: session, status } = useSession();
 
   const linkProps = { prefetch: false as const };
+
+  useEffect(() => setMounted(true), []);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
@@ -37,10 +41,13 @@ export function PublicHeader() {
 
   useEffect(() => {
     if (!menuOpen) return;
-    const prev = document.body.style.overflow;
+    const prevBody = document.body.style.overflow;
+    const prevHtml = document.documentElement.style.overflow;
     document.body.style.overflow = "hidden";
+    document.documentElement.style.overflow = "hidden";
     return () => {
-      document.body.style.overflow = prev;
+      document.body.style.overflow = prevBody;
+      document.documentElement.style.overflow = prevHtml;
     };
   }, [menuOpen]);
 
@@ -181,21 +188,177 @@ export function PublicHeader() {
     </>
   );
 
+  const mobileDrawer =
+    menuOpen && mounted ? (
+      <div className="md:hidden">
+        <button
+          type="button"
+          aria-label="Zatvori meni"
+          onClick={() => setMenuOpen(false)}
+          className="fixed inset-0 z-[500] h-[100dvh] w-full bg-slate-950/55 backdrop-blur-sm"
+        />
+        <aside
+          className="fixed right-0 top-0 z-[510] flex h-[100dvh] max-h-[100dvh] w-[min(92vw,23.5rem)] flex-col border-l border-slate-200/90 bg-white shadow-[0_22px_55px_-15px_rgba(15,23,42,0.5)]"
+          data-testid="mobile-nav"
+          aria-modal="true"
+          role="dialog"
+          aria-label="Mobilni meni"
+        >
+          <div className="flex shrink-0 items-center justify-between border-b border-slate-200/80 px-4 pb-3 pt-[max(0.75rem,env(safe-area-inset-top))]">
+            <div className="min-w-0 pr-2">
+              <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-slate-500">BrziMajstor.ME</p>
+              <p className="mt-0.5 truncate text-sm font-semibold text-slate-900">Meni</p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setMenuOpen(false)}
+              className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-slate-600 transition hover:bg-slate-100"
+              aria-label="Zatvori meni"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </div>
+
+          <nav className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-4 pb-[max(1.25rem,env(safe-area-inset-bottom))]">
+            <div className="flex flex-col gap-1">
+              <Link
+                href="/"
+                className={sheetNavLink(isPocetnaActive)}
+                onClick={() => setMenuOpen(false)}
+                data-testid="nav-pocetna"
+                {...linkProps}
+              >
+                Početna
+              </Link>
+              <Link
+                href="/categories"
+                className={sheetNavLink(isKategorijeActive)}
+                onClick={() => setMenuOpen(false)}
+                data-testid="nav-kategorije"
+                {...linkProps}
+              >
+                Kategorije
+              </Link>
+              <Link
+                href="/#kako-radi"
+                className={sheetNavLink(isKakoActive)}
+                onClick={() => setMenuOpen(false)}
+                data-testid="nav-kako-radi"
+                {...linkProps}
+              >
+                Kako radi
+              </Link>
+              <Link
+                href="/instaliraj"
+                className={sheetNavLink(isInstalirajActive)}
+                onClick={() => setMenuOpen(false)}
+                data-testid="nav-instaliraj-mobile"
+                {...linkProps}
+              >
+                Instaliraj aplikaciju
+              </Link>
+            </div>
+
+            {session ? (
+              <div className="mt-6 border-t border-slate-200/90 pt-5">
+                <p className="mb-2 px-1 text-[11px] font-bold uppercase tracking-[0.12em] text-slate-400">Nalog</p>
+                <div className="flex flex-col gap-1">
+                  {session.user?.role === "ADMIN" && (
+                    <Link
+                      href="/admin"
+                      className="flex items-center gap-2 rounded-xl bg-amber-50 px-3.5 py-3 text-[15px] font-semibold text-amber-900 transition hover:bg-amber-100"
+                      onClick={() => setMenuOpen(false)}
+                      {...linkProps}
+                    >
+                      Admin panel
+                    </Link>
+                  )}
+                  {session.user?.role === "HANDYMAN" && (
+                    <Link
+                      href="/dashboard/handyman"
+                      className={sheetNavLink(isProfilActive)}
+                      onClick={() => setMenuOpen(false)}
+                      {...linkProps}
+                    >
+                      Profil majstora
+                    </Link>
+                  )}
+                  {session.user?.role === "USER" && (
+                    <Link
+                      href="/dashboard/user"
+                      className={sheetNavLink(isUserDashActive)}
+                      onClick={() => setMenuOpen(false)}
+                      {...linkProps}
+                    >
+                      Moji zahtjevi
+                    </Link>
+                  )}
+                  <button
+                    type="button"
+                    className="mt-2 flex w-full rounded-xl px-3.5 py-3 text-left text-[15px] font-medium text-rose-600 transition hover:bg-rose-50"
+                    onClick={() => {
+                      setMenuOpen(false);
+                      signOut({ callbackUrl: "/" });
+                    }}
+                  >
+                    Odjavi se
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="mt-6 border-t border-slate-200/90 pt-5">
+                <Link
+                  href="/register?type=majstor"
+                  className="flex rounded-xl px-3.5 py-3 text-[15px] font-medium text-slate-700 transition hover:bg-slate-50"
+                  onClick={() => setMenuOpen(false)}
+                  data-testid="nav-registracija-majstor"
+                  {...linkProps}
+                >
+                  Registruj se kao majstor
+                </Link>
+                <div className="mt-4 flex flex-col gap-2">
+                  <Link
+                    href="/login"
+                    className="flex rounded-xl px-3.5 py-3 text-center text-[15px] font-medium text-slate-700 transition hover:bg-slate-50"
+                    onClick={() => setMenuOpen(false)}
+                    data-testid="nav-prijava"
+                    {...linkProps}
+                  >
+                    Prijava
+                  </Link>
+                  <Link
+                    href="/register"
+                    className="flex min-h-[48px] items-center justify-center rounded-xl bg-[#1d4ed8] py-3.5 text-center text-[15px] font-bold text-white shadow-sm transition hover:bg-[#1e40af] active:opacity-95"
+                    onClick={() => setMenuOpen(false)}
+                    data-testid="nav-registracija"
+                    {...linkProps}
+                  >
+                    Registracija
+                  </Link>
+                </div>
+              </div>
+            )}
+          </nav>
+        </aside>
+      </div>
+    ) : null;
+
   return (
-    <header
-      className={cn(
-        "sticky top-0 z-[100] w-full border-b shadow-sm transition-[background-color,border-color] duration-300 ease-out",
-        "pt-[env(safe-area-inset-top)] backdrop-blur-[12px] backdrop-saturate-[180%]",
-        homeAtTop
-          ? "border-white/10 bg-slate-950/50"
-          : scrolled
-            ? "border-slate-200/80 bg-white/90"
-            : "border-white/20 bg-white/75"
-      )}
-      data-testid="public-header"
-      style={{ pointerEvents: "auto", WebkitBackdropFilter: "blur(12px) saturate(180%)" }}
-    >
-      <div className="relative z-[100] mx-auto flex min-h-14 max-w-6xl items-center justify-between px-4 sm:px-6">
+    <>
+      <header
+        className={cn(
+          "sticky top-0 z-[100] w-full border-b shadow-sm transition-[background-color,border-color] duration-300 ease-out",
+          "pt-[env(safe-area-inset-top)] backdrop-blur-[12px] backdrop-saturate-[180%]",
+          homeAtTop
+            ? "border-white/10 bg-slate-950/50"
+            : scrolled
+              ? "border-slate-200/80 bg-white/90"
+              : "border-white/20 bg-white/75"
+        )}
+        data-testid="public-header"
+        style={{ pointerEvents: "auto", WebkitBackdropFilter: "blur(12px) saturate(180%)" }}
+      >
+        <div className="relative z-[100] mx-auto flex min-h-14 max-w-6xl items-center justify-between px-4 sm:px-6">
         <Link
           href="/"
           className="font-display text-xl font-bold tracking-tight md:text-2xl"
@@ -241,152 +404,8 @@ export function PublicHeader() {
           {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
       </div>
-
-      {menuOpen && (
-        <>
-          <button
-            type="button"
-            aria-label="Zatvori meni"
-            onClick={() => setMenuOpen(false)}
-            className="fixed inset-0 z-[108] bg-slate-950/50 backdrop-blur-[2px] md:hidden"
-          />
-          <aside
-            className="fixed inset-y-0 right-0 z-[110] flex w-[min(92vw,23.5rem)] flex-col border-l border-slate-200/90 bg-white shadow-[0_22px_55px_-15px_rgba(15,23,42,0.45)] md:hidden"
-            data-testid="mobile-nav"
-            aria-label="Mobilni meni"
-          >
-            <div className="flex items-center justify-between border-b border-slate-200/80 px-4 py-3.5 pt-[max(0.875rem,env(safe-area-inset-top))]">
-              <div>
-                <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-slate-500">BrziMajstor.ME</p>
-                <p className="mt-0.5 text-sm font-semibold text-slate-900">Meni</p>
-              </div>
-              <button
-                type="button"
-                onClick={() => setMenuOpen(false)}
-                className="inline-flex h-10 w-10 items-center justify-center rounded-xl text-slate-600 transition hover:bg-slate-100"
-                aria-label="Zatvori meni"
-              >
-                <X className="h-5 w-5" />
-              </button>
-            </div>
-
-            <nav className="flex-1 overflow-y-auto overscroll-contain px-4 py-4 pb-[max(1.5rem,env(safe-area-inset-bottom))]">
-              <div className="flex flex-col gap-1">
-                <Link href="/" className={sheetNavLink(isPocetnaActive)} onClick={() => setMenuOpen(false)} data-testid="nav-pocetna" {...linkProps}>
-                  Početna
-                </Link>
-                <Link
-                  href="/categories"
-                  className={sheetNavLink(isKategorijeActive)}
-                  onClick={() => setMenuOpen(false)}
-                  data-testid="nav-kategorije"
-                  {...linkProps}
-                >
-                  Kategorije
-                </Link>
-                <Link
-                  href="/#kako-radi"
-                  className={sheetNavLink(isKakoActive)}
-                  onClick={() => setMenuOpen(false)}
-                  data-testid="nav-kako-radi"
-                  {...linkProps}
-                >
-                  Kako radi
-                </Link>
-                <Link
-                  href="/instaliraj"
-                  className={sheetNavLink(isInstalirajActive)}
-                  onClick={() => setMenuOpen(false)}
-                  data-testid="nav-instaliraj-mobile"
-                  {...linkProps}
-                >
-                  Instaliraj aplikaciju
-                </Link>
-              </div>
-
-              {session ? (
-                <div className="mt-6 border-t border-slate-200/90 pt-5">
-                  <p className="mb-2 px-1 text-[11px] font-bold uppercase tracking-[0.12em] text-slate-400">Nalog</p>
-                  <div className="flex flex-col gap-1">
-                    {session.user?.role === "ADMIN" && (
-                      <Link
-                        href="/admin"
-                        className="flex items-center gap-2 rounded-xl bg-amber-50 px-3.5 py-3 text-[15px] font-semibold text-amber-900 transition hover:bg-amber-100"
-                        onClick={() => setMenuOpen(false)}
-                        {...linkProps}
-                      >
-                        Admin panel
-                      </Link>
-                    )}
-                    {session.user?.role === "HANDYMAN" && (
-                      <Link
-                        href="/dashboard/handyman"
-                        className={sheetNavLink(isProfilActive)}
-                        onClick={() => setMenuOpen(false)}
-                        {...linkProps}
-                      >
-                        Profil majstora
-                      </Link>
-                    )}
-                    {session.user?.role === "USER" && (
-                      <Link
-                        href="/dashboard/user"
-                        className={sheetNavLink(isUserDashActive)}
-                        onClick={() => setMenuOpen(false)}
-                        {...linkProps}
-                      >
-                        Moji zahtjevi
-                      </Link>
-                    )}
-                    <button
-                      type="button"
-                      className="mt-2 flex w-full rounded-xl px-3.5 py-3 text-left text-[15px] font-medium text-rose-600 transition hover:bg-rose-50"
-                      onClick={() => {
-                        setMenuOpen(false);
-                        signOut({ callbackUrl: "/" });
-                      }}
-                    >
-                      Odjavi se
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <div className="mt-6 border-t border-slate-200/90 pt-5">
-                  <Link
-                    href="/register?type=majstor"
-                    className="flex rounded-xl px-3.5 py-3 text-[15px] font-medium text-slate-700 transition hover:bg-slate-50"
-                    onClick={() => setMenuOpen(false)}
-                    data-testid="nav-registracija-majstor"
-                    {...linkProps}
-                  >
-                    Registruj se kao majstor
-                  </Link>
-                  <div className="mt-4 flex flex-col gap-2">
-                    <Link
-                      href="/login"
-                      className="flex rounded-xl px-3.5 py-3 text-center text-[15px] font-medium text-slate-700 transition hover:bg-slate-50"
-                      onClick={() => setMenuOpen(false)}
-                      data-testid="nav-prijava"
-                      {...linkProps}
-                    >
-                      Prijava
-                    </Link>
-                    <Link
-                      href="/register"
-                      className="flex min-h-[48px] items-center justify-center rounded-xl bg-[#1d4ed8] py-3.5 text-center text-[15px] font-bold text-white shadow-sm transition hover:bg-[#1e40af] active:opacity-95"
-                      onClick={() => setMenuOpen(false)}
-                      data-testid="nav-registracija"
-                      {...linkProps}
-                    >
-                      Registracija
-                    </Link>
-                  </div>
-                </div>
-              )}
-            </nav>
-          </aside>
-        </>
-      )}
     </header>
+    {mounted ? createPortal(mobileDrawer, document.body) : null}
+    </>
   );
 }
