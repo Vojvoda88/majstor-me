@@ -3,8 +3,18 @@ import Link from "next/link";
 import { PublicHeader } from "@/components/layout/PublicHeader";
 import { PublicFooter } from "@/components/layout/PublicFooter";
 import { getSiteUrl } from "@/lib/site-url";
+import {
+  CREDIT_PACKAGES,
+  HANDYMAN_START_BONUS_CREDITS,
+  STANDARD_LEAD_CREDITS,
+} from "@/lib/credit-packages";
 
 const baseUrl = getSiteUrl();
+const CREDITS_STARTER_PACK = CREDIT_PACKAGES.find((p) => p.id === "credits_1000")!;
+const STARTER_PRICE_LABEL = `${CREDITS_STARTER_PACK.priceEur.toLocaleString("sr-Latn-ME", {
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2,
+})} €`;
 
 export const metadata: Metadata = {
   title: "Kako radi za majstore",
@@ -41,7 +51,7 @@ const steps = [
   {
     n: "03",
     title: "Dobijate relevantne i odobrene poslove",
-    body: "Kada ste aktivni, vidite poslove koji su odobreni i koji su relevantni za vašu branšu/lokaciju.",
+    body: "Kada ste aktivni, čim se pojavi posao za vašu kategoriju i grad, stiže vam obavještenje. Vidite poslove koji su odobreni i relevantni za vas — ako ste slobodni, možete odmah da reagujete.",
   },
   {
     n: "04",
@@ -79,7 +89,7 @@ const faq = [
   },
   {
     q: "Kako kupujem kredite?",
-    a: "Kredite kupujete kroz postojeće pakete na platformi kad vam zatrebaju, bez pretplate.",
+    a: `Kredite kupujete kroz pakete u aplikaciji kad vam zatrebaju, bez pretplate. Npr. ${CREDITS_STARTER_PACK.credits.toLocaleString("sr-Latn-ME")} kredita košta ${STARTER_PRICE_LABEL}.`,
   },
   {
     q: "Da li mogu prvo pogledati posao pa odlučiti?",
@@ -124,25 +134,54 @@ export default function KakoRadiMajstoriPage() {
           </div>
         </section>
 
-        <section className="mt-8 rounded-3xl border border-slate-200/80 bg-white p-6 sm:p-8">
-          <h2 className="font-display text-2xl font-bold text-slate-900">Šta su krediti?</h2>
+        <section
+          id="krediti"
+          className="scroll-mt-28 mt-8 rounded-3xl border-2 border-amber-200/80 bg-gradient-to-b from-amber-50/40 to-white p-6 shadow-sm sm:p-8"
+        >
+          <h2 className="font-display text-2xl font-bold text-slate-900">Kako rade krediti?</h2>
           <p className="mt-3 text-[15px] leading-relaxed text-slate-600 sm:text-base">
-            Krediti nijesu pretplata. Ne plaćate mjesečno samo da biste “bili tu”. Kupujete kredite unaprijed i trošite ih
-            samo kada vi odlučite da otključate kontakt za konkretan posao.
+            Ukratko, bez šminkanja: krediti nijesu pretplata. Ne plaćate mjesečno da biste “bili tu”. Trošite ih samo kad
+            sami odlučite da otključate kontakt za posao koji želite.
           </p>
-          <ul className="mt-4 space-y-2 text-sm leading-relaxed text-slate-600 sm:text-[15px]">
-            <li>- Pregled platforme i osnovnog posla ne troši kredite.</li>
-            <li>- Krediti se troše tek kad procijenite da posao ima smisla za vas.</li>
-            <li>- Sami birate gdje želite da se uključite.</li>
+          <ul className="mt-5 space-y-2.5 text-sm leading-relaxed text-slate-700 sm:text-[15px]">
+            <li className="flex gap-2">
+              <span className="font-bold text-slate-900">•</span>
+              <span>Registracija je besplatna.</span>
+            </li>
+            <li className="flex gap-2">
+              <span className="font-bold text-slate-900">•</span>
+              <span>
+                Dobijate {HANDYMAN_START_BONUS_CREDITS.toLocaleString("sr-Latn-ME")} start kredita (jednokratno pri
+                odobrenom profilu).
+              </span>
+            </li>
+            <li className="flex gap-2">
+              <span className="font-bold text-slate-900">•</span>
+              <span>
+                Paket od {CREDITS_STARTER_PACK.credits.toLocaleString("sr-Latn-ME")} kredita košta {STARTER_PRICE_LABEL}{" "}
+                (kupujete kad vam treba).
+              </span>
+            </li>
+            <li className="flex gap-2">
+              <span className="font-bold text-slate-900">•</span>
+              <span>
+                Standardan posao kad nije hitno košta {STANDARD_LEAD_CREDITS} kredita — to je oko 1,99 € iz tog početnog
+                paketa (ispod 2 €).
+              </span>
+            </li>
+            <li className="flex gap-2">
+              <span className="font-bold text-slate-900">•</span>
+              <span>Hitniji oglasi i jači leadovi mogu koštati više kredita (u aplikaciji vidite tačan broj prije otključavanja).</span>
+            </li>
+            <li className="flex gap-2">
+              <span className="font-bold text-slate-900">•</span>
+              <span>Nema pretplate.</span>
+            </li>
+            <li className="flex gap-2">
+              <span className="font-bold text-slate-900">•</span>
+              <span>Pregled oglasa je besplatan; krediti idu tek na otključavanje broja klijenta koji želite.</span>
+            </li>
           </ul>
-        </section>
-
-        <section className="mt-8 rounded-3xl border border-slate-200/80 bg-white p-6 sm:p-8">
-          <h2 className="font-display text-2xl font-bold text-slate-900">Koliko to košta?</h2>
-          <p className="mt-3 text-[15px] leading-relaxed text-slate-600 sm:text-base">
-            Trošak zavisi od tipa i kvaliteta posla. Manji ili standardni poslovi su obično povoljniji od jačih leadova.
-            U praksi, uključivanje u posao vas često izađe svega nekoliko eura, ali tačan iznos zavisi od konkretnog posla.
-          </p>
         </section>
 
         <section className="mt-8 rounded-3xl border border-slate-200/80 bg-white p-6 sm:p-8">

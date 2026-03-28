@@ -12,7 +12,17 @@ import {
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { HANDYMAN_START_BONUS_CREDITS, STANDARD_LEAD_CREDITS } from "@/lib/credit-packages";
+import {
+  CREDIT_PACKAGES,
+  HANDYMAN_START_BONUS_CREDITS,
+  STANDARD_LEAD_CREDITS,
+} from "@/lib/credit-packages";
+
+const CREDITS_STARTER_PACK = CREDIT_PACKAGES.find((p) => p.id === "credits_1000")!;
+const STARTER_PRICE_LABEL = `${CREDITS_STARTER_PACK.priceEur.toLocaleString("sr-Latn-ME", {
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2,
+})} €`;
 
 /** Tri koraka — korisniku samo brzina, jednostavnost, besplatna objava. */
 const USER_STEPS = [
@@ -40,23 +50,23 @@ const USER_STEPS = [
 const HANDYMAN_STEPS = [
   {
     n: 1,
-    icon: UserPlus,
-    title: "Registracija besplatna + start krediti",
-    desc: `Registracija ne košta. Dobijate ${HANDYMAN_START_BONUS_CREDITS} start kredita. Admin kratko pregleda profil, pa vam šaljemo relevantne poslove.`,
-    featured: true as const,
+    icon: Smartphone,
+    title: "Obavještenja čim posao odgovara",
+    desc: "Čim se pojavi posao za vašu kategoriju i grad, stiže vam obavještenje. Ako ste slobodni, odmah se možete prijaviti. Ne jurite oglase — relevantni poslovi dolaze do vas.",
+    featured: false as const,
   },
   {
     n: 2,
-    icon: Smartphone,
-    title: "Obavještenja za poslove koji vam odgovaraju",
-    desc: "Bez pretplate — plaćate samo kada vam posao odgovara.",
-    featured: false as const,
+    icon: UserPlus,
+    title: `Registracija besplatna + ${HANDYMAN_START_BONUS_CREDITS.toLocaleString("sr-Latn-ME")} start kredita`,
+    desc: `Registracija ne košta. Dobijate ${HANDYMAN_START_BONUS_CREDITS.toLocaleString("sr-Latn-ME")} start kredita. Admin kratko pregleda profil, pa vam šaljemo relevantne poslove.`,
+    featured: true as const,
   },
   {
     n: 3,
     icon: Unlock,
-    title: "Nema pretplate — plaćate samo kontakt",
-    desc: `Pregledate oglas besplatno. Ako želite broj klijenta, otključate kontakt: standardni (nije hitno) posao = ${STANDARD_LEAD_CREDITS} kredita. Zatim šaljete ponudu.`,
+    title: "Standardan kontakt: ispod 2 €",
+    desc: `Standardan posao kad nije hitno = ${STANDARD_LEAD_CREDITS} kredita. Početni paket je ${CREDITS_STARTER_PACK.credits.toLocaleString("sr-Latn-ME")} kredita za ${STARTER_PRICE_LABEL} — to je oko 1,99 € po tom kontaktu. Nema pretplate: plaćate samo kad želite otključati broj klijenta.`,
     featured: false as const,
   },
 ] as const;
@@ -219,17 +229,24 @@ export function HowItWorksForHandymen() {
         <div className="rounded-[1.7rem] border border-slate-200/80 bg-white p-5 shadow-[0_22px_58px_-42px_rgba(15,23,42,0.45)] sm:p-7 md:p-9">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div className="max-w-2xl">
-              <p className="text-xs font-bold uppercase tracking-[0.2em] text-slate-500">Za majstore</p>
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-slate-500">Majstori</p>
               <h2 className="mt-2 font-display text-[1.65rem] font-bold tracking-tight text-slate-900 sm:text-3xl md:text-4xl">
-                Kako radi za majstore
+                Za majstore
               </h2>
               <p className="mt-3 text-[15px] font-medium leading-relaxed text-slate-600 sm:text-base md:text-lg">
-                Besplatna registracija, start krediti, bez mjesečne pretplate — plaćate samo kad želite kontakt klijenta.
+                Registracija je besplatna. Dobijate {HANDYMAN_START_BONUS_CREDITS.toLocaleString("sr-Latn-ME")} start
+                kredita, a plaćate samo kada želite kontakt klijenta.
               </p>
             </div>
-            <div className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3.5 py-1.5 text-xs font-semibold text-slate-600">
-              <ShieldTruth />
-              Nema pretplate • Jasno koliko košta kontakt
+            <div className="inline-flex max-w-[min(100%,20rem)] flex-col gap-1.5 sm:max-w-none sm:flex-row sm:items-center sm:gap-2">
+              <div className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3.5 py-1.5 text-xs font-semibold text-slate-600">
+                <ShieldTruth />
+                Nema pretplate • Obavještenja odmah
+              </div>
+              <div className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3.5 py-1.5 text-xs font-semibold text-slate-600">
+                <ShieldTruth />
+                Standardan kontakt oko 1,99 €
+              </div>
             </div>
           </div>
 
@@ -238,9 +255,12 @@ export function HowItWorksForHandymen() {
           </div>
 
           <div className="mt-7 rounded-2xl border border-slate-200/80 bg-slate-50/70 px-4 py-4 text-center sm:px-6">
-            <p className="text-sm leading-relaxed text-slate-600 sm:text-[15px]">
-              Hitniji poslovi i dodaci (slike, duži opis, verifikacije) mogu koštati više kredita — do plafona iz cjenovnika
-              u aplikaciji. Standardni, nije hitno: {STANDARD_LEAD_CREDITS} kredita.
+            <p className="text-sm font-medium leading-relaxed text-slate-700 sm:text-[15px]">
+              Krediti nijesu pretplata. Troše se samo kada otključate kontakt za posao koji želite.
+            </p>
+            <p className="mt-2 text-sm leading-relaxed text-slate-600 sm:text-[15px]">
+              Hitniji poslovi i dodaci mogu koštati više kredita (do plafona u aplikaciji). Standardni, nije hitno:{" "}
+              {STANDARD_LEAD_CREDITS} kredita.
             </p>
           </div>
 
@@ -255,10 +275,10 @@ export function HowItWorksForHandymen() {
           </div>
           <p className="mt-3 text-center">
             <Link
-              href="/kako-radi-majstori"
-              className="inline-flex items-center rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+              href="/kako-radi-majstori#krediti"
+              className="inline-flex min-h-[44px] items-center justify-center rounded-full border-2 border-slate-300 bg-white px-5 py-2 text-sm font-bold text-brand-navy transition hover:bg-slate-50"
             >
-              Detaljno o poslovima i kreditima
+              Kako rade krediti?
             </Link>
           </p>
         </div>
