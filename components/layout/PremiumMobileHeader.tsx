@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Menu, X, Shield } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSession, signOut } from "next-auth/react";
 import { NotificationsDropdown } from "@/components/layout/notifications-dropdown";
 import { HandymanCreditsPill } from "@/components/layout/handyman-credits-pill";
@@ -11,6 +11,21 @@ import { HandymanCreditsPill } from "@/components/layout/handyman-credits-pill";
 export function PremiumMobileHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
   const { data: session } = useSession();
+  const dashboardHref =
+    session?.user?.role === "HANDYMAN"
+      ? "/dashboard/handyman"
+      : session?.user?.role === "ADMIN"
+        ? "/admin"
+        : "/dashboard/user";
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prevOverflow;
+    };
+  }, [menuOpen]);
 
   return (
     <header className="fixed left-0 right-0 top-0 z-50 border-b border-slate-200/80 bg-white/95 shadow-sm backdrop-blur-md">
@@ -89,36 +104,70 @@ export function PremiumMobileHeader() {
       </div>
 
       {menuOpen && (
-        <div className="max-h-[min(72vh,calc(100dvh-4rem))] overflow-y-auto border-t border-slate-100 bg-white px-3 py-4 sm:px-6 md:hidden">
-          <nav className="flex flex-col gap-0.5">
-            <Link href="/categories" className="py-3 text-[16px] font-medium text-slate-700" onClick={() => setMenuOpen(false)}>
-              Kategorije
-            </Link>
-            <Link href="/#kako-radi" className="py-3 text-[16px] font-medium text-slate-700" onClick={() => setMenuOpen(false)}>
-              Kako radi
-            </Link>
-            {session?.user?.role === "ADMIN" && (
-              <Link
-                href="/admin"
-                className="flex items-center gap-2 py-3 text-[16px] font-semibold text-amber-700"
+        <div className="md:hidden">
+          <button
+            type="button"
+            aria-label="Zatvori meni"
+            onClick={() => setMenuOpen(false)}
+            className="fixed inset-0 z-[68] bg-slate-950/35 backdrop-blur-[1px]"
+          />
+          <aside className="fixed inset-y-0 right-0 z-[70] flex w-[min(92vw,23.5rem)] flex-col border-l border-slate-200/80 bg-white shadow-[0_22px_55px_-15px_rgba(15,23,42,0.45)]">
+            <div className="flex items-center justify-between border-b border-slate-200/80 px-4 py-3.5">
+              <div>
+                <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-slate-500">Navigacija</p>
+                <p className="mt-0.5 text-sm font-semibold text-slate-900">Meni</p>
+              </div>
+              <button
+                type="button"
                 onClick={() => setMenuOpen(false)}
+                className="inline-flex h-10 w-10 items-center justify-center rounded-xl text-slate-600 transition hover:bg-slate-100"
+                aria-label="Zatvori meni panel"
               >
-                <Shield className="h-4 w-4" />
-                Admin panel
-              </Link>
-            )}
-            {session ? (
-              <div className="mt-4 flex flex-col gap-2 border-t border-slate-100 pt-4">
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <nav className="flex-1 overflow-y-auto px-4 py-4">
+              <div className="flex flex-col gap-2">
                 <Link
-                  href={session.user?.role === "HANDYMAN" ? "/dashboard/handyman" : session.user?.role === "ADMIN" ? "/admin" : "/dashboard/user"}
-                  className="py-3 text-center text-[16px] font-medium text-slate-700"
+                  href={dashboardHref}
+                  className="rounded-xl bg-slate-100 px-3.5 py-3 text-[15px] font-semibold text-slate-900 transition hover:bg-slate-200"
                   onClick={() => setMenuOpen(false)}
                 >
                   Moj dashboard
                 </Link>
+                <Link
+                  href="/categories"
+                  className="rounded-xl px-3.5 py-3 text-[15px] font-medium text-slate-700 transition hover:bg-slate-50"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  Kategorije
+                </Link>
+                <Link
+                  href="/#kako-radi"
+                  className="rounded-xl px-3.5 py-3 text-[15px] font-medium text-slate-700 transition hover:bg-slate-50"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  Kako radi
+                </Link>
+                {session?.user?.role === "ADMIN" && (
+                  <Link
+                    href="/admin"
+                    className="mt-1 flex items-center gap-2 rounded-xl bg-amber-50 px-3.5 py-3 text-[15px] font-semibold text-amber-800 transition hover:bg-amber-100"
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    <Shield className="h-4 w-4" />
+                    Admin panel
+                  </Link>
+                )}
+              </div>
+            </nav>
+
+            <div className="border-t border-slate-200/80 px-4 py-4">
+              {session ? (
                 <button
                   type="button"
-                  className="w-full py-3 text-center text-[16px] font-medium text-red-600 hover:underline"
+                  className="w-full rounded-xl border border-rose-200 bg-rose-50 px-3.5 py-3 text-center text-[15px] font-semibold text-rose-700 transition hover:bg-rose-100"
                   onClick={async () => {
                     setMenuOpen(false);
                     await signOut({ callbackUrl: "/" });
@@ -126,18 +175,26 @@ export function PremiumMobileHeader() {
                 >
                   Odjavi se
                 </button>
-              </div>
-            ) : (
-              <div className="mt-4 flex flex-col gap-2 border-t border-slate-100 pt-4">
-                <Link href="/login" className="py-3 text-center text-[16px] font-medium text-slate-700" onClick={() => setMenuOpen(false)}>
-                  Prijava
-                </Link>
-                <Link href="/register" className="rounded-xl bg-[#1d4ed8] py-3.5 text-center text-[16px] font-bold text-white" onClick={() => setMenuOpen(false)}>
-                  Registracija
-                </Link>
-              </div>
-            )}
-          </nav>
+              ) : (
+                <div className="flex flex-col gap-2">
+                  <Link
+                    href="/login"
+                    className="rounded-xl px-3.5 py-3 text-center text-[15px] font-medium text-slate-700 transition hover:bg-slate-100"
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    Prijava
+                  </Link>
+                  <Link
+                    href="/register"
+                    className="rounded-xl bg-[#1d4ed8] px-3.5 py-3 text-center text-[15px] font-bold text-white transition hover:bg-[#1e40af]"
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    Registracija
+                  </Link>
+                </div>
+              )}
+            </div>
+          </aside>
         </div>
       )}
     </header>
