@@ -60,52 +60,53 @@ const HANDYMAN_STEPS = [
   },
 ] as const;
 
-const userCardShell =
-  "group relative flex min-h-full flex-col overflow-hidden rounded-[1.35rem] border border-slate-200/80 bg-white p-5 shadow-[0_14px_36px_-22px_rgba(15,23,42,0.28)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_20px_40px_-22px_rgba(15,23,42,0.35)] sm:p-6";
-
 function StepGrid({
   steps,
-  colsClass,
 }: {
   steps: readonly { n: number; icon: LucideIcon; title: string; desc: string }[];
-  colsClass: string;
 }) {
   return (
-    <div className={cn("grid gap-4 sm:gap-5 md:gap-6", colsClass)}>
+    <div className="relative">
+      <div
+        className="pointer-events-none absolute left-6 top-8 bottom-8 w-px bg-gradient-to-b from-sky-300 via-blue-300 to-indigo-300 md:hidden"
+        aria-hidden
+      />
+      <div
+        className="pointer-events-none absolute left-[16.666%] right-[16.666%] top-[2.25rem] hidden h-px bg-gradient-to-r from-sky-300 via-blue-300 to-indigo-300 md:block"
+        aria-hidden
+      />
+      <div className="grid gap-5 md:grid-cols-3 md:gap-4 lg:gap-6">
       {steps.map((step) => (
-        <article key={step.n} className={userCardShell}>
-          <div
-            className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-sky-500/70 via-blue-500/65 to-indigo-500/60 opacity-85"
-            aria-hidden
-          />
-          <div className="relative flex items-start gap-4">
-            <div className="flex items-start justify-between gap-3 md:block">
+        <article
+          key={step.n}
+          className="relative rounded-2xl border border-slate-200/80 bg-white/95 p-4 shadow-[0_14px_34px_-26px_rgba(15,23,42,0.35)] md:h-full md:p-5"
+        >
+          <div className="flex items-start gap-3 md:flex-col md:gap-4">
+            <div className="relative z-[1] flex w-10 shrink-0 items-center justify-center md:w-full md:justify-start">
               <span
-                className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-sky-50/90 text-brand-navy ring-1 ring-sky-100/70 md:h-12 md:w-12 md:rounded-2xl"
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-slate-900 text-sm font-extrabold tabular-nums text-white shadow-[0_10px_20px_-12px_rgba(15,23,42,0.9)] ring-4 ring-white md:h-11 md:w-11 md:text-[15px]"
                 aria-hidden
               >
-                <step.icon className="h-5 w-5 md:h-6 md:w-6" strokeWidth={2} />
+                {step.n}
               </span>
             </div>
             <div className="min-w-0 flex-1">
-              <div className="flex items-start justify-between gap-2">
-                <h3 className="min-w-0 break-words font-display text-[17px] font-bold leading-snug text-slate-900 md:mt-2 md:text-[18px]">
-                  {step.title}
-                </h3>
-                <span className="inline-flex min-h-[1.85rem] min-w-[1.85rem] shrink-0 items-center justify-center rounded-full border border-slate-200 bg-slate-900 px-2.5 text-xs font-bold tabular-nums text-white shadow-sm">
-                  {step.n}
-                </span>
+              <div className="inline-flex items-center gap-2 rounded-full border border-sky-100/90 bg-sky-50/80 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-sky-700">
+                <step.icon className="h-3.5 w-3.5" strokeWidth={2.1} />
+                Korak {step.n}
               </div>
-              <p className="mt-2 text-[14px] leading-relaxed text-slate-600 sm:text-[15px]">{step.desc}</p>
+              <h3 className="mt-2 font-display text-[17px] font-bold leading-snug text-slate-900 md:text-[18px]">
+                {step.title}
+              </h3>
+              <p className="mt-1.5 text-[14px] leading-relaxed text-slate-600 sm:text-[15px]">{step.desc}</p>
             </div>
           </div>
         </article>
       ))}
+      </div>
     </div>
   );
 }
-
-const userWrap = "rounded-[1.5rem] border border-slate-100/90 bg-gradient-to-b from-slate-50/95 to-white p-4 sm:p-6 md:rounded-[1.75rem] md:p-8 lg:p-10";
 
 type HandymanStep = {
   n: number;
@@ -188,16 +189,16 @@ export function HowItWorksForUsers() {
         </p>
       </div>
       <div className="mx-auto mt-8 max-w-6xl md:mt-10">
-        <div className={cn(userWrap, "shadow-[0_22px_55px_-40px_rgba(15,23,42,0.45)]")}>
-          <StepGrid steps={USER_STEPS} colsClass="md:grid-cols-3" />
+        <div className="rounded-3xl border border-slate-200/80 bg-gradient-to-b from-white to-slate-50/40 p-4 shadow-[0_20px_55px_-42px_rgba(15,23,42,0.52)] sm:p-5 md:p-6">
+          <StepGrid steps={USER_STEPS} />
         </div>
-        <div className="mx-auto mt-6 max-w-2xl text-center">
+        <div className="mx-auto mt-4 max-w-2xl text-center md:mt-5">
           <p className="text-sm text-slate-500 md:text-[15px]">
             Dobijate više ponuda bez zvanja redom — sve na jednom mjestu.
           </p>
           <Link
             href="/kako-radi-korisnici"
-            className="mt-3 inline-flex items-center rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+            className="mt-3 inline-flex items-center rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50"
           >
             Detaljno za korisnike
           </Link>
