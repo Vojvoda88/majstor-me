@@ -3,6 +3,7 @@ import { Prisma } from "@prisma/client";
 import { requireAdminApi } from "@/lib/admin/api-auth";
 import { createAuditLog } from "@/lib/admin/audit";
 import { prismaErrorCode } from "@/lib/admin/admin-ssr-params";
+import { replayBacklogNotificationsForActiveHandyman } from "@/lib/handyman-backlog-replay";
 
 export const dynamic = "force-dynamic";
 
@@ -63,6 +64,16 @@ export async function POST(_req: Request, { params }: { params: Promise<{ id: st
       entityId: id,
       newValue: { workerStatus: "ACTIVE" },
     });
+
+    try {
+      const replay = await replayBacklogNotificationsForActiveHandyman(prisma, id);
+      console.info("[AdminHandymanApproveAPI] backlog replay", { handymanUserId: id, ...replay });
+    } catch (replayError) {
+      console.warn("[AdminHandymanApproveAPI] backlog replay failed", {
+        handymanUserId: id,
+        error: replayError instanceof Error ? replayError.message : String(replayError),
+      });
+    }
 
     return NextResponse.json({ success: true, data: { workerStatus: "ACTIVE" } });
   } catch (e) {

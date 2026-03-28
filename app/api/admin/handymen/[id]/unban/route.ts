@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { requireAdminApi } from "@/lib/admin/api-auth";
 import { createAuditLog } from "@/lib/admin/audit";
+import { replayBacklogNotificationsForActiveHandyman } from "@/lib/handyman-backlog-replay";
 
 export const dynamic = "force-dynamic";
 
@@ -47,6 +48,16 @@ export async function POST(_req: Request, { params }: { params: Promise<{ id: st
       entityId: id,
       newValue: { workerStatus: "ACTIVE" },
     });
+
+    try {
+      const replay = await replayBacklogNotificationsForActiveHandyman(prisma, id);
+      console.info("[AdminHandymanUnbanAPI] backlog replay", { handymanUserId: id, ...replay });
+    } catch (replayError) {
+      console.warn("[AdminHandymanUnbanAPI] backlog replay failed", {
+        handymanUserId: id,
+        error: replayError instanceof Error ? replayError.message : String(replayError),
+      });
+    }
 
     return NextResponse.json({ success: true, data: { workerStatus: "ACTIVE" } });
   } catch (e) {
