@@ -66,7 +66,7 @@ const HANDYMAN_STEPS = [
     n: 3,
     icon: Unlock,
     title: "Standardan kontakt: ispod 2 €",
-    desc: `Standardan posao kad nije hitno = ${STANDARD_LEAD_CREDITS} kredita. Početni paket je ${CREDITS_STARTER_PACK.credits.toLocaleString("sr-Latn-ME")} kredita za ${STARTER_PRICE_LABEL} — to je oko 1,99 € po tom kontaktu. Nema pretplate: plaćate samo kad želite otključati broj klijenta.`,
+    desc: `Standardan posao: ${STANDARD_LEAD_CREDITS} kredita. ${CREDITS_STARTER_PACK.credits.toLocaleString("sr-Latn-ME")} kredita: ${STARTER_PRICE_LABEL}. Oko 1,99 € po standardnom poslu. Bez pretplate. Plaćate samo kad želite kontakt klijenta.`,
     featured: false as const,
   },
 ] as const;
