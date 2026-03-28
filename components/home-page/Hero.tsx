@@ -80,7 +80,7 @@ export function Hero() {
           ))}
         </div>
         <p className="relative z-30 mx-auto mt-4 max-w-md px-2 text-center text-[13px] font-medium leading-relaxed text-slate-200/95 sm:text-sm md:mt-5">
-          Čim se pojavi posao za vašu kategoriju i grad, stiže vam obavještenje.
+          Čim se pojavi posao koji odgovara vašoj branši i zoni, stiže vam obavještenje.
         </p>
         <p className="relative z-30 mt-2 text-center md:mt-2.5">
           <Link

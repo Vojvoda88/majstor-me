@@ -41,7 +41,7 @@ const steps = [
   {
     n: "01",
     title: "Registrujete se besplatno",
-    body: "Otvorite profil bez pretplate i bez mjesečne obaveze.",
+    body: `Registracija ne košta i nema pretplate. Nakon odobrenja profila dobijate ${HANDYMAN_START_BONUS_CREDITS.toLocaleString("sr-Latn-ME")} start kredita — da odmah možete probati platformu.`,
   },
   {
     n: "02",
@@ -51,7 +51,7 @@ const steps = [
   {
     n: "03",
     title: "Dobijate relevantne i odobrene poslove",
-    body: "Kada ste aktivni, čim se pojavi posao za vašu kategoriju i grad, stiže vam obavještenje. Vidite poslove koji su odobreni i relevantni za vas — ako ste slobodni, možete odmah da reagujete.",
+    body: "Kada ste aktivni, čim se pojavi posao koji odgovara vašoj branši i zoni, stiže vam obavještenje. Vidite poslove koji su odobreni i relevantni za vas — ako ste slobodni, možete odmah da reagujete.",
   },
   {
     n: "04",
@@ -61,7 +61,7 @@ const steps = [
   {
     n: "05",
     title: "Kontakt otključavate samo kad želite",
-    body: "Ako vam posao odgovara, tada kreditima otključavate kontakt i tek onda idete dalje ka ponudi.",
+    body: `Ako vam posao odgovara, tada kreditima otključavate broj klijenta. Standardan posao kad nije hitno = ${STANDARD_LEAD_CREDITS} kredita (oko 1,99 € iz paketa ${CREDITS_STARTER_PACK.credits.toLocaleString("sr-Latn-ME")} kredita za ${STARTER_PRICE_LABEL}). Plaćate samo kad sami želite taj kontakt — nema pretplate.`,
   },
   {
     n: "06",
@@ -73,11 +73,11 @@ const steps = [
 const faq = [
   {
     q: "Da li je registracija besplatna?",
-    a: "Da. Registracija i kreiranje profila su besplatni.",
+    a: `Da. Registracija i profil su besplatni, bez pretplate. Nakon odobrenja dobijate ${HANDYMAN_START_BONUS_CREDITS.toLocaleString("sr-Latn-ME")} start kredita.`,
   },
   {
     q: "Kada trošim kredite?",
-    a: "Krediti se troše kada vi odlučite da otključate kontakt za konkretan posao.",
+    a: `Samo kad sami odlučite da otključate kontakt klijenta za posao koji želite. Npr. standardan posao kad nije hitno = ${STANDARD_LEAD_CREDITS} kredita (oko 1,99 €, ispod 2 €, iz početnog paketa).`,
   },
   {
     q: "Da li moram otključati svaki posao?",
@@ -108,8 +108,11 @@ export default function KakoRadiMajstoriPage() {
             Jasno, bez pretplate i bez skrivenih troškova
           </h1>
           <p className="mt-4 max-w-3xl text-[15px] leading-relaxed text-slate-100/95 sm:text-base">
-            Ukratko: registrujete se besplatno, profil prođe pregled, vidite relevantne i odobrene poslove, pa sami birate
-            kada ćete kontakt otključati kreditima.
+            Registracija je besplatna i nema pretplate. Dobijate {HANDYMAN_START_BONUS_CREDITS.toLocaleString("sr-Latn-ME")}{" "}
+            start kredita. Kad vam treba više, paket od {CREDITS_STARTER_PACK.credits.toLocaleString("sr-Latn-ME")} kredita
+            košta {STARTER_PRICE_LABEL}. Standardan posao kad nije hitno = {STANDARD_LEAD_CREDITS} kredita — to je oko 1,99 €
+            (ispod 2 €) iz tog paketa. Plaćate samo kad želite otključati kontakt klijenta. Obavještenja stižu čim se pojavi
+            posao koji odgovara vašoj branši i zoni.
           </p>
           <div className="mt-6">
             <Link
@@ -179,7 +182,9 @@ export default function KakoRadiMajstoriPage() {
             </li>
             <li className="flex gap-2">
               <span className="font-bold text-slate-900">•</span>
-              <span>Pregled oglasa je besplatan; krediti idu tek na otključavanje broja klijenta koji želite.</span>
+              <span>
+                Plaćate samo kad želite otključati kontakt klijenta za posao koji birate. Pregled oglasa je besplatan.
+              </span>
             </li>
           </ul>
         </section>
