@@ -50,6 +50,7 @@ export function AdminShell({ adminRole, session, pendingReview, children }: Prop
   }, []);
 
   const roleLabel = adminRole.replace(/_/g, " ");
+  const pendingTotal = pendingReview.pendingRequests + pendingReview.pendingHandymen;
 
   return (
     <div className="min-h-screen bg-[#F1F5F9]">
@@ -58,7 +59,7 @@ export function AdminShell({ adminRole, session, pendingReview, children }: Prop
         <button
           type="button"
           aria-label="Zatvori meni"
-          className="fixed inset-0 z-40 bg-black/50 lg:hidden"
+          className="fixed inset-0 z-40 bg-slate-950/45 backdrop-blur-[1px] lg:hidden"
           onClick={() => setMobileOpen(false)}
         />
       )}
@@ -71,11 +72,11 @@ export function AdminShell({ adminRole, session, pendingReview, children }: Prop
       />
 
       <div className="flex min-h-screen w-full min-w-0 flex-col lg:pl-64">
-        <header className="sticky top-0 z-30 shrink-0 border-b border-[#E2E8F0] bg-white/95 px-3 py-2.5 backdrop-blur supports-[backdrop-filter]:bg-white/90 sm:px-6">
-          <div className="flex items-center gap-2">
+        <header className="sticky top-0 z-30 shrink-0 border-b border-[#E2E8F0] bg-white/95 pt-[env(safe-area-inset-top)] backdrop-blur supports-[backdrop-filter]:bg-white/90">
+          <div className="flex items-center gap-2 px-3 py-2.5 sm:px-6">
             <button
               type="button"
-              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[#E2E8F0] bg-white text-[#0F172A] lg:hidden"
+              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] text-[#0F172A] transition hover:bg-[#F1F5F9] lg:hidden"
               aria-expanded={mobileOpen}
               aria-controls="admin-sidebar-nav"
               aria-label={mobileOpen ? "Zatvori meni" : "Otvori meni"}
@@ -84,21 +85,25 @@ export function AdminShell({ adminRole, session, pendingReview, children }: Prop
               {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </button>
             <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-semibold text-[#0F172A]">Admin panel</p>
-              <p className="truncate text-[11px] text-[#64748B] sm:text-xs">
+              <p className="truncate text-sm font-semibold tracking-tight text-[#0F172A]">Admin panel</p>
+              <p className="hidden truncate text-xs text-[#64748B] sm:block">
                 {session.user?.name} · {roleLabel}
               </p>
             </div>
-            <div className="flex shrink-0 items-center gap-1.5 sm:gap-2.5">
+            <div className="flex shrink-0 items-center gap-1 sm:gap-2">
               <NotificationsDropdown />
               <AdminSignOutButton />
             </div>
           </div>
-          <div className="mt-2 flex items-center justify-between gap-2">
-            <AdminPendingHeaderBadge counts={pendingReview} />
-            <Link href="/" className="shrink-0 text-xs font-medium text-[#64748B] hover:text-[#0F172A]">
-              <span className="sm:hidden">Sajt</span>
-              <span className="hidden sm:inline">← Javna stranica</span>
+          {pendingTotal > 0 && (
+            <div className="border-t border-[#F1F5F9] px-3 py-2 sm:hidden">
+              <AdminPendingHeaderBadge counts={pendingReview} />
+            </div>
+          )}
+          <div className="hidden items-center gap-3 border-t border-[#F1F5F9] px-6 py-2 sm:flex">
+            <div className="min-w-0 flex-1">{pendingTotal > 0 ? <AdminPendingHeaderBadge counts={pendingReview} /> : null}</div>
+            <Link href="/" className="shrink-0 text-xs font-medium text-[#64748B] transition hover:text-[#0F172A]">
+              ← Javna stranica
             </Link>
           </div>
         </header>

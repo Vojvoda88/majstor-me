@@ -27,8 +27,23 @@ export function PremiumMobileHeader() {
     };
   }, [menuOpen]);
 
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setMenuOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
+  const dashboardLabel =
+    session?.user?.role === "HANDYMAN"
+      ? "Profil majstora"
+      : session?.user?.role === "ADMIN"
+        ? "Admin panel"
+        : "Moj nalog";
+
   return (
-    <header className="fixed left-0 right-0 top-0 z-50 border-b border-slate-200/80 bg-white/95 shadow-sm backdrop-blur-md">
+    <header className="fixed left-0 right-0 top-0 z-[100] border-b border-slate-200/80 bg-white/95 pt-[env(safe-area-inset-top)] shadow-sm backdrop-blur-md">
       <div className="mx-auto flex h-[3.75rem] max-w-6xl items-center justify-between px-3 sm:h-16 sm:px-6">
         <Link href="/" className="font-display text-xl font-bold tracking-tight md:text-2xl">
           <span className="text-[#1d4ed8]">BrziMajstor</span>
@@ -109,10 +124,10 @@ export function PremiumMobileHeader() {
             type="button"
             aria-label="Zatvori meni"
             onClick={() => setMenuOpen(false)}
-            className="fixed inset-0 z-[68] bg-slate-950/35 backdrop-blur-[1px]"
+            className="fixed inset-0 z-[108] bg-slate-950/50 backdrop-blur-[2px]"
           />
-          <aside className="fixed inset-y-0 right-0 z-[70] flex w-[min(92vw,23.5rem)] flex-col border-l border-slate-200/80 bg-white shadow-[0_22px_55px_-15px_rgba(15,23,42,0.45)]">
-            <div className="flex items-center justify-between border-b border-slate-200/80 px-4 py-3.5">
+          <aside className="fixed inset-y-0 right-0 z-[110] flex w-[min(92vw,23.5rem)] flex-col border-l border-slate-200/80 bg-white shadow-[0_22px_55px_-15px_rgba(15,23,42,0.45)]">
+            <div className="flex items-center justify-between border-b border-slate-200/80 px-4 py-3.5 pt-[max(0.875rem,env(safe-area-inset-top))]">
               <div>
                 <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-slate-500">Navigacija</p>
                 <p className="mt-0.5 text-sm font-semibold text-slate-900">Meni</p>
@@ -127,25 +142,25 @@ export function PremiumMobileHeader() {
               </button>
             </div>
 
-            <nav className="flex-1 overflow-y-auto px-4 py-4">
-              <div className="flex flex-col gap-2">
+            <nav className="flex-1 overflow-y-auto overscroll-contain px-4 py-4 pb-[max(1.5rem,env(safe-area-inset-bottom))]">
+              <div className="flex flex-col gap-1">
                 <Link
                   href={dashboardHref}
                   className="rounded-xl bg-slate-100 px-3.5 py-3 text-[15px] font-semibold text-slate-900 transition hover:bg-slate-200"
                   onClick={() => setMenuOpen(false)}
                 >
-                  Moj dashboard
+                  {dashboardLabel}
                 </Link>
                 <Link
                   href="/categories"
-                  className="rounded-xl px-3.5 py-3 text-[15px] font-medium text-slate-700 transition hover:bg-slate-50"
+                  className="rounded-xl px-3.5 py-3 text-[15px] font-medium text-slate-700 transition hover:bg-slate-50 active:bg-slate-100"
                   onClick={() => setMenuOpen(false)}
                 >
                   Kategorije
                 </Link>
                 <Link
                   href="/#kako-radi"
-                  className="rounded-xl px-3.5 py-3 text-[15px] font-medium text-slate-700 transition hover:bg-slate-50"
+                  className="rounded-xl px-3.5 py-3 text-[15px] font-medium text-slate-700 transition hover:bg-slate-50 active:bg-slate-100"
                   onClick={() => setMenuOpen(false)}
                 >
                   Kako radi
@@ -163,11 +178,11 @@ export function PremiumMobileHeader() {
               </div>
             </nav>
 
-            <div className="border-t border-slate-200/80 px-4 py-4">
+            <div className="border-t border-slate-200/80 px-4 py-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
               {session ? (
                 <button
                   type="button"
-                  className="w-full rounded-xl border border-rose-200 bg-rose-50 px-3.5 py-3 text-center text-[15px] font-semibold text-rose-700 transition hover:bg-rose-100"
+                  className="w-full rounded-xl px-3.5 py-3 text-left text-[15px] font-medium text-rose-600 transition hover:bg-rose-50"
                   onClick={async () => {
                     setMenuOpen(false);
                     await signOut({ callbackUrl: "/" });

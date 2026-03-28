@@ -22,7 +22,7 @@ function isRequesterVerifiedUser(
 }
 
 export const metadata: Metadata = {
-  title: "Dashboard majstora",
+  title: "Profil majstora",
   description: "Pregled otvorenih zahtjeva i slanje ponuda",
 };
 
@@ -164,10 +164,10 @@ export default async function HandymanDashboardPage({
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-[#0F172A] sm:text-3xl">
-            Dashboard majstora
+            Profil majstora
           </h1>
           <p className="mt-2 text-base text-[#64748B]">
-            Pregledajte otvorene zahtjeve i pošaljite ponude
+            Otvoreni zahtjevi i ponude na jednom mjestu
           </p>
         </div>
         <Link href="/dashboard/handyman/profile">

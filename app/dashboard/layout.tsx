@@ -18,7 +18,7 @@ export default function DashboardLayout({
 }) {
   return (
     <AppProviders>
-      <div className="min-h-screen bg-[#F3F4F6] pb-24 pt-16 md:pb-8">
+      <div className="min-h-screen bg-[#F3F4F6] pb-24 pt-[calc(3.75rem+env(safe-area-inset-top,0px))] sm:pt-[calc(4rem+env(safe-area-inset-top,0px))] md:pb-8">
         <PremiumMobileHeader />
         {children}
         <MobileBottomNav />

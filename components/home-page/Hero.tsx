@@ -13,7 +13,7 @@ const TRUST = [
 
 export function Hero() {
   return (
-    <section className="relative flex min-h-[min(88dvh,620px)] w-full items-center justify-center overflow-hidden px-4 pb-12 pt-[max(5.25rem,env(safe-area-inset-top)+4rem)] text-white sm:px-5 md:min-h-[720px] md:pb-24 md:pt-32">
+    <section className="relative flex min-h-[min(88dvh,620px)] w-full items-center justify-center overflow-hidden rounded-b-[1.75rem] px-4 pb-12 pt-[max(4.5rem,env(safe-area-inset-top)+3.25rem)] text-white sm:px-5 md:min-h-[720px] md:rounded-b-[2rem] md:pb-24 md:pt-32">
       <Image
         src={HERO_IMAGE}
         alt="Majstor na poslu"
