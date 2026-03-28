@@ -19,6 +19,7 @@ import {
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { User, Wrench } from "lucide-react";
+import { HANDYMAN_START_BONUS_CREDITS, STANDARD_LEAD_CREDITS } from "@/lib/credit-packages";
 
 const registerSchema = z.object({
   name: z.string().min(2, "Naziv mora imati najmanje 2 karaktera"),
@@ -141,9 +142,10 @@ export function RegisterForm({
             </div>
             {role === "HANDYMAN" && (
               <div className="rounded-lg border border-amber-100 bg-amber-50/70 px-3 py-2.5 text-xs leading-relaxed text-slate-700">
-                <strong className="font-semibold text-slate-800">Za majstore:</strong> Poslije registracije profil ide na
-                kratak admin pregled. Nakon odobrenja profil je aktivan, poslovi su vidljivi, a krediti se troše tek kada
-                želite broj korisnika.
+                <strong className="font-semibold text-slate-800">Za majstore:</strong> Registracija je besplatna; dobijate{" "}
+                {HANDYMAN_START_BONUS_CREDITS.toLocaleString("sr-Latn-ME")} start kredita. Nema pretplate — krediti idu na
+                otključavanje kontakta kad vam posao odgovara (standardni, nije hitno posao = {STANDARD_LEAD_CREDITS}{" "}
+                kredita). Admin kratko odobri profil prije punog pristupa poslovima.
               </div>
             )}
           </div>

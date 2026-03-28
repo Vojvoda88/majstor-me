@@ -67,6 +67,8 @@ function LoginFormInner() {
       setInfo("Poslali smo vam email za potvrdu naloga. Potvrdite email adresu kako biste nastavili.");
     } else if (searchParams.get("verified") === "1") {
       setInfo("Email adresa je potvrđena. Sada se možete prijaviti.");
+    } else if (searchParams.get("reset") === "1") {
+      setInfo("Lozinka je promijenjena. Prijavite se novom lozinkom.");
     } else {
       setInfo(null);
     }
@@ -244,6 +246,14 @@ function LoginFormInner() {
             {errors.password && (
               <p className="text-sm text-destructive">{errors.password.message}</p>
             )}
+          </div>
+          <div className="text-right">
+            <Link
+              href="/forgot-password"
+              className="text-sm font-medium text-[#2563EB] underline-offset-4 hover:underline"
+            >
+              Zaboravili ste lozinku?
+            </Link>
           </div>
           <Button type="submit" className="mt-2 w-full" size="lg" disabled={isSubmitting} data-testid="login-submit">
             {isSubmitting ? "Prijava..." : "Prijavi se"}

@@ -180,6 +180,29 @@ export async function sendGuestRequestTrackingEmail(opts: {
 /**
  * Link za potvrdu emaila nakon password registracije.
  */
+export async function sendPasswordResetEmail(to: string, name: string, plainToken: string) {
+  const resend = getResend();
+  if (!resend) return;
+  const link = `${appBaseUrl}/reset-password?token=${encodeURIComponent(plainToken)}`;
+
+  try {
+    await resend.emails.send({
+      from,
+      to,
+      subject: "Nova lozinka — BrziMajstor.ME",
+      html: `
+        <p>Zdravo${name ? ` ${name.split(/\s+/)[0]}` : ""},</p>
+        <p>Zatražili ste reset lozinke. Postavite novu lozinku putem linka ispod.</p>
+        <p><a href="${link}">Postavi novu lozinku →</a></p>
+        <p>Link važi 1 sat. Ako niste vi tražili reset, zanemarite ovu poruku — lozinka ostaje ista.</p>
+        <p>— BrziMajstor.ME</p>
+      `,
+    });
+  } catch {
+    // Ne otkrivati grešku klijentu; forgot-password uvijek vraća isti odgovor
+  }
+}
+
 export async function sendEmailVerificationEmail(to: string, name: string, plainToken: string) {
   const resend = getResend();
   if (!resend) return;

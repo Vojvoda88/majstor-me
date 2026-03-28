@@ -2,13 +2,13 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { ShieldCheck, Sparkles, Zap } from "lucide-react";
+import { Sparkles, Zap } from "lucide-react";
 import { HeroSearch } from "./hero-search";
 import { HERO_IMAGE } from "@/lib/homepage-data";
 
 const TRUST = [
-  { icon: Sparkles, label: "Besplatno za korisnike" },
-  { icon: Zap, label: "Jedan zahtjev, više ponuda" },
+  { icon: Sparkles, label: "Za vas kao korisnika — potpuno besplatno" },
+  { icon: Zap, label: "Jedan oglas, više ponuda majstora" },
 ];
 
 export function Hero() {
@@ -35,18 +35,18 @@ export function Hero() {
       />
       <div className="relative z-10 w-full max-w-4xl text-center pointer-events-auto">
         <p className="mb-3 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-amber-200/95 backdrop-blur-sm md:mb-4 md:px-4 md:text-[13px] md:tracking-[0.2em]">
-          Marketplace za majstore u Crnoj Gori
+          Pronađite majstora — brzo i jasno
         </p>
         <h1 className="font-display mb-4 text-[1.75rem] font-extrabold leading-[1.12] tracking-tight text-white sm:text-[2rem] md:mb-5 md:text-5xl lg:text-[3.25rem] lg:leading-[1.08]">
-          Majstori za cijelu Crnu Goru,
+          Besplatno pronađite majstora,
           <br />
           <span className="bg-gradient-to-r from-white to-white/85 bg-clip-text text-transparent">
-            na jednom mjestu.
+            objavite posao bez plaćanja.
           </span>
         </h1>
         <p className="mx-auto mb-7 max-w-xl text-[15px] font-medium leading-relaxed text-slate-200/95 sm:text-base md:mb-10 md:text-lg md:leading-relaxed">
-          Opišite posao jednom — nakon kratkog admin pregleda, zahtjev ide majstorima kojima odgovara. Bez naknade za
-          korisnike.
+          Za vas kao korisnika sve je besplatno: opišete šta vam treba, sačekate ponude i birate majstora. Mi povezujemo —
+          vi ne plaćate platformu.
         </p>
 
         <div className="mx-auto max-w-2xl">

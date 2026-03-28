@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { logError } from "@/lib/logger";
 import { z } from "zod";
+import { isRateLimited, getRetryAfterSeconds } from "@/lib/rate-limit";
+import { getRequestClientIp } from "@/lib/request-ip";
 
 export const dynamic = "force-dynamic";
 
@@ -26,6 +28,15 @@ export async function POST(request: Request) {
       return NextResponse.json(
         { success: false, error: "Obavještenja na ovom uređaju dostupna su prijavljenim korisnicima, majstorima i administratorima" },
         { status: 403 }
+      );
+    }
+
+    const ip = getRequestClientIp(request);
+    const rlKey = `push-sub:user:${session.user.id}:ip:${ip}`;
+    if (isRateLimited(rlKey, 30, 60 * 60 * 1000)) {
+      return NextResponse.json(
+        { success: false, error: "Previše pokušaja pretplate. Pokušajte kasnije." },
+        { status: 429, headers: { "Retry-After": String(getRetryAfterSeconds(rlKey)) } }
       );
     }
 

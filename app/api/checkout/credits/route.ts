@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { createCreditsCheckout } from "@/lib/payment";
 import { getPackageById } from "@/lib/credit-packages";
+import { isRateLimited, getRetryAfterSeconds } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
 
@@ -18,6 +19,14 @@ export async function POST(request: Request) {
       return NextResponse.json(
         { success: false, error: "Samo majstori mogu kupovati kredite" },
         { status: 403 }
+      );
+    }
+
+    const ck = `checkout-credits:user:${session.user.id}`;
+    if (isRateLimited(ck, 25, 60 * 60 * 1000)) {
+      return NextResponse.json(
+        { success: false, error: "Previše pokušaja plaćanja. Pokušajte kasnije." },
+        { status: 429, headers: { "Retry-After": String(getRetryAfterSeconds(ck)) } }
       );
     }
 

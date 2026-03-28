@@ -1,6 +1,8 @@
 import type { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { compare } from "bcryptjs";
+import { getClientIpFromNextAuthReq } from "@/lib/request-ip";
+import { isRateLimited } from "@/lib/rate-limit";
 
 const authStepsLog =
   process.env.LOGIN_AUTH_DEBUG === "1" || process.env.LOG_AUTH_STEPS === "1";
@@ -28,7 +30,7 @@ export const authOptions: NextAuthOptions = {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials) {
+      async authorize(credentials, req) {
         if (!credentials?.email || !credentials?.password) {
           if (authStepsLog) console.warn("[auth][authorize] missing email or password");
           return null;
@@ -36,6 +38,12 @@ export const authOptions: NextAuthOptions = {
 
         const email = credentials.email.trim().toLowerCase();
         if (!email) return null;
+
+        const ip = getClientIpFromNextAuthReq(req);
+        if (isRateLimited(`login-attempt:ip:${ip}`, 45, 15 * 60 * 1000)) {
+          console.warn("[auth][authorize] rate_limited_credentials");
+          return null;
+        }
 
         const { prisma } = await import("@/lib/db");
         /**
@@ -66,6 +74,8 @@ export const authOptions: NextAuthOptions = {
         if (!user) {
           if (authStepsLog) {
             console.warn("[auth][authorize] user not found", { emailLookup: email });
+          } else {
+            console.warn("[auth] credentials_rejected", { reason: "unknown_user" });
           }
           return null;
         }
@@ -88,6 +98,7 @@ export const authOptions: NextAuthOptions = {
         }
         if (!isValid) {
           if (authStepsLog) console.warn("[auth][authorize] password mismatch", { userId: user.id });
+          else console.warn("[auth] credentials_rejected", { reason: "password_mismatch", userId: user.id });
           return null;
         }
 

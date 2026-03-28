@@ -3,9 +3,12 @@ import { auth } from "@/lib/auth";
 import {
   isStorageConfigured,
   validateImageFile,
+  validateImageMagicBytes,
   uploadImage,
 } from "@/lib/storage";
 import { MAX_IMAGE_SIZE_BYTES, MAX_GALLERY_IMAGES } from "@/lib/constants";
+import { isRateLimited, getRetryAfterSeconds } from "@/lib/rate-limit";
+import { getRequestClientIp } from "@/lib/request-ip";
 
 export const dynamic = "force-dynamic";
 
@@ -13,6 +16,15 @@ const VALID_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
 export async function POST(request: Request) {
   try {
+    const ip = getRequestClientIp(request);
+    const rlKey = `upload:ip:${ip}`;
+    if (isRateLimited(rlKey, 40, 60 * 60 * 1000)) {
+      return NextResponse.json(
+        { ok: false, error: "Previše uploada. Pokušajte kasnije." },
+        { status: 429, headers: { "Retry-After": String(getRetryAfterSeconds(rlKey)) } }
+      );
+    }
+
     const session = await auth();
     if (!session?.user?.id) {
       return NextResponse.json(
@@ -77,6 +89,12 @@ export async function POST(request: Request) {
           : `gallery/${session.user.id}/${filename}`;
 
     const buffer = Buffer.from(await file.arrayBuffer());
+    if (!validateImageMagicBytes(buffer, file.type)) {
+      return NextResponse.json(
+        { ok: false, error: "Fajl nije valjana slika (JPEG, PNG ili WebP)." },
+        { status: 400 }
+      );
+    }
     const result = await uploadImage(buffer, file.type, path);
 
     if (!result.ok) {

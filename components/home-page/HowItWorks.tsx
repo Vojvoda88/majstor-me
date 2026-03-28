@@ -12,50 +12,51 @@ import {
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { HANDYMAN_START_BONUS_CREDITS, STANDARD_LEAD_CREDITS } from "@/lib/credit-packages";
 
 /** Tri koraka — korisniku samo brzina, jednostavnost, besplatna objava. */
 const USER_STEPS = [
   {
     n: 1,
     icon: FileText,
-    title: "Objavite šta vam treba",
-    desc: "Kratak opis, grad, po želji slike — objava je besplatna.",
+    title: "Objavite šta vam treba — besplatno",
+    desc: "Kratak opis, grad, po želji slike. Za korisnike je objava i korištenje platforme potpuno besplatno.",
   },
   {
     n: 2,
     icon: MessageSquare,
-    title: "Kratak admin pregled, pa distribucija",
-    desc: "Zahtjev prvo ide na brzu provjeru, zatim se prikazuje odgovarajućim majstorima.",
+    title: "Mi provjerimo, majstori vide oglas",
+    desc: "Zahtjev kratko pregledamo (spam, osnovne stvari), pa ide majstorima kojima odgovara posao.",
   },
   {
     n: 3,
     icon: CheckCircle2,
-    title: "Pregledajte ponude i birajte",
-    desc: "Kada stignu ponude, uporedite ih i izaberite majstora koji vam odgovara — u svom ritmu.",
+    title: "Uporedite ponude, izaberite majstora",
+    desc: "Kada stignu ponude, birate ko vam odgovara — bez žurbe i bez da zovete redom.",
   },
 ] as const;
 
-/** Copy za sekciju „Kako radi za majstore“ — tri koraka (bez ponavljanja CTA bloka ispod). */
+/** Copy za sekciju „Kako radi za majstore“ — brojevi iz lib/credit-packages + lib/lead-tier (standardni unlock). */
 const HANDYMAN_STEPS = [
   {
     n: 1,
     icon: UserPlus,
-    title: "Besplatan profil i onboarding",
-    desc: "Registracija je besplatna. Nakon pregleda profila od admina otvarate puni pristup poslovima.",
+    title: "Registracija besplatna + start krediti",
+    desc: `Registracija ne košta. Dobijate ${HANDYMAN_START_BONUS_CREDITS} start kredita. Admin kratko pregleda profil, pa vam šaljemo relevantne poslove.`,
     featured: true as const,
   },
   {
     n: 2,
     icon: Smartphone,
-    title: "Obavještenja za odobrene poslove",
-    desc: "Kada je zahtjev odobren i relevantan za vašu branšu/lokaciju, dobijate obavještenje.",
+    title: "Obavještenja za poslove koji vam odgovaraju",
+    desc: "Kada oglas prođe provjeru i pase vašoj branši i zoni, dobijate obavještenje.",
     featured: false as const,
   },
   {
     n: 3,
     icon: Unlock,
-    title: "Pregled besplatno, kontakt kad odgovara",
-    desc: "Opis i slike vidite prije plaćanja. Ako vam posao odgovara, otključavate kontakt i šaljete ponudu.",
+    title: "Nema pretplate — plaćate samo kontakt",
+    desc: `Pregledate oglas besplatno. Ako želite broj klijenta, otključate kontakt: standardni (nije hitno) posao = ${STANDARD_LEAD_CREDITS} kredita. Zatim šaljete ponudu.`,
     featured: false as const,
   },
 ] as const;
@@ -185,7 +186,7 @@ export function HowItWorksForUsers() {
           Kako radi za korisnike
         </h2>
         <p className="mx-auto mt-3 max-w-2xl text-[15px] font-medium leading-relaxed text-slate-600 sm:text-base md:text-lg">
-          Tri jasna koraka od objave do izbora ponude. Bez zvanja redom, bez gužve.
+          Tri jasna koraka: besplatna objava, ponude od majstora, izbor bez žurbe.
         </p>
       </div>
       <div className="mx-auto mt-8 max-w-6xl md:mt-10">
@@ -223,12 +224,12 @@ export function HowItWorksForHandymen() {
                 Kako radi za majstore
               </h2>
               <p className="mt-3 text-[15px] font-medium leading-relaxed text-slate-600 sm:text-base md:text-lg">
-                Besplatan onboarding, jasna pravila i relevantni poslovi tek nakon odobrenja.
+                Besplatna registracija, start krediti, bez mjesečne pretplate — plaćate samo kad želite kontakt klijenta.
               </p>
             </div>
             <div className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3.5 py-1.5 text-xs font-semibold text-slate-600">
               <ShieldTruth />
-              Bez pretplate • Bez skrivenih troškova
+              Nema pretplate • Jasno koliko košta kontakt
             </div>
           </div>
 
@@ -238,8 +239,8 @@ export function HowItWorksForHandymen() {
 
           <div className="mt-7 rounded-2xl border border-slate-200/80 bg-slate-50/70 px-4 py-4 text-center sm:px-6">
             <p className="text-sm leading-relaxed text-slate-600 sm:text-[15px]">
-              Kredite koristite samo kada želite da otključate kontakt za konkretan posao. Nema pretplate i nema
-              skrivenih troškova.
+              Hitniji poslovi i dodaci (slike, duži opis, verifikacije) mogu koštati više kredita — do plafona iz cjenovnika
+              u aplikaciji. Standardni, nije hitno: {STANDARD_LEAD_CREDITS} kredita.
             </p>
           </div>
 
