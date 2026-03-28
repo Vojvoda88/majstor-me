@@ -160,14 +160,23 @@ export function StatsStrip() {
   const cols = gridClass(items.length);
 
   return (
-    <div className="relative z-20 mx-auto -mt-10 max-w-5xl px-4 pointer-events-none sm:-mt-12 md:-mt-20">
-      <div className="overflow-hidden rounded-2xl border border-slate-200/90 bg-slate-100/70 p-px shadow-[0_12px_40px_-12px_rgba(10,22,40,0.12)] md:rounded-3xl">
+    <section className="py-5 md:py-7" aria-labelledby="stats-trust-title">
+      <div className="mb-3 flex items-center justify-between px-1 md:mb-4">
+        <div>
+          <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-slate-500">Trust signali</p>
+          <h3 id="stats-trust-title" className="mt-1 font-display text-lg font-bold tracking-tight text-slate-900 md:text-xl">
+            Platforma u brojkama
+          </h3>
+        </div>
+      </div>
+
+      <div className="overflow-hidden rounded-2xl border border-slate-200/80 bg-white/80 p-px shadow-[0_16px_42px_-30px_rgba(15,23,42,0.36)] backdrop-blur-sm md:rounded-3xl">
         {loading ? (
           <div className="grid grid-cols-2 gap-px overflow-hidden rounded-[inherit] bg-slate-200/80 md:grid-cols-4">
             {[1, 2, 3, 4].map((i) => (
               <div
                 key={i}
-                className="flex min-h-[100px] items-center justify-center bg-white px-5 py-5 md:min-h-[120px] md:py-6"
+                className="flex min-h-[86px] items-center justify-center bg-white px-5 py-4 md:min-h-[96px] md:py-5"
               >
                 <div className="h-10 w-24 animate-pulse rounded-lg bg-slate-200/90 md:h-12 md:w-28" />
               </div>
@@ -181,18 +190,18 @@ export function StatsStrip() {
                 return (
                   <div
                     key={item.label}
-                    className="flex items-center gap-3 bg-white px-4 py-4 md:flex-col md:items-center md:justify-center md:gap-3 md:px-4 md:py-6 lg:py-7"
+                    className="flex items-center gap-3 bg-white px-4 py-3.5 md:flex-col md:items-center md:justify-center md:gap-2.5 md:px-4 md:py-5"
                   >
                     <div
-                      className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl md:h-12 md:w-12 ${item.badgeClass}`}
+                      className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl md:h-11 md:w-11 ${item.badgeClass}`}
                     >
-                      <Icon className="h-5 w-5 md:h-[22px] md:w-[22px]" strokeWidth={2} aria-hidden />
+                      <Icon className="h-4.5 w-4.5 md:h-5 md:w-5" strokeWidth={2} aria-hidden />
                     </div>
                     <div className="min-w-0 text-left md:text-center">
-                      <p className="font-display text-2xl font-bold tabular-nums tracking-tight text-brand-navy md:text-[1.75rem]">
+                      <p className="font-display text-[1.4rem] font-bold tabular-nums tracking-tight text-brand-navy md:text-[1.6rem]">
                         {item.value}
                       </p>
-                      <p className="mt-1 text-[10px] font-bold uppercase leading-snug tracking-[0.08em] text-slate-500 md:text-[11px]">
+                      <p className="mt-0.5 text-[10px] font-bold uppercase leading-snug tracking-[0.08em] text-slate-500 md:text-[11px]">
                         {item.label}
                       </p>
                     </div>
@@ -202,18 +211,18 @@ export function StatsStrip() {
               return (
                 <div
                   key={item.title}
-                  className="flex items-center gap-3 bg-white px-4 py-4 md:flex-col md:items-center md:justify-center md:gap-3 md:px-4 md:py-6 lg:py-7"
+                  className="flex items-center gap-3 bg-white px-4 py-3.5 md:flex-col md:items-center md:justify-center md:gap-2.5 md:px-4 md:py-5"
                 >
                   <div
-                    className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl md:h-12 md:w-12 ${item.badgeClass}`}
+                    className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl md:h-11 md:w-11 ${item.badgeClass}`}
                   >
-                    <Icon className="h-5 w-5 md:h-[22px] md:w-[22px]" strokeWidth={2} aria-hidden />
+                    <Icon className="h-4.5 w-4.5 md:h-5 md:w-5" strokeWidth={2} aria-hidden />
                   </div>
                   <div className="min-w-0 text-left md:text-center">
-                    <p className="font-display text-base font-bold tracking-tight text-brand-navy md:text-xl">
+                    <p className="font-display text-[15px] font-bold tracking-tight text-brand-navy md:text-lg">
                       {item.title}
                     </p>
-                    <p className="mt-1 text-[13px] leading-snug text-slate-600 md:text-sm">{item.description}</p>
+                    <p className="mt-0.5 text-[12px] leading-snug text-slate-600 md:text-[13px]">{item.description}</p>
                   </div>
                 </div>
               );
@@ -221,6 +230,6 @@ export function StatsStrip() {
           </div>
         )}
       </div>
-    </div>
+    </section>
   );
 }

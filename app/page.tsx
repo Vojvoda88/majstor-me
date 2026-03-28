@@ -50,7 +50,6 @@ export default function HomePage() {
       <PublicHeader />
       <div className="pt-2 md:pt-8">
         <Hero />
-        <StatsStrip />
       </div>
 
       <div className="mx-auto max-w-6xl px-4 py-6 sm:px-5 md:px-6 md:py-16">
@@ -60,16 +59,19 @@ export default function HomePage() {
         <div className="animate-fade-up" style={{ animationDelay: "0.08s", animationFillMode: "both" }}>
           <HowItWorksForHandymen />
         </div>
-        <div className="animate-fade-up" style={{ animationDelay: "0.12s", animationFillMode: "both" }}>
+        <div className="animate-fade-up" style={{ animationDelay: "0.11s", animationFillMode: "both" }}>
+          <StatsStrip />
+        </div>
+        <div className="animate-fade-up" style={{ animationDelay: "0.14s", animationFillMode: "both" }}>
           <CategoriesGrid />
         </div>
-        <div className="animate-fade-up" style={{ animationDelay: "0.16s", animationFillMode: "both" }}>
+        <div className="animate-fade-up" style={{ animationDelay: "0.18s", animationFillMode: "both" }}>
           <WhyMajstorSection />
         </div>
-        <div className="animate-fade-up" style={{ animationDelay: "0.2s", animationFillMode: "both" }}>
+        <div className="animate-fade-up" style={{ animationDelay: "0.22s", animationFillMode: "both" }}>
           <FAQ />
         </div>
-        <div className="animate-fade-up" style={{ animationDelay: "0.24s", animationFillMode: "both" }}>
+        <div className="animate-fade-up" style={{ animationDelay: "0.26s", animationFillMode: "both" }}>
           <SeoLandingLinks />
         </div>
       </div>
