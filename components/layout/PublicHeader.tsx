@@ -347,7 +347,7 @@ export function PublicHeader() {
           "sticky top-0 z-[100] w-full border-b shadow-sm transition-[background-color,border-color] duration-300 ease-out",
           "pt-[env(safe-area-inset-top)] backdrop-blur-[12px] backdrop-saturate-[180%]",
           homeAtTop
-            ? "border-white/10 bg-slate-950/50"
+            ? "border-white/[0.08] bg-slate-950/40"
             : scrolled
               ? "border-slate-200/80 bg-white/90"
               : "border-white/20 bg-white/75"
@@ -362,8 +362,8 @@ export function PublicHeader() {
           data-testid="header-home"
           {...linkProps}
         >
-          <span className={cn(homeAtTop ? "text-sky-300" : "text-[#1d4ed8]")}>BrziMajstor</span>
-          <span className={cn(homeAtTop ? "text-white" : "text-slate-800")}>.ME</span>
+          <span className={cn(homeAtTop ? "text-white" : "text-[#1d4ed8]")}>BrziMajstor</span>
+          <span className={cn(homeAtTop ? "text-amber-100/85" : "text-slate-800")}>.ME</span>
         </Link>
 
         <nav className="relative z-[100] hidden items-center gap-x-8 md:flex" aria-label="Glavna navigacija">
