@@ -52,7 +52,7 @@ const HANDYMAN_STEPS = [
     n: 1,
     icon: Smartphone,
     title: "Obavještenja čim posao odgovara",
-    desc: "Čim se pojavi posao koji odgovara vašoj branši i zoni, stiže vam obavještenje. Ako ste slobodni, odmah se možete prijaviti. Ne jurite oglase — relevantni poslovi dolaze do vas.",
+    desc: "Kada oglas prođe provjeru i odgovara vašoj branši i zoni, stiže vam obavještenje. Ako ste slobodni, odmah se možete prijaviti. Ne jurite oglase — relevantni poslovi dolaze do vas.",
     featured: false as const,
   },
   {
