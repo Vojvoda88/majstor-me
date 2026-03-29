@@ -1,0 +1,20 @@
+{
+  "action": "rules.insert",
+  "value": {
+    "name": "Log marketplace API (requests incl. unlock-contact, upload, offers, checkout, push)",
+    "description": "Jedno pravilo zbog limita od 3; unlock-contact je pod /api/requests/...",
+    "active": true,
+    "conditionGroup": [
+      {
+        "conditions": [
+          {
+            "type": "path",
+            "op": "re",
+            "value": "^/api/(requests|upload|offers|checkout/credits|push/subscribe)(/|$)"
+          }
+        ]
+      }
+    ],
+    "action": { "mitigate": { "action": "log" } }
+  }
+}

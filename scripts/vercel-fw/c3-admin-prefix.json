@@ -1,0 +1,13 @@
+{
+  "action": "rules.insert",
+  "value": {
+    "name": "Log admin API",
+    "active": true,
+    "conditionGroup": [
+      {
+        "conditions": [{ "type": "path", "op": "pre", "value": "/api/admin" }]
+      }
+    ],
+    "action": { "mitigate": { "action": "log" } }
+  }
+}

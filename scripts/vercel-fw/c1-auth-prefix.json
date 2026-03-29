@@ -1,0 +1,14 @@
+{
+  "action": "rules.insert",
+  "value": {
+    "name": "Log auth API (register, forgot, reset, credentials, …)",
+    "description": "Prefix /api/auth/ — pokriva tražene auth rute u jednom pravilu (plan limit 3 custom rules).",
+    "active": true,
+    "conditionGroup": [
+      {
+        "conditions": [{ "type": "path", "op": "pre", "value": "/api/auth/" }]
+      }
+    ],
+    "action": { "mitigate": { "action": "log" } }
+  }
+}
