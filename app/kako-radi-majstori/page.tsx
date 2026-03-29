@@ -61,7 +61,7 @@ const steps = [
   {
     n: "05",
     title: "Kontakt otključavate samo kad želite",
-    body: `Ako vam posao odgovara, tada kreditima otključavate broj klijenta. Standardan posao kad nije hitno = ${STANDARD_LEAD_CREDITS} kredita (oko 1,99 € iz paketa ${CREDITS_STARTER_PACK.credits.toLocaleString("sr-Latn-ME")} kredita za ${STARTER_PRICE_LABEL}). Plaćate samo kad sami želite taj kontakt — nema pretplate.`,
+    body: `Ako vam posao odgovara, tada kreditima otključavate kontakt klijenta. Standardan posao kad nije hitno = ${STANDARD_LEAD_CREDITS} kredita (oko 1,99 € iz paketa ${CREDITS_STARTER_PACK.credits.toLocaleString("sr-Latn-ME")} kredita za ${STARTER_PRICE_LABEL}). Plaćate samo kad sami želite taj kontakt — nema pretplate.`,
   },
   {
     n: "06",
