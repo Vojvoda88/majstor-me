@@ -6,6 +6,7 @@
     "seed": "tsx prisma/seed.ts"
   },
   "scripts": {
+    "postinstall": "prisma generate",
     "images:download": "node scripts/download-images.js",
     "images:download-homepage": "node scripts/download-homepage-images.js",
     "icons:generate": "node scripts/generate-pwa-icons.js",
