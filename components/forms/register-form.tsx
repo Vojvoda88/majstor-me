@@ -12,7 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { User, Wrench } from "lucide-react";
+import { User, Wrench, ChevronDown } from "lucide-react";
 import { HANDYMAN_START_BONUS_CREDITS, STANDARD_LEAD_CREDITS } from "@/lib/credit-packages";
 import { CITIES, MAX_HANDYMAN_CATEGORIES } from "@/lib/constants";
 import { displayLabelForRequestCategory, HANDYMAN_SELECTABLE_INTERNAL_NAMES } from "@/lib/categories";
@@ -55,6 +55,8 @@ export function RegisterForm({
 }) {
   const router = useRouter();
   const [error, setError] = useState<string>("");
+  const [workCitiesOpen, setWorkCitiesOpen] = useState(false);
+  const workCitiesPanelRef = useRef<HTMLDivElement>(null);
 
   const {
     register,
@@ -126,7 +128,6 @@ export function RegisterForm({
     router.refresh();
   }
 
-  /** Bez `?? "USER"`: pri mountu `watch("role")` je često undefined pa bi pogrešno palio brisanje kategorija. */
   const role = (watch("role") as RegisterFormData["role"] | undefined) ?? defaultRole;
   const categoriesSel = watch("categories") ?? [];
   const workCitiesSel = watch("workCities") ?? [];
@@ -136,9 +137,20 @@ export function RegisterForm({
     if (prevRole.current === "HANDYMAN" && role === "USER") {
       setValue("categories", []);
       setValue("workCities", []);
+      setWorkCitiesOpen(false);
     }
     prevRole.current = role;
   }, [role, setValue]);
+
+  useEffect(() => {
+    if (!workCitiesOpen) return;
+    const onDoc = (e: MouseEvent) => {
+      const el = workCitiesPanelRef.current;
+      if (el && !el.contains(e.target as Node)) setWorkCitiesOpen(false);
+    };
+    document.addEventListener("mousedown", onDoc);
+    return () => document.removeEventListener("mousedown", onDoc);
+  }, [workCitiesOpen]);
 
   const toggleCategory = (cat: string) => {
     if (categoriesSel.includes(cat)) {
@@ -206,55 +218,6 @@ export function RegisterForm({
                 kredita). Admin kratko odobri profil prije punog pristupa poslovima.
               </div>
             )}
-            {role === "HANDYMAN" && (
-              <>
-                <div className="space-y-2 border-t border-slate-100 pt-4">
-                  <Label>Kategorije koje pokrivate *</Label>
-                  <p className="text-xs text-[#64748B]">
-                    Najmanje jedna, najviše {MAX_HANDYMAN_CATEGORIES}. Admin i dalje odobrava profil.
-                  </p>
-                  <div className="max-h-48 overflow-y-auto rounded-lg border border-[#E2E8F0] bg-white p-3">
-                    <div className="flex flex-col gap-2">
-                      {HANDYMAN_SELECTABLE_INTERNAL_NAMES.map((cat) => (
-                        <label key={cat} className="flex cursor-pointer items-start gap-2 text-sm">
-                          <input
-                            type="checkbox"
-                            className="mt-0.5 h-4 w-4 shrink-0"
-                            checked={categoriesSel.includes(cat)}
-                            onChange={() => toggleCategory(cat)}
-                          />
-                          <span>{displayLabelForRequestCategory(cat)}</span>
-                        </label>
-                      ))}
-                    </div>
-                  </div>
-                  {errors.categories && (
-                    <p className="text-sm text-destructive">{errors.categories.message as string}</p>
-                  )}
-                </div>
-                <div className="space-y-2">
-                  <Label>Gradovi u kojima radite (opciono)</Label>
-                  <p className="text-xs text-[#64748B]">
-                    Ako ne izaberete ništa, pretpostavićemo da radite u svim gradovima sa platforme.
-                  </p>
-                  <div className="max-h-48 overflow-y-auto rounded-lg border border-[#E2E8F0] bg-white p-3">
-                    <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-                      {CITIES.map((city) => (
-                        <label key={city} className="flex cursor-pointer items-center gap-2 text-sm">
-                          <input
-                            type="checkbox"
-                            className="h-4 w-4 shrink-0"
-                            checked={workCitiesSel.includes(city)}
-                            onChange={() => toggleWorkCity(city)}
-                          />
-                          <span>{city}</span>
-                        </label>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </>
-            )}
           </div>
           <div className="space-y-3">
             <Label htmlFor="name">
@@ -308,10 +271,92 @@ export function RegisterForm({
             <Input id="city" placeholder="npr. Podgorica, Nikšić..." {...register("city")} />
             {role === "HANDYMAN" ? (
               <p className="text-xs text-[#64748B]">
-                Ovo je vaš „glavni“ grad na profilu. Područje poslovanja birate gore u „Gradovi u kojima radite“.
+                Glavni grad na profilu. Područje poslovanja (više gradova) birate ispod, prije registracije.
               </p>
             ) : null}
           </div>
+          {role === "HANDYMAN" && (
+            <>
+              <div className="space-y-2 border-t border-slate-100 pt-5">
+                <Label>Kategorije koje pokrivate *</Label>
+                <p className="text-xs text-[#64748B]">
+                  Najmanje jedna, najviše {MAX_HANDYMAN_CATEGORIES}. Admin i dalje odobrava profil.
+                </p>
+                <div className="max-h-44 overflow-y-auto rounded-lg border border-[#E2E8F0] bg-white p-3">
+                  <div className="flex flex-col gap-2">
+                    {HANDYMAN_SELECTABLE_INTERNAL_NAMES.map((cat) => (
+                      <label key={cat} className="flex cursor-pointer items-start gap-2 text-sm">
+                        <input
+                          type="checkbox"
+                          className="mt-0.5 h-4 w-4 shrink-0"
+                          checked={categoriesSel.includes(cat)}
+                          onChange={() => toggleCategory(cat)}
+                        />
+                        <span>{displayLabelForRequestCategory(cat)}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+                {errors.categories && (
+                  <p className="text-sm text-destructive">{errors.categories.message as string}</p>
+                )}
+              </div>
+              <div className="space-y-2" ref={workCitiesPanelRef}>
+                <Label>Gradovi u kojima radite</Label>
+                <p className="text-xs text-[#64748B]">
+                  Ako ništa ne označite, smatraćemo da radite u <strong className="font-medium text-slate-700">svim gradovima</strong> na
+                  platformi. Otvorite meni i po želji označite gradove.
+                </p>
+                <div className="relative">
+                  <button
+                    type="button"
+                    onClick={() => setWorkCitiesOpen((o) => !o)}
+                    className={cn(
+                      "flex h-11 w-full items-center justify-between gap-2 rounded-md border border-input bg-background px-3 text-left text-sm",
+                      "ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    )}
+                    aria-expanded={workCitiesOpen}
+                    aria-haspopup="listbox"
+                  >
+                    <span className="min-w-0 truncate text-slate-800">
+                      {workCitiesSel.length === 0
+                        ? "Svi gradovi (podrazumijevano)"
+                        : workCitiesSel.length === 1
+                          ? workCitiesSel[0]
+                          : workCitiesSel.length <= 3
+                            ? workCitiesSel.join(", ")
+                            : `${workCitiesSel.length} gradova izabrano`}
+                    </span>
+                    <ChevronDown
+                      className={cn("h-4 w-4 shrink-0 text-slate-500 transition-transform", workCitiesOpen && "rotate-180")}
+                      aria-hidden
+                    />
+                  </button>
+                  {workCitiesOpen && (
+                    <div
+                      className="absolute left-0 right-0 z-50 mt-1 max-h-56 overflow-y-auto rounded-lg border border-[#E2E8F0] bg-white p-2 shadow-lg"
+                      role="listbox"
+                    >
+                      {CITIES.map((city) => (
+                        <label
+                          key={city}
+                          className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-slate-50"
+                        >
+                          <input
+                            type="checkbox"
+                            className="h-4 w-4 shrink-0"
+                            checked={workCitiesSel.includes(city)}
+                            onChange={() => toggleWorkCity(city)}
+                          />
+                          <span>{city}</span>
+                        </label>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </>
+          )}
           <Button type="submit" className="mt-2 w-full" size="lg" disabled={isSubmitting}>
             {isSubmitting ? "Registracija..." : "Registruj se"}
           </Button>
