@@ -43,6 +43,7 @@ export function PremiumMobileHeader() {
         : "Moj nalog";
 
   return (
+    <>
     <header className="fixed left-0 right-0 top-0 z-[100] border-b border-slate-200/80 bg-white/95 pt-[env(safe-area-inset-top)] shadow-sm backdrop-blur-md">
       <div className="mx-auto flex h-[3.75rem] max-w-6xl items-center justify-between px-3 sm:h-16 sm:px-6">
         <Link href="/" className="font-display text-xl font-bold tracking-tight md:text-2xl">
@@ -110,13 +111,19 @@ export function PremiumMobileHeader() {
           <button
             type="button"
             onClick={() => setMenuOpen(!menuOpen)}
-            className="flex h-10 w-10 items-center justify-center rounded-xl text-slate-600 transition hover:bg-slate-100"
+            className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-slate-600 transition hover:bg-slate-100"
             aria-label="Meni"
+            aria-expanded={menuOpen}
           >
-            {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            {menuOpen ? (
+              <X className="h-5 w-5 shrink-0" strokeWidth={2} aria-hidden />
+            ) : (
+              <Menu className="h-5 w-5 shrink-0" strokeWidth={2} aria-hidden />
+            )}
           </button>
         </div>
       </div>
+    </header>
 
       {menuOpen && (
         <div className="md:hidden">
@@ -124,10 +131,10 @@ export function PremiumMobileHeader() {
             type="button"
             aria-label="Zatvori meni"
             onClick={() => setMenuOpen(false)}
-            className="fixed inset-0 z-[108] bg-slate-950/50 backdrop-blur-[2px]"
+            className="fixed inset-0 z-[200] bg-slate-950/50 backdrop-blur-[2px]"
           />
-          <aside className="fixed inset-y-0 right-0 z-[110] flex w-[min(92vw,23.5rem)] flex-col border-l border-slate-200/80 bg-white shadow-[0_22px_55px_-15px_rgba(15,23,42,0.45)]">
-            <div className="flex items-center justify-between border-b border-slate-200/80 px-4 py-3.5 pt-[max(0.875rem,env(safe-area-inset-top))]">
+          <aside className="fixed inset-y-0 right-0 z-[210] flex w-[min(92vw,23.5rem)] flex-col border-l border-slate-200/80 bg-white shadow-[0_22px_55px_-15px_rgba(15,23,42,0.45)] pt-[env(safe-area-inset-top)]">
+            <div className="flex items-center justify-between border-b border-slate-200/80 px-4 py-3.5">
               <div>
                 <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-slate-500">Navigacija</p>
                 <p className="mt-0.5 text-sm font-semibold text-slate-900">Meni</p>
@@ -138,7 +145,7 @@ export function PremiumMobileHeader() {
                 className="inline-flex h-10 w-10 items-center justify-center rounded-xl text-slate-600 transition hover:bg-slate-100"
                 aria-label="Zatvori meni panel"
               >
-                <X className="h-5 w-5" />
+                <X className="h-5 w-5 shrink-0" strokeWidth={2} aria-hidden />
               </button>
             </div>
 
@@ -212,6 +219,6 @@ export function PremiumMobileHeader() {
           </aside>
         </div>
       )}
-    </header>
+    </>
   );
 }

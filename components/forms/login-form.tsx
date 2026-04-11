@@ -64,7 +64,13 @@ function LoginFormInner() {
 
   useEffect(() => {
     if (searchParams.get("registered") === "1") {
-      setInfo("Poslali smo vam email za potvrdu naloga. Potvrdite email adresu kako biste nastavili.");
+      if (searchParams.get("verify") === "skipped") {
+        setInfo(
+          "Nalog je kreiran. Verifikacioni email trenutno nije poslat (provjerite RESEND_API_KEY / EMAIL_FROM na serveru). Prijavite se i ispod zatražite „Pošalji ponovo link za potvrdu“ kada bude dostupan email."
+        );
+      } else {
+        setInfo("Poslali smo vam email za potvrdu naloga. Potvrdite email adresu kako biste nastavili.");
+      }
     } else if (searchParams.get("verified") === "1") {
       setInfo("Email adresa je potvrđena. Sada se možete prijaviti.");
     } else if (searchParams.get("reset") === "1") {

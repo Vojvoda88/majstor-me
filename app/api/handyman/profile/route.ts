@@ -3,7 +3,7 @@ import { z } from "zod";
 
 export const dynamic = "force-dynamic";
 import { auth } from "@/lib/auth";
-import { REQUEST_CATEGORIES, MAX_GALLERY_IMAGES, MAX_HANDYMAN_CATEGORIES } from "@/lib/constants";
+import { REQUEST_CATEGORIES, MAX_GALLERY_IMAGES, MAX_HANDYMAN_CATEGORIES, CITIES } from "@/lib/constants";
 import { logError } from "@/lib/logger";
 import { zodErrorToString } from "@/lib/api-response";
 
@@ -95,11 +95,15 @@ export async function PATCH(request: Request) {
       );
     }
 
+    let { cities } = parsed.data;
+    if (cities.length === 0) {
+      cities = [...CITIES];
+    }
+
     const {
       phone,
       avatarUrl,
       categories,
-      cities,
       bio,
       galleryImages,
       yearsOfExperience,

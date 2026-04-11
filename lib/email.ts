@@ -203,9 +203,15 @@ export async function sendPasswordResetEmail(to: string, name: string, plainToke
   }
 }
 
-export async function sendEmailVerificationEmail(to: string, name: string, plainToken: string) {
+/** @returns true ako je mail stvarno poslat preko Resend-a */
+export async function sendEmailVerificationEmail(to: string, name: string, plainToken: string): Promise<boolean> {
   const resend = getResend();
-  if (!resend) return;
+  if (!resend) {
+    console.warn(
+      "[email] sendEmailVerificationEmail skipped: RESEND_API_KEY nije postavljen — korisnik neće dobiti verifikacioni mail"
+    );
+    return false;
+  }
   const link = `${appBaseUrl}/verify-email?token=${encodeURIComponent(plainToken)}`;
 
   try {
@@ -221,8 +227,13 @@ export async function sendEmailVerificationEmail(to: string, name: string, plain
         <p>— BrziMajstor.ME</p>
       `,
     });
-  } catch {
-    // Silently fail - email non-critical for UX copy; korisnik i dalje vidi poruku na loginu
+    return true;
+  } catch (e) {
+    console.error("[email] sendEmailVerificationEmail Resend error", {
+      to,
+      message: e instanceof Error ? e.message.slice(0, 300) : String(e).slice(0, 300),
+    });
+    return false;
   }
 }
 

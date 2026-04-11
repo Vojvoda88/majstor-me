@@ -3,7 +3,7 @@ import { auth } from "@/lib/auth";
 import { createCreditsCheckout } from "@/lib/payment";
 import { getPackageById } from "@/lib/credit-packages";
 import { isRateLimited, getRetryAfterSeconds } from "@/lib/rate-limit";
-import { getSiteUrl } from "@/lib/site-url";
+import { getCheckoutBaseUrl } from "@/lib/site-url";
 
 export const dynamic = "force-dynamic";
 
@@ -48,7 +48,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const baseUrl = getSiteUrl().replace(/\/$/, "");
+    const baseUrl = getCheckoutBaseUrl(request);
     const result = await createCreditsCheckout({
       handymanId: session.user.id,
       packageId: pkg.id,

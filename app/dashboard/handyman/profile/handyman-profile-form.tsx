@@ -27,7 +27,7 @@ const profileSchema = z.object({
     .array(z.string())
     .min(1, "Odaberite najmanje jednu kategoriju")
     .max(MAX_CATEGORIES, "Možete izabrati maksimalno 5 kategorija."),
-  cities: z.array(z.string()).min(1, "Odaberite najmanje jedan grad"),
+  cities: z.array(z.string()), // prazan = svi gradovi (server čuva punu listu)
   galleryImages: z.array(z.string().url()).optional(),
   yearsOfExperience: z.number().int().min(0).max(50).optional().nullable(),
   startingPrice: z.number().min(0).optional().nullable(),
@@ -203,8 +203,10 @@ export function HandymanProfileForm({
             )}
           </div>
           <div>
-            <Label>Gradovi *</Label>
-            <p className="text-sm text-muted-foreground">U kojim gradovima radite</p>
+            <Label>Gradovi (opciono)</Label>
+            <p className="text-sm text-muted-foreground">
+              Ako ne izaberete ni jedan, tretiraćemo kao da radite u svim gradovima na platformi.
+            </p>
             <div className="mt-2 flex flex-wrap gap-2">
               {CITIES_LIST.map((city) => (
                 <label key={city} className="flex items-center gap-2">
