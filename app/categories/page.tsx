@@ -54,7 +54,7 @@ export default function CategoriesPage() {
   });
 
   return (
-    <div className="min-h-screen bg-brand-page pb-28 pt-16 md:pb-10 md:pt-20">
+    <div className="min-h-screen bg-brand-page pb-28 md:pb-10">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(categoriesJsonLd) }} />
       <PublicHeader />
       <div className="mx-auto max-w-6xl px-5 py-10 md:px-8 md:py-14">

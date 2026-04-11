@@ -147,7 +147,7 @@ export function CategoryPageContent({
   const sortLabel = sortBy === "rating" ? "Po ocjeni" : "Po broju recenzija";
 
   return (
-    <main className="min-h-screen bg-brand-page pb-28 pt-16 text-brand-navy md:pb-10 md:pt-20">
+    <main className="min-h-screen bg-brand-page pb-28 text-brand-navy md:pb-10">
       <PublicHeader />
 
       <div className="mx-auto max-w-[430px] px-4 md:max-w-4xl md:px-6 lg:max-w-[1400px] lg:px-8">

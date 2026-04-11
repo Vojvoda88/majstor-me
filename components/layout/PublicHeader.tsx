@@ -352,9 +352,13 @@ export function PublicHeader() {
 
   return (
     <>
+      {/*
+        fixed umjesto sticky: Safari/iOS + overflow na body često „gube” sticky pa nav isplivava
+        iz viewporta pri skrolu. Spacer ispod zadržava isti razmak u dokumentu.
+      */}
       <header
         className={cn(
-          "sticky top-0 z-[100] w-full border-b shadow-sm transition-[background-color,border-color] duration-300 ease-out",
+          "fixed inset-x-0 top-0 z-[110] w-full border-b shadow-sm transition-[background-color,border-color] duration-300 ease-out",
           "pt-[env(safe-area-inset-top)] backdrop-blur-[12px] backdrop-saturate-[180%]",
           homeAtTop
             ? "border-white/[0.08] bg-slate-950/40"
@@ -415,6 +419,10 @@ export function PublicHeader() {
         </button>
       </div>
     </header>
+      <div
+        aria-hidden
+        className="shrink-0 [height:calc(3.5rem+env(safe-area-inset-top,0px))]"
+      />
     {mounted ? createPortal(mobileDrawer, document.body) : null}
     </>
   );

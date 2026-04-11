@@ -46,7 +46,7 @@ export default function HomePage() {
   const structuredData = buildHomeJsonLdGraph(FAQ_ITEMS);
   return (
     <>
-      {/* Sticky header: izvan <main> jer overflow-x na main/body ruši sticky u nekim pregledačima */}
+      {/* Header izvan <main> (overflow) + fixed nav u PublicHeader (pouzdanije od sticky na iOS) */}
       <PublicHeader />
       <main className="relative isolate min-h-screen overflow-x-hidden pb-8 md:pb-16 before:pointer-events-none before:absolute before:inset-0 before:bg-[radial-gradient(ellipse_90%_60%_at_50%_-10%,rgba(29,78,216,0.06),transparent_55%)]">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
