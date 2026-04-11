@@ -1,8 +1,5 @@
 import { NextResponse } from "next/server";
-import {
-  prismaWhereHandymanProfileActiveTruth,
-  prismaWhereUserActiveHandymanTruth,
-} from "@/lib/handyman-truth";
+import { prismaWhereUserActiveHandymanForPublicCatalog } from "@/lib/handyman-truth";
 
 export const revalidate = 60;
 
@@ -15,7 +12,7 @@ export async function GET() {
     const { prisma } = await import("@/lib/db");
 
     const [handymanCount, completedCount, reviewAgg, requestCount, userCount] = await Promise.all([
-      prisma.handymanProfile.count(),
+      prisma.user.count({ where: prismaWhereUserActiveHandymanForPublicCatalog() }),
       prisma.request.count({ where: { status: "COMPLETED" } }),
       prisma.review.aggregate({
         _avg: { rating: true },
@@ -37,7 +34,7 @@ export async function GET() {
         distinct: ["city"],
       }),
       prisma.user.findMany({
-        where: { ...prismaWhereUserActiveHandymanTruth(), city: { not: null } },
+        where: { ...prismaWhereUserActiveHandymanForPublicCatalog(), city: { not: null } },
         select: { city: true },
         distinct: ["city"],
       }),

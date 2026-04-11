@@ -13,7 +13,7 @@ import { LandingValueBlock } from "@/components/landing/landing-value-block";
 import { Wrench, MapPin, List, ChevronLeft, ChevronRight, SlidersHorizontal } from "lucide-react";
 import { CITIES, DEFAULT_PAGE_SIZE } from "@/lib/constants";
 import { HOMEPAGE_CITIES } from "@/lib/homepage-data";
-import { cityToSlug } from "@/lib/slugs";
+import { cityToSlug, phraseUGradu } from "@/lib/slugs";
 import type { PublicHandymenListResult } from "@/lib/handymen-listing";
 
 type Handyman = {
@@ -281,7 +281,7 @@ export function CategoryPageContent({
                 <div className="overflow-hidden rounded-3xl border border-slate-200/80 bg-white p-10 text-center shadow-marketplace-sm md:p-14">
                   <Wrench className="mx-auto mb-5 h-14 w-14 text-slate-300" />
                   <p className="text-lg font-semibold text-brand-navy">
-                    Trenutno nema aktivnih majstora za ovu kategoriju{cityFilter ? ` u gradu ${cityFilter}` : ""}.
+                    Trenutno nema aktivnih majstora za ovu kategoriju{cityFilter ? ` ${phraseUGradu(cityFilter)}` : ""}.
                   </p>
                   <p className="mt-3 text-sm leading-relaxed text-slate-600">
                     Pošaljite jedan zahtjev i nakon kratkog pregleda dobijate ponude majstora koji pokrivaju ovaj posao.
@@ -298,7 +298,7 @@ export function CategoryPageContent({
                         href={`/grad/${cityToSlug(cityFilter)}`}
                         className="inline-flex h-14 min-h-[52px] items-center justify-center rounded-2xl border border-slate-200 bg-white px-6 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
                       >
-                        Pogledaj sve usluge u {cityFilter}
+                        Pogledaj sve usluge {phraseUGradu(cityFilter)}
                       </Link>
                     ) : null}
                   </div>

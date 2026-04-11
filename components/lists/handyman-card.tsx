@@ -73,7 +73,7 @@ function HandymanCardComponent({
           <>Još nema recenzija</>
         )}
       </span>
-      {averageResponseMinutes != null && (
+      {averageResponseMinutes != null && averageResponseMinutes > 0 && (
         <span className="inline-flex items-center gap-1 rounded-lg bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-700">
           <Clock className="h-3.5 w-3.5" /> Odgovara za ~{averageResponseMinutes} min
         </span>

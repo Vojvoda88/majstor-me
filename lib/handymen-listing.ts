@@ -1,14 +1,72 @@
 /**
  * Zajednička logika za javni listing majstora (API + server-side first render).
+ *
+ * Jedan izvor istine za javnu vidljivost: `prismaWherePublicHandymanListingUserNotExcluded` + ACTIVE + (opciono kategorija + grad).
+ * Kad je `city` postavljen, majstor mora raditi u tom gradu (`profile.cities` sadrži grad) ili imati prazan
+ * `cities` i `User.city` jednak tom gradu (legacy).
  */
+import type { Prisma } from "@prisma/client";
 import { dbCategoryNamesForDistributionFilter, getInternalCategory } from "@/lib/categories";
 import { DEFAULT_PAGE_SIZE } from "@/lib/constants";
 import { getCityCoords } from "@/lib/cities";
 import { calcHandymanScore } from "@/lib/handyman-score";
-import { prismaWhereUserActiveHandymanWithProfileExtra } from "@/lib/handyman-truth";
+import { prismaWherePublicHandymanListingUserNotExcluded } from "@/lib/demo-email";
 
 const MAX_HANDYMEN_LOAD = 200;
 const MAX_PAGE_SIZE = 50;
+
+function buildPublicHandymanListingWhere(params: {
+  categoryDbNames: string[] | null;
+  city: string | null;
+}): Prisma.UserWhereInput {
+  const { categoryDbNames, city } = params;
+  const categoryPart: Prisma.HandymanProfileWhereInput = categoryDbNames
+    ? { workerCategories: { some: { category: { name: { in: categoryDbNames } } } } }
+    : {};
+
+  const activeProfile: Prisma.HandymanProfileWhereInput = {
+    workerStatus: "ACTIVE",
+    ...categoryPart,
+  };
+
+  const andParts: Prisma.UserWhereInput[] = [{ handymanProfile: { is: activeProfile } }];
+
+  if (city) {
+    andParts.push({
+      OR: [
+        {
+          handymanProfile: {
+            is: {
+              ...activeProfile,
+              cities: { has: city },
+            },
+          },
+        },
+        {
+          AND: [
+            { city: { equals: city } },
+            {
+              handymanProfile: {
+                is: {
+                  ...activeProfile,
+                  OR: [{ cities: { isEmpty: true } }, { cities: { equals: [] } }],
+                },
+              },
+            },
+          ],
+        },
+      ],
+    });
+  }
+
+  return {
+    role: "HANDYMAN",
+    bannedAt: null,
+    suspendedAt: null,
+    ...prismaWherePublicHandymanListingUserNotExcluded(),
+    AND: andParts,
+  };
+}
 
 export type PublicHandymanListItem = {
   id: string;
@@ -72,15 +130,7 @@ export async function getPublicHandymenList(params: {
 
   const resolvedCategory = categoryParam ? (getInternalCategory(categoryParam) ?? categoryParam) : null;
   const categoryDbNames = resolvedCategory ? dbCategoryNamesForDistributionFilter(resolvedCategory) : null;
-  const baseWhere = prismaWhereUserActiveHandymanWithProfileExtra(
-    categoryDbNames
-      ? {
-          workerCategories: {
-            some: { category: { name: { in: categoryDbNames } } },
-          },
-        }
-      : {}
-  );
+  const baseWhere = buildPublicHandymanListingWhere({ categoryDbNames, city });
 
   const useDbPagination = !city && (sortBy === "rating" || sortBy === "reviews");
   let items: UserWithProfile[];
@@ -152,8 +202,8 @@ export async function getPublicHandymenList(params: {
   const mapItem = (u: UserWithProfile): PublicHandymanListItem => {
     const prof = u.handymanProfile;
     const ext = profileExt(prof);
-    const c = u.city;
-    const coords = c ? getCityCoords(c) : null;
+    const cForCoords = city?.trim() || u.city;
+    const coords = cForCoords ? getCityCoords(cForCoords) : null;
     return {
       id: u.id,
       name: u.name,

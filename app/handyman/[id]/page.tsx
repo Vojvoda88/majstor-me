@@ -21,7 +21,7 @@ import { cityToSlug } from "@/lib/slugs";
 import { getSiteUrl } from "@/lib/site-url";
 import { localBusinessJsonLd } from "@/lib/json-ld";
 import { AVATAR_IMAGE_FALLBACK } from "@/lib/homepage-data";
-import { prismaWhereUserActiveHandymanTruth } from "@/lib/handyman-truth";
+import { prismaWhereUserActiveHandymanForPublicCatalog } from "@/lib/handyman-truth";
 
 export const dynamic = "force-dynamic";
 
@@ -33,7 +33,7 @@ export async function generateMetadata({
   const { id } = await params;
   const { prisma } = await import("@/lib/db");
   const user = await prisma.user.findFirst({
-    where: { id, ...prismaWhereUserActiveHandymanTruth() },
+    where: { id, ...prismaWhereUserActiveHandymanForPublicCatalog() },
     include: {
       handymanProfile: { include: { workerCategories: { include: { category: true } } } },
     },
@@ -83,7 +83,7 @@ export default async function HandymanProfilePage({
 
   const { prisma } = await import("@/lib/db");
   const user = await prisma.user.findFirst({
-    where: { id, ...prismaWhereUserActiveHandymanTruth() },
+    where: { id, ...prismaWhereUserActiveHandymanForPublicCatalog() },
     include: {
       handymanProfile: { include: { workerCategories: { include: { category: true } } } },
       reviewsReceived: {
@@ -226,9 +226,13 @@ export default async function HandymanProfilePage({
                     )}
                   </div>
                   <div className="mt-2 flex flex-wrap gap-2">
-                    {isVerified && (
+                    {isVerified ? (
                       <span className="inline-flex items-center gap-1 rounded-full bg-white/20 px-2.5 py-0.5 text-xs font-medium text-white">
                         <CheckCircle2 className="h-3.5 w-3.5" /> Verifikovan
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1 rounded-full bg-white/15 px-2.5 py-0.5 text-xs font-medium text-white/90">
+                        Verifikacija profila u toku
                       </span>
                     )}
                     {profileExt.isPromoted && (
@@ -361,7 +365,10 @@ export default async function HandymanProfilePage({
                 Recenzije
               </h3>
               {user.reviewsReceived.length === 0 ? (
-                <p className="text-sm text-[#64748B]">Još nema recenzija.</p>
+                <p className="text-sm text-[#64748B]">
+                  Još nema javnih recenzija. Nakon završenog posla klijent može ostaviti ocjenu — tada će se ovdje
+                  pojaviti.
+                </p>
               ) : (
                 <div className="space-y-4">
                   {user.reviewsReceived.map((r) => {

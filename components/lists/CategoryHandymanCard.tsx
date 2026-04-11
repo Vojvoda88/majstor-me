@@ -39,11 +39,12 @@ export function CategoryHandymanCard({
     isVerified && { label: "Verifikovan", style: "bg-[#ECFDF5] text-[#047857] border-[#A7F3D0]" },
     hasReviews && { label: `${reviewCount} recenzija`, style: "bg-[#F8FAFC] text-[#334155] border-[#E2E8F0]" },
     !hasReviews && { label: "Još nema recenzija", style: "bg-[#F8FAFC] text-[#64748B] border-[#E2E8F0]" },
-    averageResponseMinutes != null && { label: `~${averageResponseMinutes} min`, style: "bg-[#EFF6FF] text-[#1D4ED8] border-[#BFDBFE]" },
+    averageResponseMinutes != null &&
+      averageResponseMinutes > 0 && { label: `~${averageResponseMinutes} min`, style: "bg-[#EFF6FF] text-[#1D4ED8] border-[#BFDBFE]" },
     completedJobsCount != null && completedJobsCount > 0 && { label: `${completedJobsCount} poslova`, style: "bg-[#FFF7ED] text-[#C2410C] border-[#FED7AA]" },
   ].filter(Boolean) as { label: string; style: string }[];
 
-  const shortDescription = `Specijalizovan za ${primaryCategory}. Kontaktirajte za besplatnu procjenu i brzu ponudu.`;
+  const shortDescription = `Pregled profila na BrziMajstor.ME — ${primaryCategory}. Pošaljite zahtjev za besplatnu procjenu.`;
 
   return (
     <Link

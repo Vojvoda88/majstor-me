@@ -7,7 +7,7 @@ import { PublicFooter } from "@/components/layout/PublicFooter";
 import { Wrench, ChevronLeft, ChevronRight, MapPin, ArrowRight } from "lucide-react";
 import { HandymanCard } from "@/components/lists/handyman-card";
 import { DEFAULT_PAGE_SIZE } from "@/lib/constants";
-import { cityLocative } from "@/lib/slugs";
+import { cityLocative, phraseUGradu } from "@/lib/slugs";
 import { buildSeoCombinedIntroParagraph, type SeoCombinedParsed } from "@/lib/seo-landing-copy";
 import { getPrioritySeoLandingContent } from "@/lib/seo-landing-priority-copy";
 import type { PublicHandymenListResult } from "@/lib/handymen-listing";
@@ -153,7 +153,7 @@ export function SeoLandingContent({
               href={`/grad/${citySlug}`}
               className="font-semibold text-blue-700 underline underline-offset-2 hover:text-blue-900"
             >
-              Sve usluge u {cityName}
+              Sve usluge {phraseUGradu(cityName)}
             </Link>
             {priority && (
               <>
@@ -164,7 +164,7 @@ export function SeoLandingContent({
                   href={createUrl}
                   className="font-semibold text-blue-700 underline underline-offset-2 hover:text-blue-900"
                 >
-                  Zahtjev za {displayName.toLowerCase()} u {cityName}
+                  Zahtjev za {displayName.toLowerCase()} {phraseUGradu(cityName)}
                 </Link>
               </>
             )}
@@ -218,7 +218,7 @@ export function SeoLandingContent({
                   href={`/grad/${citySlug}`}
                   className="inline-flex h-11 items-center justify-center rounded-xl border border-slate-200 px-5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
                 >
-                  Sve usluge u {cityName}
+                  Sve usluge {phraseUGradu(cityName)}
                 </Link>
               </div>
             </div>

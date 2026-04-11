@@ -10,7 +10,7 @@ import { Wrench, ChevronLeft, ChevronRight } from "lucide-react";
 import { HandymanCard } from "@/components/lists/handyman-card";
 import { PUBLIC_CATEGORY_LISTING } from "@/lib/categories";
 import { DEFAULT_PAGE_SIZE } from "@/lib/constants";
-import { cityLocative } from "@/lib/slugs";
+import { cityLocative, phraseUGradu } from "@/lib/slugs";
 import type { PublicHandymenListResult } from "@/lib/handymen-listing";
 
 type Handyman = {
@@ -130,7 +130,7 @@ export function GradPageContent({
               href={`/request/create?city=${encodeURIComponent(cityName)}`}
               className="font-medium text-blue-700 hover:underline"
             >
-              Objavi zahtjev u {cityName}
+              Objavi zahtjev {phraseUGradu(cityName)}
             </Link>
           </div>
 
@@ -159,8 +159,7 @@ export function GradPageContent({
 
           <p className="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-slate-500">Grad</p>
           <p className="mb-6 max-w-2xl text-sm leading-relaxed text-slate-600 sm:text-base">
-            Jedan grad, više kategorija — ispod su profili majstora u{" "}
-            <span className="font-medium text-slate-900">{cityName}</span>. Možete otvoriti uslugu po kategoriji ili
+            Jedan grad, više kategorija — ispod su profili majstora {phraseUGradu(cityName)}. Možete otvoriti uslugu po kategoriji ili
             poslati jedan zahtjev i sačekati ponude; nema obaveze da birate odmah.
           </p>
 
@@ -169,9 +168,9 @@ export function GradPageContent({
             href={`/request/create?city=${encodeURIComponent(cityName)}`}
           />
 
-          <h2 className="mb-3 text-lg font-bold text-slate-900">Usluge po kategorijama u {cityName}</h2>
+          <h2 className="mb-3 text-lg font-bold text-slate-900">Usluge po kategorijama {phraseUGradu(cityName)}</h2>
           <p className="mb-4 max-w-2xl text-sm text-slate-600">
-            Odaberite vrstu usluge — prikazuje se pregled za taj grad i kategoriju.
+            Odaberite vrstu usluge — prikazuje se pregled za isti grad i kategoriju.
           </p>
           <div className="mb-10 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
             {PUBLIC_CATEGORY_LISTING.map((cat) => (
@@ -209,7 +208,7 @@ export function GradPageContent({
             <div className="mb-12 rounded-3xl border border-slate-200/80 bg-white p-12 text-center shadow-marketplace-sm">
               <Wrench className="mx-auto mb-4 h-12 w-12 text-slate-300" />
               <p className="text-lg font-semibold text-brand-navy">
-                Trenutno nema majstora registrovanih za {cityName}.
+                Trenutno nema majstora {phraseUGradu(cityName)}.
               </p>
               <p className="mt-2 text-sm leading-relaxed text-slate-600">
                 Objavite besplatan zahtjev – dobijate ponude od više majstora iz ovog i okolnih gradova, bez obaveze.

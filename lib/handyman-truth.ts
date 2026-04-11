@@ -13,7 +13,7 @@
  */
 
 import type { Prisma } from "@prisma/client";
-import { prismaWhereHandymanEmailNotDemo } from "@/lib/demo-email";
+import { prismaWhereHandymanEmailNotDemo, prismaWherePublicHandymanListingUserNotExcluded } from "@/lib/demo-email";
 
 /** User-level where za findMany (listing, homepage) — aktivan majstor. */
 export function prismaWhereUserActiveHandymanTruth(): Prisma.UserWhereInput {
@@ -22,6 +22,20 @@ export function prismaWhereUserActiveHandymanTruth(): Prisma.UserWhereInput {
     bannedAt: null,
     suspendedAt: null,
     ...prismaWhereHandymanEmailNotDemo(),
+    handymanProfile: { workerStatus: "ACTIVE" },
+  };
+}
+
+/**
+ * Javni katalog: isto kao aktivni majstor, ali uključuje i isključenje smoke/backlog imena (vidi demo-email).
+ * Koristi za /handyman/[id], početnu, sitemap — ne za admin KPI.
+ */
+export function prismaWhereUserActiveHandymanForPublicCatalog(): Prisma.UserWhereInput {
+  return {
+    role: "HANDYMAN",
+    bannedAt: null,
+    suspendedAt: null,
+    ...prismaWherePublicHandymanListingUserNotExcluded(),
     handymanProfile: { workerStatus: "ACTIVE" },
   };
 }

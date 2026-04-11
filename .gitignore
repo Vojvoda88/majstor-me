@@ -18,6 +18,7 @@ build
 dist
 
 # Misc
+artifacts/
 .DS_Store
 *.pem
 

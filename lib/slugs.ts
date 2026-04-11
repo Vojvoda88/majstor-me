@@ -108,6 +108,13 @@ export function cityLocative(name: string): string {
   return CITY_LOCATIVE_MAP[name] ?? name;
 }
 
+/** Prirodan prijedlog: „u Podgorici“, „u Herceg Novom“ (nom. → lok.) */
+export function phraseUGradu(cityNominative: string): string {
+  const n = cityNominative.trim();
+  if (!n) return "u gradu";
+  return `u ${cityLocative(n)}`;
+}
+
 /** Genitiv imena grada (npr. „iz Podgorice“, „iz Nikšića“) */
 export function cityGenitive(name: string): string {
   return CITY_GENITIVE_MAP[name] ?? name;

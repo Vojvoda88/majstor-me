@@ -4,10 +4,7 @@
  */
 
 import { calcHandymanScore } from "@/lib/handyman-score";
-import {
-  prismaWhereHandymanProfileActiveTruth,
-  prismaWhereUserActiveHandymanTruth,
-} from "@/lib/handyman-truth";
+import { prismaWhereUserActiveHandymanForPublicCatalog } from "@/lib/handyman-truth";
 
 export type PlatformStats = {
   /** Registrovani klijenti (role USER) */
@@ -35,12 +32,12 @@ export async function getPlatformStats(): Promise<PlatformStats> {
   try {
     const { prisma } = await import("@/lib/db");
     const [handymanCount, completedCount, reviewAgg, citiesRows, hmCitiesRows, userCount] = await Promise.all([
-      prisma.handymanProfile.count({ where: prismaWhereHandymanProfileActiveTruth() }),
+      prisma.user.count({ where: prismaWhereUserActiveHandymanForPublicCatalog() }),
       prisma.request.count({ where: { status: "COMPLETED" } }),
       prisma.review.aggregate({ _avg: { rating: true }, _count: true }),
       prisma.request.findMany({ select: { city: true }, distinct: ["city"] }),
       prisma.user.findMany({
-        where: { ...prismaWhereUserActiveHandymanTruth(), city: { not: null } },
+        where: { ...prismaWhereUserActiveHandymanForPublicCatalog(), city: { not: null } },
         select: { city: true },
         distinct: ["city"],
       }),
@@ -71,7 +68,7 @@ export async function getTopHandymenForHome(limit: number = 3): Promise<HomeHand
   try {
     const { prisma } = await import("@/lib/db");
     const users = await prisma.user.findMany({
-      where: prismaWhereUserActiveHandymanTruth(),
+      where: prismaWhereUserActiveHandymanForPublicCatalog(),
       include: {
         handymanProfile: {
           include: { workerCategories: { include: { category: true } } },

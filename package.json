@@ -24,6 +24,7 @@
     "seed:demo:clean": "tsx prisma/seed-demo.ts --reset-only",
     "audit:prod-demo": "tsx scripts/audit-production-demo-patterns.ts",
     "verify:login-db": "tsx scripts/verify-login-db.ts",
+    "verify:public-handyman-filter": "tsx scripts/verify-public-handyman-exclusion.ts",
     "admin:reset-password": "tsx scripts/reset-admin-password.ts",
     "list:admin-users": "tsx scripts/list-admin-users.ts",
     "test:e2e": "playwright test",

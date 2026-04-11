@@ -1,5 +1,6 @@
 import { Resend } from "resend";
 import { getSiteUrl } from "@/lib/site-url";
+import { phraseUGradu } from "@/lib/slugs";
 
 function getResend() {
   const key = process.env.RESEND_API_KEY;
@@ -36,10 +37,10 @@ export async function sendNewRequestEmail(
     await resend.emails.send({
       from,
       to,
-      subject: `Novi zahtjev: ${requestCategory} u ${requestCity}`,
+      subject: `Novi zahtjev: ${requestCategory} ${phraseUGradu(requestCity)}`,
       html: `
         <p>Zdravo,</p>
-        <p>Novi zahtjev za <strong>${requestCategory}</strong> u <strong>${requestCity}</strong>.</p>
+        <p>Novi zahtjev za <strong>${requestCategory}</strong> ${phraseUGradu(requestCity)}.</p>
         <p><a href="${link}">Pogledaj zahtjev i pošalji ponudu →</a></p>
         <p>— BrziMajstor.ME</p>
       `,
