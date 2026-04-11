@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import type Stripe from "stripe";
+import { notifyAdminsCreditPurchase } from "@/lib/admin-notify-credit-purchase";
+import { getPackageById } from "@/lib/credit-packages";
 import { applyCreditsFromCheckoutSession } from "@/lib/stripe-webhook-credits";
 import { getStripe } from "@/lib/stripe-server";
 
@@ -43,6 +45,25 @@ export async function POST(req: Request) {
       const result = await applyCreditsFromCheckoutSession(prisma, session, event.id);
       if (!result.applied && result.reason && result.reason !== "duplicate_event" && result.reason !== "duplicate_session") {
         console.warn("[Stripe webhook] Nije knjiženo", result.reason, { sessionId: session.id });
+      }
+      if (result.applied) {
+        const md = session.metadata ?? {};
+        const handymanId = md.handymanId ?? md.userId;
+        const credits = parseInt(String(md.credits ?? ""), 10);
+        const pkg = md.packageId ? getPackageById(md.packageId) : null;
+        if (handymanId) {
+          const u = await prisma.user.findUnique({
+            where: { id: handymanId },
+            select: { name: true },
+          });
+          void notifyAdminsCreditPurchase(prisma, {
+            stripeEventId: event.id,
+            handymanName: u?.name?.trim() || "Majstor",
+            credits: Number.isFinite(credits) ? credits : 0,
+            packageLabel: pkg?.label ?? "",
+            sessionId: session.id,
+          });
+        }
       }
     } catch (e) {
       console.error("[Stripe webhook] Obrada sesije", e);

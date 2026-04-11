@@ -21,6 +21,7 @@ import { displayLabelForRequestCategory, REQUEST_CATEGORY_FALLBACK } from "@/lib
 import { RequestPhotosEditor } from "./request-photos-editor";
 import { containsContactBypass } from "@/lib/contact-sanitization";
 import { createRequestAction } from "@/app/actions/create-request";
+import { AiAssistChip } from "@/components/ai/ai-assist-chip";
 
 const createRequestSchema = z
   .object({
@@ -203,6 +204,19 @@ export function CreateRequestForm({ initialCategory, initialCity }: CreateReques
               {...register("description")}
             />
             <p className="text-xs text-slate-500">Bez telefona i emaila u tekstu — koristite polja za kontakt ispod.</p>
+            <AiAssistChip
+              kind="request_draft"
+              getPayload={() => ({
+                draft: watch("description") ?? "",
+                currentTitle: watch("title") ?? "",
+                category: watch("category") ? displayLabelForRequestCategory(watch("category")) : undefined,
+                city: watch("city") || undefined,
+              })}
+              onApply={(r) => {
+                setValue("title", r.title, { shouldValidate: true, shouldDirty: true });
+                setValue("description", r.description, { shouldValidate: true, shouldDirty: true });
+              }}
+            />
             {errors.description && (
               <p className="text-sm text-destructive">{errors.description.message}</p>
             )}

@@ -44,7 +44,7 @@ export function PremiumMobileHeader() {
 
   return (
     <>
-    <header className="fixed left-0 right-0 top-0 z-[100] border-b border-slate-200/80 bg-white/95 pt-[env(safe-area-inset-top)] shadow-sm backdrop-blur-md">
+    <header className="sticky top-0 z-[100] w-full border-b border-slate-200/80 bg-white/95 pt-[env(safe-area-inset-top)] shadow-sm backdrop-blur-md supports-[backdrop-filter]:bg-white/90">
       <div className="mx-auto flex h-[3.75rem] max-w-6xl items-center justify-between px-3 sm:h-16 sm:px-6">
         <Link href="/" className="font-display text-xl font-bold tracking-tight md:text-2xl">
           <span className="text-[#1d4ed8]">BrziMajstor</span>
@@ -92,6 +92,13 @@ export function PremiumMobileHeader() {
                   </span>
                 )}
               </Link>
+              <button
+                type="button"
+                onClick={() => void signOut({ callbackUrl: "/" })}
+                className="text-[15px] font-medium text-rose-600 transition hover:text-rose-700"
+              >
+                Odjavi se
+              </button>
             </>
           ) : (
             <div className="flex items-center gap-4">
@@ -154,6 +161,13 @@ export function PremiumMobileHeader() {
 
             <nav className="flex-1 overflow-y-auto overscroll-contain px-4 py-4 pb-[max(1.5rem,env(safe-area-inset-bottom))]">
               <div className="flex flex-col gap-1">
+                <Link
+                  href="/"
+                  className="rounded-xl bg-[#eff6ff] px-3.5 py-3 text-[15px] font-semibold text-[#1d4ed8] transition hover:bg-blue-100"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  Početna stranica
+                </Link>
                 <Link
                   href={dashboardHref}
                   className="rounded-xl bg-slate-100 px-3.5 py-3 text-[15px] font-semibold text-slate-900 transition hover:bg-slate-200"

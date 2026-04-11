@@ -59,7 +59,7 @@ export default async function CreateRequestPage(props: {
   }
 
   return (
-    <div className="min-h-screen bg-brand-page pb-[max(7rem,calc(env(safe-area-inset-bottom,0px)+5.5rem))] pt-[calc(3.75rem+env(safe-area-inset-top,0px))] sm:pt-[calc(4rem+env(safe-area-inset-top,0px))] md:pb-10 md:pt-20">
+    <div className="min-h-screen bg-brand-page pb-[max(7rem,calc(env(safe-area-inset-bottom,0px)+5.5rem))] md:pb-10">
       <PremiumMobileHeader />
       <div className="mx-auto max-w-[430px] px-4 py-6 md:max-w-2xl md:py-10">
         <Breadcrumbs

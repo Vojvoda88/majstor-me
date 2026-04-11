@@ -16,6 +16,7 @@ import { displayLabelForRequestCategory, HANDYMAN_SELECTABLE_INTERNAL_NAMES } fr
 import { GalleryEditor } from "@/components/profile/gallery-editor";
 import { AvatarUpload } from "@/components/profile/avatar-upload";
 import type { HandymanProfileClientProps } from "@/lib/handyman-profile-for-client";
+import { AiAssistChip } from "@/components/ai/ai-assist-chip";
 
 const MAX_CATEGORIES = 5;
 
@@ -78,6 +79,7 @@ export function HandymanProfileForm({
   });
 
   const categories = watch("categories");
+  const bioWatch = watch("bio");
   const cities = watch("cities");
 
   const handymanCategoryChoices = useMemo(() => {
@@ -177,6 +179,15 @@ export function HandymanProfileForm({
               rows={3}
               placeholder="Kratko o vama i uslugama..."
             />
+            <div className="mt-2">
+              <AiAssistChip
+                kind="handyman_bio"
+                getPayload={() => ({ draft: bioWatch ?? "" })}
+                onApply={(r) => {
+                  setValue("bio", r.bio, { shouldValidate: true, shouldDirty: true });
+                }}
+              />
+            </div>
           </div>
           <div>
             <Label>Kategorije *</Label>

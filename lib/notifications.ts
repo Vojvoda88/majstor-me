@@ -8,7 +8,8 @@ export type NotificationType =
   | "VERIFIED"
   | "NEW_JOB"
   | "ADMIN_PENDING_REQUEST"
-  | "ADMIN_PENDING_HANDYMAN";
+  | "ADMIN_PENDING_HANDYMAN"
+  | "ADMIN_CREDIT_PURCHASE";
 
 export async function createNotification(
   userId: string,
