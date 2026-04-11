@@ -45,9 +45,11 @@ const FAQ = nextDynamic(
 export default function HomePage() {
   const structuredData = buildHomeJsonLdGraph(FAQ_ITEMS);
   return (
-    <main className="relative isolate min-h-screen overflow-x-hidden pb-8 md:pb-16 before:pointer-events-none before:absolute before:inset-0 before:bg-[radial-gradient(ellipse_90%_60%_at_50%_-10%,rgba(29,78,216,0.06),transparent_55%)]">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
+    <>
+      {/* Sticky header: izvan <main> jer overflow-x na main/body ruši sticky u nekim pregledačima */}
       <PublicHeader />
+      <main className="relative isolate min-h-screen overflow-x-hidden pb-8 md:pb-16 before:pointer-events-none before:absolute before:inset-0 before:bg-[radial-gradient(ellipse_90%_60%_at_50%_-10%,rgba(29,78,216,0.06),transparent_55%)]">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
       <div className="pt-0 md:pt-8">
         <Hero />
       </div>
@@ -77,5 +79,6 @@ export default function HomePage() {
       </div>
       <PublicFooter />
     </main>
+    </>
   );
 }

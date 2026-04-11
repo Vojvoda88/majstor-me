@@ -99,7 +99,7 @@ export default async function RootLayout({
   const session = await auth();
   return (
     <html lang="sr" className={`${inter.variable} ${dmSans.variable} ${outfit.variable}`}>
-      <body className="min-h-[100dvh] overflow-x-hidden font-sans antialiased bg-[#FAFBFC] text-[#0F172A] [padding-bottom:env(safe-area-inset-bottom)]">
+      <body className="min-h-[100dvh] overflow-x-clip font-sans antialiased bg-[#FAFBFC] text-[#0F172A] [padding-bottom:env(safe-area-inset-bottom)]">
         <Providers session={session}>
           {children}
           <Analytics />
