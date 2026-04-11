@@ -58,6 +58,9 @@ export function PremiumMobileHeader() {
           <Link href="/#kako-radi" className="text-[15px] font-medium text-slate-600 transition hover:text-[#1d4ed8]">
             Kako radi
           </Link>
+          <Link href="/kontakt" className="text-[15px] font-medium text-slate-600 transition hover:text-[#1d4ed8]">
+            Kontakt
+          </Link>
           {session?.user?.role === "ADMIN" && (
             <Link
               href="/admin"
@@ -171,6 +174,13 @@ export function PremiumMobileHeader() {
                   onClick={() => setMenuOpen(false)}
                 >
                   Kako radi
+                </Link>
+                <Link
+                  href="/kontakt"
+                  className="rounded-xl px-3.5 py-3 text-[15px] font-medium text-slate-700 transition hover:bg-slate-50 active:bg-slate-100"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  Kontakt / podrška
                 </Link>
                 {session?.user?.role === "ADMIN" && (
                   <Link

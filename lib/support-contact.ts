@@ -13,3 +13,16 @@ export function getSupportPhone(): string | null {
   const p = process.env.NEXT_PUBLIC_SUPPORT_PHONE?.trim();
   return p || null;
 }
+
+const DEFAULT_SUBJECT = "Pitanje za BrziMajstor.ME";
+
+/** mailto: za korisnike i majstore (stranica /kontakt). */
+export function getSupportMailtoHref(bodyHint?: string): string {
+  const email = getSupportEmail();
+  const subject = encodeURIComponent(DEFAULT_SUBJECT);
+  const body = encodeURIComponent(
+    bodyHint?.trim() ||
+      "Zdravo,\n\nImam pitanje u vezi platforme:\n\n"
+  );
+  return `mailto:${email}?subject=${subject}&body=${body}`;
+}

@@ -37,6 +37,15 @@ test.describe("Public routes", () => {
     await expect(page.getByText(/registracija|registrujte/i).first()).toBeVisible();
   });
 
+  test("GET /kontakt – contact page loads", async ({ page }) => {
+    const res = await page.goto("/kontakt");
+    expect(res?.status()).toBe(200);
+    await assertNoServerComponentError(page);
+    await assertNoErrorPage(page);
+    await expect(page.getByRole("heading", { name: /kontakt i podrška/i })).toBeVisible();
+    await expect(page.getByRole("link", { name: /Pošalji poruku/i })).toBeVisible();
+  });
+
   test("GET /request/create – create request page loads", async ({ page }) => {
     const res = await page.goto("/request/create");
     expect(res?.status()).toBe(200);
@@ -54,12 +63,12 @@ test.describe("Public routes", () => {
     await assertNoServerComponentError(page);
   });
 
-test("Click Registruj se kao majstor goes to /register?type=majstor", async ({ page }) => {
+  test("Click Registruj se kao majstor goes to /register?type=majstor", async ({ page }) => {
     await page.goto("/");
     await assertNoServerComponentError(page);
     await page.getByTestId("nav-registracija-majstor").scrollIntoViewIfNeeded();
     await page.getByTestId("nav-registracija-majstor").click();
-  await expect(page).toHaveURL(/\/register\?type=majstor/);
+    await expect(page).toHaveURL(/\/register\?type=majstor/);
     await assertNoServerComponentError(page);
   });
 

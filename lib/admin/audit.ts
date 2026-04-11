@@ -35,7 +35,8 @@ export type AuditActionType =
   | "EDIT_CITY"
   | "EDIT_FAQ"
   | "REJECT_REPORT"
-  | "RESOLVE_REPORT";
+  | "RESOLVE_REPORT"
+  | "REISSUE_GUEST_ACCESS";
 
 export type AuditEntityType =
   | "user"

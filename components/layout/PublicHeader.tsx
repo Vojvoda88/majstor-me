@@ -72,6 +72,7 @@ export function PublicHeader() {
   const isProfilActive = pathname?.startsWith("/dashboard/handyman") ?? false;
   const isUserDashActive = pathname?.startsWith("/dashboard/user") ?? false;
   const isInstalirajActive = pathname === "/instaliraj";
+  const isKontaktActive = pathname === "/kontakt";
 
   const navLinkDesktop = (active: boolean) =>
     cn(
@@ -254,6 +255,15 @@ export function PublicHeader() {
               >
                 Instaliraj aplikaciju
               </Link>
+              <Link
+                href="/kontakt"
+                className={sheetNavLink(isKontaktActive)}
+                onClick={() => setMenuOpen(false)}
+                data-testid="nav-kontakt"
+                {...linkProps}
+              >
+                Kontakt / podrška
+              </Link>
             </div>
 
             {session ? (
@@ -378,6 +388,9 @@ export function PublicHeader() {
           </Link>
           <Link href="/instaliraj" className={navLinkDesktop(isInstalirajActive)} data-testid="nav-instaliraj" {...linkProps}>
             Instaliraj aplikaciju
+          </Link>
+          <Link href="/kontakt" className={navLinkDesktop(isKontaktActive)} data-testid="nav-kontakt-desktop" {...linkProps}>
+            Kontakt
           </Link>
           {status === "loading" ? (
             desktopGuestNav

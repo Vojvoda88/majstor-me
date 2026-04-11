@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { RequestDetailActions } from "./request-detail-actions";
+import { AdminGuestAccessPanel } from "@/components/admin/admin-guest-access-panel";
 import { RestoreRequestButton } from "./restore-button";
 import { MarkAsBypassAttemptButton } from "@/components/admin/mark-as-bypass-button";
 import { AdminRouteLoadError } from "@/lib/admin/admin-ssr-fallback";
@@ -126,6 +127,15 @@ export default async function AdminRequestDetailPage({ params }: { params: Promi
             </CardContent>
           </Card>
         </div>
+
+        {!req.userId && (
+          <AdminGuestAccessPanel
+            requestId={req.id}
+            userId={req.userId}
+            hadGuestToken={!!req.guestAccessTokenHash}
+            canReissue={canWriteRequests}
+          />
+        )}
 
         <Card>
           <CardHeader>
