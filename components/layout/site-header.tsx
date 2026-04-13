@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useSession, signOut } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { MobileNav } from "./mobile-nav";
@@ -12,8 +13,18 @@ export function SiteHeader() {
   return (
     <header className="sticky top-0 z-50 border-b border-[#E2E8F0] bg-white/95 backdrop-blur">
       <div className="container mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
-        <Link href="/" className="text-xl font-bold text-[#0F172A] hover:text-[#2563EB] transition-colors">
-          BrziMajstor.ME
+        <Link
+          href="/"
+          className="flex items-center gap-2 text-xl font-bold text-[#0F172A] transition-colors hover:text-[#2563EB]"
+        >
+          <Image
+            src="/icon-192.png"
+            alt="BrziMajstor"
+            width={26}
+            height={26}
+            className="h-6 w-6 rounded-md"
+          />
+          <span>BrziMajstor.ME</span>
         </Link>
         <nav className="hidden items-center gap-2 md:flex">
           {status === "loading" ? (
