@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
@@ -369,17 +368,10 @@ export function PublicHeader() {
         <div className="relative z-[100] mx-auto flex min-h-14 max-w-6xl items-center justify-between px-4 sm:px-6">
         <Link
           href="/"
-          className="flex items-center gap-2 font-display text-xl font-bold tracking-tight md:text-2xl"
+          className="font-display text-xl font-bold tracking-tight md:text-2xl"
           data-testid="header-home"
           {...linkProps}
         >
-          <Image
-            src="/icon-192.png"
-            alt="BrziMajstor"
-            width={26}
-            height={26}
-            className="h-6 w-6 rounded-md"
-          />
           <span className={cn(homeAtTop ? "text-white" : "text-[#1d4ed8]")}>BrziMajstor</span>
           <span className={cn(homeAtTop ? "text-amber-100/85" : "text-slate-800")}>.ME</span>
         </Link>

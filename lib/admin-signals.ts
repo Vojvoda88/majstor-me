@@ -8,17 +8,10 @@ import { sendPushToUser } from "@/lib/push";
 
 async function getAdminUserIds(): Promise<string[]> {
   const rows = await prisma.user.findMany({
-    where: {
-      OR: [
-        { role: "ADMIN" },
-        // Fallback: ako je token/session ADMIN ali DB role privremeno nije usklađen,
-        // adminProfile i dalje označava da korisnik treba primati admin signale.
-        { adminProfile: { isNot: null } },
-      ],
-    },
+    where: { role: "ADMIN" },
     select: { id: true },
   });
-  return Array.from(new Set(rows.map((r) => r.id)));
+  return rows.map((r) => r.id);
 }
 
 async function hasExistingAdminSignal(adminId: string, type: NotificationType, link: string): Promise<boolean> {
@@ -51,17 +44,13 @@ export async function notifyAdminsNewPendingRequest(params: {
 
   try {
     const adminIds = await getAdminUserIds();
-    console.info("[admin-signals] pending_request recipients", {
-      requestId: params.requestId,
-      adminCount: adminIds.length,
-    });
     for (const uid of adminIds) {
       if (await hasExistingAdminSignal(uid, "ADMIN_PENDING_REQUEST", link)) continue;
       await createNotification(uid, "ADMIN_PENDING_REQUEST", title, {
         body,
         link,
       });
-      await sendPushToUser(prisma, uid, {
+      void sendPushToUser(prisma, uid, {
         title,
         body: body || "Otvori zahtjev u admin panelu.",
         link,
@@ -84,17 +73,13 @@ export async function notifyAdminsNewPendingHandyman(params: {
 
   try {
     const adminIds = await getAdminUserIds();
-    console.info("[admin-signals] pending_handyman recipients", {
-      handymanUserId: params.handymanUserId,
-      adminCount: adminIds.length,
-    });
     for (const uid of adminIds) {
       if (await hasExistingAdminSignal(uid, "ADMIN_PENDING_HANDYMAN", link)) continue;
       await createNotification(uid, "ADMIN_PENDING_HANDYMAN", title, {
         body,
         link,
       });
-      await sendPushToUser(prisma, uid, {
+      void sendPushToUser(prisma, uid, {
         title,
         body,
         link,

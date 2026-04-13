@@ -1,5 +1,4 @@
 import Link from "next/link";
-import Image from "next/image";
 
 const FOOTER_LINKS = [
   { href: "/", label: "Početna" },
@@ -20,16 +19,7 @@ export function PublicFooter() {
       <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 md:py-11">
         <div className="flex flex-col gap-8 md:flex-row md:items-start md:justify-between md:gap-12">
           <div className="max-w-md">
-            <p className="flex items-center gap-2 font-display text-lg font-bold tracking-tight text-brand-navy">
-              <Image
-                src="/icon-192.png"
-                alt="BrziMajstor"
-                width={22}
-                height={22}
-                className="h-5 w-5 rounded-md"
-              />
-              <span>BrziMajstor.ME</span>
-            </p>
+            <p className="font-display text-lg font-bold tracking-tight text-brand-navy">BrziMajstor.ME</p>
             <p className="mt-2 text-sm leading-relaxed text-slate-600">
               Platforma za lakše povezivanje korisnika i majstora u Crnoj Gori — objavite zahtjev i dobijte ponude.
             </p>
