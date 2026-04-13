@@ -5,6 +5,7 @@ import { Providers } from "@/app/providers";
 import { auth } from "@/lib/auth";
 import { InstallCTA } from "@/components/pwa/install-cta";
 import { ServiceWorkerRegister } from "@/components/pwa/service-worker-register";
+import { pwaIconSrc } from "@/lib/pwa-icon-assets";
 import { getSiteUrl } from "@/lib/site-url";
 import "./globals.css";
 
@@ -56,8 +57,8 @@ export const metadata: Metadata = {
   ],
   alternates: { canonical: "/" },
   icons: {
-    icon: "/icon-192.png",
-    apple: "/icon-192.png",
+    icon: pwaIconSrc(192),
+    apple: pwaIconSrc(192),
   },
   openGraph: {
     title: "BrziMajstor.ME – Zahtjev za majstore u Crnoj Gori",
