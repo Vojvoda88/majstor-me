@@ -56,8 +56,8 @@ export const metadata: Metadata = {
   ],
   alternates: { canonical: "/" },
   icons: {
-    icon: "/icon-192-v2.png",
-    apple: "/icon-192-v2.png",
+    icon: "/icon-192.png",
+    apple: "/icon-192.png",
   },
   openGraph: {
     title: "BrziMajstor.ME – Zahtjev za majstore u Crnoj Gori",

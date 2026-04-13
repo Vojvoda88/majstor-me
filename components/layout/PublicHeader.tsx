@@ -380,7 +380,8 @@ export function PublicHeader() {
             height={26}
             className="h-6 w-6 rounded-md"
           />
-          <span className={cn(homeAtTop ? "text-white" : "text-[#0F172A]")}>BrziMajstor.ME</span>
+          <span className={cn(homeAtTop ? "text-white" : "text-[#1d4ed8]")}>BrziMajstor</span>
+          <span className={cn(homeAtTop ? "text-amber-100/85" : "text-slate-800")}>.ME</span>
         </Link>
 
         <nav className="relative z-[100] hidden items-center gap-x-8 md:flex" aria-label="Glavna navigacija">
