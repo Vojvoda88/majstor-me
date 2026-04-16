@@ -29,20 +29,20 @@ const USER_STEPS = [
   {
     n: 1,
     icon: FileText,
-    title: "Objavite šta vam treba — besplatno",
-    desc: "Kratak opis, grad, po želji slike. Za korisnike je objava i korištenje platforme potpuno besplatno.",
+    title: "Objavite zahtjev besplatno",
+    desc: "Kratak opis, grad i po želji slike. Objavljivanje je besplatno.",
   },
   {
     n: 2,
     icon: MessageSquare,
-    title: "Mi provjerimo, majstori vide oglas",
-    desc: "Zahtjev kratko pregledamo (spam, osnovne stvari), pa ide majstorima kojima odgovara posao.",
+    title: "Majstori dobiju vaš oglas",
+    desc: "Nakon kratke provjere, oglas ide majstorima kojima posao odgovara.",
   },
   {
     n: 3,
     icon: CheckCircle2,
-    title: "Uporedite ponude, izaberite majstora",
-    desc: "Kada stignu ponude, birate ko vam odgovara — bez žurbe i bez da zovete redom.",
+    title: "Uporedite i izaberite",
+    desc: "Kada stignu ponude, birate majstora bez zvanja redom.",
   },
 ] as const;
 
@@ -51,22 +51,22 @@ const HANDYMAN_STEPS = [
   {
     n: 1,
     icon: Smartphone,
-    title: "Obavještenja čim posao odgovara",
-    desc: "Kada oglas prođe provjeru i odgovara vašoj branši i zoni, stiže vam obavještenje. Ako ste slobodni, odmah se možete prijaviti. Ne jurite oglase — relevantni poslovi dolaze do vas.",
+    title: "Poslovi dolaze do vas",
+    desc: "Dobijate obavještenje kada oglas odgovara vašoj branši i gradu.",
     featured: false as const,
   },
   {
     n: 2,
     icon: UserPlus,
     title: `Registracija besplatna + ${HANDYMAN_START_BONUS_CREDITS.toLocaleString("sr-Latn-ME")} start kredita`,
-    desc: `Registracija ne košta. Dobijate ${HANDYMAN_START_BONUS_CREDITS.toLocaleString("sr-Latn-ME")} start kredita. Admin kratko pregleda profil, pa vam šaljemo relevantne poslove.`,
+    desc: `Registracija je besplatna. Dobijate ${HANDYMAN_START_BONUS_CREDITS.toLocaleString("sr-Latn-ME")} start kredita i krećete bez pretplate.`,
     featured: true as const,
   },
   {
     n: 3,
     icon: Unlock,
-    title: "Standardan kontakt: ispod 2 €",
-    desc: `Standardan posao: ${STANDARD_LEAD_CREDITS} kredita. ${CREDITS_STARTER_PACK.credits.toLocaleString("sr-Latn-ME")} kredita: ${STARTER_PRICE_LABEL}. Oko 1,99 € po standardnom poslu. Bez pretplate. Plaćate samo kad želite kontakt klijenta.`,
+    title: "Plaćate samo kada želite kontakt",
+    desc: `Standardan kontakt: ${STANDARD_LEAD_CREDITS} kredita (oko 1,99 €). Nema pretplate.`,
     featured: false as const,
   },
 ] as const;
@@ -79,41 +79,46 @@ function StepGrid({
   return (
     <div className="relative">
       <div
-        className="pointer-events-none absolute left-6 top-8 bottom-8 w-px bg-gradient-to-b from-sky-300 via-blue-300 to-indigo-300 md:hidden"
+        className="pointer-events-none absolute -inset-x-3 -inset-y-2 rounded-[1.6rem] bg-gradient-to-br from-white/35 via-white/10 to-sky-100/20 blur-2xl"
+        aria-hidden
+      />
+      <div
+        className="pointer-events-none absolute bottom-8 left-6 top-8 w-px bg-gradient-to-b from-sky-300 via-blue-300 to-indigo-300 md:hidden"
         aria-hidden
       />
       <div
         className="pointer-events-none absolute left-[16.666%] right-[16.666%] top-[2.25rem] hidden h-px bg-gradient-to-r from-sky-300 via-blue-300 to-indigo-300 md:block"
         aria-hidden
       />
-      <div className="grid gap-5 md:grid-cols-3 md:gap-4 lg:gap-6">
-      {steps.map((step) => (
-        <article
-          key={step.n}
-          className="relative rounded-2xl border border-slate-200/80 bg-white/95 p-4 shadow-[0_14px_34px_-26px_rgba(15,23,42,0.35)] md:h-full md:p-5"
-        >
-          <div className="flex items-start gap-3 md:flex-col md:gap-4">
-            <div className="relative z-[1] flex w-10 shrink-0 items-center justify-center md:w-full md:justify-start">
-              <span
-                className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-slate-900 text-sm font-extrabold tabular-nums text-white shadow-[0_10px_20px_-12px_rgba(15,23,42,0.9)] ring-4 ring-white md:h-11 md:w-11 md:text-[15px]"
-                aria-hidden
-              >
-                {step.n}
-              </span>
-            </div>
-            <div className="min-w-0 flex-1">
-              <div className="inline-flex items-center gap-2 rounded-full border border-sky-100/90 bg-sky-50/80 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-sky-700">
-                <step.icon className="h-3.5 w-3.5" strokeWidth={2.1} />
-                Korak {step.n}
+      <div className="relative grid gap-5 md:grid-cols-3 md:gap-4 lg:gap-6">
+        {steps.map((step) => (
+          <article
+            key={step.n}
+            className="group relative rounded-2xl border border-white/70 bg-white/88 p-4 shadow-[0_20px_42px_-30px_rgba(15,23,42,0.5)] backdrop-blur-sm transition-transform duration-200 hover:-translate-y-0.5 md:h-full md:p-5"
+          >
+            <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/90 to-transparent" />
+            <div className="flex items-start gap-3 md:flex-col md:gap-4">
+              <div className="relative z-[1] flex w-10 shrink-0 items-center justify-center md:w-full md:justify-start">
+                <span
+                  className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-slate-900 text-sm font-extrabold tabular-nums text-white shadow-[0_10px_24px_-12px_rgba(15,23,42,0.95)] ring-4 ring-white md:h-11 md:w-11 md:text-[15px]"
+                  aria-hidden
+                >
+                  {step.n}
+                </span>
               </div>
-              <h3 className="mt-2 font-display text-[17px] font-bold leading-snug text-slate-900 md:text-[18px]">
-                {step.title}
-              </h3>
-              <p className="mt-1.5 text-[14px] leading-relaxed text-slate-600 sm:text-[15px]">{step.desc}</p>
+              <div className="min-w-0 flex-1">
+                <div className="inline-flex items-center gap-2 rounded-full border border-sky-200/60 bg-gradient-to-r from-sky-50/95 to-blue-50/95 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-sky-700">
+                  <step.icon className="h-3.5 w-3.5" strokeWidth={2.1} />
+                  Korak {step.n}
+                </div>
+                <h3 className="mt-2 font-display text-[17px] font-bold leading-snug text-slate-900 md:text-[18px]">
+                  {step.title}
+                </h3>
+                <p className="mt-1.5 text-[14px] leading-relaxed text-slate-600 sm:text-[15px]">{step.desc}</p>
+              </div>
             </div>
-          </div>
-        </article>
-      ))}
+          </article>
+        ))}
       </div>
     </div>
   );
@@ -196,11 +201,15 @@ export function HowItWorksForUsers() {
           Kako radi za korisnike
         </h2>
         <p className="mx-auto mt-3 max-w-2xl text-[15px] font-medium leading-relaxed text-slate-600 sm:text-base md:text-lg">
-          Tri jasna koraka: besplatna objava, ponude od majstora, izbor bez žurbe.
+          Tri kratka koraka: objavite, dobijete ponude, izaberete.
         </p>
       </div>
       <div className="mx-auto mt-8 max-w-6xl md:mt-10">
-        <div className="rounded-3xl border border-slate-200/80 bg-gradient-to-b from-white to-slate-50/40 p-4 shadow-[0_20px_55px_-42px_rgba(15,23,42,0.52)] sm:p-5 md:p-6">
+        <div className="relative overflow-hidden rounded-3xl border border-slate-200/70 bg-gradient-to-b from-slate-950/[0.035] via-white to-white p-4 shadow-[0_24px_70px_-44px_rgba(15,23,42,0.58)] sm:p-5 md:p-6">
+          <div
+            className="pointer-events-none absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-sky-300/70 to-transparent"
+            aria-hidden
+          />
           <StepGrid steps={USER_STEPS} />
         </div>
         <div className="mx-auto mt-4 max-w-2xl text-center md:mt-5">
@@ -209,7 +218,7 @@ export function HowItWorksForUsers() {
           </p>
           <Link
             href="/kako-radi-korisnici"
-            className="mt-3 inline-flex items-center rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50"
+            className="mt-3 inline-flex items-center rounded-full border border-slate-300/80 bg-white/95 px-4 py-2 text-sm font-semibold text-slate-800 shadow-[0_10px_24px_-18px_rgba(15,23,42,0.45)] transition hover:border-slate-400/70 hover:bg-white"
           >
             Detaljno za korisnike
           </Link>
@@ -226,7 +235,11 @@ export function HowItWorksForHandymen() {
       className="scroll-mt-24 border-t border-slate-200/60 bg-gradient-to-b from-slate-100/60 via-white to-white py-12 md:py-20"
     >
       <div className="mx-auto max-w-6xl px-4 sm:px-5">
-        <div className="rounded-[1.7rem] border border-slate-200/80 bg-white p-5 shadow-[0_22px_58px_-42px_rgba(15,23,42,0.45)] sm:p-7 md:p-9">
+        <div className="relative overflow-hidden rounded-[1.7rem] border border-slate-200/80 bg-white p-5 shadow-[0_26px_70px_-44px_rgba(15,23,42,0.5)] sm:p-7 md:p-9">
+          <div
+            className="pointer-events-none absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-slate-300/85 to-transparent"
+            aria-hidden
+          />
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div className="max-w-2xl">
               <p className="text-xs font-bold uppercase tracking-[0.2em] text-slate-500">Majstori</p>
@@ -234,8 +247,8 @@ export function HowItWorksForHandymen() {
                 Za majstore
               </h2>
               <p className="mt-3 text-[15px] font-medium leading-relaxed text-slate-600 sm:text-base md:text-lg">
-                Registracija je besplatna. Dobijate {HANDYMAN_START_BONUS_CREDITS.toLocaleString("sr-Latn-ME")} start
-                kredita, a plaćate samo kada želite kontakt klijenta.
+                Bez pretplate. Dobijate {HANDYMAN_START_BONUS_CREDITS.toLocaleString("sr-Latn-ME")} start kredita i plaćate
+                samo kada otključate kontakt klijenta.
               </p>
             </div>
             <div className="inline-flex max-w-[min(100%,20rem)] flex-col gap-1.5 sm:max-w-none sm:flex-row sm:items-center sm:gap-2">
@@ -267,7 +280,7 @@ export function HowItWorksForHandymen() {
           <div className="mt-6 flex flex-col items-stretch gap-3 sm:items-center">
             <Link
               href="/register?type=majstor"
-              className="inline-flex min-h-[52px] items-center justify-center gap-2 rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 px-8 text-base font-bold text-brand-navy shadow-[0_14px_36px_-10px_rgba(245,158,11,0.45)] transition hover:brightness-105 active:scale-[0.99]"
+              className="inline-flex min-h-[52px] items-center justify-center gap-2 rounded-2xl bg-gradient-to-br from-amber-300 via-amber-400 to-amber-500 px-8 text-base font-bold text-brand-navy shadow-[0_16px_40px_-14px_rgba(245,158,11,0.55)] ring-1 ring-white/45 transition hover:brightness-105 active:scale-[0.99]"
             >
               Registruj se kao majstor
               <ArrowRight className="h-4 w-4" />
@@ -276,7 +289,7 @@ export function HowItWorksForHandymen() {
           <p className="mt-3 text-center">
             <Link
               href="/kako-radi-majstori#krediti"
-              className="inline-flex min-h-[44px] items-center justify-center rounded-full border-2 border-slate-300 bg-white px-5 py-2 text-sm font-bold text-brand-navy transition hover:bg-slate-50"
+              className="inline-flex min-h-[44px] items-center justify-center rounded-full border border-slate-300/90 bg-white/95 px-5 py-2 text-sm font-bold text-brand-navy shadow-[0_10px_24px_-18px_rgba(15,23,42,0.42)] transition hover:border-slate-400/80 hover:bg-white"
             >
               Kako rade krediti?
             </Link>

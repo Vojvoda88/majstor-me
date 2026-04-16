@@ -4,7 +4,6 @@ import { getSiteUrl } from "@/lib/site-url";
 import { PublicHeader } from "@/components/layout/PublicHeader";
 import { PublicFooter } from "@/components/layout/PublicFooter";
 import { Hero } from "@/components/home-page/Hero";
-import { StatsStrip } from "@/components/home-page/StatsStrip";
 import { WhyMajstorSection } from "@/components/home-page/WhyMajstorSection";
 import { CategoriesGrid } from "@/components/home-page/CategoriesGrid";
 import { HowItWorksForUsers, HowItWorksForHandymen } from "@/components/home-page/HowItWorks";
@@ -58,9 +57,6 @@ export default function HomePage() {
         </div>
         <div className="animate-fade-up" style={{ animationDelay: "0.08s", animationFillMode: "both" }}>
           <HowItWorksForHandymen />
-        </div>
-        <div className="animate-fade-up" style={{ animationDelay: "0.11s", animationFillMode: "both" }}>
-          <StatsStrip />
         </div>
         <div className="animate-fade-up" style={{ animationDelay: "0.14s", animationFillMode: "both" }}>
           <CategoriesGrid />

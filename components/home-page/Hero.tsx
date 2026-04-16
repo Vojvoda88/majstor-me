@@ -76,14 +76,6 @@ export function Hero() {
             </span>
           ))}
         </div>
-        <p className="relative z-30 mt-2 text-center md:mt-2.5">
-          <Link
-            href="/register?type=majstor"
-            className="inline-block min-h-[44px] touch-manipulation text-sm font-semibold text-amber-200/95 underline decoration-amber-400/45 underline-offset-4 transition hover:text-white active:opacity-90"
-          >
-            Registrujte se kao majstor →
-          </Link>
-        </p>
       </div>
     </section>
   );
