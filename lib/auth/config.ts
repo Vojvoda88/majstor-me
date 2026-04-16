@@ -7,14 +7,6 @@ import { isRateLimited } from "@/lib/rate-limit";
 const authStepsLog =
   process.env.LOGIN_AUTH_DEBUG === "1" || process.env.LOG_AUTH_STEPS === "1";
 
-/** Relativni redirect u signIn callback-u lomi next-auth/react (new URL bez baze). */
-function authBaseUrlForClientRedirect(): string {
-  const raw = process.env.NEXTAUTH_URL ?? (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "");
-  if (!raw) return "";
-  const withScheme = raw.startsWith("http") ? raw : `https://${raw}`;
-  return withScheme.replace(/\/$/, "");
-}
-
 export const authOptions: NextAuthOptions = {
   session: {
     strategy: "jwt",
@@ -128,42 +120,9 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    /**
-     * Password (credentials): bez potvrđenog emaila nema sesije.
-     * OAuth (npr. Google) kada se doda: provider !== credentials → ne primjenjuj ovo pravilo.
-     */
     async signIn({ user, account }) {
-      if (account?.provider === "credentials" && user?.id) {
-        const { prisma } = await import("@/lib/db");
-        const u = await prisma.user.findUnique({
-          where: { id: user.id as string },
-          select: { id: true, emailVerified: true, email: true, role: true },
-        });
-        if (u && u.emailVerified == null) {
-          /** Admin nalozi često nemaju emailVerified (seed/ručno); blokada bi ih zaključala na mobilnom dok desktop drži staru sesiju. */
-          if (u.role === "ADMIN") {
-            return true;
-          }
-          const hasAdminProfile = await prisma.adminProfile.findUnique({
-            where: { userId: u.id },
-            select: { id: true },
-          });
-          if (hasAdminProfile) {
-            return true;
-          }
-          const email = encodeURIComponent(u.email ?? "");
-          const base = authBaseUrlForClientRedirect();
-          if (!base) {
-            if (authStepsLog) {
-              console.warn(
-                "[auth][signIn] email unverified but NEXTAUTH_URL unset — client redirect may break; set NEXTAUTH_URL"
-              );
-            }
-            return `/login?error=unverified&email=${email}`;
-          }
-          return `${base}/login?error=unverified&email=${email}`;
-        }
-      }
+      void user;
+      void account;
       return true;
     },
     async jwt({ token, user }) {

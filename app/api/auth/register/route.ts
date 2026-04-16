@@ -50,11 +50,20 @@ const registerSchema = z
     whatsappPhone: z.string().optional(),
     city: z.string().optional(),
     role: z.enum(["USER", "HANDYMAN"]),
+    bio: z.string().optional(),
+    galleryImages: z.array(z.string().url()).default([]),
     categories: z.array(z.string()).default([]),
     workCities: z.array(z.string()).default([]),
   })
   .superRefine((data, ctx) => {
     if (data.role !== "HANDYMAN") return;
+    if (!data.bio?.trim()) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Unesite kratak opis profila.",
+        path: ["bio"],
+      });
+    }
     if (data.categories.length === 0) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
@@ -121,6 +130,12 @@ function normalizeRegisterBody(raw: unknown): z.infer<typeof registerSchema> {
       ? undefined
       : String(cityRaw).trim() || undefined;
 
+  const bioRaw = b.bio;
+  const bio =
+    bioRaw === null || bioRaw === undefined
+      ? undefined
+      : String(bioRaw).trim();
+
   const roleRaw = String(b.role ?? "USER")
     .trim()
     .toUpperCase();
@@ -128,8 +143,9 @@ function normalizeRegisterBody(raw: unknown): z.infer<typeof registerSchema> {
 
   const categories = normalizeStringArray(b.categories);
   const workCities = normalizeStringArray(b.workCities);
+  const galleryImages = normalizeStringArray(b.galleryImages);
 
-  return { name, email, password, phone, viberPhone, whatsappPhone, city, role, categories, workCities };
+  return { name, email, password, phone, viberPhone, whatsappPhone, city, role, bio, galleryImages, categories, workCities };
 }
 
 export async function POST(request: Request) {
@@ -160,7 +176,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const { name, email, password, phone, viberPhone, whatsappPhone, city, role, categories, workCities } = parsed.data;
+    const { name, email, password, phone, viberPhone, whatsappPhone, city, role, bio, galleryImages, categories, workCities } = parsed.data;
 
     /**
      * Rate limit NAKON validacije JSON-a — da ne trošimo slot na loš JSON.
@@ -223,7 +239,9 @@ export async function POST(request: Request) {
         const prof = await tx.handymanProfile.create({
           data: {
             userId: u.id,
+            bio: bio?.trim() || null,
             cities: citiesResolved,
+            galleryImages: galleryImages ?? [],
             creditsBalance: bonus,
             starterBonusGrantedAt: new Date(),
             viberPhone: viberPhone ?? null,

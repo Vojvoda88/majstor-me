@@ -90,3 +90,31 @@ export async function notifyAdminsNewPendingHandyman(params: {
     console.warn("[admin-signals] notifyAdminsNewPendingHandyman failed", e);
   }
 }
+
+/** Aktivni majstor je izmijenio javni profil i vraćen je na pregled. */
+export async function notifyAdminsHandymanReturnedToReview(params: {
+  handymanUserId: string;
+  displayName: string;
+}): Promise<void> {
+  const link = `/admin/handymen/${params.handymanUserId}`;
+  const title = "Majstorov profil čeka ponovni pregled";
+  const body = params.displayName.trim() || "Majstor bez naziva";
+
+  try {
+    const adminIds = await getAdminUserIds();
+    for (const uid of adminIds) {
+      await createNotification(uid, "ADMIN_PENDING_HANDYMAN", title, {
+        body,
+        link,
+      });
+      void sendPushToUser(prisma, uid, {
+        title,
+        body,
+        link,
+        tag: `admin-hm-rereview-${params.handymanUserId}-${Date.now()}`,
+      });
+    }
+  } catch (e) {
+    console.warn("[admin-signals] notifyAdminsHandymanReturnedToReview failed", e);
+  }
+}

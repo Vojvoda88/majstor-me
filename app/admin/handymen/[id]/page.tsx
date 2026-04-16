@@ -7,6 +7,7 @@ import { AdminHandymanActions } from "./admin-handyman-actions";
 import { DeleteUserButton } from "./delete-user-button";
 import { AdminRouteLoadError } from "@/lib/admin/admin-ssr-fallback";
 import { prismaErrorCode } from "@/lib/admin/admin-ssr-params";
+import Image from "next/image";
 
 export const dynamic = "force-dynamic";
 
@@ -26,6 +27,10 @@ export default async function AdminHandymanDetailPage({ params }: { params: Prom
       verifiedStatus: string;
       workerStatus: string;
       cities: string[];
+      avatarUrl: string | null;
+      galleryImages: string[];
+      viberPhone: string | null;
+      whatsappPhone: string | null;
       creditsBalance: number;
       completedJobsCount: number;
       ratingAvg: number;
@@ -69,6 +74,10 @@ export default async function AdminHandymanDetailPage({ params }: { params: Prom
             verifiedStatus: true,
             workerStatus: true,
             cities: true,
+            avatarUrl: true,
+            galleryImages: true,
+            viberPhone: true,
+            whatsappPhone: true,
             creditsBalance: true,
             completedJobsCount: true,
             ratingAvg: true,
@@ -174,6 +183,12 @@ export default async function AdminHandymanDetailPage({ params }: { params: Prom
               <strong>Telefon:</strong> {user.phone ?? "-"}
             </p>
             <p>
+              <strong>Viber:</strong> {hp.viberPhone ?? "-"}
+            </p>
+            <p>
+              <strong>WhatsApp:</strong> {hp.whatsappPhone ?? "-"}
+            </p>
+            <p>
               <strong>Grad:</strong> {user.city ?? hp.cities[0] ?? "-"}
             </p>
             <p>
@@ -229,6 +244,42 @@ export default async function AdminHandymanDetailPage({ params }: { params: Prom
           </CardHeader>
           <CardContent>
             <p className="text-sm">{hp.bio}</p>
+          </CardContent>
+        </Card>
+      )}
+
+      {(hp.avatarUrl || hp.galleryImages.length > 0) && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Fotografije profila</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {hp.avatarUrl && (
+              <div>
+                <p className="mb-2 text-sm font-medium text-slate-700">Profilna fotografija</p>
+                <div className="relative h-28 w-28 overflow-hidden rounded-2xl border bg-slate-100">
+                  <Image src={hp.avatarUrl} alt={user.name} fill className="object-cover" sizes="112px" />
+                </div>
+              </div>
+            )}
+            {hp.galleryImages.length > 0 && (
+              <div>
+                <p className="mb-2 text-sm font-medium text-slate-700">Galerija radova</p>
+                <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                  {hp.galleryImages.map((url, idx) => (
+                    <a
+                      key={`${url}-${idx}`}
+                      href={url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="relative aspect-square overflow-hidden rounded-xl border bg-slate-100"
+                    >
+                      <Image src={url} alt={`Rad ${idx + 1}`} fill className="object-cover" sizes="240px" />
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
           </CardContent>
         </Card>
       )}

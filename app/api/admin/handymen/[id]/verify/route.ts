@@ -45,6 +45,13 @@ export async function POST(
       data: { verifiedStatus: parsed.data.status },
     });
 
+    if (parsed.data.status === "VERIFIED") {
+      await prisma.user.update({
+        where: { id: handymanUserId },
+        data: { emailVerified: new Date() },
+      });
+    }
+
     await createAuditLog(prisma, {
       adminId: authResult.session.user.id,
       adminRole: authResult.adminRole,
@@ -52,7 +59,7 @@ export async function POST(
       entityType: "handyman",
       entityId: handymanUserId,
       oldValue: { verifiedStatus: oldStatus },
-      newValue: { verifiedStatus: parsed.data.status },
+      newValue: { verifiedStatus: parsed.data.status, emailVerified: parsed.data.status === "VERIFIED" },
     });
 
     return NextResponse.json({ success: true, data: updated });

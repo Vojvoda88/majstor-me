@@ -8,6 +8,7 @@ import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { PasswordField } from "@/components/ui/password-field";
+import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import Link from "next/link";
@@ -16,6 +17,7 @@ import { User, Wrench, ChevronDown } from "lucide-react";
 import { HANDYMAN_START_BONUS_CREDITS, STANDARD_LEAD_CREDITS } from "@/lib/credit-packages";
 import { CITIES, MAX_HANDYMAN_CATEGORIES } from "@/lib/constants";
 import { displayLabelForRequestCategory, HANDYMAN_SELECTABLE_INTERNAL_NAMES } from "@/lib/categories";
+import { GalleryEditor } from "@/components/profile/gallery-editor";
 
 const registerSchema = z
   .object({
@@ -27,11 +29,20 @@ const registerSchema = z
     whatsappPhone: z.string().optional(),
     city: z.string().optional(),
     role: z.enum(["USER", "HANDYMAN"]).default("USER"),
+    bio: z.string().optional(),
+    galleryImages: z.array(z.string().url()).default([]),
     categories: z.array(z.string()).default([]),
     workCities: z.array(z.string()).default([]),
   })
   .superRefine((data, ctx) => {
     if (data.role !== "HANDYMAN") return;
+    if (!data.bio?.trim()) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Unesite kratak opis profila.",
+        path: ["bio"],
+      });
+    }
     if (data.categories.length === 0) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
@@ -68,7 +79,7 @@ export function RegisterForm({
     formState: { errors, isSubmitting },
   } = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
-    defaultValues: { role: defaultRole, categories: [], workCities: [], viberPhone: "", whatsappPhone: "" },
+    defaultValues: { role: defaultRole, categories: [], workCities: [], viberPhone: "", whatsappPhone: "", bio: "", galleryImages: [] },
   });
 
   async function onSubmit(data: RegisterFormData) {
@@ -87,6 +98,8 @@ export function RegisterForm({
     if (role === "HANDYMAN") {
       payload.categories = data.categories;
       payload.workCities = data.workCities;
+      payload.bio = data.bio?.trim() || "";
+      payload.galleryImages = data.galleryImages ?? [];
     }
 
     const res = await fetch("/api/auth/register", {
@@ -135,6 +148,7 @@ export function RegisterForm({
   const role = (watch("role") as RegisterFormData["role"] | undefined) ?? defaultRole;
   const categoriesSel = watch("categories") ?? [];
   const workCitiesSel = watch("workCities") ?? [];
+  const galleryImages = watch("galleryImages") ?? [];
 
   const prevRole = useRef(role);
   useEffect(() => {
@@ -143,6 +157,8 @@ export function RegisterForm({
       setValue("workCities", []);
       setValue("viberPhone", "");
       setValue("whatsappPhone", "");
+      setValue("bio", "");
+      setValue("galleryImages", []);
       setWorkCitiesOpen(false);
     }
     prevRole.current = role;
@@ -295,6 +311,26 @@ export function RegisterForm({
           </div>
           {role === "HANDYMAN" && (
             <>
+              <div className="space-y-2 rounded-xl border border-slate-200 bg-slate-50/70 p-4">
+                <Label htmlFor="bio">Opis profila *</Label>
+                <Textarea
+                  id="bio"
+                  rows={4}
+                  placeholder="Napišite čime se bavite, kakve poslove radite i zašto da vas klijent odabere."
+                  {...register("bio")}
+                />
+                <p className="text-xs text-[#64748B]">
+                  Ovo admin pregleda prije nego što profil postane javno vidljiv.
+                </p>
+                {errors.bio && <p className="text-sm text-destructive">{errors.bio.message}</p>}
+              </div>
+              <div className="space-y-2 rounded-xl border border-slate-200 bg-slate-50/70 p-4">
+                <Label>Fotografije radova</Label>
+                <GalleryEditor images={galleryImages} onChange={(imgs) => setValue("galleryImages", imgs)} />
+                <p className="text-xs text-[#64748B]">
+                  Dodajte slike odmah pri registraciji da admin pregleda kompletan profil.
+                </p>
+              </div>
               <div className="space-y-2 border-t border-slate-100 pt-5">
                 <Label>Kategorije koje pokrivate *</Label>
                 <p className="text-xs text-[#64748B]">

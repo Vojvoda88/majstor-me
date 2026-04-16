@@ -66,10 +66,10 @@ function LoginFormInner() {
     if (searchParams.get("registered") === "1") {
       if (searchParams.get("verify") === "skipped") {
         setInfo(
-          "Nalog je kreiran. Verifikacioni email trenutno nije poslat (provjerite RESEND_API_KEY / EMAIL_FROM na serveru). Prijavite se i ispod zatražite „Pošalji ponovo link za potvrdu“ kada bude dostupan email."
+          "Nalog je kreiran. Verifikacioni email trenutno nije poslat, ali se možete prijaviti odmah i potvrditi email kasnije."
         );
       } else {
-        setInfo("Poslali smo vam email za potvrdu naloga. Potvrdite email adresu kako biste nastavili.");
+        setInfo("Nalog je kreiran. Ako vam stigne verifikacioni email, potvrdite ga kad stignete — prijava radi odmah.");
       }
     } else if (searchParams.get("verified") === "1") {
       setInfo("Email adresa je potvrđena. Sada se možete prijaviti.");
@@ -109,17 +109,7 @@ function LoginFormInner() {
       return;
     }
 
-    /**
-     * NextAuth sa redirect:false: kad signIn callback vrati URL sa ?error=unverified,
-     * klijent postavlja result.error = "unverified" i result.url = null (ne puni url kad postoji error).
-     * Stari kod je provjeravao samo result.url — zato je unverified uvijek padao u granu "pogrešna lozinka".
-     */
     const authError = result?.error;
-    if (authError === "unverified" || result?.url?.includes("unverified")) {
-      const emailParam = encodeURIComponent(data.email.trim().toLowerCase());
-      router.replace(result?.url?.includes("unverified") ? (result.url as string) : `/login?error=unverified&email=${emailParam}`);
-      return;
-    }
 
     if (result?.error || result?.ok === false) {
       if (authError === "CredentialsSignin") {
@@ -134,9 +124,6 @@ function LoginFormInner() {
         );
       } else {
         setError("Pogrešan email ili lozinka");
-      }
-      if (searchParams.get("error") === "unverified") {
-        router.replace("/login");
       }
       return;
     }
@@ -212,7 +199,7 @@ function LoginFormInner() {
           {unverifiedFromUrl && (
             <div className="rounded-lg border border-amber-200 bg-amber-50/90 px-3 py-3 text-sm text-amber-950">
               <p className="font-medium">Email adresa još nije potvrđena.</p>
-              <p className="mt-1 text-amber-900/90">Potvrdite email prije prijave.</p>
+              <p className="mt-1 text-amber-900/90">To više ne blokira prijavu. Link možete zatražiti ponovo kad želite.</p>
               <Button
                 type="button"
                 variant="outline"

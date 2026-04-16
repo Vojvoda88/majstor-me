@@ -9,6 +9,10 @@ export function HandymanPendingReviewBanner() {
         Prijava je primljena. Vaš profil je poslat na pregled. Bićete obaviješteni kada profil bude odobren ili ako bude
         potrebna dorada.
       </p>
+      <p className="mt-2 text-sm leading-relaxed text-sky-900">
+        Ako kasnije izmijenite opis, slike ili druge javne podatke, profil ide ponovo na pregled prije nego što bude
+        javno prikazan.
+      </p>
     </div>
   );
 }

@@ -9,6 +9,7 @@ import { HandymanRequestList } from "./handyman-request-list";
 import { OnboardingBanner } from "@/components/handyman/onboarding-banner";
 import { HandymanPushNotificationsCard } from "@/components/handyman/push-notifications-card";
 import { HandymanPendingReviewBanner } from "@/components/handyman/handyman-pending-review-banner";
+import { EmailVerificationReminder } from "@/components/account/email-verification-reminder";
 import { calcProfileCompletion } from "@/lib/handyman-onboarding";
 import { isCreditsRequired, LOW_CREDITS_THRESHOLD } from "@/lib/credits";
 import { REQUEST_CATEGORY_FALLBACK } from "@/lib/constants";
@@ -48,7 +49,7 @@ export default async function HandymanDashboardPage({
   const profileRaw = await prisma.handymanProfile.findUnique({
     where: { userId: session.user.id },
     include: {
-      user: { select: { city: true, phone: true } },
+      user: { select: { city: true, phone: true, emailVerified: true } },
       workerCategories: { include: { category: true } },
     },
   });
@@ -154,6 +155,7 @@ export default async function HandymanDashboardPage({
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-5 sm:px-6 sm:py-8">
+      {profileRaw?.user?.emailVerified == null && <EmailVerificationReminder email={session.user.email} />}
       {profile.workerStatus === "PENDING_REVIEW" && <HandymanPendingReviewBanner />}
       {onboarding.percent < 100 && (
         <OnboardingBanner percent={onboarding.percent} steps={onboarding.steps} className="mb-6" />

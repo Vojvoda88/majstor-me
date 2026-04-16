@@ -124,10 +124,11 @@ export async function PATCH(request: Request) {
       );
     }
 
-    const hadProfileBefore = !!(await prisma.handymanProfile.findUnique({
+    const existingProfile = await prisma.handymanProfile.findUnique({
       where: { userId: session.user.id },
-      select: { id: true },
-    }));
+      select: { id: true, workerStatus: true },
+    });
+    const hadProfileBefore = !!existingProfile;
 
     if (phone !== undefined) {
       await prisma.user.update({
@@ -165,6 +166,7 @@ export async function PATCH(request: Request) {
         update: {
           bio,
           cities,
+          ...(existingProfile?.workerStatus === "ACTIVE" && { workerStatus: "PENDING_REVIEW" }),
           ...(avatarUrl !== undefined && { avatarUrl }),
           ...(galleryImages !== undefined && { galleryImages }),
           ...(yearsOfExperience !== undefined && { yearsOfExperience }),
@@ -203,15 +205,24 @@ export async function PATCH(request: Request) {
     const cats = profile.workerCategories.map((wc) => wc.category.name);
     const { workerCategories, ...rest } = profile;
 
+    const userForSignals = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { name: true },
+    });
+
     if (!hadProfileBefore) {
-      const u = await prisma.user.findUnique({
-        where: { id: session.user.id },
-        select: { name: true },
-      });
       const { notifyAdminsNewPendingHandyman } = await import("@/lib/admin-signals");
       void notifyAdminsNewPendingHandyman({
         handymanUserId: session.user.id,
-        displayName: u?.name?.trim() ?? "",
+        displayName: userForSignals?.name?.trim() ?? "",
+      });
+    }
+
+    if (existingProfile?.workerStatus === "ACTIVE") {
+      const { notifyAdminsHandymanReturnedToReview } = await import("@/lib/admin-signals");
+      void notifyAdminsHandymanReturnedToReview({
+        handymanUserId: session.user.id,
+        displayName: userForSignals?.name?.trim() ?? "",
       });
     }
 
