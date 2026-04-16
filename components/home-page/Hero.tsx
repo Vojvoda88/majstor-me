@@ -61,7 +61,7 @@ export function Hero() {
             href="/#kako-radi-majstore"
             className="inline-flex h-14 min-h-[52px] items-center justify-center rounded-2xl border border-white/20 bg-transparent px-6 text-base font-semibold text-white/90 transition hover:bg-white/10 active:scale-[0.98] md:px-8"
           >
-            Kako majstor dobija poslove
+            Registruj se kao majstor
           </Link>
         </div>
 
