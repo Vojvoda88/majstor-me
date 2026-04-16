@@ -65,7 +65,7 @@ export function PublicHeader() {
   }, []);
 
   const isHome = pathname === "/";
-  const homeAtTop = isHome && !scrolled;
+  const homeTheme = isHome;
   const isKakoActive = isHome && hash === "#kako-radi";
   const isPocetnaActive = isHome && !isKakoActive;
   const isKategorijeActive = pathname === "/categories";
@@ -77,7 +77,7 @@ export function PublicHeader() {
   const navLinkDesktop = (active: boolean) =>
     cn(
       "font-medium transition-colors",
-      homeAtTop
+      homeTheme
         ? cn(
             "text-white/85 hover:text-white",
             active && "font-semibold text-white underline decoration-white/40 underline-offset-[6px]"
@@ -100,7 +100,7 @@ export function PublicHeader() {
         href="/register?type=majstor"
         className={cn(
           "text-[15px] font-medium transition-colors",
-          homeAtTop ? "text-white/90 hover:text-white" : "text-gray-700 hover:text-brand-navy"
+          homeTheme ? "text-white/90 hover:text-white" : "text-gray-700 hover:text-brand-navy"
         )}
         data-testid="nav-registracija-majstor"
         {...linkProps}
@@ -111,7 +111,7 @@ export function PublicHeader() {
         href="/login"
         className={cn(
           "rounded-xl px-5 py-2.5 text-[15px] font-bold shadow-sm transition",
-          homeAtTop
+          homeTheme
             ? "bg-amber-400 text-brand-navy hover:bg-amber-300"
             : "bg-[#1d4ed8] text-white hover:bg-[#1e40af]"
         )}
@@ -138,11 +138,11 @@ export function PublicHeader() {
             variant="ghost"
             size="sm"
             className={cn(
-              homeAtTop
+              homeTheme
                 ? "text-white/90 hover:bg-white/10 hover:text-white"
                 : "text-gray-700 hover:text-brand-navy",
               isUserDashActive &&
-                (homeAtTop
+                (homeTheme
                   ? "font-semibold text-white underline decoration-white/40 underline-offset-[6px]"
                   : "font-semibold text-brand-navy underline decoration-brand-navy/35 underline-offset-[6px]")
             )}
@@ -157,11 +157,11 @@ export function PublicHeader() {
             variant="ghost"
             size="sm"
             className={cn(
-              homeAtTop
+              homeTheme
                 ? "text-white/90 hover:bg-white/10 hover:text-white"
                 : "text-gray-700 hover:text-brand-navy",
               isProfilActive &&
-                (homeAtTop
+                (homeTheme
                   ? "font-semibold text-white underline decoration-white/40 underline-offset-[6px]"
                   : "font-semibold text-brand-navy underline decoration-brand-navy/35 underline-offset-[6px]")
             )}
@@ -176,7 +176,7 @@ export function PublicHeader() {
         onClick={() => signOut({ callbackUrl: "/" })}
         className={cn(
           "font-semibold shadow-sm transition",
-          homeAtTop
+          homeTheme
             ? "border-white/25 bg-white/10 text-white backdrop-blur-sm hover:bg-white/15 hover:text-white"
             : "border-slate-200/90 bg-white/80 text-gray-800 hover:bg-white hover:text-brand-navy"
         )}
@@ -354,10 +354,10 @@ export function PublicHeader() {
     <>
       <header
         className={cn(
-          "sticky top-0 z-[100] w-full border-b shadow-sm transition-[background-color,border-color] duration-300 ease-out",
-          "pt-[env(safe-area-inset-top)] backdrop-blur-[12px] backdrop-saturate-[180%]",
-          homeAtTop
-            ? "border-white/[0.08] bg-slate-950/40"
+          "sticky top-0 z-[100] w-full border-b shadow-sm transition-[background-color,border-color,box-shadow] duration-300 ease-out",
+          "pt-[env(safe-area-inset-top)] backdrop-blur-[14px] backdrop-saturate-[180%]",
+          homeTheme
+            ? "border-white/[0.12] bg-gradient-to-r from-slate-950/75 via-slate-900/65 to-slate-950/75 shadow-[0_10px_30px_-18px_rgba(0,0,0,0.7)]"
             : scrolled
               ? "border-slate-200/80 bg-white/90"
               : "border-white/20 bg-white/75"
@@ -368,12 +368,19 @@ export function PublicHeader() {
         <div className="relative z-[100] mx-auto flex min-h-14 max-w-6xl items-center justify-between px-4 sm:px-6">
         <Link
           href="/"
-          className="font-display text-xl font-bold tracking-tight md:text-2xl"
+          className="inline-flex items-center gap-2 font-display text-xl font-bold tracking-tight md:text-2xl"
           data-testid="header-home"
           {...linkProps}
         >
-          <span className={cn(homeAtTop ? "text-white" : "text-[#1d4ed8]")}>BrziMajstor</span>
-          <span className={cn(homeAtTop ? "text-amber-100/85" : "text-slate-800")}>.ME</span>
+          <span
+            className={cn(
+              "inline-flex h-2.5 w-2.5 rounded-full",
+              homeTheme ? "bg-amber-300 shadow-[0_0_0_4px_rgba(252,211,77,0.15)]" : "bg-blue-600"
+            )}
+            aria-hidden
+          />
+          <span className={cn(homeTheme ? "text-white" : "text-[#1d4ed8]")}>BrziMajstor</span>
+          <span className={cn(homeTheme ? "text-amber-100/85" : "text-slate-800")}>.ME</span>
         </Link>
 
         <nav className="relative z-[100] hidden items-center gap-x-8 md:flex" aria-label="Glavna navigacija">
@@ -406,7 +413,7 @@ export function PublicHeader() {
           onClick={() => setMenuOpen(!menuOpen)}
           className={cn(
             "flex min-h-[44px] min-w-[44px] touch-manipulation items-center justify-center rounded-xl transition md:hidden",
-            homeAtTop ? "text-white hover:bg-white/10" : "text-gray-700 hover:bg-black/[0.04]"
+            homeTheme ? "text-white hover:bg-white/10" : "text-gray-700 hover:bg-black/[0.04]"
           )}
           aria-label="Meni"
           aria-expanded={menuOpen}

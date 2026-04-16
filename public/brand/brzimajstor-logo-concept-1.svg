@@ -1,0 +1,13 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1024" height="1024" rx="220" fill="#0F172A"/>
+
+  <!-- House -->
+  <path d="M224 470L512 242L800 470" stroke="#FFFFFF" stroke-width="44" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M306 448V726H458M718 448V726H566" stroke="#FFFFFF" stroke-width="44" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Wrench head -->
+  <path d="M512 330C558 330 596 368 596 414C596 437 586 458 570 473L534 439V350H490V439L454 473C438 458 428 437 428 414C428 368 466 330 512 330Z" fill="#3B82F6"/>
+
+  <!-- Bolt body -->
+  <path d="M560 494H524L560 568H506L548 650H492L462 748L448 746L480 642H426L468 560H412L462 494H426L478 430H546L512 494H560Z" fill="#3B82F6"/>
+</svg>

@@ -3,7 +3,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Sparkles, Zap } from "lucide-react";
-import { HeroSearch } from "./hero-search";
 import { HERO_IMAGE } from "@/lib/homepage-data";
 
 const TRUST = [
@@ -13,7 +12,7 @@ const TRUST = [
 
 export function Hero() {
   return (
-    <section className="relative flex min-h-[min(88dvh,620px)] w-full items-center justify-center overflow-hidden rounded-b-[1.75rem] px-4 pb-12 pt-[max(4.5rem,env(safe-area-inset-top)+3.25rem)] text-white sm:px-5 md:min-h-[720px] md:rounded-b-[2rem] md:pb-24 md:pt-32">
+    <section className="relative flex min-h-[min(82dvh,620px)] w-full items-center justify-center overflow-hidden rounded-b-[1.75rem] px-4 pb-10 pt-[max(4.5rem,env(safe-area-inset-top)+3.25rem)] text-white sm:px-5 md:min-h-[700px] md:rounded-b-[2rem] md:pb-20 md:pt-28">
       <Image
         src={HERO_IMAGE}
         alt="Majstor na poslu"
@@ -22,53 +21,51 @@ export function Hero() {
         priority
         sizes="100vw"
       />
-      {/* Dodatni dim na uskim ekranima (portretna slika + jači kontrast za tekst) */}
-      <div className="pointer-events-none absolute inset-0 bg-black/30 md:bg-transparent" aria-hidden />
-      {/* Premium overlay: deep navy + vignette */}
+      {/* Jači kontrast da hero tekst bude čitljiv na mobilnom. */}
+      <div className="pointer-events-none absolute inset-0 bg-black/40 md:bg-black/20" aria-hidden />
       <div
-        className="pointer-events-none absolute inset-0 bg-gradient-to-b from-brand-navy/95 via-brand-navy/75 to-brand-navy/92"
+        className="pointer-events-none absolute inset-0 bg-gradient-to-b from-brand-navy/96 via-brand-navy/84 to-brand-navy/92"
         aria-hidden
       />
       <div
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_120%_80%_at_50%_-20%,rgba(245,158,11,0.12),transparent_55%)]"
         aria-hidden
       />
-      <div className="relative z-10 w-full max-w-4xl text-center pointer-events-auto">
-        <p className="mb-3 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-amber-200/95 backdrop-blur-sm md:mb-4 md:px-4 md:text-[13px] md:tracking-[0.2em]">
+      <div className="pointer-events-auto relative z-10 w-full max-w-4xl text-center">
+        <p className="mb-3 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.16em] text-amber-200/95 backdrop-blur-sm md:mb-4 md:px-4 md:text-[13px] md:tracking-[0.18em]">
           Pronađite majstora — brzo i jasno
         </p>
-        <h1 className="font-display mb-4 text-[1.75rem] font-extrabold leading-[1.12] tracking-tight text-white sm:text-[2rem] md:mb-5 md:text-5xl lg:text-[3.25rem] lg:leading-[1.08]">
-          Besplatno pronađite majstora,
+        <h1 className="font-display mb-4 text-[1.72rem] font-extrabold leading-[1.12] tracking-tight text-white sm:text-[2rem] md:mb-5 md:text-5xl lg:text-[3.25rem] lg:leading-[1.08]">
+          Treba vam majstor?
           <br />
-          <span className="bg-gradient-to-r from-white to-white/85 bg-clip-text text-transparent">
-            objavite posao bez plaćanja.
-          </span>
+          <span className="bg-gradient-to-r from-white to-white/85 bg-clip-text text-transparent">Objavite zahtjev za 2 minuta.</span>
         </h1>
-        <p className="mx-auto mb-7 max-w-xl text-[15px] font-medium leading-relaxed text-slate-200/95 sm:text-base md:mb-10 md:text-lg md:leading-relaxed">
-          Za vas kao korisnika sve je besplatno: opišete šta vam treba, sačekate ponude i birate majstora. Mi povezujemo —
-          vi ne plaćate platformu.
+        <p className="mx-auto mb-6 max-w-xl text-[15px] font-medium leading-relaxed text-slate-100 sm:text-base md:mb-8 md:text-lg md:leading-relaxed">
+          Jedan zahtjev, više ponuda. Za korisnike je objava potpuno besplatna.
         </p>
 
-        <div className="mx-auto max-w-2xl">
-          <HeroSearch />
-        </div>
-
-        <div className="mt-6 flex flex-col items-stretch gap-2.5 sm:flex-row sm:items-center sm:justify-center sm:gap-3 md:mt-8">
+        <div className="mt-2 flex flex-col items-stretch gap-2.5 sm:flex-row sm:items-center sm:justify-center sm:gap-3 md:mt-4">
           <Link
             href="/request/create"
-            className="inline-flex h-14 min-h-[52px] items-center justify-center rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 px-8 text-base font-bold text-brand-navy shadow-lg shadow-amber-500/25 transition hover:brightness-105 active:scale-[0.98] md:h-[52px] md:px-10"
+            className="inline-flex h-14 min-h-[52px] items-center justify-center rounded-2xl bg-gradient-to-br from-[#3b82f6] to-[#1d4ed8] px-8 text-base font-bold text-white shadow-lg shadow-blue-600/30 transition hover:brightness-105 active:scale-[0.98] md:h-[52px] md:px-10"
           >
-            Objavi besplatan zahtjev
+            Pronađi majstora
+          </Link>
+          <Link
+            href="/categories"
+            className="inline-flex h-14 min-h-[52px] items-center justify-center rounded-2xl border border-white/25 bg-white/10 px-6 text-base font-semibold text-white backdrop-blur-md transition hover:bg-white/15 active:scale-[0.98] md:px-8"
+          >
+            Pogledaj kategorije
           </Link>
           <Link
             href="/#kako-radi-majstore"
-            className="inline-flex h-14 min-h-[52px] items-center justify-center rounded-2xl border border-white/25 bg-white/10 px-6 text-base font-semibold text-white backdrop-blur-md transition hover:bg-white/15 active:scale-[0.98] md:px-8"
+            className="inline-flex h-14 min-h-[52px] items-center justify-center rounded-2xl border border-white/20 bg-transparent px-6 text-base font-semibold text-white/90 transition hover:bg-white/10 active:scale-[0.98] md:px-8"
           >
-            Koraci za majstore
+            Kako majstor dobija poslove
           </Link>
         </div>
 
-        <div className="mt-5 flex flex-wrap items-center justify-center gap-2 sm:gap-3 md:mt-10 md:gap-4">
+        <div className="mt-4 flex flex-wrap items-center justify-center gap-2 sm:gap-3 md:mt-6 md:gap-4">
           {TRUST.map(({ icon: Icon, label }) => (
             <span
               key={label}
@@ -79,9 +76,6 @@ export function Hero() {
             </span>
           ))}
         </div>
-        <p className="relative z-30 mx-auto mt-4 max-w-md px-2 text-center text-[13px] font-medium leading-relaxed text-slate-200/95 sm:text-sm md:mt-5">
-          Čim se pojavi posao koji odgovara vašoj branši i zoni, stiže vam obavještenje.
-        </p>
         <p className="relative z-30 mt-2 text-center md:mt-2.5">
           <Link
             href="/register?type=majstor"
