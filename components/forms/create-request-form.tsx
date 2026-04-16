@@ -30,6 +30,8 @@ const createRequestSchema = z
     description: z.string().min(10, "Opis mora imati najmanje 10 karaktera").max(2000),
     city: z.string().min(1, "Unesite grad"),
     requesterPhone: z.string().min(6, "Unesite broj telefona"),
+    requesterViberPhone: z.string().optional(),
+    requesterWhatsappPhone: z.string().optional(),
     address: z.string().optional(),
     requesterEmail: z.union([z.string().email("Neispravan email"), z.literal("")]).optional(),
     urgency: z.enum(["HITNO_DANAS", "U_NAREDNA_2_DANA", "NIJE_HITNO"]),
@@ -87,6 +89,8 @@ export function CreateRequestForm({ initialCategory, initialCity }: CreateReques
       category: urlCategory,
       photos: [],
       requesterEmail: "",
+      requesterViberPhone: "",
+      requesterWhatsappPhone: "",
     },
   });
 
@@ -252,6 +256,28 @@ export function CreateRequestForm({ initialCategory, initialCity }: CreateReques
             {errors.requesterPhone && (
               <p className="text-sm text-destructive">{errors.requesterPhone.message}</p>
             )}
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="space-y-2">
+              <Label htmlFor="requesterViberPhone">Viber broj</Label>
+              <Input
+                id="requesterViberPhone"
+                type="tel"
+                placeholder="Opciono"
+                autoComplete="tel"
+                {...register("requesterViberPhone")}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="requesterWhatsappPhone">WhatsApp broj</Label>
+              <Input
+                id="requesterWhatsappPhone"
+                type="tel"
+                placeholder="Opciono"
+                autoComplete="tel"
+                {...register("requesterWhatsappPhone")}
+              />
+            </div>
           </div>
           <div className="space-y-2">
             <Label htmlFor="requesterEmail">Email</Label>

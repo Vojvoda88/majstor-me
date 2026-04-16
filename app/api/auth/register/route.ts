@@ -46,6 +46,8 @@ const registerSchema = z
     email: z.string().email("Neispravan email"),
     password: z.string().min(6, "Lozinka mora imati najmanje 6 karaktera"),
     phone: z.string().optional(),
+    viberPhone: z.string().optional(),
+    whatsappPhone: z.string().optional(),
     city: z.string().optional(),
     role: z.enum(["USER", "HANDYMAN"]),
     categories: z.array(z.string()).default([]),
@@ -101,6 +103,18 @@ function normalizeRegisterBody(raw: unknown): z.infer<typeof registerSchema> {
       ? undefined
       : String(phoneRaw).trim() || undefined;
 
+  const viberPhoneRaw = b.viberPhone;
+  const viberPhone =
+    viberPhoneRaw === null || viberPhoneRaw === undefined || viberPhoneRaw === ""
+      ? undefined
+      : String(viberPhoneRaw).trim() || undefined;
+
+  const whatsappPhoneRaw = b.whatsappPhone;
+  const whatsappPhone =
+    whatsappPhoneRaw === null || whatsappPhoneRaw === undefined || whatsappPhoneRaw === ""
+      ? undefined
+      : String(whatsappPhoneRaw).trim() || undefined;
+
   const cityRaw = b.city;
   const city =
     cityRaw === null || cityRaw === undefined || cityRaw === ""
@@ -115,7 +129,7 @@ function normalizeRegisterBody(raw: unknown): z.infer<typeof registerSchema> {
   const categories = normalizeStringArray(b.categories);
   const workCities = normalizeStringArray(b.workCities);
 
-  return { name, email, password, phone, city, role, categories, workCities };
+  return { name, email, password, phone, viberPhone, whatsappPhone, city, role, categories, workCities };
 }
 
 export async function POST(request: Request) {
@@ -146,7 +160,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const { name, email, password, phone, city, role, categories, workCities } = parsed.data;
+    const { name, email, password, phone, viberPhone, whatsappPhone, city, role, categories, workCities } = parsed.data;
 
     /**
      * Rate limit NAKON validacije JSON-a — da ne trošimo slot na loš JSON.
@@ -212,6 +226,8 @@ export async function POST(request: Request) {
             cities: citiesResolved,
             creditsBalance: bonus,
             starterBonusGrantedAt: new Date(),
+            viberPhone: viberPhone ?? null,
+            whatsappPhone: whatsappPhone ?? null,
           },
         });
 

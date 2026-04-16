@@ -23,6 +23,7 @@ import { UrgencyBadge } from "@/components/request/urgency-badge";
 import { MapPin, Calendar, User } from "lucide-react";
 import { trackFunnelEvent } from "@/lib/funnel-events";
 import type { RequestDetailPayload } from "@/lib/requests/request-detail-include";
+import { viberHref, whatsappHref } from "@/lib/contact-links";
 
 const STATUS_LABELS: Record<string, string> = {
   OPEN: "Otvoren",
@@ -178,6 +179,43 @@ export async function RequestDetailView({
             <div>
               <h3 className="text-sm font-medium text-[#475569]">Adresa</h3>
               <p className="mt-1 text-[#64748B]">{req.address}</p>
+            </div>
+          )}
+          {(isOwner || handymanUnlocked) && (req.requesterPhone || req.requesterViberPhone || req.requesterWhatsappPhone || req.requesterEmail) && (
+            <div className="rounded-2xl border border-slate-200/80 bg-slate-50/80 p-4">
+              <h3 className="text-sm font-medium text-[#475569]">Kontakt</h3>
+              <div className="mt-2 space-y-1.5 text-sm text-[#64748B]">
+                {req.requesterPhone && (
+                  <p>
+                    Telefon:{" "}
+                    <a className="font-medium text-blue-700 hover:underline" href={`tel:${req.requesterPhone.replace(/\s/g, "")}`}>
+                      {req.requesterPhone}
+                    </a>
+                  </p>
+                )}
+                {req.requesterEmail && <p>Email: <span className="font-medium text-slate-700">{req.requesterEmail}</span></p>}
+                {req.requesterViberPhone && (
+                  <p>
+                    Viber:{" "}
+                    <a className="font-medium text-blue-700 hover:underline" href={viberHref(req.requesterViberPhone)}>
+                      {req.requesterViberPhone}
+                    </a>
+                  </p>
+                )}
+                {req.requesterWhatsappPhone && (
+                  <p>
+                    WhatsApp:{" "}
+                    <a
+                      className="font-medium text-blue-700 hover:underline"
+                      href={whatsappHref(req.requesterWhatsappPhone)}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      {req.requesterWhatsappPhone}
+                    </a>
+                  </p>
+                )}
+              </div>
             </div>
           )}
           {session?.user?.role === "HANDYMAN" && !isOwner && (

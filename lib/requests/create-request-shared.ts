@@ -45,6 +45,8 @@ export const createRequestSchema = z.object({
   description: z.string().min(10, "Opis mora imati najmanje 10 karaktera").max(2000, "Opis predug"),
   city: z.string().min(1, "Unesite grad"),
   requesterPhone: z.string().min(6, "Unesite broj telefona"),
+  requesterViberPhone: z.string().optional(),
+  requesterWhatsappPhone: z.string().optional(),
   requesterEmail: z.string().email().optional().or(z.literal("")),
   address: z.string().optional(),
   urgency: z.enum(["HITNO_DANAS", "U_NAREDNA_2_DANA", "NIJE_HITNO"]),
@@ -199,8 +201,10 @@ export async function createRequestShared(
       return { ok: false, error: "Već ste objavili isti zahtjev danas", status: 400 };
     }
 
-    const { requesterName, title, requesterPhone, requesterEmail, ...rest } = parsed.data;
+    const { requesterName, title, requesterPhone, requesterViberPhone, requesterWhatsappPhone, requesterEmail, ...rest } = parsed.data;
     const emailTrimmed = requesterEmail?.trim() || undefined;
+    const viberTrimmed = requesterViberPhone?.trim() || undefined;
+    const whatsappTrimmed = requesterWhatsappPhone?.trim() || undefined;
     const phoneNorm = parsed.data.requesterPhone.replace(/\D/g, "");
     const emailNorm = (emailTrimmed ?? session?.user?.email ?? "").trim().toLowerCase();
     const blacklistedPhones = await prisma.blacklistedPhone.findMany({
@@ -222,6 +226,8 @@ export async function createRequestShared(
         userId: isGuest ? null : session!.user!.id,
         requesterName: isGuest ? parsed.data.requesterName : undefined,
         requesterPhone: parsed.data.requesterPhone,
+        requesterViberPhone: viberTrimmed,
+        requesterWhatsappPhone: whatsappTrimmed,
         requesterEmail: isGuest ? emailTrimmed : undefined,
         title: parsed.data.title ?? undefined,
         category: parsed.data.category,
@@ -250,6 +256,8 @@ export async function createRequestShared(
       userId: isGuest ? null : session!.user!.id,
       requesterName: isGuest ? requesterName : undefined,
       requesterPhone: requesterPhone,
+      requesterViberPhone: viberTrimmed,
+      requesterWhatsappPhone: whatsappTrimmed,
       requesterEmail: isGuest ? emailTrimmed : undefined,
       guestAccessTokenHash: guestSecret?.hash,
       title: title ?? undefined,

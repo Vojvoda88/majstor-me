@@ -1,7 +1,15 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Mail, Phone, ArrowLeft } from "lucide-react";
-import { getSupportEmail, getSupportMailtoHref, getSupportPhone } from "@/lib/support-contact";
+import { redirect } from "next/navigation";
+import { Mail, Phone, ArrowLeft, MessageCircleMore } from "lucide-react";
+import { auth } from "@/lib/auth";
+import {
+  getSupportEmail,
+  getSupportMailtoHref,
+  getSupportPhone,
+  getSupportViberHref,
+  getSupportWhatsappHref,
+} from "@/lib/support-contact";
 import { Button } from "@/components/ui/button";
 
 export const metadata: Metadata = {
@@ -9,10 +17,20 @@ export const metadata: Metadata = {
   description: "Pitanja za tim BrziMajstor.ME — korisnici, majstori, tehnička podrška.",
 };
 
-export default function KontaktPage() {
+export default async function KontaktPage() {
+  const session = await auth();
+  if (!session?.user?.id) {
+    redirect("/login?callbackUrl=/kontakt");
+  }
+  if (session.user.role !== "USER" && session.user.role !== "HANDYMAN") {
+    redirect("/");
+  }
+
   const email = getSupportEmail();
   const phone = getSupportPhone();
   const mailto = getSupportMailtoHref();
+  const whatsapp = getSupportWhatsappHref();
+  const viber = getSupportViberHref();
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -27,8 +45,8 @@ export default function KontaktPage() {
 
         <h1 className="font-display text-2xl font-bold text-slate-900 sm:text-3xl">Kontakt i podrška</h1>
         <p className="mt-3 text-[15px] leading-relaxed text-slate-600">
-          Ako ste korisnik ili majstor i imate bilo kakva dodatna pitanja (nalog, oglas, krediti, tehnički problem),
-          pišite nam na email ispod. Odgovaramo što prije možemo.
+          Ako ste prijavljeni korisnik ili majstor i nešto vam nije jasno oko naloga, oglasa, kredita ili tehničkog
+          problema, javite se direktno putem emaila, poziva, Vibera ili WhatsApp-a.
         </p>
 
         <div className="mt-8 space-y-4 rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm">
@@ -57,9 +75,35 @@ export default function KontaktPage() {
                 <a href={`tel:${phone.replace(/\s/g, "")}`} className="mt-0.5 block text-[15px] text-[#1d4ed8] hover:underline">
                   {phone}
                 </a>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {viber && (
+                    <Button asChild variant="outline" className="border-slate-200 bg-white">
+                      <a href={viber}>Piši na Viber</a>
+                    </Button>
+                  )}
+                  {whatsapp && (
+                    <Button asChild variant="outline" className="border-slate-200 bg-white">
+                      <a href={whatsapp} target="_blank" rel="noreferrer">
+                        Piši na WhatsApp
+                      </a>
+                    </Button>
+                  )}
+                </div>
               </div>
             </div>
           )}
+
+          <div className="flex gap-3 border-t border-slate-100 pt-4">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-500/10 text-amber-700">
+              <MessageCircleMore className="h-5 w-5" aria-hidden />
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-slate-900">Kako najbrže da nam pišete</p>
+              <p className="mt-0.5 text-[15px] leading-relaxed text-slate-600">
+                Pošaljite kratko šta nije jasno, broj oglasa ako postoji i screenshot ako imate tehnički problem.
+              </p>
+            </div>
+          </div>
         </div>
 
         <p className="mt-6 text-xs leading-relaxed text-slate-500">

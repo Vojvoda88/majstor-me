@@ -23,6 +23,8 @@ const registerSchema = z
     email: z.string().email("Unesite validan email"),
     password: z.string().min(6, "Lozinka mora imati najmanje 6 karaktera"),
     phone: z.string().optional(),
+    viberPhone: z.string().optional(),
+    whatsappPhone: z.string().optional(),
     city: z.string().optional(),
     role: z.enum(["USER", "HANDYMAN"]).default("USER"),
     categories: z.array(z.string()).default([]),
@@ -66,7 +68,7 @@ export function RegisterForm({
     formState: { errors, isSubmitting },
   } = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
-    defaultValues: { role: defaultRole, categories: [], workCities: [] },
+    defaultValues: { role: defaultRole, categories: [], workCities: [], viberPhone: "", whatsappPhone: "" },
   });
 
   async function onSubmit(data: RegisterFormData) {
@@ -78,6 +80,8 @@ export function RegisterForm({
       password: data.password,
       role,
       ...(data.phone?.trim() ? { phone: data.phone.trim() } : {}),
+      ...(role === "HANDYMAN" && data.viberPhone?.trim() ? { viberPhone: data.viberPhone.trim() } : {}),
+      ...(role === "HANDYMAN" && data.whatsappPhone?.trim() ? { whatsappPhone: data.whatsappPhone.trim() } : {}),
       ...(data.city?.trim() ? { city: data.city.trim() } : {}),
     };
     if (role === "HANDYMAN") {
@@ -137,6 +141,8 @@ export function RegisterForm({
     if (prevRole.current === "HANDYMAN" && role === "USER") {
       setValue("categories", []);
       setValue("workCities", []);
+      setValue("viberPhone", "");
+      setValue("whatsappPhone", "");
       setWorkCitiesOpen(false);
     }
     prevRole.current = role;
@@ -266,6 +272,18 @@ export function RegisterForm({
             <Label htmlFor="phone">Telefon (opciono)</Label>
             <Input id="phone" placeholder="+382 xx xxx xxx" {...register("phone")} />
           </div>
+          {role === "HANDYMAN" && (
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor="viberPhone">Viber broj (opciono)</Label>
+                <Input id="viberPhone" placeholder="+382 xx xxx xxx" {...register("viberPhone")} />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="whatsappPhone">WhatsApp broj (opciono)</Label>
+                <Input id="whatsappPhone" placeholder="+382 xx xxx xxx" {...register("whatsappPhone")} />
+              </div>
+            </div>
+          )}
           <div className="space-y-3">
             <Label htmlFor="city">Grad (opciono)</Label>
             <Input id="city" placeholder="npr. Podgorica, Nikšić..." {...register("city")} />

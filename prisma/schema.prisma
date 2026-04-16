@@ -352,6 +352,8 @@ model Request {
   photos          String[]      @default([]) // URLs from storage
   requesterName   String?       @map("requester_name") // za guest
   requesterPhone  String?       @map("requester_phone") // skriven dok ne otključa
+  requesterViberPhone String?   @map("requester_viber_phone")
+  requesterWhatsappPhone String? @map("requester_whatsapp_phone")
   requesterEmail  String?       @map("requester_email") // opciono
   // guest pristup: SHA-256 heks tajnog linka (plain se ne čuva u bazi)
   guestAccessTokenHash String? @unique @map("guest_access_token_hash")
