@@ -1,5 +1,5 @@
 /**
- * PWA ikone: public/icon-192.png i public/icon-512.png
+ * PWA ikone: public/icon-192.png/icon-512.png + launcher-icon-192/512.png
  *
  * Izvor u public/ (bilo koje ime — ne moraš preimenovati):
  *   pwa-icon-raw.png | .jpg | .jpeg | pwa-icon-raw.png.jpg (kad Windows doda .jpg)
@@ -65,6 +65,7 @@ async function buildMasterFromRaw(rawPath) {
 }
 
 async function resizeToIcon(size) {
+  const out = path.join(PUBLIC, `icon-${size}.png`);
   await sharp(SOURCE_OUT)
     .resize(size, size, {
       fit: "cover",
@@ -72,7 +73,8 @@ async function resizeToIcon(size) {
       kernel: sharp.kernel.lanczos3,
     })
     .png({ compressionLevel: 9 })
-    .toFile(path.join(PUBLIC, `icon-${size}.png`));
+    .toFile(out);
+  fs.copyFileSync(out, path.join(PUBLIC, `launcher-icon-${size}.png`));
 }
 
 function createVersionTag() {
@@ -94,27 +96,30 @@ function updatePwaVersionInFiles(versionTag) {
   }
 
   const libSrc = fs.readFileSync(LIB_PWA_ICON_ASSETS, "utf8");
-  const libUpdated = libSrc.replace(
-    /export const PWA_ICON_CACHE_VERSION = ".*?";/,
-    `export const PWA_ICON_CACHE_VERSION = "${versionTag}";`
-  );
-  if (libSrc === libUpdated) {
+  const libPattern = /export const PWA_ICON_CACHE_VERSION = ".*?";/;
+  if (!libPattern.test(libSrc)) {
     throw new Error("Nije pronađen PWA_ICON_CACHE_VERSION u lib/pwa-icon-assets.ts");
   }
+  const libUpdated = libSrc.replace(
+    libPattern,
+    `export const PWA_ICON_CACHE_VERSION = "${versionTag}";`
+  );
   fs.writeFileSync(LIB_PWA_ICON_ASSETS, libUpdated, "utf8");
 
   const swSrc = fs.readFileSync(SW_PATH, "utf8");
-  let swUpdated = swSrc.replace(
-    /const ICON_192 = "\/icon-192\.png\?v=.*?";/,
-    `const ICON_192 = "/icon-192.png?v=${versionTag}";`
-  );
-  swUpdated = swUpdated.replace(
-    /const CACHE_NAME = "majstor-me-v.*?";/,
-    `const CACHE_NAME = "majstor-me-v${versionTag}";`
-  );
-  if (swSrc === swUpdated) {
+  const swIconPattern = /const ICON_192 = "\/launcher-icon-192\.png\?v=.*?";/;
+  const swCachePattern = /const CACHE_NAME = "majstor-me-v.*?";/;
+  if (!swIconPattern.test(swSrc) || !swCachePattern.test(swSrc)) {
     throw new Error("Nije pronađen ICON_192 ili CACHE_NAME u public/sw.js");
   }
+  let swUpdated = swSrc.replace(
+    swIconPattern,
+    `const ICON_192 = "/launcher-icon-192.png?v=${versionTag}";`
+  );
+  swUpdated = swUpdated.replace(
+    swCachePattern,
+    `const CACHE_NAME = "majstor-me-v${versionTag}";`
+  );
   fs.writeFileSync(SW_PATH, swUpdated, "utf8");
 }
 
