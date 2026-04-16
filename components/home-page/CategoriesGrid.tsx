@@ -55,8 +55,8 @@ const CATEGORIES = [
 
 export function CategoriesGrid() {
   return (
-    <section id="kategorije" className="py-12 md:py-28">
-      <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4 md:mb-14">
+    <section id="kategorije" className="py-10 md:py-20">
+      <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4 md:mb-10">
         <div className="max-w-2xl">
           <h2 className="font-display text-[1.65rem] font-bold tracking-tight text-brand-navy sm:text-3xl md:text-4xl lg:text-[2.35rem]">
             Glavne kategorije

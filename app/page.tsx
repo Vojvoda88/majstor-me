@@ -51,23 +51,28 @@ export default function HomePage() {
         <Hero />
       </div>
 
-      <div className="mx-auto max-w-6xl px-4 py-6 sm:px-5 md:px-6 md:py-16">
+      <div className="mx-auto max-w-6xl px-4 pb-10 pt-8 sm:px-5 md:px-6 md:pb-20 md:pt-14">
         <div className="animate-fade-up" style={{ animationDelay: "0.05s", animationFillMode: "both" }}>
           <HowItWorksForUsers />
         </div>
-        <div className="animate-fade-up" style={{ animationDelay: "0.08s", animationFillMode: "both" }}>
+        <div className="relative animate-fade-up pt-3 md:pt-5" style={{ animationDelay: "0.08s", animationFillMode: "both" }}>
+          <div className="pointer-events-none absolute inset-x-4 top-0 h-px bg-gradient-to-r from-transparent via-slate-200/85 to-transparent" />
           <HowItWorksForHandymen />
         </div>
-        <div className="animate-fade-up" style={{ animationDelay: "0.14s", animationFillMode: "both" }}>
+        <div className="relative animate-fade-up pt-3 md:pt-5" style={{ animationDelay: "0.14s", animationFillMode: "both" }}>
+          <div className="pointer-events-none absolute inset-x-4 top-0 h-px bg-gradient-to-r from-transparent via-slate-200/85 to-transparent" />
           <CategoriesGrid />
         </div>
-        <div className="animate-fade-up" style={{ animationDelay: "0.18s", animationFillMode: "both" }}>
+        <div className="relative animate-fade-up pt-2 md:pt-4" style={{ animationDelay: "0.18s", animationFillMode: "both" }}>
+          <div className="pointer-events-none absolute inset-x-4 top-0 h-px bg-gradient-to-r from-transparent via-slate-200/75 to-transparent" />
           <WhyMajstorSection />
         </div>
-        <div className="animate-fade-up" style={{ animationDelay: "0.22s", animationFillMode: "both" }}>
+        <div className="relative animate-fade-up pt-2 md:pt-4" style={{ animationDelay: "0.22s", animationFillMode: "both" }}>
+          <div className="pointer-events-none absolute inset-x-4 top-0 h-px bg-gradient-to-r from-transparent via-slate-200/75 to-transparent" />
           <FAQ />
         </div>
-        <div className="animate-fade-up" style={{ animationDelay: "0.26s", animationFillMode: "both" }}>
+        <div className="relative animate-fade-up pt-2 md:pt-4" style={{ animationDelay: "0.26s", animationFillMode: "both" }}>
+          <div className="pointer-events-none absolute inset-x-4 top-0 h-px bg-gradient-to-r from-transparent via-slate-200/70 to-transparent" />
           <SeoLandingLinks />
         </div>
       </div>

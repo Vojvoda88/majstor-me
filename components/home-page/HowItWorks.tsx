@@ -194,7 +194,7 @@ function HandymanStepGrid({ steps }: { steps: readonly HandymanStep[] }) {
 
 export function HowItWorksForUsers() {
   return (
-    <section id="kako-radi" className="scroll-mt-24 py-10 md:py-16">
+    <section id="kako-radi" className="scroll-mt-24 py-8 md:py-14">
       <div className="mx-auto max-w-3xl text-center md:max-w-none">
         <p className="text-xs font-bold uppercase tracking-[0.2em] text-sky-700">Za korisnike</p>
         <h2 className="mt-2 font-display text-[1.6rem] font-bold tracking-tight text-brand-navy sm:text-3xl md:text-4xl">
@@ -232,7 +232,7 @@ export function HowItWorksForHandymen() {
   return (
     <section
       id="kako-radi-majstore"
-      className="scroll-mt-24 border-t border-slate-200/60 bg-gradient-to-b from-slate-100/60 via-white to-white py-12 md:py-20"
+      className="scroll-mt-24 border-t border-slate-200/60 bg-gradient-to-b from-slate-100/60 via-white to-white py-10 md:py-16"
     >
       <div className="mx-auto max-w-6xl px-4 sm:px-5">
         <div className="relative overflow-hidden rounded-[1.7rem] border border-slate-200/80 bg-white p-5 shadow-[0_26px_70px_-44px_rgba(15,23,42,0.5)] sm:p-7 md:p-9">

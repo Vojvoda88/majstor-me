@@ -17,10 +17,10 @@ const BENEFITS = [
 
 export function WhyMajstorSection() {
   return (
-    <section className="relative py-12 md:py-32">
+    <section className="relative py-10 md:py-20">
       <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent" />
 
-      <div className="grid gap-10 lg:grid-cols-[minmax(0,1.08fr)_minmax(0,0.95fr)] lg:gap-12 xl:gap-16 lg:items-start">
+      <div className="grid gap-8 lg:grid-cols-[minmax(0,1.08fr)_minmax(0,0.95fr)] lg:gap-10 xl:gap-14 lg:items-start">
         <div className="relative overflow-hidden rounded-[1.75rem] border border-slate-200/90 bg-gradient-to-br from-slate-800 via-brand-navy to-[#152a45] p-8 text-white shadow-[0_24px_56px_-28px_rgba(10,22,40,0.22)] md:p-10 lg:p-12">
           <div className="pointer-events-none absolute -right-20 -top-28 h-72 w-72 rounded-full bg-sky-400/15 blur-3xl" />
           <div className="pointer-events-none absolute -bottom-24 -left-12 h-56 w-56 rounded-full bg-amber-400/12 blur-3xl" />
