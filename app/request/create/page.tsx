@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
+import Link from "next/link";
 import { CreateRequestForm } from "@/components/forms/create-request-form";
 import { PremiumMobileHeader } from "@/components/layout/PremiumMobileHeader";
 import { GuestRequestReturnCard } from "@/components/request/guest-request-return-card";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { parseRequestCreateSearchParams } from "@/lib/request-create-query";
 import { getSiteUrl } from "@/lib/site-url";
+import { auth } from "@/lib/auth";
 
 const baseUrl = getSiteUrl();
 
@@ -41,6 +43,7 @@ export const dynamic = "force-dynamic";
 export default async function CreateRequestPage(props: {
   searchParams?: Promise<Record<string, string | string[] | undefined>> | Record<string, string | string[] | undefined>;
 }) {
+  const session = await auth();
   let initialCategory: string | undefined;
   let initialCity: string | undefined;
 
@@ -78,6 +81,29 @@ export default async function CreateRequestPage(props: {
             pregleda zahtjev, zatim zainteresovani majstori mogu poslati ponude.
           </p>
         </header>
+        {!session?.user?.id && (
+          <div className="mb-5 rounded-[1.35rem] border border-amber-200/80 bg-gradient-to-br from-amber-50 via-white to-slate-50 p-4 shadow-[0_16px_38px_-28px_rgba(15,23,42,0.28)]">
+            <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-amber-700">Preporučeno</p>
+            <h2 className="mt-1.5 font-display text-lg font-bold text-slate-900">Registrujte se prije objave oglasa</h2>
+            <p className="mt-2 text-sm leading-relaxed text-slate-600">
+              Nije obavezno, ali je lakše da kasnije pratite zahtjev, ponude i status na jednom mjestu.
+            </p>
+            <div className="mt-3 flex flex-col gap-2 sm:flex-row">
+              <Link
+                href="/register"
+                className="inline-flex min-h-[46px] items-center justify-center rounded-xl bg-[#2563EB] px-4 text-sm font-bold text-white shadow-sm transition hover:bg-[#1d4ed8]"
+              >
+                Registruj se
+              </Link>
+              <Link
+                href="/login"
+                className="inline-flex min-h-[46px] items-center justify-center rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+              >
+                Već imam nalog
+              </Link>
+            </div>
+          </div>
+        )}
         <GuestRequestReturnCard />
 
         <Suspense

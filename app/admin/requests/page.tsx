@@ -12,6 +12,7 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { RequestFilters } from "./request-filters";
 import { RestoreButtonInline } from "./restore-button-inline";
+import { DeleteButtonInline } from "./delete-button-inline";
 import { ADMIN_REQUEST_LIST_SELECT } from "@/lib/admin/admin-prisma-selects";
 
 export const dynamic = "force-dynamic";
@@ -67,7 +68,8 @@ export default async function AdminRequestsPage({
     | Promise<Record<string, string | string[] | undefined>>
     | Record<string, string | string[] | undefined>;
 }) {
-  await requireAdminPermission("requests");
+  const { adminRole } = await requireAdminPermission("requests");
+  const canWriteRequests = adminRole !== "READ_ONLY";
 
   let snapshot: AdminRequestsSnapshot = { page: 1 };
 
@@ -246,7 +248,9 @@ export default async function AdminRequestsPage({
                     <Link href={`/admin/requests/${r.id}`} className="text-sm font-medium text-[#2563EB] hover:underline">
                       Detalji
                     </Link>
-                    {r.adminStatus === "DELETED" && <RestoreButtonInline requestId={r.id} />}
+                    {r.adminStatus === "DELETED"
+                      ? <RestoreButtonInline requestId={r.id} />
+                      : canWriteRequests && <DeleteButtonInline requestId={r.id} />}
                   </div>
                 </div>
               ))}
@@ -300,7 +304,9 @@ export default async function AdminRequestsPage({
                           <Link href={`/admin/requests/${r.id}`} className="text-[#2563EB] hover:underline">
                             Detalji
                           </Link>
-                          {r.adminStatus === "DELETED" && <RestoreButtonInline requestId={r.id} />}
+                          {r.adminStatus === "DELETED"
+                            ? <RestoreButtonInline requestId={r.id} />
+                            : canWriteRequests && <DeleteButtonInline requestId={r.id} />}
                         </div>
                       </td>
                     </tr>

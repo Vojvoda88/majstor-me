@@ -22,6 +22,7 @@ export function RequestDetailActions({
   const [loading, setLoading] = useState<string | null>(null);
 
   const canAct = canWriteRequests && (adminStatus === "PENDING_REVIEW" || !adminStatus);
+  const canDelete = canWriteRequests && adminStatus !== "DELETED";
 
   const action = async (path: string) => {
     if (!canAct || loading) return;
@@ -92,7 +93,25 @@ export function RequestDetailActions({
     }
   };
 
-  if (!canAct) return null;
+  const remove = async () => {
+    if (!canDelete || loading) return;
+    if (!confirm("Obrisati ovaj oglas?")) return;
+    setLoading("delete");
+    try {
+      const res = await fetch(`/api/admin/requests/${requestId}/delete`, {
+        method: "POST",
+      });
+      const data = await res.json();
+      if (data.success) router.refresh();
+      else alert(data.error ?? "Greška");
+    } catch {
+      alert("Greška");
+    } finally {
+      setLoading(null);
+    }
+  };
+
+  if (!canAct && !canDelete) return null;
 
   return (
     <Card>
@@ -112,9 +131,11 @@ export function RequestDetailActions({
         <Button variant="outline" onClick={() => action("/spam")} disabled={!!loading}>
           Mark as spam
         </Button>
-        <Button variant="outline" onClick={() => action("/delete")} disabled={!!loading}>
-          Delete
-        </Button>
+        {canDelete && (
+          <Button variant="outline" onClick={remove} disabled={!!loading}>
+            Obriši oglas
+          </Button>
+        )}
         {requesterPhone && canTrustSafety && (
           <Button variant="destructive" onClick={blacklist} disabled={!!loading}>
             Blacklist phone
