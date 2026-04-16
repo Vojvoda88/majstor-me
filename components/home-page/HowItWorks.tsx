@@ -141,14 +141,14 @@ function handymanCardClass(featured: boolean): string {
     );
   }
   return cn(
-    "group relative flex min-h-full flex-col overflow-hidden rounded-2xl border border-slate-200/85 bg-white/95 p-5 backdrop-blur-sm md:p-6",
+    "group relative flex min-h-full flex-col overflow-hidden rounded-2xl border border-slate-200/85 bg-gradient-to-b from-white to-slate-50/80 p-5 backdrop-blur-sm md:p-6",
     "shadow-[0_16px_36px_-24px_rgba(15,23,42,0.38)] transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_24px_48px_-22px_rgba(15,23,42,0.46)]"
   );
 }
 
 function HandymanStepGrid({ steps }: { steps: readonly HandymanStep[] }) {
   return (
-    <div className="grid gap-5 md:grid-cols-2 md:gap-6 lg:grid-cols-3 lg:gap-7">
+    <div className="grid gap-4 md:grid-cols-2 md:gap-5 lg:grid-cols-3 lg:gap-6">
       {steps.map((step) => (
         <div key={step.n} className={handymanCardClass(step.featured)}>
           {!step.featured && (
@@ -164,12 +164,12 @@ function HandymanStepGrid({ steps }: { steps: readonly HandymanStep[] }) {
             />
           )}
           {step.featured && (
-            <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.2em] text-amber-200/90">Glavni benefit</p>
+            <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.2em] text-amber-200/90">Glavni benefit</p>
           )}
-          <div className="flex items-start gap-4">
+          <div className="flex items-start gap-3.5">
             <span
               className={cn(
-                "inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl md:h-12 md:w-12",
+                "inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl md:h-12 md:w-12",
                 step.featured
                   ? "bg-white/15 text-white shadow-inner shadow-black/20 ring-1 ring-white/20"
                   : "bg-slate-100 text-brand-navy ring-1 ring-slate-200/80"
@@ -189,13 +189,13 @@ function HandymanStepGrid({ steps }: { steps: readonly HandymanStep[] }) {
               </div>
               <h3
                 className={cn(
-                  "mt-2 font-display font-bold leading-snug",
+                  "mt-1.5 font-display font-bold leading-snug",
                   step.featured ? "text-[17px] md:text-xl" : "text-[17px] md:text-[17px]"
                 )}
               >
                 {step.title}
               </h3>
-              <p className={cn("mt-3 text-sm leading-relaxed md:text-[15px]", step.featured ? "text-slate-100/95" : "text-slate-600")}>
+              <p className={cn("mt-2 text-sm leading-relaxed md:text-[15px]", step.featured ? "text-slate-100/95" : "text-slate-600")}>
                 {step.desc}
               </p>
             </div>
@@ -246,10 +246,10 @@ export function HowItWorksForHandymen() {
   return (
     <section
       id="kako-radi-majstore"
-      className="scroll-mt-24 border-t border-slate-200/60 bg-gradient-to-b from-slate-100/60 via-white to-white py-10 md:py-16"
+      className="scroll-mt-24 border-t border-slate-200/60 bg-gradient-to-b from-slate-100/60 via-white to-white py-8 md:py-14"
     >
       <div className="mx-auto max-w-6xl px-4 sm:px-5">
-        <div className="relative overflow-hidden rounded-[1.7rem] border border-slate-200/80 bg-gradient-to-b from-slate-50/55 via-white to-white p-5 shadow-[0_26px_70px_-44px_rgba(15,23,42,0.5)] sm:p-7 md:p-9">
+        <div className="relative overflow-hidden rounded-[1.7rem] border border-slate-200/80 bg-gradient-to-b from-slate-50/55 via-white to-white p-4 shadow-[0_26px_70px_-44px_rgba(15,23,42,0.5)] sm:p-6 md:p-8">
           <div
             className="pointer-events-none absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-slate-300/85 to-transparent"
             aria-hidden
@@ -258,13 +258,13 @@ export function HowItWorksForHandymen() {
             className="pointer-events-none absolute -right-24 -top-24 h-64 w-64 rounded-full bg-sky-200/20 blur-3xl"
             aria-hidden
           />
-          <div className="flex flex-wrap items-start justify-between gap-4">
+          <div className="flex flex-wrap items-start justify-between gap-3.5">
             <div className="max-w-2xl">
               <p className="text-xs font-bold uppercase tracking-[0.2em] text-slate-500">Majstori</p>
-              <h2 className="mt-2 font-display text-[1.65rem] font-bold tracking-tight text-slate-900 sm:text-3xl md:text-4xl">
+              <h2 className="mt-1.5 font-display text-[1.58rem] font-bold tracking-tight text-slate-900 sm:text-3xl md:text-4xl">
                 Za majstore
               </h2>
-              <p className="mt-3 text-[15px] font-medium leading-relaxed text-slate-600 sm:text-base md:text-lg">
+              <p className="mt-2.5 text-[15px] font-medium leading-relaxed text-slate-600 sm:text-base md:text-lg">
                 Bez pretplate. Dobijate {HANDYMAN_START_BONUS_CREDITS.toLocaleString("sr-Latn-ME")} start kredita i plaćate
                 samo kada otključate kontakt klijenta.
               </p>
@@ -281,7 +281,7 @@ export function HowItWorksForHandymen() {
             </div>
           </div>
 
-          <div className="relative mx-auto mt-8 max-w-6xl md:mt-10">
+          <div className="relative mx-auto mt-6 max-w-6xl md:mt-8">
             <div
               className="pointer-events-none absolute -inset-x-2 -inset-y-2 rounded-[1.6rem] bg-gradient-to-br from-slate-100/70 via-white/0 to-sky-100/25 blur-2xl"
               aria-hidden
@@ -289,7 +289,7 @@ export function HowItWorksForHandymen() {
             <HandymanStepGrid steps={HANDYMAN_STEPS} />
           </div>
 
-          <div className="mt-7 rounded-2xl border border-slate-200/80 bg-slate-50/70 px-4 py-4 text-center sm:px-6">
+          <div className="mt-5 rounded-2xl border border-slate-200/80 bg-slate-50/70 px-4 py-4 text-center sm:px-6">
             <p className="text-sm font-medium leading-relaxed text-slate-700 sm:text-[15px]">
               Krediti nijesu pretplata. Troše se samo kada otključate kontakt za posao koji želite.
             </p>
@@ -299,7 +299,7 @@ export function HowItWorksForHandymen() {
             </p>
           </div>
 
-          <div className="mt-6 flex flex-col items-stretch gap-3 sm:items-center">
+          <div className="mt-5 flex flex-col items-stretch gap-3 sm:items-center">
             <Link
               href="/register?type=majstor"
               className="inline-flex min-h-[52px] items-center justify-center gap-2 rounded-2xl bg-gradient-to-br from-amber-300 via-amber-400 to-amber-500 px-8 text-base font-bold text-brand-navy shadow-[0_16px_40px_-14px_rgba(245,158,11,0.55)] ring-1 ring-white/45 transition hover:brightness-105 active:scale-[0.99]"

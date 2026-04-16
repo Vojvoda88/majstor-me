@@ -70,11 +70,11 @@ export default function CategoriesPage() {
   });
 
   return (
-    <div className="min-h-screen bg-brand-page pb-28 pt-16 md:pb-10 md:pt-20">
+    <div className="min-h-screen bg-brand-page pb-20 pt-16 md:pb-10 md:pt-20">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(categoriesJsonLd) }} />
       <PublicHeader />
-      <div className="mx-auto max-w-6xl px-5 py-10 md:px-8 md:py-14">
-        <header className="mb-10 md:mb-14">
+      <div className="mx-auto max-w-6xl px-5 pb-10 pt-5 md:px-8 md:pb-14 md:pt-8">
+        <header className="mb-7 md:mb-10">
           <h1 className="font-display text-3xl font-bold tracking-tight text-brand-navy md:text-5xl">
             Sve kategorije
           </h1>
