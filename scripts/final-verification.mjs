@@ -5,7 +5,7 @@
  * Optional env: ADMIN_EMAIL, ADMIN_PASSWORD (default from seed: admin@majstor.me, Test123!)
  */
 
-const BASE = process.argv[2] || "http://localhost:3000";
+const BASE = process.argv[2] || "http://localhost:3010";
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "admin@majstor.me";
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "Test123!";
 

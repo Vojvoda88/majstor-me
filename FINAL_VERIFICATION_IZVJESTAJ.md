@@ -7,7 +7,7 @@ Verifikacija je urađena **stvarnim HTTP zahtjevima** (simulacija browsera) uz p
 ## Korištena metoda
 
 - Skripta: **`scripts/final-verification.mjs`**
-- Pokretanje: `node scripts/final-verification.mjs` (dev server mora biti pokrenut na `http://localhost:3000`).
+- Pokretanje: `node scripts/final-verification.mjs` (dev server mora biti pokrenut na `http://localhost:3010`).
 - Admin kredencijali (ako je seed pokrenut): **admin@majstor.me** / **Test123!** (mogu se override-ati s `ADMIN_EMAIL` i `ADMIN_PASSWORD`).
 
 Skripta radi:
@@ -55,6 +55,6 @@ Skripta radi:
 
 1. Pokrenuti dev server: `npm run dev`
 2. U drugom terminalu: `node scripts/final-verification.mjs`
-3. Opciono: ručno u browseru – otvoriti http://localhost:3000, kliknuti Prijava, ulogovati se kao admin@majstor.me / Test123!, otvoriti /admin i podstranice.
+3. Opciono: ručno u browseru – otvoriti http://localhost:3010, kliknuti Prijava, ulogovati se kao admin@majstor.me / Test123!, otvoriti /admin i podstranice.
 
 Ako seed nije pokrenut, prvo pokrenuti: `npm run db:seed` (koristi ADMIN_EMAIL iz .env ili "admin@majstor.me").

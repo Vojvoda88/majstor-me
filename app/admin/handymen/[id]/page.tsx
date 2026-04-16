@@ -8,6 +8,7 @@ import { DeleteUserButton } from "./delete-user-button";
 import { AdminRouteLoadError } from "@/lib/admin/admin-ssr-fallback";
 import { prismaErrorCode } from "@/lib/admin/admin-ssr-params";
 import Image from "next/image";
+import { Badge } from "@/components/ui/badge";
 
 export const dynamic = "force-dynamic";
 
@@ -152,6 +153,22 @@ export default async function AdminHandymanDetailPage({ params }: { params: Prom
   const hp = user.handymanProfile;
   const categories = hp.workerCategories.map((wc) => wc.category.name);
   const ratingDisplay = Number(hp.ratingAvg ?? 0).toFixed(1);
+  const reviewStatusLabel =
+    hp.workerStatus === "PENDING_REVIEW"
+      ? "Profil čeka pregled"
+      : hp.workerStatus === "ACTIVE"
+        ? "Profil je odobren"
+        : hp.workerStatus === "SUSPENDED" || user.suspendedAt
+          ? "Profil je suspendovan"
+          : hp.workerStatus === "BANNED" || user.bannedAt
+            ? "Profil je banovan"
+            : "Status profila";
+  const verificationLabel =
+    hp.verifiedStatus === "VERIFIED"
+      ? "Verifikovan"
+      : hp.verifiedStatus === "REJECTED"
+        ? "Verifikacija odbijena"
+        : "Verifikacija na čekanju";
 
   return (
     <div className="space-y-6">
@@ -172,6 +189,75 @@ export default async function AdminHandymanDetailPage({ params }: { params: Prom
           <DeleteUserButton userId={id} label="Obriši nalog (majstora)" />
         </div>
       </div>
+
+      <Card className="border-slate-200">
+        <CardHeader>
+          <CardTitle>Pregled odluke</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex flex-wrap gap-2">
+            <Badge
+              variant={
+                hp.workerStatus === "ACTIVE"
+                  ? "success"
+                  : hp.workerStatus === "PENDING_REVIEW"
+                    ? "outline"
+                    : hp.workerStatus === "SUSPENDED" || user.suspendedAt
+                      ? "secondary"
+                      : "destructive"
+              }
+            >
+              {reviewStatusLabel}
+            </Badge>
+            <Badge
+              variant={
+                hp.verifiedStatus === "VERIFIED"
+                  ? "success"
+                  : hp.verifiedStatus === "REJECTED"
+                    ? "destructive"
+                    : "secondary"
+              }
+            >
+              {verificationLabel}
+            </Badge>
+          </div>
+          <div className="grid gap-4 md:grid-cols-3">
+            <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+              <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Šta admin pregleda</p>
+              <p className="mt-2 text-sm font-semibold text-slate-900">Opis, kategorije, gradove i slike radova</p>
+              <p className="mt-1 text-xs leading-relaxed text-slate-600">
+                Ovaj blok služi da brzo odlučite da li profil može javno da se objavi ili treba dorada.
+              </p>
+            </div>
+            <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+              <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Javni status</p>
+              <p className="mt-2 text-sm font-semibold text-slate-900">
+                {hp.workerStatus === "ACTIVE"
+                  ? "Vidljiv korisnicima"
+                  : hp.workerStatus === "PENDING_REVIEW"
+                    ? "Nije javno objavljen"
+                    : "Ograničen pristup"}
+              </p>
+              <p className="mt-1 text-xs leading-relaxed text-slate-600">
+                Dok nije aktivan, majstor ne treba da bude tretiran kao javno objavljen profil u katalogu.
+              </p>
+            </div>
+            <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+              <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Sljedeća akcija</p>
+              <p className="mt-2 text-sm font-semibold text-slate-900">
+                {hp.workerStatus === "PENDING_REVIEW"
+                  ? "Odobrite ili odbijte profil"
+                  : hp.verifiedStatus !== "VERIFIED"
+                    ? "Verifikujte nalog ako je pregled završen"
+                    : "Nalog je spreman"}
+              </p>
+              <p className="mt-1 text-xs leading-relaxed text-slate-600">
+                Akcije su gore desno. Verifikacija naloga je odvojena od odobrenja javnog profila.
+              </p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       <div className="grid gap-6 lg:grid-cols-2">
         <Card>

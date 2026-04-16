@@ -9,7 +9,7 @@ Tačni koraci za ručno testiranje cijelog flow-a.
 1. Pokrenuti `npm run db:push`
 2. Opciono: `npm run db:seed` za demo podatke
 3. Pokrenuti `npm run dev`
-4. Otvoriti http://localhost:3000
+4. Otvoriti http://localhost:3010 (isti port kao `npm run dev` u `package.json`)
 
 ---
 

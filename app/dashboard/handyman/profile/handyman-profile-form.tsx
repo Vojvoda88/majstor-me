@@ -173,15 +173,6 @@ export function HandymanProfileForm({
             </div>
           </div>
           <div>
-            <Label>Bio / Opis usluga</Label>
-            <Textarea
-              {...register("bio")}
-              className="mt-2"
-              rows={3}
-              placeholder="Kratko o vama i uslugama..."
-            />
-          </div>
-          <div>
             <Label>Kategorije *</Label>
             <p className="text-sm text-muted-foreground">
               Odaberite kategorije u kojima nudite usluge (maks. {MAX_CATEGORIES})
@@ -233,6 +224,9 @@ export function HandymanProfileForm({
       <Card>
         <CardHeader>
           <CardTitle>Detalji profila</CardTitle>
+          <p className="text-sm text-muted-foreground">
+            Ovo pomaže klijentu da odmah vidi koliko ste iskusni, koliko brzo odgovarate i za kakve poslove ste dostupni.
+          </p>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid gap-4 sm:grid-cols-2">
@@ -306,12 +300,28 @@ export function HandymanProfileForm({
       <Card>
         <CardHeader>
           <CardTitle>Galerija radova</CardTitle>
-          <p className="text-sm text-muted-foreground">Dodajte URL-ove slika vaših radova</p>
+          <p className="text-sm text-muted-foreground">Dodajte slike stvarnih radova da profil djeluje uvjerljivo i ozbiljno.</p>
         </CardHeader>
         <CardContent>
           <GalleryEditor
             images={galleryImages}
             onChange={(imgs) => setValue("galleryImages", imgs)}
+          />
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Opis profila</CardTitle>
+          <p className="text-sm text-muted-foreground">
+            Na kraju napišite jasan opis: šta radite, za koga radite i zašto bi klijent izabrao baš vas.
+          </p>
+        </CardHeader>
+        <CardContent>
+          <Textarea
+            {...register("bio")}
+            rows={5}
+            placeholder="Npr. Radimo adaptacije kupatila, vodoinstalaterske intervencije i manje hitne popravke u Podgorici i okolini. Dolazak po dogovoru, uredan rad i jasna cijena prije početka."
           />
         </CardContent>
       </Card>

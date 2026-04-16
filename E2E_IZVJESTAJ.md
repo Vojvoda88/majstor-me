@@ -42,7 +42,7 @@ Samo Chromium: `npx playwright test --project=chromium`
 - **Env (opciono):**  
   `E2E_ADMIN_EMAIL`, `E2E_USER_EMAIL`, `E2E_HANDYMAN_EMAIL`, `E2E_PASSWORD`  
   ili `ADMIN_EMAIL`, `ADMIN_PASSWORD` za admin.
-- **BaseURL:** `http://localhost:3000` (ili `PLAYWRIGHT_BASE_URL`).
+- **BaseURL:** `http://localhost:3010` (ili `PLAYWRIGHT_BASE_URL`).
 
 ## 5. Otkriveni problemi
 

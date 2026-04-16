@@ -170,6 +170,11 @@ export default async function AdminHandymenPage({
                       <span>Krediti: {hp.creditsBalance}</span>
                       <span>Ponude: {h._count.offers}</span>
                     </div>
+                    {hp.workerStatus === "PENDING_REVIEW" && (
+                      <p className="mt-2 text-xs font-medium text-amber-700">
+                        Čeka admin pregled profila prije javne objave.
+                      </p>
+                    )}
                     <div className="mt-3">
                       <Link href={`/admin/handymen/${h.id}`} className="text-sm font-medium text-[#2563EB] hover:underline">
                         Detalji
@@ -212,7 +217,7 @@ export default async function AdminHandymenPage({
                           ) : hp.workerStatus === "SUSPENDED" || isSuspended ? (
                             <Badge variant="secondary">Suspendovan</Badge>
                           ) : hp.workerStatus === "PENDING_REVIEW" ? (
-                            <Badge variant="outline">Na čekanju</Badge>
+                            <Badge variant="outline">Čeka pregled</Badge>
                           ) : (
                             <Badge variant="success">Aktivan</Badge>
                           )}

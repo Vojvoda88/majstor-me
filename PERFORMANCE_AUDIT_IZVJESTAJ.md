@@ -289,8 +289,8 @@ Pronađeno je **~55+** fajlova s `"use client"` (uključujući duplikate zbog pu
 // app/page.tsx
 async function getHomeData() {
   const [statsRes, handymenRes] = await Promise.all([
-    fetch(`${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/stats/platform`, { next: { revalidate: 60 } }),
-    fetch(`${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/handymen?limit=3&sort=rating`, { next: { revalidate: 60 } }),
+    fetch(`${process.env.NEXTAUTH_URL || 'http://localhost:3010'}/api/stats/platform`, { next: { revalidate: 60 } }),
+    fetch(`${process.env.NEXTAUTH_URL || 'http://localhost:3010'}/api/handymen?limit=3&sort=rating`, { next: { revalidate: 60 } }),
   ]);
   const stats = statsRes.ok ? await statsRes.json() : null;
   const handymen = handymenRes.ok ? await handymenRes.json() : { items: [] };

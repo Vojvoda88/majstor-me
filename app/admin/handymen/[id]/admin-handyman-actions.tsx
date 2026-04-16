@@ -56,7 +56,7 @@ export function AdminHandymanActions({
             onClick={() => action(`/handymen/${handymanId}/approve`)}
             disabled={!!loading}
           >
-            Approve
+            {loading === `/handymen/${handymanId}/approve` ? "Odobravanje..." : "Odobri profil"}
           </Button>
           <Button
             size="sm"
@@ -64,7 +64,7 @@ export function AdminHandymanActions({
             onClick={() => action(`/handymen/${handymanId}/reject`)}
             disabled={!!loading}
           >
-            Reject
+            {loading === `/handymen/${handymanId}/reject` ? "Odbijanje..." : "Odbij profil"}
           </Button>
         </>
       )}
@@ -75,7 +75,7 @@ export function AdminHandymanActions({
           onClick={() => action(`/handymen/${handymanId}/verify`, { status: "VERIFIED" })}
           disabled={!!loading}
         >
-          {loading === `/handymen/${handymanId}/verify` ? "..." : "Verifikuj"}
+          {loading === `/handymen/${handymanId}/verify` ? "Verifikacija..." : "Verifikuj nalog"}
         </Button>
       )}
       {verifiedStatus !== "REJECTED" && (

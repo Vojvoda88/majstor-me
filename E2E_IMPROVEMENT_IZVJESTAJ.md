@@ -90,7 +90,7 @@
 # Terminal 1 – obavezno prvo
 npm run dev
 
-# Čekati "Ready" ili otvoriti http://localhost:3000
+# Čekati "Ready" ili otvoriti http://localhost:3010
 
 # Terminal 2 – manji broj workera smanjuje opterećenje
 npx playwright test --project=chromium --workers=1

@@ -3,6 +3,8 @@
 **Datum testa (runtime):** 2026-03-21  
 **Okruženje:** Windows, `npx next dev -p 3010`, projekat `MajstorMe`, učitava se `.env`.
 
+> **Napomena (2026):** lokalni dev u repou je **`npm run dev` → port 3010**. U `.env` treba **`NEXTAUTH_URL=http://localhost:3010`** da se poklopi sa stvarnim originom (inače CSRF / sesija znaju pucati).
+
 ---
 
 ## 1. Pokretanje aplikacije
@@ -78,7 +80,7 @@ Pokušaj: `POST /api/auth/callback/credentials` sa `csrfToken` sa istog hosta (`
 - **Registracija i upis u bazu (USER + HANDYMAN + profil)** — **dokazano radi** runtime zahtjevima i Prisma čitanjem.
 - **Login kroz `/api/auth/callback/credentials` na portu 3010** — u ovom testu **nije** potvrđen kao uspješan zbog **NEXTAUTH_URL vs port**; to **nije** greška u `POST /api/auth/register`.
 
-**Preporuka za lokalni login test:** pokrenuti `next dev` na portu **3000** (ili postaviti `NEXTAUTH_URL` na isti port kao dev server, npr. `http://localhost:3010`).
+**Preporuka za lokalni login test:** uskladiti **`NEXTAUTH_URL`** sa portom dev servera (u repou: **`http://localhost:3010`** kao `npm run dev`).
 
 ---
 

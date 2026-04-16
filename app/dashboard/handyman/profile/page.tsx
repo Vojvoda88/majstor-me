@@ -32,7 +32,7 @@ export default async function HandymanProfilePage() {
     <div className="container mx-auto max-w-lg px-4 py-8">
       <h1 className="page-title">Profil majstora</h1>
       <p className="page-description">
-        Izaberite kategorije i gradove u kojima nudite usluge
+        Popunite profil onim redom kako bi ga klijent najlakše razumio: osnovni podaci, detalji usluge, galerija i opis.
       </p>
       {onboarding.percent < 100 && (
         <OnboardingBanner percent={onboarding.percent} steps={onboarding.steps} className="mb-6" />

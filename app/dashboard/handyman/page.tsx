@@ -152,6 +152,13 @@ export default async function HandymanDashboardPage({
   const totalDisplayed = sorted.length;
 
   const onboarding = calcProfileCompletion(profile, profile?.user);
+  const pendingSteps = onboarding.steps.filter((step) => !step.done);
+  const statusLabel =
+    profile.workerStatus === "ACTIVE"
+      ? "Profil je aktivan"
+      : profile.workerStatus === "PENDING_REVIEW"
+        ? "Čeka pregled admina"
+        : "Profil trenutno nije aktivan";
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-5 sm:px-6 sm:py-8">
@@ -178,6 +185,36 @@ export default async function HandymanDashboardPage({
             </Button>
           </Link>
           <SignOutButton />
+        </div>
+      </div>
+
+      <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+          <div className="space-y-2">
+            <p className="text-sm font-semibold text-slate-500">Status profila</p>
+            <h2 className="text-xl font-bold text-[#0F172A]">{statusLabel}</h2>
+            <p className="max-w-2xl text-sm leading-relaxed text-slate-600">
+              {profile.workerStatus === "ACTIVE"
+                ? "Profil je javno vidljiv i možete normalno pratiti zahtjeve, otključavati kontakte i slati ponude."
+                : "Profil još nije javno objavljen. Popunite što više podataka da admin može brže pregledati i odobriti profil."}
+            </p>
+          </div>
+          <div className="min-w-[220px] rounded-xl border border-slate-200 bg-slate-50 p-4">
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Sledeći korak</p>
+            <p className="mt-2 text-sm font-semibold text-slate-900">
+              {pendingSteps[0]?.label ?? "Profil je kompletiran."}
+            </p>
+            <p className="mt-1 text-xs leading-relaxed text-slate-600">
+              {pendingSteps.length > 0
+                ? `Preostalo još ${pendingSteps.length} stvari prije punijeg profila.`
+                : "Svi osnovni elementi profila su popunjeni."}
+            </p>
+            <Link href="/dashboard/handyman/profile" className="mt-3 inline-block">
+              <Button size="sm" className="w-full">
+                Otvori profil i dovrši
+              </Button>
+            </Link>
+          </div>
         </div>
       </div>
 
