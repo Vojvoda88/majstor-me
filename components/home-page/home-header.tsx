@@ -104,7 +104,7 @@ export function HomeHeader() {
                 onClick={() => setMenuOpen(false)}
               >
                 <Shield className="h-4 w-4" />
-                Admin panel
+                Administracija
               </Link>
             )}
             <div className="mt-3 flex flex-col gap-2 border-t border-[#E2E8F0] pt-3">

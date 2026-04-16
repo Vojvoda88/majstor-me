@@ -117,7 +117,7 @@ function ReviewForm({ requestId, handymanName }: { requestId: string; handymanNa
       </div>
       <div>
         <Label>Komentar (opciono)</Label>
-        <Textarea {...register("comment")} className="mt-2" rows={3} maxLength={1000} placeholder="Opcionalno (max 1000 znakova)" />
+        <Textarea {...register("comment")} className="mt-2" rows={3} maxLength={1000} placeholder="Opciono (max 1000 znakova)" />
       </div>
       <Button type="submit" disabled={mutation.isPending}>
         {mutation.isPending ? "Šaljem..." : "Ostavite recenziju"}

@@ -129,7 +129,7 @@ export function PublicHeader() {
       {session?.user?.role === "ADMIN" && (
         <Link href="/admin" {...linkProps}>
           <Button variant="secondary" size="sm" className="bg-amber-100/90 text-amber-900 hover:bg-amber-200">
-            Admin panel
+            Administracija
           </Button>
         </Link>
       )}
@@ -278,7 +278,7 @@ export function PublicHeader() {
                       onClick={() => setMenuOpen(false)}
                       {...linkProps}
                     >
-                      Admin panel
+                      Administracija
                     </Link>
                   )}
                   {session.user?.role === "HANDYMAN" && (

@@ -147,7 +147,7 @@ export function AdminSidebar({ adminRole, pendingReview, mobileOpen = false, onC
               data-testid="admin-sidebar-title"
               onClick={() => onClose?.()}
             >
-              Admin panel
+              Administracija
             </Link>
           </div>
           <Link

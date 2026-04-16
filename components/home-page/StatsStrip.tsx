@@ -163,7 +163,7 @@ export function StatsStrip() {
     <section className="py-5 md:py-7" aria-labelledby="stats-trust-title">
       <div className="mb-3 flex items-center justify-between px-1 md:mb-4">
         <div>
-          <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-slate-500">Trust signali</p>
+          <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-slate-500">Pokazatelji pouzdanosti</p>
           <h3 id="stats-trust-title" className="mt-1 font-display text-lg font-bold tracking-tight text-slate-900 md:text-xl">
             Platforma u brojkama
           </h3>

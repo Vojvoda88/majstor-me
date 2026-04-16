@@ -57,7 +57,7 @@ export function HandymanRequestList({
   return (
     <div className="mt-6 space-y-4 sm:mt-8">
       <div className="flex flex-wrap items-center gap-3 rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
-        <span className="w-full text-sm font-medium text-gray-600 sm:w-auto">Filter:</span>
+        <span className="w-full text-sm font-medium text-gray-600 sm:w-auto">Filtri:</span>
         <select
           className="min-h-[44px] flex-1 rounded-xl border border-gray-200 bg-white px-4 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 sm:min-h-0 sm:flex-initial sm:h-11"
           value={currentCategory}

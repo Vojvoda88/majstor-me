@@ -59,7 +59,7 @@ export function Navbar() {
                 )}
                 {session.user.role === "HANDYMAN" && (
                   <Link href="/dashboard/handyman" className={`px-4 py-2 font-medium transition-colors ${textClass}`}>
-                    Dashboard
+                    Početak
                   </Link>
                 )}
                 <Link
@@ -90,7 +90,7 @@ export function Navbar() {
           <button
             onClick={() => setIsOpen(!isOpen)}
             className="lg:hidden p-2 text-[#0F172A]"
-            aria-label="Toggle menu"
+            aria-label="Otvori meni"
           >
             {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
@@ -128,7 +128,7 @@ export function Navbar() {
                       className="block py-2 text-[#0F172A] font-medium"
                       onClick={() => setIsOpen(false)}
                     >
-                      Dashboard
+                      Početak
                     </Link>
                   )}
                   <Link

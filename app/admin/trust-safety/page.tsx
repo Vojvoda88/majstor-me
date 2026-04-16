@@ -16,14 +16,14 @@ export default async function TrustSafetyPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-[#0F172A]">Trust & Safety</h1>
-        <p className="mt-1 text-sm text-[#64748B]">Blacklist i sigurnosni pregled</p>
+        <h1 className="text-2xl font-bold text-[#0F172A]">Sigurnost i povjerenje</h1>
+        <p className="mt-1 text-sm text-[#64748B]">Blokirani kontakti i sigurnosni pregled</p>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Blacklist telefona ({blacklistedPhones.length})</CardTitle>
+            <CardTitle>Blokirani telefoni ({blacklistedPhones.length})</CardTitle>
             <AddPhoneForm />
           </CardHeader>
           <CardContent>
@@ -41,7 +41,7 @@ export default async function TrustSafetyPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Blacklist emailova ({blacklistedEmails.length})</CardTitle>
+            <CardTitle>Blokirani email nalozi ({blacklistedEmails.length})</CardTitle>
           </CardHeader>
           <CardContent>
             <ul className="space-y-2 text-sm">

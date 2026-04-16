@@ -155,7 +155,7 @@ export default async function AdminHandymenPage({
                         <p className="mt-0.5 text-xs text-slate-500">{h.phone ?? "-"} · {h.city ?? hp.cities[0] ?? "-"}</p>
                       </div>
                       {hp.workerStatus === "BANNED" || isBanned ? (
-                        <Badge variant="destructive">Banned</Badge>
+                        <Badge variant="destructive">Banovan</Badge>
                       ) : hp.workerStatus === "SUSPENDED" || isSuspended ? (
                         <Badge variant="secondary">Suspendovan</Badge>
                       ) : hp.workerStatus === "PENDING_REVIEW" ? (
@@ -213,7 +213,7 @@ export default async function AdminHandymenPage({
                         <td className="py-3 pr-4">{h.city ?? hp.cities[0] ?? "-"}</td>
                         <td className="py-3 pr-4">
                           {hp.workerStatus === "BANNED" || isBanned ? (
-                            <Badge variant="destructive">Banned</Badge>
+                            <Badge variant="destructive">Banovan</Badge>
                           ) : hp.workerStatus === "SUSPENDED" || isSuspended ? (
                             <Badge variant="secondary">Suspendovan</Badge>
                           ) : hp.workerStatus === "PENDING_REVIEW" ? (

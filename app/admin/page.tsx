@@ -258,7 +258,7 @@ export default async function AdminDashboardPage() {
   return (
     <div className="space-y-6 sm:space-y-8">
       <div>
-        <h1 className="text-xl font-bold text-[#0F172A] sm:text-2xl">Dashboard</h1>
+        <h1 className="text-xl font-bold text-[#0F172A] sm:text-2xl">Početak</h1>
         <p className="mt-1 text-xs text-[#64748B] sm:text-sm">Pregled platforme i ključnih metrika</p>
       </div>
 

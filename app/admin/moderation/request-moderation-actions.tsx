@@ -34,7 +34,7 @@ export function RequestModerationActions({
         if (path === "/spam" && data.data) {
           const r = data.data;
           if (r.refundCount > 0) {
-            alert(`Spam. Refundirano: ${r.refundCount} majstor(a), ${r.totalCreditsRefunded} kredita.`);
+            alert(`Označeno kao spam. Vraćeno: ${r.refundCount} majstor(a), ${r.totalCreditsRefunded} kredita.`);
           }
         }
         router.refresh();
@@ -50,7 +50,7 @@ export function RequestModerationActions({
 
   const blacklist = async () => {
     if (!canWriteRequests || !canTrustSafety) return;
-    if (!requesterPhone || !confirm(`Blacklistovati ${requesterPhone}?`)) return;
+    if (!requesterPhone || !confirm(`Blokirati broj ${requesterPhone}?`)) return;
     setLoading("blacklist");
     try {
       const res = await fetch("/api/admin/blacklist/phone", {
@@ -75,7 +75,7 @@ export function RequestModerationActions({
     <div className="flex flex-wrap items-center gap-1">
       <Link href={`/admin/requests/${requestId}`}>
         <Button size="sm" variant="outline" className="h-7 text-xs">
-          Edit
+          Detalji
         </Button>
       </Link>
       {canWriteRequests && (
@@ -87,7 +87,7 @@ export function RequestModerationActions({
             disabled={!!loading}
             className="h-7 text-xs"
           >
-            Approve
+            Odobri
           </Button>
           <Button
             size="sm"
@@ -96,7 +96,7 @@ export function RequestModerationActions({
             disabled={!!loading}
             className="h-7 text-xs"
           >
-            Reject
+            Odbij
           </Button>
           <Button
             size="sm"
@@ -105,7 +105,7 @@ export function RequestModerationActions({
             disabled={!!loading}
             className="h-7 text-xs"
           >
-            Spam
+            Označi spam
           </Button>
           <Button
             size="sm"
@@ -114,7 +114,7 @@ export function RequestModerationActions({
             disabled={!!loading}
             className="h-7 text-xs"
           >
-            Delete
+            Obriši
           </Button>
         </>
       )}
@@ -126,7 +126,7 @@ export function RequestModerationActions({
           disabled={!!loading}
           className="h-7 text-xs"
         >
-          Blacklist
+          Blokiraj broj
         </Button>
       )}
     </div>

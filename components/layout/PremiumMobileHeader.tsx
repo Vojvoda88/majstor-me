@@ -39,7 +39,7 @@ export function PremiumMobileHeader() {
     session?.user?.role === "HANDYMAN"
       ? "Profil majstora"
       : session?.user?.role === "ADMIN"
-        ? "Admin panel"
+        ? "Administracija"
         : "Moj nalog";
 
   return (
@@ -189,7 +189,7 @@ export function PremiumMobileHeader() {
                     onClick={() => setMenuOpen(false)}
                   >
                     <Shield className="h-4 w-4" />
-                    Admin panel
+                    Administracija
                   </Link>
                 )}
               </div>

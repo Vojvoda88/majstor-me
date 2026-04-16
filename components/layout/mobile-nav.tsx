@@ -16,7 +16,7 @@ export function MobileNav() {
       {session.user.role === "ADMIN" && (
         <Link href="/admin" onClick={() => setOpen(false)}>
           <Button variant="secondary" className="h-14 min-h-[48px] w-full justify-start gap-2 text-base bg-amber-100 text-amber-800 hover:bg-amber-200">
-            Admin panel
+            Administracija
           </Button>
         </Link>
       )}
@@ -30,7 +30,7 @@ export function MobileNav() {
       {session.user.role === "HANDYMAN" && (
         <Link href="/dashboard/handyman" onClick={() => setOpen(false)}>
           <Button variant="ghost" className="h-14 min-h-[48px] w-full justify-start text-base">
-            Dashboard
+            Početak
           </Button>
         </Link>
       )}

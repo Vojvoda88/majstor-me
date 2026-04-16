@@ -116,7 +116,7 @@ export function AdminHandymanActions({
           onClick={() => action(`/handymen/${handymanId}/ban`)}
           disabled={!!loading}
         >
-          Ban
+          Zabrani nalog
         </Button>
       )}
       {(workerStatus === "BANNED" || bannedAt) && (
@@ -127,7 +127,7 @@ export function AdminHandymanActions({
           onClick={() => action(`/handymen/${handymanId}/unban`)}
           disabled={!!loading}
         >
-          Unban (vrati)
+          Ukloni zabranu
         </Button>
       )}
       <Button

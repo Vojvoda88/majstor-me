@@ -56,7 +56,7 @@ export default async function HandymanCreditsPage({
     <div className="container mx-auto max-w-5xl px-4 py-8">
       <div className="mb-6">
         <Link href="/dashboard/handyman" className="text-sm text-slate-500 hover:text-slate-700">
-          ← Dashboard
+          ← Početak
         </Link>
       </div>
 

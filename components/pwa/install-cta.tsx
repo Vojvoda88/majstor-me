@@ -237,18 +237,18 @@ export function InstallCTA() {
 
         {loggedIn && (isHandyman || isAdmin) && (
           <p className="mt-3 text-center text-xs leading-snug text-slate-500">
-            Kasnije možete uključiti push na{" "}
+            Kasnije možete uključiti push u{" "}
             {isAdmin ? (
               <>
                 <Link href="/admin" className="font-medium text-slate-700 underline-offset-2 hover:underline">
-                  Dashboardu
+                  administraciji
                 </Link>{" "}
-                ili{" "}
+                ili u{" "}
                 <Link
                   href="/admin/notifications"
                   className="font-medium text-slate-700 underline-offset-2 hover:underline"
                 >
-                  Notifikacije
+                  obavještenjima
                 </Link>
                 .
               </>
@@ -257,7 +257,7 @@ export function InstallCTA() {
                 href="/dashboard/handyman"
                 className="font-medium text-slate-700 underline-offset-2 hover:underline"
               >
-                dashboardu majstora
+                dijelu za majstore
               </Link>
             )}
           </p>

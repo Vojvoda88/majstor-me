@@ -87,7 +87,7 @@ export default async function AdminUsersPage({
                       <td className="py-3 pr-4">{u._count.requests}</td>
                       <td className="py-3 pr-4">
                         {isBanned ? (
-                          <Badge variant="destructive">Banned</Badge>
+                          <Badge variant="destructive">Banovan</Badge>
                         ) : isSuspended ? (
                           <Badge variant="secondary">Suspendovan</Badge>
                         ) : (

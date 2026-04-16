@@ -56,7 +56,7 @@ export function WorkerModerationActions({
             disabled={!!loading}
             className="h-7 text-xs"
           >
-            Approve
+            Odobri
           </Button>
           <Button
             size="sm"
@@ -65,7 +65,7 @@ export function WorkerModerationActions({
             disabled={!!loading}
             className="h-7 text-xs"
           >
-            Reject
+            Odbij
           </Button>
           <Button
             size="sm"
@@ -74,7 +74,7 @@ export function WorkerModerationActions({
             disabled={!!loading}
             className="h-7 text-xs"
           >
-            Suspend
+            Obustavi
           </Button>
           <Button
             size="sm"
@@ -83,18 +83,18 @@ export function WorkerModerationActions({
             disabled={!!loading}
             className="h-7 text-xs"
           >
-            Ban
+            Zabrani
           </Button>
         </>
       )}
       <Link href={`/admin/handymen/${handymanId}`}>
         <Button size="sm" variant="outline" className="h-7 text-xs">
-          Edit
+          Detalji
         </Button>
       </Link>
       <Link href={`/admin/handymen/${handymanId}`}>
         <Button size="sm" variant="outline" className="h-7 text-xs">
-          Credits
+          Krediti
         </Button>
       </Link>
     </div>

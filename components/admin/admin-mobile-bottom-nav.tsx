@@ -18,7 +18,7 @@ const ITEMS: {
   icon: LucideIcon;
   permission: Permission;
 }[] = [
-  { href: "/admin", label: "Panel", icon: LayoutDashboard, permission: "dashboard" },
+  { href: "/admin", label: "Početak", icon: LayoutDashboard, permission: "dashboard" },
   { href: "/admin/moderation", label: "Moderacija", icon: Inbox, permission: "moderation" },
   { href: "/admin/requests", label: "Zahtjevi", icon: FileText, permission: "requests" },
   { href: "/admin/handymen", label: "Majstori", icon: Wrench, permission: "workers" },
@@ -45,7 +45,7 @@ export function AdminMobileBottomNav({ adminRole, hidden = false, pendingTotal =
   return (
     <nav
       className="fixed inset-x-0 bottom-0 z-[52] border-t border-slate-200/90 bg-white/95 px-1 pb-[max(0.35rem,env(safe-area-inset-bottom))] pt-1 shadow-[0_-8px_32px_rgba(15,23,42,0.08)] backdrop-blur-md lg:hidden"
-      aria-label="Admin brza navigacija"
+      aria-label="Brza navigacija u administraciji"
     >
       <div className="mx-auto flex max-w-lg items-stretch justify-around gap-0.5">
         {visible.map(({ href, label, icon: Icon }) => {

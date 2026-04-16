@@ -72,7 +72,7 @@ export function RequestDetailActions({
 
   const blacklist = async () => {
     if (!canTrustSafety) return;
-    if (!requesterPhone || !confirm(`Blacklistovati ${requesterPhone}?`)) return;
+    if (!requesterPhone || !confirm(`Blokirati broj ${requesterPhone}?`)) return;
     setLoading("blacklist");
     try {
       const res = await fetch("/api/admin/blacklist/phone", {
@@ -123,13 +123,13 @@ export function RequestDetailActions({
           onClick={() => action("/approve")}
           disabled={!!loading}
         >
-          Approve
+          Odobri
         </Button>
         <Button variant="outline" onClick={() => action("/reject")} disabled={!!loading}>
-          Reject
+          Odbij
         </Button>
         <Button variant="outline" onClick={() => action("/spam")} disabled={!!loading}>
-          Mark as spam
+          Označi kao spam
         </Button>
         {canDelete && (
           <Button variant="outline" onClick={remove} disabled={!!loading}>
@@ -138,7 +138,7 @@ export function RequestDetailActions({
         )}
         {requesterPhone && canTrustSafety && (
           <Button variant="destructive" onClick={blacklist} disabled={!!loading}>
-            Blacklist phone
+            Blokiraj broj
           </Button>
         )}
       </CardContent>

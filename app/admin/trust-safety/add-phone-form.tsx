@@ -52,12 +52,12 @@ export function AddPhoneForm() {
         <Input
           value={reason}
           onChange={(e) => setReason(e.target.value)}
-          placeholder="Spam"
+          placeholder="npr. spam, zloupotreba"
           className="w-32"
         />
       </div>
       <Button type="submit" disabled={loading || !phone.trim()}>
-        Blacklist
+        Dodaj na listu
       </Button>
     </form>
   );

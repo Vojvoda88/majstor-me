@@ -23,7 +23,7 @@ export function SiteHeader() {
               {session.user.role === "ADMIN" && (
                 <Link href="/admin">
                   <Button variant="secondary" size="sm" className="bg-amber-100 text-amber-800 hover:bg-amber-200">
-                    Admin panel
+                    Administracija
                   </Button>
                 </Link>
               )}
@@ -34,7 +34,7 @@ export function SiteHeader() {
               )}
               {session.user.role === "HANDYMAN" && (
                 <Link href="/dashboard/handyman">
-                  <Button variant="ghost" size="sm">Dashboard</Button>
+                  <Button variant="ghost" size="sm">Početak</Button>
                 </Link>
               )}
               <NotificationsDropdown />

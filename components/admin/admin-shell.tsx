@@ -85,7 +85,7 @@ export function AdminShell({ adminRole, session, pendingReview, children }: Prop
               {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </button>
             <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-semibold tracking-tight text-[#0F172A]">Admin panel</p>
+              <p className="truncate text-sm font-semibold tracking-tight text-[#0F172A]">Administracija</p>
               <p className="hidden truncate text-xs text-[#64748B] sm:block">
                 {session.user?.name} · {roleLabel}
               </p>
