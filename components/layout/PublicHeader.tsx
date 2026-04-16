@@ -376,13 +376,12 @@ export function PublicHeader() {
           <Image
             src="/icon-192.png"
             alt=""
-            width={26}
-            height={26}
-            className="rounded-md ring-1 ring-white/25"
+            width={24}
+            height={24}
+            className="rounded-md"
             aria-hidden
           />
-          <span className={cn(homeTheme ? "text-white" : "text-[#1d4ed8]")}>BrziMajstor.</span>
-          <span className={cn(homeTheme ? "text-amber-100/90" : "text-slate-800")}>ME</span>
+          <span className={cn(homeTheme ? "text-slate-100" : "text-brand-navy")}>BrziMajstor.ME</span>
         </Link>
 
         <nav className="relative z-[100] hidden items-center gap-x-8 md:flex" aria-label="Glavna navigacija">
