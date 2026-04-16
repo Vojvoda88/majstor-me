@@ -112,7 +112,6 @@ export function RegisterForm({
       success?: boolean;
       error?: unknown;
       code?: string;
-      data?: { verificationEmailSent?: boolean; verificationEmailError?: string | null };
     };
     try {
       json = await res.json();
@@ -140,8 +139,7 @@ export function RegisterForm({
       return;
     }
 
-    const verify = json.data?.verificationEmailSent === false ? "skipped" : "sent";
-    router.push(`/login?registered=1&verify=${verify}`);
+    router.push("/login?registered=1");
     router.refresh();
   }
 
@@ -311,26 +309,6 @@ export function RegisterForm({
           </div>
           {role === "HANDYMAN" && (
             <>
-              <div className="space-y-2 rounded-xl border border-slate-200 bg-slate-50/70 p-4">
-                <Label htmlFor="bio">Opis profila *</Label>
-                <Textarea
-                  id="bio"
-                  rows={4}
-                  placeholder="Napišite čime se bavite, kakve poslove radite i zašto da vas klijent odabere."
-                  {...register("bio")}
-                />
-                <p className="text-xs text-[#64748B]">
-                  Ovo admin pregleda prije nego što profil postane javno vidljiv.
-                </p>
-                {errors.bio && <p className="text-sm text-destructive">{errors.bio.message}</p>}
-              </div>
-              <div className="space-y-2 rounded-xl border border-slate-200 bg-slate-50/70 p-4">
-                <Label>Fotografije radova</Label>
-                <GalleryEditor images={galleryImages} onChange={(imgs) => setValue("galleryImages", imgs)} />
-                <p className="text-xs text-[#64748B]">
-                  Dodajte slike odmah pri registraciji da admin pregleda kompletan profil.
-                </p>
-              </div>
               <div className="space-y-2 border-t border-slate-100 pt-5">
                 <Label>Kategorije koje pokrivate *</Label>
                 <p className="text-xs text-[#64748B]">
@@ -408,6 +386,26 @@ export function RegisterForm({
                     </div>
                   )}
                 </div>
+              </div>
+              <div className="space-y-2 rounded-xl border border-slate-200 bg-slate-50/70 p-4">
+                <Label>Fotografije radova</Label>
+                <GalleryEditor images={galleryImages} onChange={(imgs) => setValue("galleryImages", imgs)} />
+                <p className="text-xs text-[#64748B]">
+                  Dodajte slike odmah pri registraciji da admin pregleda kompletan profil.
+                </p>
+              </div>
+              <div className="space-y-2 rounded-xl border border-slate-200 bg-slate-50/70 p-4">
+                <Label htmlFor="bio">Opis profila *</Label>
+                <Textarea
+                  id="bio"
+                  rows={4}
+                  placeholder="Napišite čime se bavite, kakve poslove radite i zašto da vas klijent odabere."
+                  {...register("bio")}
+                />
+                <p className="text-xs text-[#64748B]">
+                  Ovo admin pregleda prije nego što profil postane javno vidljiv.
+                </p>
+                {errors.bio && <p className="text-sm text-destructive">{errors.bio.message}</p>}
               </div>
             </>
           )}

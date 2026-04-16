@@ -48,13 +48,10 @@ function LoginFormInner() {
   const emailQ = searchParams.get("email");
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
-  const [resendBusy, setResendBusy] = useState(false);
-  const [resendMsg, setResendMsg] = useState<string | null>(null);
 
   const {
     register,
     handleSubmit,
-    getValues,
     reset,
     formState: { errors, isSubmitting },
   } = useForm<LoginFormData>({
@@ -64,13 +61,7 @@ function LoginFormInner() {
 
   useEffect(() => {
     if (searchParams.get("registered") === "1") {
-      if (searchParams.get("verify") === "skipped") {
-        setInfo(
-          "Nalog je kreiran. Verifikacioni email trenutno nije poslat jer email servis nije spreman, ali se možete prijaviti odmah i potvrditi email kasnije."
-        );
-      } else {
-        setInfo("Nalog je kreiran. Ako vam stigne verifikacioni email, potvrdite ga kad stignete — prijava radi odmah.");
-      }
+      setInfo("Nalog je kreiran. Možete se odmah prijaviti.");
     } else if (searchParams.get("verified") === "1") {
       setInfo("Email adresa je potvrđena. Sada se možete prijaviti.");
     } else {
@@ -86,13 +77,9 @@ function LoginFormInner() {
       reset({ email: emailQ, password: "" });
     }
   }, [emailQ, reset]);
-
-  const unverifiedFromUrl = searchParams.get("error") === "unverified";
-
   async function onSubmit(data: LoginFormData) {
     setError(null);
-    setResendMsg(null);
-    if (!unverifiedFromUrl) setInfo(null);
+    setInfo(null);
 
     let result: Awaited<ReturnType<typeof signIn>>;
     try {
@@ -150,33 +137,6 @@ function LoginFormInner() {
     router.refresh();
   }
 
-  async function resendVerification() {
-    const email = getValues("email")?.trim().toLowerCase();
-    if (!email || !email.includes("@")) {
-      setResendMsg("Unesite email u polje iznad pa pokušajte ponovo.");
-      return;
-    }
-    setResendBusy(true);
-    setResendMsg(null);
-    try {
-      const res = await fetch("/api/auth/resend-verification", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
-      });
-      const json = await res.json().catch(() => ({}));
-      if (res.ok && json?.success) {
-        setResendMsg("Ako nalog postoji i email još nije potvrđen, poslali smo novi link.");
-      } else {
-        setResendMsg(typeof json?.error === "string" ? json.error : "Pokušajte kasnije.");
-      }
-    } catch {
-      setResendMsg("Greška mreže. Pokušajte ponovo.");
-    } finally {
-      setResendBusy(false);
-    }
-  }
-
   return (
     <Card className="w-full rounded-2xl border-[#E2E8F0] shadow-card">
       <CardContent className="pt-8">
@@ -194,23 +154,6 @@ function LoginFormInner() {
           {error && (
             <div className="form-error" data-testid="login-error" role="alert">
               {error}
-            </div>
-          )}
-          {unverifiedFromUrl && (
-            <div className="rounded-lg border border-amber-200 bg-amber-50/90 px-3 py-3 text-sm text-amber-950">
-              <p className="font-medium">Email adresa još nije potvrđena.</p>
-              <p className="mt-1 text-amber-900/90">To više ne blokira prijavu. Link možete zatražiti ponovo kad želite.</p>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                className="mt-3 w-full border-amber-300 text-amber-950"
-                disabled={resendBusy}
-                onClick={() => void resendVerification()}
-              >
-                {resendBusy ? "Slanje…" : "Pošalji ponovo link za potvrdu"}
-              </Button>
-              {resendMsg && <p className="mt-2 text-xs text-amber-900">{resendMsg}</p>}
             </div>
           )}
           <div className="space-y-3">

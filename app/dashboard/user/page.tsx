@@ -9,7 +9,6 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { MapPin, Calendar, MessageSquare } from "lucide-react";
 import { DeleteMyAccount } from "@/components/account/delete-my-account";
 import { UserPushNotificationsCard } from "@/components/user/push-notifications-card";
-import { EmailVerificationReminder } from "@/components/account/email-verification-reminder";
 
 export const dynamic = "force-dynamic";
 
@@ -26,10 +25,6 @@ export default async function UserDashboardPage() {
   if (session.user.role !== "USER") redirect("/");
 
   const { prisma } = await import("@/lib/db");
-  const userRow = await prisma.user.findUnique({
-    where: { id: session.user.id },
-    select: { emailVerified: true },
-  });
   const requests = await prisma.request.findMany({
     where: { userId: session.user.id },
     include: {
@@ -43,7 +38,6 @@ export default async function UserDashboardPage() {
   return (
     <div className="min-h-screen bg-[#F4F7FB] pb-28 md:pb-10">
     <div className="mx-auto max-w-[430px] px-4 py-6 md:max-w-4xl md:py-8">
-      {userRow?.emailVerified == null && <EmailVerificationReminder email={session.user.email} />}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-[#0F172A] sm:text-3xl">

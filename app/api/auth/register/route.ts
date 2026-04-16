@@ -6,8 +6,6 @@ import { zodErrorToString } from "@/lib/api-response";
 import { isRateLimited, getRetryAfterSeconds } from "@/lib/rate-limit";
 import { HANDYMAN_START_BONUS_CREDITS } from "@/lib/credit-packages";
 import { getRegisterRateLimitKey, getRequestClientIp } from "@/lib/request-ip";
-import { generateEmailVerificationSecret } from "@/lib/email-verification-token";
-import { sendEmailVerificationEmail } from "@/lib/email";
 import { CITIES, MAX_HANDYMAN_CATEGORIES } from "@/lib/constants";
 import { HANDYMAN_SELECTABLE_INTERNAL_NAMES } from "@/lib/categories";
 
@@ -286,21 +284,6 @@ export async function POST(request: Request) {
       return u;
     });
 
-    const verifySecret = generateEmailVerificationSecret();
-    const verifyExpires = new Date(Date.now() + 24 * 60 * 60 * 1000);
-    await prisma.user.update({
-      where: { id: user.id },
-      data: {
-        emailVerificationTokenHash: verifySecret.hash,
-        emailVerificationExpiresAt: verifyExpires,
-      },
-    });
-    const verificationEmailResult = await sendEmailVerificationEmail(
-      user.email,
-      user.name ?? "",
-      verifySecret.plain
-    );
-
     if (role === "HANDYMAN") {
       const { notifyAdminsNewPendingHandyman } = await import("@/lib/admin-signals");
       void notifyAdminsNewPendingHandyman({
@@ -311,12 +294,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({
       success: true,
-      data: {
-        ...user,
-        needsEmailVerification: true as const,
-        verificationEmailSent: verificationEmailResult.ok,
-        verificationEmailError: verificationEmailResult.ok ? null : verificationEmailResult.error,
-      },
+      data: { ...user },
     });
   } catch (error) {
     console.error("Register error:", error);
