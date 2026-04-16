@@ -135,14 +135,14 @@ type HandymanStep = {
 function handymanCardClass(featured: boolean): string {
   if (featured) {
     return cn(
-      "relative flex min-h-full flex-col overflow-hidden rounded-2xl p-5 md:p-7",
+      "group relative flex min-h-full flex-col overflow-hidden rounded-2xl p-5 md:p-7",
       "border border-slate-200/80 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white",
-      "shadow-[0_22px_52px_-24px_rgba(15,23,42,0.6)]"
+      "shadow-[0_24px_58px_-26px_rgba(15,23,42,0.62)]"
     );
   }
   return cn(
-    "flex min-h-full flex-col rounded-2xl border border-slate-200/85 bg-white p-5 md:p-6",
-    "shadow-[0_14px_34px_-24px_rgba(15,23,42,0.35)] transition-shadow duration-200 hover:shadow-[0_20px_40px_-22px_rgba(15,23,42,0.42)]"
+    "group relative flex min-h-full flex-col overflow-hidden rounded-2xl border border-slate-200/85 bg-white/95 p-5 backdrop-blur-sm md:p-6",
+    "shadow-[0_16px_36px_-24px_rgba(15,23,42,0.38)] transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_24px_48px_-22px_rgba(15,23,42,0.46)]"
   );
 }
 
@@ -151,6 +151,12 @@ function HandymanStepGrid({ steps }: { steps: readonly HandymanStep[] }) {
     <div className="grid gap-5 md:grid-cols-2 md:gap-6 lg:grid-cols-3 lg:gap-7">
       {steps.map((step) => (
         <div key={step.n} className={handymanCardClass(step.featured)}>
+          {!step.featured && (
+            <div
+              className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-slate-200/80 to-transparent"
+              aria-hidden
+            />
+          )}
           {step.featured && (
             <div
               className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-amber-300/70 via-amber-400/80 to-amber-300/70 opacity-95"
@@ -173,9 +179,17 @@ function HandymanStepGrid({ steps }: { steps: readonly HandymanStep[] }) {
               <step.icon className={cn("h-6 w-6", step.featured && "text-white")} strokeWidth={2} />
             </span>
             <div className="min-w-0 flex-1">
+              <div
+                className={cn(
+                  "inline-flex items-center rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.14em]",
+                  step.featured ? "bg-white/10 text-amber-100 ring-1 ring-white/15" : "bg-slate-100 text-slate-600 ring-1 ring-slate-200/80"
+                )}
+              >
+                Korak {step.n}
+              </div>
               <h3
                 className={cn(
-                  "font-display font-bold leading-snug",
+                  "mt-2 font-display font-bold leading-snug",
                   step.featured ? "text-[17px] md:text-xl" : "text-[17px] md:text-[17px]"
                 )}
               >
@@ -235,9 +249,13 @@ export function HowItWorksForHandymen() {
       className="scroll-mt-24 border-t border-slate-200/60 bg-gradient-to-b from-slate-100/60 via-white to-white py-10 md:py-16"
     >
       <div className="mx-auto max-w-6xl px-4 sm:px-5">
-        <div className="relative overflow-hidden rounded-[1.7rem] border border-slate-200/80 bg-white p-5 shadow-[0_26px_70px_-44px_rgba(15,23,42,0.5)] sm:p-7 md:p-9">
+        <div className="relative overflow-hidden rounded-[1.7rem] border border-slate-200/80 bg-gradient-to-b from-slate-50/55 via-white to-white p-5 shadow-[0_26px_70px_-44px_rgba(15,23,42,0.5)] sm:p-7 md:p-9">
           <div
             className="pointer-events-none absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-slate-300/85 to-transparent"
+            aria-hidden
+          />
+          <div
+            className="pointer-events-none absolute -right-24 -top-24 h-64 w-64 rounded-full bg-sky-200/20 blur-3xl"
             aria-hidden
           />
           <div className="flex flex-wrap items-start justify-between gap-4">
@@ -252,18 +270,22 @@ export function HowItWorksForHandymen() {
               </p>
             </div>
             <div className="inline-flex max-w-[min(100%,20rem)] flex-col gap-1.5 sm:max-w-none sm:flex-row sm:items-center sm:gap-2">
-              <div className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3.5 py-1.5 text-xs font-semibold text-slate-600">
+              <div className="inline-flex items-center gap-2 rounded-full border border-slate-200/90 bg-white/90 px-3.5 py-1.5 text-xs font-semibold text-slate-700 shadow-[0_8px_20px_-16px_rgba(15,23,42,0.45)]">
                 <ShieldTruth />
                 Nema pretplate • Obavještenja odmah
               </div>
-              <div className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3.5 py-1.5 text-xs font-semibold text-slate-600">
+              <div className="inline-flex items-center gap-2 rounded-full border border-slate-200/90 bg-white/90 px-3.5 py-1.5 text-xs font-semibold text-slate-700 shadow-[0_8px_20px_-16px_rgba(15,23,42,0.45)]">
                 <ShieldTruth />
                 Standardan kontakt oko 1,99 €
               </div>
             </div>
           </div>
 
-          <div className="mx-auto mt-8 max-w-6xl md:mt-10">
+          <div className="relative mx-auto mt-8 max-w-6xl md:mt-10">
+            <div
+              className="pointer-events-none absolute -inset-x-2 -inset-y-2 rounded-[1.6rem] bg-gradient-to-br from-slate-100/70 via-white/0 to-sky-100/25 blur-2xl"
+              aria-hidden
+            />
             <HandymanStepGrid steps={HANDYMAN_STEPS} />
           </div>
 
