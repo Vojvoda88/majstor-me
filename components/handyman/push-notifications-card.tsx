@@ -60,7 +60,9 @@ const BODY =
 export function HandymanPushNotificationsCard() {
   const [status, setStatus] = useState<PushUiState | { kind: "loading" }>({ kind: "loading" });
   const [busy, setBusy] = useState(false);
+  const [testBusy, setTestBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [testMessage, setTestMessage] = useState<string | null>(null);
   const [uiMode, setUiModeState] = useState<UiMode>("full");
 
   const vapid = typeof process !== "undefined" ? process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY : undefined;
@@ -96,6 +98,29 @@ export function HandymanPushNotificationsCard() {
     setUiModeState("compact");
   };
 
+  const handleSendTest = async () => {
+    if (testBusy) return;
+    setTestBusy(true);
+    setError(null);
+    setTestMessage(null);
+    try {
+      const res = await fetch("/api/push/test", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      });
+      const json = await res.json().catch(() => ({}));
+      if (res.ok && json?.success) {
+        setTestMessage("Test obavještenje je poslato. Ako je aplikacija otvorena, vidićete ga odmah i u njoj.");
+      } else {
+        setError(typeof json?.error === "string" ? json.error : "Test obavještenje nije poslato.");
+      }
+    } catch {
+      setError("Greška pri slanju test obavještenja.");
+    } finally {
+      setTestBusy(false);
+    }
+  };
+
   if (status.kind === "loading") {
     return (
       <div
@@ -125,6 +150,20 @@ export function HandymanPushNotificationsCard() {
             Obavještenja su uključena — push stiže kad zahtjev koji vam odgovara uđe u sistem.
           </p>
         </div>
+        <div className="mt-3 flex flex-wrap items-center gap-2">
+          <Button
+            type="button"
+            size="sm"
+            variant="outline"
+            className="border-emerald-300 bg-white text-emerald-900 hover:bg-emerald-100"
+            disabled={testBusy}
+            onClick={() => void handleSendTest()}
+          >
+            {testBusy ? "Slanje testa..." : "Pošalji test obavještenje"}
+          </Button>
+        </div>
+        {testMessage && <p className="mt-2 text-sm text-emerald-900">{testMessage}</p>}
+        {error && <p className="mt-2 text-sm text-red-700">{error}</p>}
       </div>
     );
   }

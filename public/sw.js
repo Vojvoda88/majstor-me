@@ -43,7 +43,25 @@ self.addEventListener("push", (event) => {
     tag: data.tag || "majstor-me",
     renotify: true,
   };
-  event.waitUntil(self.registration.showNotification(data.title, options));
+  event.waitUntil(
+    (async () => {
+      await self.registration.showNotification(data.title, options);
+      const clients = await self.clients.matchAll({
+        type: "window",
+        includeUncontrolled: true,
+      });
+      for (const client of clients) {
+        client.postMessage({
+          type: "PUSH_RECEIVED",
+          payload: {
+            title: data.title,
+            body: data.body,
+            link: data.link,
+          },
+        });
+      }
+    })()
+  );
 });
 
 function normalizeNotificationTarget(raw) {
