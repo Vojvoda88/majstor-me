@@ -11,9 +11,12 @@
 const sharp = require("sharp");
 const fs = require("fs");
 const path = require("path");
+const crypto = require("crypto");
 
 const PUBLIC = path.join(__dirname, "..", "public");
 const SOURCE_OUT = path.join(PUBLIC, "pwa-icon-source.png");
+const LIB_PWA_ICON_ASSETS = path.join(__dirname, "..", "lib", "pwa-icon-assets.ts");
+const SW_PATH = path.join(PUBLIC, "sw.js");
 /** Poznata imena; redoslijed samo za “jednaki” timestamp — inače pobjeđuje najnoviji fajl. */
 const RAW_NAMES = [
   "pwa-icon-raw.png",
@@ -72,6 +75,49 @@ async function resizeToIcon(size) {
     .toFile(path.join(PUBLIC, `icon-${size}.png`));
 }
 
+function createVersionTag() {
+  const icon512 = fs.readFileSync(path.join(PUBLIC, "icon-512.png"));
+  const hash = crypto.createHash("sha1").update(icon512).digest("hex").slice(0, 8);
+  const d = new Date();
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const dd = String(d.getDate()).padStart(2, "0");
+  return `${yyyy}${mm}${dd}-${hash}`;
+}
+
+function updatePwaVersionInFiles(versionTag) {
+  if (!fs.existsSync(LIB_PWA_ICON_ASSETS)) {
+    throw new Error(`Nedostaje fajl: ${LIB_PWA_ICON_ASSETS}`);
+  }
+  if (!fs.existsSync(SW_PATH)) {
+    throw new Error(`Nedostaje fajl: ${SW_PATH}`);
+  }
+
+  const libSrc = fs.readFileSync(LIB_PWA_ICON_ASSETS, "utf8");
+  const libUpdated = libSrc.replace(
+    /export const PWA_ICON_CACHE_VERSION = ".*?";/,
+    `export const PWA_ICON_CACHE_VERSION = "${versionTag}";`
+  );
+  if (libSrc === libUpdated) {
+    throw new Error("Nije pronađen PWA_ICON_CACHE_VERSION u lib/pwa-icon-assets.ts");
+  }
+  fs.writeFileSync(LIB_PWA_ICON_ASSETS, libUpdated, "utf8");
+
+  const swSrc = fs.readFileSync(SW_PATH, "utf8");
+  let swUpdated = swSrc.replace(
+    /const ICON_192 = "\/icon-192\.png\?v=.*?";/,
+    `const ICON_192 = "/icon-192.png?v=${versionTag}";`
+  );
+  swUpdated = swUpdated.replace(
+    /const CACHE_NAME = "majstor-me-v.*?";/,
+    `const CACHE_NAME = "majstor-me-v${versionTag}";`
+  );
+  if (swSrc === swUpdated) {
+    throw new Error("Nije pronađen ICON_192 ili CACHE_NAME u public/sw.js");
+  }
+  fs.writeFileSync(SW_PATH, swUpdated, "utf8");
+}
+
 async function main() {
   if (!fs.existsSync(PUBLIC)) fs.mkdirSync(PUBLIC, { recursive: true });
 
@@ -98,7 +144,10 @@ async function main() {
 
   await resizeToIcon(192);
   await resizeToIcon(512);
+  const versionTag = createVersionTag();
+  updatePwaVersionInFiles(versionTag);
   console.log("Gotovo: public/icon-192.png i public/icon-512.png");
+  console.log(`PWA verzija ikonica ažurirana: ${versionTag}`);
 }
 
 main().catch((err) => {
