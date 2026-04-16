@@ -10,6 +10,7 @@ import { OnboardingBanner } from "@/components/handyman/onboarding-banner";
 import { HandymanPushNotificationsCard } from "@/components/handyman/push-notifications-card";
 import { HandymanPendingReviewBanner } from "@/components/handyman/handyman-pending-review-banner";
 import { EmailVerificationReminder } from "@/components/account/email-verification-reminder";
+import { SignOutButton } from "@/components/account/sign-out-button";
 import { calcProfileCompletion } from "@/lib/handyman-onboarding";
 import { isCreditsRequired, LOW_CREDITS_THRESHOLD } from "@/lib/credits";
 import { REQUEST_CATEGORY_FALLBACK } from "@/lib/constants";
@@ -172,11 +173,14 @@ export default async function HandymanDashboardPage({
             Otvoreni zahtjevi i ponude na jednom mjestu
           </p>
         </div>
-        <Link href="/dashboard/handyman/profile">
-          <Button variant="outline" size="sm">
-            Ažuriraj profil
-          </Button>
-        </Link>
+        <div className="flex flex-wrap gap-2">
+          <Link href="/dashboard/handyman/profile">
+            <Button variant="outline" size="sm">
+              Ažuriraj profil
+            </Button>
+          </Link>
+          <SignOutButton />
+        </div>
       </div>
 
       <div className="mt-6 grid grid-cols-2 gap-6 md:grid-cols-4">
