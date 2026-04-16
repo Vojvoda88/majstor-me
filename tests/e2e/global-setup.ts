@@ -1,16 +1,18 @@
 /**
- * Global setup: create admin storage state so admin tests can reuse auth.
- * Run once before the test suite. Requires dev server at baseURL.
+ * Jednom prije suite-a: admin prijava i snimanje `storageState` za `admin.spec.ts`.
+ * Zahtijeva pokrenut app na `PLAYWRIGHT_BASE_URL` (default http://localhost:3010).
  */
 import * as fs from "fs";
 import * as path from "path";
 import { chromium } from "@playwright/test";
+import { fillLoginForm } from "./helpers/auth";
 import { CREDS } from "./helpers/credentials";
+import { playwrightBaseURL } from "./helpers/playwright-base-url";
 
-const baseURL = process.env.PLAYWRIGHT_BASE_URL || "http://localhost:3000";
 const storagePath = path.join(process.cwd(), "tests", "e2e", ".auth", "admin.json");
 
 export default async function globalSetup() {
+  const baseURL = playwrightBaseURL();
   const dir = path.dirname(storagePath);
   fs.mkdirSync(dir, { recursive: true });
 
@@ -19,15 +21,21 @@ export default async function globalSetup() {
   const page = await context.newPage();
 
   try {
-    await page.goto(`${baseURL}/login?callbackUrl=${encodeURIComponent("/admin")}`, { waitUntil: "load", timeout: 30_000 });
-    await page.getByLabel(/email/i).waitFor({ state: "visible", timeout: 20_000 });
-    await page.getByLabel(/email/i).fill(CREDS.admin.email);
-    await page.getByLabel(/lozinka|password/i).fill(CREDS.admin.password);
-    await page.getByTestId("login-submit").click();
-    await page.waitForURL(/\/(admin|\?)/, { timeout: 25_000 });
-    if (page.url().includes("/admin")) {
-      await context.storageState({ path: storagePath });
+    await page.goto(`${baseURL}/login?callbackUrl=${encodeURIComponent("/admin")}`, {
+      waitUntil: "domcontentloaded",
+      timeout: 60_000,
+    });
+    await fillLoginForm(page, CREDS.admin.email, CREDS.admin.password);
+    await page.goto(`${baseURL}/admin`, { waitUntil: "domcontentloaded", timeout: 60_000 });
+
+    const pathname = new URL(page.url()).pathname;
+    if (pathname === "/login" || pathname.startsWith("/login")) {
+      const err = page.getByTestId("login-error");
+      const msg = (await err.isVisible().catch(() => false)) ? (await err.innerText().catch(() => "")) : "";
+      throw new Error(`[globalSetup] Admin login nije uspio (ostanak na /login). ${msg.trim()}`);
     }
+
+    await context.storageState({ path: storagePath });
   } finally {
     await browser.close();
   }

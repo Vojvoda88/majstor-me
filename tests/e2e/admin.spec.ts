@@ -1,12 +1,7 @@
 import { test, expect } from "@playwright/test";
-import { loginAsAdmin } from "./helpers/auth";
 import { assertNoServerComponentError, assertNoErrorPage } from "./helpers/errors";
 
 test.describe("Admin flow", () => {
-  test.beforeEach(async ({ page }) => {
-    await loginAsAdmin(page);
-  });
-
   test("Admin dashboard loads without server component error", async ({ page }) => {
     const res = await page.goto("/admin");
     expect(res?.status()).toBe(200);

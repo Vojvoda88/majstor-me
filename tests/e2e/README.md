@@ -16,7 +16,10 @@ Playwright E2E testovi za glavne flowove: javne rute, auth, zahtjevi, handyman d
    ```bash
    npm run dev
    ```
-   Testovi koriste `baseURL`: **http://localhost:3000** (ili `PLAYWRIGHT_BASE_URL`).
+   Testovi koriste `baseURL`: **http://localhost:3010** (isti port kao `package.json` `dev` skripta), ili postavi **`PLAYWRIGHT_BASE_URL`**.
+
+3. **Admin sesija (automatski)**  
+   Prije testova Playwright pokreće `global-setup.ts`: jednom se prijavi admin i snimi `tests/e2e/.auth/admin.json` (gitignored). Zato **`admin.spec.ts` mora imati živ server** pri startu suite-a.
 
 ## Nalozi (seed)
 
@@ -36,9 +39,14 @@ npm run test:e2e:ui      # Playwright UI
 npm run test:e2e:headed  # headed browser
 ```
 
-Samo Chromium:
+Samo Chromium (bez `admin.spec.ts` — vidi `chromium-admin`):
 ```bash
 npx playwright test --project=chromium
+```
+
+Samo admin stranice (već ulogovan nalog iz `global-setup`):
+```bash
+npx playwright test --project=chromium-admin tests/e2e/admin.spec.ts
 ```
 
 ## Struktura
@@ -52,7 +60,7 @@ npx playwright test --project=chromium
 - **auth.spec.ts** – login stranica; login admin/handyman/user; redirect na login kada nisi ulogovan; pogrešni kredencijali; logout
 - **request.spec.ts** – forma za novi zahtjev; submit i redirect na /request/[id]; validacija
 - **handyman.spec.ts** – login handyman; /dashboard/handyman, profil, krediti
-- **admin.spec.ts** – login admin; /admin, /admin/requests, users, handymen, moderation; sidebar navigacija
+- **admin.spec.ts** – /admin, /admin/requests, users, handymen, moderation; sidebar navigacija (već ulogovan admin preko `global-setup` + `storageState`)
 - **smoke-clicks.spec.ts** – glavni klikovi: header, hero CTA, sticky CTA, admin sidebar
 
 ## Error guards

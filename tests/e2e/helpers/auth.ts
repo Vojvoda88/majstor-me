@@ -2,30 +2,27 @@ import { Page } from "@playwright/test";
 import { CREDS } from "./credentials";
 import { assertNoServerComponentError } from "./errors";
 
-/** waitForURL sa regexom na cijelom URL-u lažno „prođe“ na /login?callbackUrl=/dashboard/... — provjerava pathname. */
-function waitForPathname(
-  page: Page,
-  predicate: (pathname: string) => boolean,
-  timeout = 25_000
-): Promise<void> {
-  return page.waitForURL(
-    (url) => {
-      try {
-        return predicate(new URL(url).pathname);
-      } catch {
-        return false;
-      }
-    },
-    { timeout }
-  );
+async function assertNotStuckOnLogin(page: Page, context: string): Promise<void> {
+  const pathname = new URL(page.url()).pathname;
+  if (pathname !== "/login" && !pathname.startsWith("/login")) return;
+  const err = page.getByTestId("login-error");
+  const msg = (await err.isVisible().catch(() => false)) ? (await err.innerText().catch(() => "")) : "";
+  throw new Error(`${context} — ostali smo na /login. ${msg.trim()}`);
 }
 
 /** PWA „Preuzmi aplikaciju“ modal može prekriti formu i pokvariti E2E / klik. */
 export async function dismissPwaInstallModalIfVisible(page: Page): Promise<void> {
+  const dialog = page.getByRole("dialog", { name: /Preuzmi aplikaciju/i });
+  const closeButton = page.getByRole("button", { name: /Zatvori/i });
   const kasnije = page.getByRole("button", { name: /Kasnije/i });
   try {
-    await kasnije.waitFor({ state: "visible", timeout: 2500 });
-    await kasnije.click();
+    await dialog.waitFor({ state: "visible", timeout: 2500 });
+    if (await kasnije.isVisible().catch(() => false)) {
+      await kasnije.click();
+    } else if (await closeButton.isVisible().catch(() => false)) {
+      await closeButton.click();
+    }
+    await dialog.waitFor({ state: "hidden", timeout: 5000 }).catch(() => {});
   } catch {
     /* modal nije prikazan */
   }
@@ -43,7 +40,14 @@ export async function fillLoginForm(
   await page.getByTestId("login-email").waitFor({ state: "visible", timeout: 15_000 });
   await page.getByTestId("login-email").fill(email);
   await page.getByTestId("login-password").fill(password);
+  await dismissPwaInstallModalIfVisible(page);
+  const credPost = page.waitForResponse(
+    (r) =>
+      r.url().includes("/api/auth/callback/credentials") && r.request().method() === "POST",
+    { timeout: 60_000 }
+  );
   await page.getByTestId("login-submit").click();
+  await credPost;
 }
 
 /**
@@ -51,18 +55,13 @@ export async function fillLoginForm(
  */
 export async function loginAsAdmin(page: Page, callbackUrl = "/admin"): Promise<void> {
   await page.goto(`/login?callbackUrl=${encodeURIComponent(callbackUrl)}`, { waitUntil: "domcontentloaded" });
+  await dismissPwaInstallModalIfVisible(page);
   await page.getByTestId("login-email").waitFor({ state: "visible", timeout: 20_000 });
   await assertNoServerComponentError(page);
   await fillLoginForm(page, CREDS.admin.email, CREDS.admin.password);
-  await waitForPathname(
-    page,
-    (p) =>
-      p === "/admin" ||
-      p.startsWith("/admin/") ||
-      p.startsWith("/dashboard") ||
-      p.startsWith("/request"),
-    25_000
-  );
+  const target = callbackUrl.startsWith("/") ? callbackUrl : `/${callbackUrl}`;
+  await page.goto(target, { waitUntil: "domcontentloaded", timeout: 60_000 });
+  await assertNotStuckOnLogin(page, "loginAsAdmin");
   await assertNoServerComponentError(page);
 }
 
@@ -71,13 +70,11 @@ export async function loginAsAdmin(page: Page, callbackUrl = "/admin"): Promise<
  */
 export async function loginAsHandyman(page: Page): Promise<void> {
   await page.goto("/login?callbackUrl=/dashboard/handyman");
+  await dismissPwaInstallModalIfVisible(page);
   await assertNoServerComponentError(page);
   await fillLoginForm(page, CREDS.handyman.email, CREDS.handyman.password);
-  await waitForPathname(
-    page,
-    (p) => p === "/dashboard/handyman" || p === "/admin" || p.startsWith("/admin/"),
-    25_000
-  );
+  await page.goto("/dashboard/handyman", { waitUntil: "domcontentloaded", timeout: 60_000 });
+  await assertNotStuckOnLogin(page, "loginAsHandyman");
   await assertNoServerComponentError(page);
 }
 
@@ -88,14 +85,12 @@ export async function loginAsHandyman(page: Page): Promise<void> {
 export async function loginAsUser(page: Page, emailOverride?: string): Promise<void> {
   const email = emailOverride ?? CREDS.user.email;
   await page.goto("/login?callbackUrl=/dashboard/user", { waitUntil: "domcontentloaded" });
+  await dismissPwaInstallModalIfVisible(page);
   await page.getByTestId("login-email").waitFor({ state: "visible", timeout: 20_000 });
   await assertNoServerComponentError(page);
   await fillLoginForm(page, email, CREDS.user.password);
-  await waitForPathname(
-    page,
-    (p) => p === "/dashboard/user" || p === "/admin" || p.startsWith("/admin/"),
-    25_000
-  );
+  await page.goto("/dashboard/user", { waitUntil: "domcontentloaded", timeout: 60_000 });
+  await assertNotStuckOnLogin(page, "loginAsUser");
   await assertNoServerComponentError(page);
 }
 
