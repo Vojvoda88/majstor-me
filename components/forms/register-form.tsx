@@ -112,7 +112,7 @@ export function RegisterForm({
       success?: boolean;
       error?: unknown;
       code?: string;
-      data?: { verificationEmailSent?: boolean };
+      data?: { verificationEmailSent?: boolean; verificationEmailError?: string | null };
     };
     try {
       json = await res.json();

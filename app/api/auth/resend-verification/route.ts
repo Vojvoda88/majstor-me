@@ -56,7 +56,13 @@ export async function POST(request: Request) {
         emailVerificationExpiresAt: expires,
       },
     });
-    void sendEmailVerificationEmail(user.email, user.name, secret.plain);
+    const emailResult = await sendEmailVerificationEmail(user.email, user.name, secret.plain);
+    if (!emailResult.ok) {
+      return NextResponse.json(
+        { success: false, error: emailResult.error, code: emailResult.code },
+        { status: emailResult.code === "EMAIL_SEND_FAILED" ? 502 : 503 }
+      );
+    }
 
     return NextResponse.json({ success: true });
   } catch (error) {

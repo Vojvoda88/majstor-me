@@ -11,6 +11,43 @@ function getResend() {
 const from = process.env.EMAIL_FROM ?? "BrziMajstor.ME <onboarding@resend.dev>";
 const appBaseUrl = getSiteUrl().replace(/\/$/, "");
 
+export type EmailDeliveryResult =
+  | { ok: true }
+  | { ok: false; error: string; code: "EMAIL_NOT_CONFIGURED" | "EMAIL_FROM_INVALID" | "EMAIL_SEND_FAILED" };
+
+function getEmailConfigError(): EmailDeliveryResult | null {
+  if (!process.env.RESEND_API_KEY?.trim()) {
+    console.warn("[email] RESEND_API_KEY nije postavljen.");
+    return {
+      ok: false,
+      code: "EMAIL_NOT_CONFIGURED",
+      error: "Email servis trenutno nije podešen. Kontaktirajte podršku.",
+    };
+  }
+
+  const emailFrom = process.env.EMAIL_FROM?.trim();
+  if (process.env.NODE_ENV === "production") {
+    if (!emailFrom) {
+      console.warn("[email] EMAIL_FROM nije postavljen u produkciji.");
+      return {
+        ok: false,
+        code: "EMAIL_FROM_INVALID",
+        error: "Email pošiljalac nije podešen. Kontaktirajte podršku.",
+      };
+    }
+    if (emailFrom.toLowerCase().includes("@resend.dev")) {
+      console.warn("[email] EMAIL_FROM koristi resend.dev u produkciji.");
+      return {
+        ok: false,
+        code: "EMAIL_FROM_INVALID",
+        error: "Email pošiljalac nije validan za produkciju. Kontaktirajte podršku.",
+      };
+    }
+  }
+
+  return null;
+}
+
 async function getUserEmail(userId: string): Promise<string | null> {
   const { prisma } = await import("@/lib/db");
   const user = await prisma.user.findUnique({
@@ -204,14 +241,24 @@ export async function sendPasswordResetEmail(to: string, name: string, plainToke
   }
 }
 
-/** @returns true ako je mail stvarno poslat preko Resend-a */
-export async function sendEmailVerificationEmail(to: string, name: string, plainToken: string): Promise<boolean> {
+/** @returns rezultat stvarnog slanja verifikacionog maila */
+export async function sendEmailVerificationEmail(
+  to: string,
+  name: string,
+  plainToken: string
+): Promise<EmailDeliveryResult> {
+  const configError = getEmailConfigError();
+  if (configError) {
+    return configError;
+  }
+
   const resend = getResend();
   if (!resend) {
-    console.warn(
-      "[email] sendEmailVerificationEmail skipped: RESEND_API_KEY nije postavljen — korisnik neće dobiti verifikacioni mail"
-    );
-    return false;
+    return {
+      ok: false,
+      code: "EMAIL_NOT_CONFIGURED",
+      error: "Email servis trenutno nije podešen. Kontaktirajte podršku.",
+    };
   }
   const link = `${appBaseUrl}/verify-email?token=${encodeURIComponent(plainToken)}`;
 
@@ -228,13 +275,17 @@ export async function sendEmailVerificationEmail(to: string, name: string, plain
         <p>— BrziMajstor.ME</p>
       `,
     });
-    return true;
+    return { ok: true };
   } catch (e) {
     console.error("[email] sendEmailVerificationEmail Resend error", {
       to,
       message: e instanceof Error ? e.message.slice(0, 300) : String(e).slice(0, 300),
     });
-    return false;
+    return {
+      ok: false,
+      code: "EMAIL_SEND_FAILED",
+      error: "Slanje verifikacionog emaila nije uspjelo. Pokušajte kasnije.",
+    };
   }
 }
 

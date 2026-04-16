@@ -295,7 +295,7 @@ export async function POST(request: Request) {
         emailVerificationExpiresAt: verifyExpires,
       },
     });
-    const verificationEmailSent = await sendEmailVerificationEmail(
+    const verificationEmailResult = await sendEmailVerificationEmail(
       user.email,
       user.name ?? "",
       verifySecret.plain
@@ -311,7 +311,12 @@ export async function POST(request: Request) {
 
     return NextResponse.json({
       success: true,
-      data: { ...user, needsEmailVerification: true as const, verificationEmailSent },
+      data: {
+        ...user,
+        needsEmailVerification: true as const,
+        verificationEmailSent: verificationEmailResult.ok,
+        verificationEmailError: verificationEmailResult.ok ? null : verificationEmailResult.error,
+      },
     });
   } catch (error) {
     console.error("Register error:", error);

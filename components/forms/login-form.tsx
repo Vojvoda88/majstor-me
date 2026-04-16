@@ -66,7 +66,7 @@ function LoginFormInner() {
     if (searchParams.get("registered") === "1") {
       if (searchParams.get("verify") === "skipped") {
         setInfo(
-          "Nalog je kreiran. Verifikacioni email trenutno nije poslat, ali se možete prijaviti odmah i potvrditi email kasnije."
+          "Nalog je kreiran. Verifikacioni email trenutno nije poslat jer email servis nije spreman, ali se možete prijaviti odmah i potvrditi email kasnije."
         );
       } else {
         setInfo("Nalog je kreiran. Ako vam stigne verifikacioni email, potvrdite ga kad stignete — prijava radi odmah.");
@@ -165,7 +165,7 @@ function LoginFormInner() {
         body: JSON.stringify({ email }),
       });
       const json = await res.json().catch(() => ({}));
-      if (json?.success) {
+      if (res.ok && json?.success) {
         setResendMsg("Ako nalog postoji i email još nije potvrđen, poslali smo novi link.");
       } else {
         setResendMsg(typeof json?.error === "string" ? json.error : "Pokušajte kasnije.");

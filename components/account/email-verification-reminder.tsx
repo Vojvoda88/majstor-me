@@ -18,7 +18,7 @@ export function EmailVerificationReminder({ email }: { email?: string | null }) 
         body: JSON.stringify({ email }),
       });
       const json = await res.json().catch(() => ({}));
-      if (json?.success) {
+      if (res.ok && json?.success) {
         setMessage("Poslali smo novi link za potvrdu emaila.");
       } else {
         setMessage(typeof json?.error === "string" ? json.error : "Pokušajte kasnije.");
