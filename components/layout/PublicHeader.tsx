@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -354,7 +355,7 @@ export function PublicHeader() {
     <>
       <header
         className={cn(
-          "sticky top-0 z-[100] w-full border-b shadow-sm transition-[background-color,border-color,box-shadow] duration-300 ease-out",
+          "fixed left-0 right-0 top-0 z-[100] w-full border-b shadow-sm transition-[background-color,border-color,box-shadow] duration-300 ease-out",
           "pt-[env(safe-area-inset-top)] backdrop-blur-[14px] backdrop-saturate-[180%]",
           homeTheme
             ? "border-white/[0.12] bg-gradient-to-r from-slate-950/75 via-slate-900/65 to-slate-950/75 shadow-[0_10px_30px_-18px_rgba(0,0,0,0.7)]"
@@ -368,19 +369,20 @@ export function PublicHeader() {
         <div className="relative z-[100] mx-auto flex min-h-14 max-w-6xl items-center justify-between px-4 sm:px-6">
         <Link
           href="/"
-          className="inline-flex items-center gap-2 font-display text-xl font-bold tracking-tight md:text-2xl"
+          className="inline-flex items-center gap-2.5 font-display text-xl font-bold tracking-tight md:text-2xl"
           data-testid="header-home"
           {...linkProps}
         >
-          <span
-            className={cn(
-              "inline-flex h-2.5 w-2.5 rounded-full",
-              homeTheme ? "bg-amber-300 shadow-[0_0_0_4px_rgba(252,211,77,0.15)]" : "bg-blue-600"
-            )}
+          <Image
+            src="/icon-192.png"
+            alt=""
+            width={26}
+            height={26}
+            className="rounded-md ring-1 ring-white/25"
             aria-hidden
           />
-          <span className={cn(homeTheme ? "text-white" : "text-[#1d4ed8]")}>BrziMajstor</span>
-          <span className={cn(homeTheme ? "text-amber-100/85" : "text-slate-800")}>.ME</span>
+          <span className={cn(homeTheme ? "text-white" : "text-[#1d4ed8]")}>BrziMajstor.</span>
+          <span className={cn(homeTheme ? "text-amber-100/90" : "text-slate-800")}>ME</span>
         </Link>
 
         <nav className="relative z-[100] hidden items-center gap-x-8 md:flex" aria-label="Glavna navigacija">
@@ -422,6 +424,7 @@ export function PublicHeader() {
         </button>
       </div>
     </header>
+      <div aria-hidden className="h-[calc(56px+env(safe-area-inset-top))]" />
     {mounted ? createPortal(mobileDrawer, document.body) : null}
     </>
   );

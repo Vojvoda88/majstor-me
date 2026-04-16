@@ -58,8 +58,8 @@ export function Hero() {
             Pogledaj kategorije
           </Link>
           <Link
-            href="/#kako-radi-majstore"
-            className="inline-flex h-14 min-h-[52px] items-center justify-center rounded-2xl border border-white/20 bg-transparent px-6 text-base font-semibold text-white/90 transition hover:bg-white/10 active:scale-[0.98] md:px-8"
+            href="/register?type=majstor"
+            className="inline-flex h-14 min-h-[52px] items-center justify-center rounded-2xl border border-amber-300/45 bg-white/12 px-6 text-base font-semibold text-amber-100 shadow-lg shadow-amber-500/10 backdrop-blur-md transition hover:bg-white/18 hover:text-white active:scale-[0.98] md:px-8"
           >
             Registruj se kao majstor
           </Link>
