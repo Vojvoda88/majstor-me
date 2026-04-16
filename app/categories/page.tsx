@@ -13,13 +13,29 @@ import { getCategoryImageUrl } from "@/lib/category-images";
 import { ArrowRight } from "lucide-react";
 import { buildPublicListingPageJsonLd } from "@/lib/json-ld";
 import { getSiteUrl } from "@/lib/site-url";
-import { SEO_LANDING_CITIES } from "@/lib/seo-landing-config";
-import { CITY_SLUGS } from "@/lib/slugs";
 
 const baseUrl = getSiteUrl();
 
 const categoriesDescription =
   "Sve kategorije majstora u Crnoj Gori — od vode i struje do klime i čišćenja. Otvorite uslugu ili pošaljite zahtjev.";
+
+const CATEGORY_SUBTEXT: Record<string, string> = {
+  vodoinstalater: "Curenja, bojleri, slavine i hitne intervencije",
+  elektricar: "Kvarovi, osigurači, rasvjeta i instalacije",
+  "klima-servis": "Montaža, servis i sezonsko čišćenje klime",
+  keramicar: "Kupatila, pločice, fugovanje i nivelacija",
+  stolar: "Namještaj, kuhinje, vrata i popravke",
+  "pvc-stolarija": "Prozori, vrata, podešavanja i zamjene",
+  bravar: "Brave, sigurnost, metalni radovi i popravke",
+  moler: "Krečenje, priprema zidova i završni radovi",
+  gipsar: "Spušteni plafoni, pregrade i dekor gips",
+  fasader: "Izolacija, fasada i obnova spoljašnjih zidova",
+  "servis-bijele-tehnike": "Mašine, frižideri, rerne i dijagnostika kvarova",
+  ciscenje: "Stanovi, lokali i dubinsko čišćenje",
+  selidbe: "Selidbe stanova, kancelarija i transport",
+  bastovanstvo: "Dvorišta, rezidba, održavanje i uređenje",
+  "sitni-kucni-poslovi": "Montaža, sitne popravke i pomoć po kući",
+};
 
 export const metadata: Metadata = {
   title: "Majstori po kategorijama",
@@ -76,56 +92,18 @@ export default function CategoriesPage() {
             U formi za zahtjev birate „{REQUEST_CATEGORY_FALLBACK_DISPLAY}“ — to nije posebna kartica u listi ispod; opišite
             posao u opisu.
           </p>
-          <div className="mt-8 rounded-2xl border border-slate-200/90 bg-white/80 p-4 md:p-5">
-            <p className="text-xs font-bold uppercase tracking-wider text-slate-500">Gradovi</p>
-            <div className="mt-3 flex flex-wrap gap-2">
-              {SEO_LANDING_CITIES.map((citySlug) => {
-                const name = CITY_SLUGS[citySlug];
-                if (!name) return null;
-                return (
-                  <Link
-                    key={citySlug}
-                    href={`/grad/${citySlug}`}
-                    className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-sm font-medium text-slate-800 hover:border-blue-200 hover:bg-blue-50"
-                  >
-                    {name}
-                  </Link>
-                );
-              })}
-            </div>
-            <p className="mt-4 text-xs font-bold uppercase tracking-wider text-slate-500">SEO stranice (usluga + grad)</p>
-            <div className="mt-3 flex flex-wrap gap-2">
-              <Link
-                href="/vodoinstalater-podgorica"
-                className="rounded-lg border border-blue-100 bg-blue-50/80 px-3 py-1.5 text-sm font-medium text-blue-900 hover:bg-blue-100"
-              >
-                Vodoinstalater Podgorica
-              </Link>
-              <Link
-                href="/elektricar-niksic"
-                className="rounded-lg border border-blue-100 bg-blue-50/80 px-3 py-1.5 text-sm font-medium text-blue-900 hover:bg-blue-100"
-              >
-                Električar Nikšić
-              </Link>
-              <Link
-                href="/klima-servis-budva"
-                className="rounded-lg border border-blue-100 bg-blue-50/80 px-3 py-1.5 text-sm font-medium text-blue-900 hover:bg-blue-100"
-              >
-                Klima Budva
-              </Link>
-            </div>
-          </div>
         </header>
-        <ul className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
+        <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 xl:grid-cols-3">
           {CATEGORY_CONFIG.map((cat) => {
             const imgSrc = getCategoryImageUrl(cat.slug);
+            const subtext = CATEGORY_SUBTEXT[cat.slug] ?? "Pogledajte profile majstora i pošaljite zahtjev.";
             return (
               <li key={cat.slug}>
                 <Link
                   href={`/category/${cat.slug}`}
-                  className="group relative flex min-h-[140px] overflow-hidden rounded-3xl border border-slate-200/90 bg-white shadow-[0_8px_28px_-12px_rgba(10,22,40,0.14)] ring-1 ring-slate-900/[0.04] transition duration-300 hover:-translate-y-0.5 hover:border-slate-300/90 hover:shadow-[0_14px_36px_-12px_rgba(10,22,40,0.18)] md:min-h-[160px]"
+                  className="group relative flex min-h-[132px] overflow-hidden rounded-3xl border border-slate-200/90 bg-white shadow-[0_12px_34px_-16px_rgba(10,22,40,0.18)] ring-1 ring-slate-900/[0.04] transition duration-300 hover:-translate-y-0.5 hover:border-slate-300/90 hover:shadow-[0_18px_44px_-16px_rgba(10,22,40,0.24)] md:min-h-[154px]"
                 >
-                  <div className="relative w-28 shrink-0 bg-slate-100 sm:w-32">
+                  <div className="relative w-24 shrink-0 bg-slate-100 sm:w-28 md:w-32">
                     <Image
                       src={imgSrc}
                       alt={cat.displayName}
@@ -136,9 +114,12 @@ export default function CategoriesPage() {
                     />
                     <div className="absolute inset-0 bg-gradient-to-r from-black/20 to-transparent md:hidden" />
                   </div>
-                  <div className="flex flex-1 flex-col justify-center px-5 py-5">
-                    <span className="font-display text-lg font-bold text-brand-navy md:text-xl">{cat.displayName}</span>
-                    <span className="mt-2 inline-flex items-center gap-1 text-sm font-semibold text-blue-700">
+                  <div className="flex flex-1 flex-col justify-center px-4 py-4 md:px-5 md:py-5">
+                    <span className="font-display text-[1.08rem] font-bold leading-tight text-brand-navy md:text-[1.24rem]">
+                      {cat.displayName}
+                    </span>
+                    <span className="mt-1.5 line-clamp-2 text-[13px] leading-snug text-slate-600 md:text-sm">{subtext}</span>
+                    <span className="mt-2.5 inline-flex items-center gap-1 text-sm font-semibold text-blue-700">
                       Pogledaj majstore
                       <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
                     </span>

@@ -381,7 +381,10 @@ export function PublicHeader() {
             className="rounded-md"
             aria-hidden
           />
-          <span className={cn(homeTheme ? "text-slate-100" : "text-brand-navy")}>BrziMajstor.ME</span>
+          <span className={cn("flex items-baseline", homeTheme ? "text-slate-100" : "text-brand-navy")}>
+            <span>BrziMajstor</span>
+            <span className={cn(homeTheme ? "text-amber-300" : "text-blue-700")}>.ME</span>
+          </span>
         </Link>
 
         <nav className="relative z-[100] hidden items-center gap-x-8 md:flex" aria-label="Glavna navigacija">
