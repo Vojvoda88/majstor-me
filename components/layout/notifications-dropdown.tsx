@@ -20,6 +20,7 @@ export function NotificationsDropdown() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [liveBanner, setLiveBanner] = useState<Notification | null>(null);
   const [panelStyle, setPanelStyle] = useState<{
     top: number;
     left: number;
@@ -27,21 +28,56 @@ export function NotificationsDropdown() {
     maxHeight: number;
   } | null>(null);
   const buttonRef = useRef<HTMLButtonElement | null>(null);
+  const firstLoadRef = useRef(true);
+  const latestIdRef = useRef<string | null>(null);
 
-  const fetchNotifications = async () => {
-    setLoading(true);
-    const res = await fetch("/api/notifications?limit=15");
-    const json = await res.json();
-    if (json.success && json.data) {
-      setNotifications(json.data.notifications ?? []);
-      setUnreadCount(json.data.unreadCount ?? 0);
+  const fetchNotifications = useCallback(async (opts?: { silent?: boolean }) => {
+    if (!opts?.silent) setLoading(true);
+    try {
+      const res = await fetch("/api/notifications?limit=15", { cache: "no-store" });
+      const json = await res.json().catch(() => ({}));
+      if (json.success && json.data) {
+        const incoming = (json.data.notifications ?? []) as Notification[];
+        setNotifications(incoming);
+        setUnreadCount(json.data.unreadCount ?? 0);
+
+        const latest = incoming[0];
+        if (latest?.id) {
+          if (firstLoadRef.current) {
+            latestIdRef.current = latest.id;
+            firstLoadRef.current = false;
+          } else if (latestIdRef.current && latest.id !== latestIdRef.current) {
+            // Obična live notifikacija u-app (fallback kad push ne stigne na uređaj).
+            setLiveBanner(latest);
+            latestIdRef.current = latest.id;
+          } else if (!latestIdRef.current) {
+            latestIdRef.current = latest.id;
+          }
+        }
+      }
+    } finally {
+      if (!opts?.silent) setLoading(false);
     }
-    setLoading(false);
-  };
+  }, []);
 
   useEffect(() => {
-    fetchNotifications();
-  }, []);
+    void fetchNotifications();
+  }, [fetchNotifications]);
+
+  useEffect(() => {
+    const tick = () => {
+      if (typeof document !== "undefined" && document.visibilityState === "visible") {
+        void fetchNotifications({ silent: true });
+      }
+    };
+    const id = window.setInterval(tick, 15000);
+    const onVisibility = () => tick();
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => {
+      window.clearInterval(id);
+      document.removeEventListener("visibilitychange", onVisibility);
+    };
+  }, [fetchNotifications]);
 
   const computePanelStyle = useCallback(() => {
     const button = buttonRef.current;
@@ -101,7 +137,7 @@ export function NotificationsDropdown() {
         onClick={() => {
           setOpen(!open);
           if (!open) {
-            fetchNotifications();
+            void fetchNotifications();
             computePanelStyle();
           }
         }}
@@ -187,6 +223,31 @@ export function NotificationsDropdown() {
             </div>
           </div>
         </>
+      )}
+      {liveBanner && !open && (
+        <div className="fixed right-3 top-[max(4rem,env(safe-area-inset-top)+3.25rem)] z-[130] w-[min(92vw,23rem)] rounded-xl border border-blue-200 bg-white p-3 shadow-xl">
+          <p className="text-sm font-semibold text-slate-900">{liveBanner.title}</p>
+          {liveBanner.body ? <p className="mt-1 text-sm text-slate-600">{liveBanner.body}</p> : null}
+          <div className="mt-2 flex items-center justify-end gap-2">
+            <button
+              type="button"
+              className="rounded-md px-2 py-1 text-xs text-slate-500 hover:bg-slate-100"
+              onClick={() => setLiveBanner(null)}
+            >
+              Zatvori
+            </button>
+            <Link
+              href={liveBanner.link ?? "#"}
+              onClick={() => {
+                setLiveBanner(null);
+                setOpen(false);
+              }}
+              className="rounded-md bg-blue-600 px-2.5 py-1 text-xs font-semibold text-white hover:bg-blue-700"
+            >
+              Otvori
+            </Link>
+          </div>
+        </div>
       )}
     </div>
   );
