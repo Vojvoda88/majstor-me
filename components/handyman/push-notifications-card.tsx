@@ -164,26 +164,6 @@ export function HandymanPushNotificationsCard() {
     }
   };
 
-  if (status.kind === "loading") {
-    return (
-      <div
-        className="rounded-2xl border-2 border-amber-300/60 bg-gradient-to-br from-amber-50 via-white to-amber-50/80 p-4 shadow-md md:p-5"
-        aria-busy="true"
-      >
-        <div className="flex items-center gap-2 text-sm font-medium text-amber-950">
-          <Loader2 className="h-5 w-5 shrink-0 animate-spin text-amber-700" aria-hidden />
-          Provjera obavještenja…
-        </div>
-      </div>
-    );
-  }
-
-  const enabled =
-    status.kind === "ready" &&
-    status.permission === "granted" &&
-    status.subscribed &&
-    status.serverSubscriptionCount > 0;
-
   // Auto self-heal bez ručnih koraka: ako je dozvola grantovana, a push ipak nije "enabled", pokušaj reparaciju jednom.
   useEffect(() => {
     if (selfHealTried || !vapid || busy) return;
@@ -208,6 +188,26 @@ export function HandymanPushNotificationsCard() {
       cancelled = true;
     };
   }, [selfHealTried, status, vapid, busy, refresh]);
+
+  if (status.kind === "loading") {
+    return (
+      <div
+        className="rounded-2xl border-2 border-amber-300/60 bg-gradient-to-br from-amber-50 via-white to-amber-50/80 p-4 shadow-md md:p-5"
+        aria-busy="true"
+      >
+        <div className="flex items-center gap-2 text-sm font-medium text-amber-950">
+          <Loader2 className="h-5 w-5 shrink-0 animate-spin text-amber-700" aria-hidden />
+          Provjera obavještenja…
+        </div>
+      </div>
+    );
+  }
+
+  const enabled =
+    status.kind === "ready" &&
+    status.permission === "granted" &&
+    status.subscribed &&
+    status.serverSubscriptionCount > 0;
 
   if (enabled) {
     return (

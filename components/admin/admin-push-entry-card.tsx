@@ -115,23 +115,6 @@ export function AdminPushEntryCard() {
     setUiModeState("compact");
   };
 
-  if (status.kind === "loading") {
-    return (
-      <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-        <div className="flex items-center gap-2 text-sm text-slate-600">
-          <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
-          Provjera obavještenja…
-        </div>
-      </div>
-    );
-  }
-
-  const enabled =
-    status.kind === "ready" &&
-    status.permission === "granted" &&
-    status.subscribed &&
-    status.serverSubscriptionCount > 0;
-
   useEffect(() => {
     if (selfHealTried || !vapid || busy) return;
     if (status.kind !== "ready") return;
@@ -155,6 +138,23 @@ export function AdminPushEntryCard() {
       cancelled = true;
     };
   }, [selfHealTried, status, vapid, busy, refresh]);
+
+  if (status.kind === "loading") {
+    return (
+      <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+        <div className="flex items-center gap-2 text-sm text-slate-600">
+          <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
+          Provjera obavještenja…
+        </div>
+      </div>
+    );
+  }
+
+  const enabled =
+    status.kind === "ready" &&
+    status.permission === "granted" &&
+    status.subscribed &&
+    status.serverSubscriptionCount > 0;
 
   if (enabled) {
     const handleSendTest = async () => {
