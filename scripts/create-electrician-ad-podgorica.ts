@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { notifyAdminsNewPendingRequest } from "@/lib/admin-signals";
+import { getPushServerConfig } from "@/lib/push";
 
 const prisma = new PrismaClient();
 
@@ -40,12 +41,22 @@ async function main() {
     urgency: request.urgency,
   });
 
+  const pushCfg = getPushServerConfig();
   console.log(
     JSON.stringify(
       {
         request,
         url: `/request/${request.id}`,
-        adminNotify: "sent (in-app + push kao na formi)",
+        adminNotify: {
+          inApp: "uvijek upisano u bazu iz ove skripte",
+          devicePushFromThisShell: pushCfg.canSend,
+        },
+        ifNoPushLocally:
+          pushCfg.canSend
+            ? null
+            : "Na ovom računaru nema VAPID u env — uređajski push ide sa Vercela. Nakon deploya: POST /api/cron/replay-admin-request-notify sa Authorization: Bearer CRON_SECRET i JSON {\"requestId\":\"" +
+              request.id +
+              "\"}",
       },
       null,
       2

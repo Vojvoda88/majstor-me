@@ -45,11 +45,13 @@ export async function notifyAdminsNewPendingRequest(params: {
   try {
     const adminIds = await getAdminUserIds();
     for (const uid of adminIds) {
-      if (await hasExistingAdminSignal(uid, "ADMIN_PENDING_REQUEST", link)) continue;
-      await createNotification(uid, "ADMIN_PENDING_REQUEST", title, {
-        body,
-        link,
-      });
+      if (!(await hasExistingAdminSignal(uid, "ADMIN_PENDING_REQUEST", link))) {
+        await createNotification(uid, "ADMIN_PENDING_REQUEST", title, {
+          body,
+          link,
+        });
+      }
+      // Uvijek pokušaj push: in-app se često upiše lokalnom skriptom bez VAPID-a, pa bi `continue` trajno preskočio uređajski push.
       await sendPushToUser(prisma, uid, {
         title,
         body: body || "Otvori zahtjev u admin panelu.",
@@ -74,11 +76,12 @@ export async function notifyAdminsNewPendingHandyman(params: {
   try {
     const adminIds = await getAdminUserIds();
     for (const uid of adminIds) {
-      if (await hasExistingAdminSignal(uid, "ADMIN_PENDING_HANDYMAN", link)) continue;
-      await createNotification(uid, "ADMIN_PENDING_HANDYMAN", title, {
-        body,
-        link,
-      });
+      if (!(await hasExistingAdminSignal(uid, "ADMIN_PENDING_HANDYMAN", link))) {
+        await createNotification(uid, "ADMIN_PENDING_HANDYMAN", title, {
+          body,
+          link,
+        });
+      }
       await sendPushToUser(prisma, uid, {
         title,
         body,
