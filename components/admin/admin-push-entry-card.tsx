@@ -48,6 +48,25 @@ export function AdminPushEntryCard() {
   const [selfHealTried, setSelfHealTried] = useState(false);
 
   const vapid = typeof process !== "undefined" ? process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY : undefined;
+  const REQUEST_TIMEOUT_MS = 15_000;
+
+  const withTimeout = async <T,>(promise: Promise<T>, timeoutMs = REQUEST_TIMEOUT_MS): Promise<T> => {
+    return new Promise<T>((resolve, reject) => {
+      const id = window.setTimeout(() => {
+        reject(new Error("request_timeout"));
+      }, timeoutMs);
+      promise.then(
+        (value) => {
+          window.clearTimeout(id);
+          resolve(value);
+        },
+        (error) => {
+          window.clearTimeout(id);
+          reject(error);
+        }
+      );
+    });
+  };
 
   const refresh = useCallback(async () => {
     const s = await getPushUiState(vapid);
@@ -63,51 +82,62 @@ export function AdminPushEntryCard() {
     if (!vapid || busy) return;
     setBusy(true);
     setError(null);
-    const result = await requestPermissionAndSubscribe(vapid);
-    if (!result.ok && result.reason !== "permission_denied") {
-      setError(result.message ?? "Nije moguće uključiti obavještenja. Pokušajte ponovo.");
-    }
-    await refresh();
-
-    const runDeviceTest = async () => {
-      const endpoint = await getCurrentPushSubscriptionEndpoint();
-      const testRes = await fetch("/api/push/test", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(endpoint ? { endpoint } : {}),
-      });
-      const testJson = await testRes.json().catch(() => ({}));
-      return { ok: !!(testRes.ok && testJson?.success), error: typeof testJson?.error === "string" ? testJson.error : null };
-    };
-
-    let deviceTest = { ok: false, error: null as string | null };
     try {
-      deviceTest = await runDeviceTest();
-    } catch {
-      deviceTest = { ok: false, error: null };
-    }
-
-    if (!deviceTest.ok) {
-      const repaired = await forceResubscribe(vapid);
-      if (!repaired.ok && repaired.reason !== "permission_denied") {
-        setError(repaired.message ?? "Automatska popravka push pretplate nije uspjela.");
+      const result = await withTimeout(requestPermissionAndSubscribe(vapid));
+      if (!result.ok && result.reason !== "permission_denied") {
+        setError(result.message ?? "Nije moguće uključiti obavještenja. Pokušajte ponovo.");
       }
       await refresh();
-      try {
-        const afterRepair = await runDeviceTest();
-        if (afterRepair.ok) {
-          setTestMessage("Push je aktiviran na ovom telefonu.");
-        } else if (!error) {
-          setError(afterRepair.error ?? "Push nije aktiviran za ovaj uređaj. Probajte ponovo.");
-        }
-      } catch {
-        if (!error) setError("Push nije aktiviran za ovaj uređaj. Probajte ponovo.");
-      }
-    } else {
-      setTestMessage("Push je aktiviran na ovom telefonu.");
-    }
 
-    setBusy(false);
+      const runDeviceTest = async () => {
+        const endpoint = await getCurrentPushSubscriptionEndpoint();
+        const testRes = await withTimeout(
+          fetch("/api/push/test", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(endpoint ? { endpoint } : {}),
+          })
+        );
+        const testJson = await testRes.json().catch(() => ({}));
+        return { ok: !!(testRes.ok && testJson?.success), error: typeof testJson?.error === "string" ? testJson.error : null };
+      };
+
+      let deviceTest = { ok: false, error: null as string | null };
+      try {
+        deviceTest = await runDeviceTest();
+      } catch {
+        deviceTest = { ok: false, error: null };
+      }
+
+      if (!deviceTest.ok) {
+        const repaired = await withTimeout(forceResubscribe(vapid));
+        if (!repaired.ok && repaired.reason !== "permission_denied") {
+          setError(repaired.message ?? "Automatska popravka push pretplate nije uspjela.");
+        }
+        await refresh();
+        try {
+          const afterRepair = await runDeviceTest();
+          if (afterRepair.ok) {
+            setTestMessage("Push je aktiviran na ovom telefonu.");
+          } else if (!error) {
+            setError(afterRepair.error ?? "Push nije aktiviran za ovaj uređaj. Probajte ponovo.");
+          }
+        } catch {
+          if (!error) setError("Push nije aktiviran za ovaj uređaj. Probajte ponovo.");
+        }
+      } else {
+        setTestMessage("Push je aktiviran na ovom telefonu.");
+      }
+    } catch (e) {
+      const isTimeout = e instanceof Error && e.message === "request_timeout";
+      setError(
+        isTimeout
+          ? "Traje predugo. Ako vidite dugme „Ažuriraj“ za aplikaciju, kliknite ga i pokušajte ponovo."
+          : "Greška pri uključivanju obavještenja. Pokušajte ponovo."
+      );
+    } finally {
+      setBusy(false);
+    }
   };
 
   const handleLater = () => {
