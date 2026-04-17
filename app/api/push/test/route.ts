@@ -76,11 +76,18 @@ export async function POST(request: Request) {
         payload
       );
       if (!result.ok) {
-        if (result.statusCode === 404 || result.statusCode === 410) {
+        if (result.statusCode === 400 || result.statusCode === 401 || result.statusCode === 403 || result.statusCode === 404 || result.statusCode === 410) {
           await prisma.pushSubscription.deleteMany({ where: { endpoint: sub.endpoint } });
         }
         return NextResponse.json(
-          { success: false, error: "Test push nije isporučen na ovom uređaju." },
+          {
+            success: false,
+            error: "Test push nije isporučen na ovom uređaju.",
+            details: {
+              statusCode: result.statusCode ?? null,
+              message: result.errorMessage ?? null,
+            },
+          },
           { status: 409 }
         );
       }

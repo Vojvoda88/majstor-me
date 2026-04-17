@@ -108,10 +108,12 @@ function readWebPushStatusCode(e: unknown): number | undefined {
   return undefined;
 }
 
-export type PushSendResult = { ok: true } | { ok: false; statusCode?: number };
+export type PushSendResult =
+  | { ok: true }
+  | { ok: false; statusCode?: number; errorMessage?: string };
 
 /**
- * Jedna isporuka; vraća status HTTP od push servisa (410/404 → čisti DB u sendPushToUser).
+ * Jedna isporuka; vraća status HTTP od push servisa i poruku greške.
  */
 export async function sendPushNotification(
   subscription: { endpoint: string; keys: { p256dh: string; auth: string } },
@@ -151,14 +153,26 @@ export async function sendPushNotification(
       message: msg.slice(0, 300),
       endpointPrefix: subscription.endpoint.slice(0, 48),
     });
-    return { ok: false, statusCode };
+    return { ok: false, statusCode, errorMessage: msg.slice(0, 300) };
   }
 }
 
 export type SendPushTrace = { requestId?: string };
 
-/** HTTP statusi kod kojih push servis kaže da pretplata više ne važi — brišemo red u DB. */
-const STALE_PUSH_STATUS_CODES = new Set([404, 410]);
+/** HTTP statusi/poruke kod kojih push servis kaže da pretplata više ne važi — brišemo red u DB. */
+const STALE_PUSH_STATUS_CODES = new Set([400, 401, 403, 404, 410]);
+
+function shouldDropSubscription(statusCode: number | undefined, errorMessage: string | undefined): boolean {
+  if (statusCode !== undefined && STALE_PUSH_STATUS_CODES.has(statusCode)) return true;
+  const msg = (errorMessage ?? "").toLowerCase();
+  return (
+    msg.includes("invalidregistration") ||
+    msg.includes("unauthorizedregistration") ||
+    msg.includes("mismatchsenderid") ||
+    msg.includes("invalid token") ||
+    msg.includes("jwt")
+  );
+}
 
 /**
  * Pošalji push svim pretplatama određenog korisnika.
@@ -195,9 +209,9 @@ export async function sendPushToUser(
       continue;
     }
     const code = result.statusCode;
-    if (code !== undefined && STALE_PUSH_STATUS_CODES.has(code)) {
+    if (shouldDropSubscription(code, result.errorMessage)) {
       await prisma.pushSubscription.deleteMany({ where: { endpoint: sub.endpoint } });
-      console.info("[push] removed stale subscription after failed delivery", {
+      console.info("[push] removed invalid subscription after failed delivery", {
         userId,
         statusCode: code,
         endpointPrefix: sub.endpoint.slice(0, 48),
@@ -206,6 +220,7 @@ export async function sendPushToUser(
       console.warn("[push] delivery failed (subscription kept)", {
         userId,
         statusCode: code,
+        errorMessage: result.errorMessage,
         endpointPrefix: sub.endpoint.slice(0, 48),
       });
     }
