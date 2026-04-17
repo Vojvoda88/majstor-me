@@ -2,12 +2,13 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Menu, X } from "lucide-react";
+import { Bell, Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
 import { Button } from "@/components/ui/button";
+import { NotificationsDropdown } from "@/components/layout/notifications-dropdown";
 import { cn } from "@/lib/utils";
 
 /**
@@ -74,6 +75,7 @@ export function PublicHeader() {
   const isUserDashActive = pathname?.startsWith("/dashboard/user") ?? false;
   const isInstalirajActive = pathname === "/instaliraj";
   const isKontaktActive = pathname === "/kontakt";
+  const loginForNotificationsHref = `/login?callbackUrl=${encodeURIComponent(pathname || "/")}`;
 
   const navLinkDesktop = (active: boolean) =>
     cn(
@@ -403,6 +405,21 @@ export function PublicHeader() {
           <Link href="/kontakt" className={navLinkDesktop(isKontaktActive)} data-testid="nav-kontakt-desktop" {...linkProps}>
             Kontakt
           </Link>
+          {session ? (
+            <NotificationsDropdown />
+          ) : (
+            <Link
+              href={loginForNotificationsHref}
+              aria-label="Prijava za obavještenja"
+              className={cn(
+                "inline-flex h-10 w-10 items-center justify-center rounded-xl transition",
+                homeTheme ? "text-white/90 hover:bg-white/10 hover:text-white" : "text-gray-700 hover:bg-black/[0.04]"
+              )}
+              {...linkProps}
+            >
+              <Bell className="h-5 w-5" />
+            </Link>
+          )}
           {status === "loading" ? (
             desktopGuestNav
           ) : session ? (
@@ -412,18 +429,35 @@ export function PublicHeader() {
           )}
         </nav>
 
-        <button
-          type="button"
-          onClick={() => setMenuOpen(!menuOpen)}
-          className={cn(
-            "flex min-h-[44px] min-w-[44px] touch-manipulation items-center justify-center rounded-xl transition md:hidden",
-            homeTheme ? "text-white hover:bg-white/10" : "text-gray-700 hover:bg-black/[0.04]"
+        <div className="flex items-center gap-1 md:hidden">
+          {session ? (
+            <NotificationsDropdown />
+          ) : (
+            <Link
+              href={loginForNotificationsHref}
+              aria-label="Prijava za obavještenja"
+              className={cn(
+                "inline-flex min-h-[44px] min-w-[44px] touch-manipulation items-center justify-center rounded-xl transition",
+                homeTheme ? "text-white hover:bg-white/10" : "text-gray-700 hover:bg-black/[0.04]"
+              )}
+              {...linkProps}
+            >
+              <Bell className="h-5 w-5" />
+            </Link>
           )}
-          aria-label="Meni"
-          aria-expanded={menuOpen}
-        >
-          {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-        </button>
+          <button
+            type="button"
+            onClick={() => setMenuOpen(!menuOpen)}
+            className={cn(
+              "flex min-h-[44px] min-w-[44px] touch-manipulation items-center justify-center rounded-xl transition",
+              homeTheme ? "text-white hover:bg-white/10" : "text-gray-700 hover:bg-black/[0.04]"
+            )}
+            aria-label="Meni"
+            aria-expanded={menuOpen}
+          >
+            {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
+        </div>
       </div>
     </header>
       <div aria-hidden className="h-[calc(56px+env(safe-area-inset-top))]" />
