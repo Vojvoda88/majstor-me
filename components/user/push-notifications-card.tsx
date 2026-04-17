@@ -17,21 +17,22 @@ export function UserPushNotificationsCard() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const vapid = typeof process !== "undefined" ? process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY : undefined;
-
   const refresh = useCallback(async () => {
-    setStatus(await getPushUiState(vapid));
-  }, [vapid]);
+    setStatus(await getPushUiState());
+  }, []);
 
   useEffect(() => {
     void refresh();
   }, [refresh]);
 
   const handleEnable = async () => {
-    if (!vapid || busy) return;
+    if (busy) return;
+    const latest = await getPushUiState();
+    if (latest.kind !== "ready" || !latest.vapidPublicKey) return;
+    const vapidKey = latest.vapidPublicKey;
     setBusy(true);
     setError(null);
-    const result = await requestPermissionAndSubscribe(vapid);
+    const result = await requestPermissionAndSubscribe(vapidKey);
     if (!result.ok && result.reason !== "permission_denied") {
       setError(result.message ?? "Greška pri uključivanju obavještenja.");
     }

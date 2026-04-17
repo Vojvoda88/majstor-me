@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { getPushServerConfig } from "@/lib/push";
 
@@ -25,6 +25,8 @@ export async function GET() {
       data: {
         count,
         serverCanSendPush: pushConfig.canSend,
+        /** Za PushManager.subscribe — uvijek aktuelan ključ sa servera. */
+        vapidPublicKey: pushConfig.hasPublicKey ? pushConfig.publicKeyNormalized : "",
         vapid: {
           hasPublicKey: pushConfig.hasPublicKey,
           hasPrivateKey: pushConfig.hasPrivateKey,

@@ -174,14 +174,16 @@ async function saveSubscriptionOnServer(sub: PushSubscription): Promise<Subscrib
 
 async function subscribeWithRegistration(reg: ServiceWorkerRegistration, vapidPublicKey: string): Promise<SubscribeResult> {
   const subscribeOnce = async (r: ServiceWorkerRegistration): Promise<SubscribeResult> => {
-    let sub = await r.pushManager.getSubscription();
-    if (!sub) {
-      console.info("[push-client] pushManager.subscribe() …");
-      sub = await r.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(vapidPublicKey) as BufferSource,
-      });
+    // Uvijek nova pretplata sa trenutnim ključem sa servera. Stara pretplata iz starog NEXT_PUBLIC builda ne odgovara VAPID potpisu na backendu.
+    const existing = await r.pushManager.getSubscription();
+    if (existing) {
+      await existing.unsubscribe().catch(() => {});
     }
+    console.info("[push-client] pushManager.subscribe() …");
+    const sub = await r.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: urlBase64ToUint8Array(vapidPublicKey) as BufferSource,
+    });
     return saveSubscriptionOnServer(sub);
   };
 
@@ -234,25 +236,46 @@ async function subscribeWithRegistration(reg: ServiceWorkerRegistration, vapidPu
 export type ServerPushStatus = {
   count: number;
   serverCanSendPush: boolean;
+  /** Iz VAPID_PUBLIC_KEY na serveru (isti kao za subscribe). */
+  vapidPublicKey?: string;
 };
+
+/** Javni ključ bez prijave — za PWA modal i kad /api/push/status nije dostupan. */
+export async function fetchPublicVapidServerKey(): Promise<string | undefined> {
+  try {
+    const res = await fetch("/api/push/vapid-public", { cache: "no-store", credentials: "same-origin" });
+    const j = (await res.json().catch(() => ({}))) as { success?: boolean; publicKey?: string };
+    if (res.ok && j.success && typeof j.publicKey === "string" && j.publicKey.length > 0) {
+      return j.publicKey;
+    }
+  } catch {
+    /* ignore */
+  }
+  return undefined;
+}
 
 export async function fetchServerPushStatus(): Promise<ServerPushStatus> {
   try {
     const res = await fetch("/api/push/status", { credentials: "include" });
     const j = (await res.json().catch(() => ({}))) as {
       success?: boolean;
-      data?: { count?: number; serverCanSendPush?: boolean };
+      data?: { count?: number; serverCanSendPush?: boolean; vapidPublicKey?: string };
     };
+    if (res.status === 401) {
+      return { count: 0, serverCanSendPush: false, vapidPublicKey: undefined };
+    }
     if (j.success && typeof j.data?.count === "number") {
+      const vp = j.data.vapidPublicKey;
       return {
         count: j.data.count,
         serverCanSendPush: j.data.serverCanSendPush !== false,
+        vapidPublicKey: typeof vp === "string" && vp.length > 0 ? vp : undefined,
       };
     }
   } catch {
     /* ignore */
   }
-  return { count: 0, serverCanSendPush: true };
+  return { count: 0, serverCanSendPush: true, vapidPublicKey: undefined };
 }
 
 export type PushUiReadyState = {
@@ -263,6 +286,8 @@ export type PushUiReadyState = {
   serverSubscriptionCount: number;
   /** Da li je backend sposoban da šalje push (VAPID public+private). */
   serverCanSendPush: boolean;
+  /** Ključ za subscribe/self-heal — sa /api/push/status ili isti kao na serveru. */
+  vapidPublicKey: string;
 };
 
 export type PushUiState =
@@ -273,15 +298,38 @@ export type PushUiState =
 
 /**
  * Lokalno stanje + broj pretplata na serveru (za iskreno „uključeno“ bez lažnog zelenog stanja).
+ * Javni VAPID ključ uzima sa servera (/api/push/status ili /api/push/vapid-public), ne samo iz NEXT_PUBLIC iz builda.
  */
-export async function getPushUiState(vapidPublicKey: string | undefined): Promise<PushUiState> {
-  const base = await getPushReadyState(vapidPublicKey);
-  if (base.kind !== "ready") return base;
+export async function getPushUiState(): Promise<PushUiState> {
   const server = await fetchServerPushStatus();
+  const envFallback =
+    typeof process !== "undefined" ? process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY?.trim() : undefined;
+
+  let vapid =
+    (server.vapidPublicKey && server.vapidPublicKey.length > 0 ? server.vapidPublicKey : undefined) ||
+    envFallback;
+
+  if ((!vapid || vapid.length === 0) && server.serverCanSendPush) {
+    const fromPublic = await fetchPublicVapidServerKey();
+    if (fromPublic) vapid = fromPublic;
+  }
+
   if (!server.serverCanSendPush) {
     return { kind: "no_vapid" };
   }
-  return { ...base, serverSubscriptionCount: server.count, serverCanSendPush: server.serverCanSendPush };
+  if (!vapid || vapid.length === 0) {
+    return { kind: "no_vapid" };
+  }
+
+  const base = await getPushReadyState(vapid);
+  if (base.kind !== "ready") return base;
+
+  return {
+    ...base,
+    serverSubscriptionCount: server.count,
+    serverCanSendPush: server.serverCanSendPush,
+    vapidPublicKey: vapid,
+  };
 }
 
 /**

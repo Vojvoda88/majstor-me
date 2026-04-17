@@ -8,18 +8,35 @@ import type { PrismaClient } from "@prisma/client";
 let vapidConfigured = false;
 let vapidMissingLogged = false;
 
+/** Uklanja navodnike, razmake i prelome reda oko VAPID vrijednosti iz Vercel / .env. */
+export function normalizeVapidEnvValue(value: string | undefined | null): string {
+  if (value == null) return "";
+  let s = String(value).trim();
+  if (
+    (s.startsWith('"') && s.endsWith('"')) ||
+    (s.startsWith("'") && s.endsWith("'"))
+  ) {
+    s = s.slice(1, -1).trim();
+  }
+  s = s.replace(/\s+/g, "");
+  return s;
+}
+
 export type PushServerConfig = {
   hasPublicKey: boolean;
   hasPrivateKey: boolean;
   hasClientPublicKey: boolean;
   publicKeysMatch: boolean;
+  /** Server može potpisati i poslati push (javni + privatni ključ). */
   canSend: boolean;
+  /** Isti string koji klijent mora koristiti u PushManager.subscribe — uvijek iz VAPID_PUBLIC_KEY. */
+  publicKeyNormalized: string;
 };
 
 export function getPushServerConfig(): PushServerConfig {
-  const serverPublicKey = process.env.VAPID_PUBLIC_KEY?.trim() ?? "";
-  const serverPrivateKey = process.env.VAPID_PRIVATE_KEY?.trim() ?? "";
-  const clientPublicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY?.trim() ?? "";
+  const serverPublicKey = normalizeVapidEnvValue(process.env.VAPID_PUBLIC_KEY);
+  const serverPrivateKey = normalizeVapidEnvValue(process.env.VAPID_PRIVATE_KEY);
+  const clientPublicKey = normalizeVapidEnvValue(process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY);
   const hasPublicKey = serverPublicKey.length > 0;
   const hasPrivateKey = serverPrivateKey.length > 0;
   const hasClientPublicKey = clientPublicKey.length > 0;
@@ -29,22 +46,22 @@ export function getPushServerConfig(): PushServerConfig {
     hasPrivateKey,
     hasClientPublicKey,
     publicKeysMatch,
-    canSend: hasPublicKey && hasPrivateKey && hasClientPublicKey && publicKeysMatch,
+    canSend: hasPublicKey && hasPrivateKey,
+    publicKeyNormalized: serverPublicKey,
   };
 }
 
 function ensureVapid() {
   if (vapidConfigured) return;
   const cfg = getPushServerConfig();
-  const publicKey = process.env.VAPID_PUBLIC_KEY?.trim();
-  const privateKey = process.env.VAPID_PRIVATE_KEY?.trim();
-  // Isti uslov kao /api/push/subscribe: inače pretplate ne bi trebale postojati, ali bez poklapanja javnog ključa FCM vraća grešku.
-  if (cfg.canSend && publicKey && privateKey) {
+  const publicKey = cfg.publicKeyNormalized;
+  const privateKey = normalizeVapidEnvValue(process.env.VAPID_PRIVATE_KEY);
+  if (cfg.canSend && publicKey.length > 0 && privateKey.length > 0) {
     webpush.setVapidDetails("mailto:support@brzimajstor.me", publicKey, privateKey);
     vapidConfigured = true;
   } else if (!vapidMissingLogged) {
     vapidMissingLogged = true;
-    console.warn("[push] VAPID nije spreman za slanje (potrebni su oba tajna ključa i NEXT_PUBLIC_VAPID_PUBLIC_KEY koji se poklapa sa VAPID_PUBLIC_KEY)", {
+    console.warn("[push] VAPID nije spreman za slanje (potrebni su VAPID_PUBLIC_KEY i VAPID_PRIVATE_KEY na serveru)", {
       hasPublicKey: cfg.hasPublicKey,
       hasPrivateKey: cfg.hasPrivateKey,
       hasClientPublicKey: cfg.hasClientPublicKey,
@@ -74,10 +91,20 @@ function toAppRelativePath(link: string | undefined): string {
 }
 
 function readWebPushStatusCode(e: unknown): number | undefined {
-  if (typeof e === "object" && e !== null && "statusCode" in e) {
-    const n = Number((e as { statusCode?: number }).statusCode);
-    return Number.isFinite(n) ? n : undefined;
+  if (typeof e === "object" && e !== null) {
+    const o = e as { statusCode?: unknown; status?: unknown };
+    for (const key of ["statusCode", "status"] as const) {
+      const raw = o[key];
+      if (typeof raw === "number" && Number.isFinite(raw)) return raw;
+      if (typeof raw === "string") {
+        const n = parseInt(raw, 10);
+        if (Number.isFinite(n)) return n;
+      }
+    }
   }
+  const msg = e instanceof Error ? e.message : String(e ?? "");
+  const m = msg.match(/\b(40[13489]|41\d|5\d\d)\b/);
+  if (m) return parseInt(m[1], 10);
   return undefined;
 }
 

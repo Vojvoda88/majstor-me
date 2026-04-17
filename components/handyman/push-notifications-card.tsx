@@ -68,7 +68,6 @@ export function HandymanPushNotificationsCard() {
   const [uiMode, setUiModeState] = useState<UiMode>("full");
   const [selfHealTried, setSelfHealTried] = useState(false);
 
-  const vapid = typeof process !== "undefined" ? process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY : undefined;
   const REQUEST_TIMEOUT_MS = 15_000;
 
   const withTimeout = async <T,>(promise: Promise<T>, timeoutMs = REQUEST_TIMEOUT_MS): Promise<T> => {
@@ -90,9 +89,9 @@ export function HandymanPushNotificationsCard() {
   };
 
   const refresh = useCallback(async () => {
-    const s = await getPushUiState(vapid);
+    const s = await getPushUiState();
     setStatus(s);
-  }, [vapid]);
+  }, []);
 
   const toUiError = (e: unknown): string => {
     if (e instanceof Error) {
@@ -114,11 +113,14 @@ export function HandymanPushNotificationsCard() {
   }, [refresh]);
 
   const handleEnable = async () => {
-    if (!vapid || busy) return;
+    if (busy) return;
+    const latest = await getPushUiState();
+    if (latest.kind !== "ready" || !latest.vapidPublicKey) return;
+    const vapidKey = latest.vapidPublicKey;
     setBusy(true);
     setError(null);
     try {
-      const result = await withTimeout(requestPermissionAndSubscribe(vapid));
+      const result = await withTimeout(requestPermissionAndSubscribe(vapidKey));
       if (!result.ok) {
         if (result.reason === "permission_denied") {
           setError(null);
@@ -150,7 +152,7 @@ export function HandymanPushNotificationsCard() {
       }
 
       if (!deviceTest.ok) {
-        const repaired = await withTimeout(forceResubscribe(vapid));
+        const repaired = await withTimeout(forceResubscribe(vapidKey));
         if (!repaired.ok && repaired.reason !== "permission_denied") {
           setError(repaired.message ?? "Automatska popravka push pretplate nije uspjela.");
         }
@@ -206,8 +208,8 @@ export function HandymanPushNotificationsCard() {
 
   // Auto self-heal bez ručnih koraka: ako je dozvola grantovana, a push ipak nije "enabled", pokušaj reparaciju jednom.
   useEffect(() => {
-    if (selfHealTried || !vapid || busy) return;
-    if (status.kind !== "ready") return;
+    if (selfHealTried || busy) return;
+    if (status.kind !== "ready" || !status.vapidPublicKey) return;
     const shouldHeal =
       status.permission === "granted" &&
       (!status.subscribed || status.serverSubscriptionCount < 1);
@@ -216,7 +218,7 @@ export function HandymanPushNotificationsCard() {
     let cancelled = false;
     setSelfHealTried(true);
     void (async () => {
-      const repaired = await forceResubscribe(vapid);
+      const repaired = await forceResubscribe(status.vapidPublicKey);
       if (cancelled) return;
       if (!repaired.ok && repaired.reason !== "permission_denied") {
         setError(repaired.message ?? "Automatska popravka push pretplate nije uspjela.");
@@ -227,7 +229,7 @@ export function HandymanPushNotificationsCard() {
     return () => {
       cancelled = true;
     };
-  }, [selfHealTried, status, vapid, busy, refresh]);
+  }, [selfHealTried, status, busy, refresh]);
 
   if (status.kind === "loading") {
     return (
@@ -296,7 +298,7 @@ export function HandymanPushNotificationsCard() {
     return (
       <div className="rounded-2xl border-2 border-amber-200 bg-amber-50/90 p-4 md:p-5">
         <p className="text-sm text-amber-950">
-          Push obavještenja nisu podešena na serveru (nedostaje javni ključ). Kontaktirajte podršku da se uključi za
+          Push obavještenja nisu podešena na serveru (VAPID ključevi). Kontaktirajte podršku da se uključi za
           produkciju.
         </p>
       </div>

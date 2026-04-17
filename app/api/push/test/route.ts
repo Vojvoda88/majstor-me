@@ -20,11 +20,7 @@ export async function POST(request: Request) {
         ? "Nedostaje VAPID_PUBLIC_KEY."
         : !pushConfig.hasPrivateKey
           ? "Nedostaje VAPID_PRIVATE_KEY."
-          : !pushConfig.hasClientPublicKey
-            ? "Nedostaje NEXT_PUBLIC_VAPID_PUBLIC_KEY."
-            : !pushConfig.publicKeysMatch
-              ? "VAPID_PUBLIC_KEY i NEXT_PUBLIC_VAPID_PUBLIC_KEY se ne poklapaju."
-              : "VAPID konfiguracija nije validna.";
+          : "VAPID konfiguracija nije validna.";
       return NextResponse.json(
         {
           success: false,

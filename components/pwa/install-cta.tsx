@@ -4,7 +4,7 @@ import { useEffect, useState, useRef, useCallback } from "react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { Bell, Download, X } from "lucide-react";
-import { requestPermissionAndSubscribe } from "@/lib/push-client";
+import { fetchPublicVapidServerKey, requestPermissionAndSubscribe } from "@/lib/push-client";
 
 const DISMISS_KEY = "pwa-entry-modal-dismissed";
 /** Koliko dugo ne prikazuj ponovo nakon „Kasnije“ */
@@ -60,7 +60,19 @@ export function InstallCTA() {
   const [installReady, setInstallReady] = useState(false);
   const deferredPrompt = useRef<BeforeInstallPromptEvent | null>(null);
 
-  const vapid = typeof process !== "undefined" ? process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY : undefined;
+  const [vapidPublicKey, setVapidPublicKey] = useState<string | undefined>(() =>
+    typeof process !== "undefined" ? process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY?.trim() : undefined
+  );
+
+  useEffect(() => {
+    let cancelled = false;
+    void fetchPublicVapidServerKey().then((k) => {
+      if (!cancelled && k) setVapidPublicKey(k);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -111,18 +123,20 @@ export function InstallCTA() {
 
   const handleNotifications = useCallback(async () => {
     const uid = (session?.user as { id?: string } | undefined)?.id;
-    if (!uid || !vapid) return;
+    if (!uid) return;
+    const key = vapidPublicKey || (await fetchPublicVapidServerKey());
+    if (!key) return;
 
     setNotifBusy(true);
     try {
-      const result = await requestPermissionAndSubscribe(vapid);
+      const result = await requestPermissionAndSubscribe(key);
       if (result.ok) setNotifDone(true);
     } catch {
       /* denied or error */
     } finally {
       setNotifBusy(false);
     }
-  }, [session?.user, vapid]);
+  }, [session?.user, vapidPublicKey]);
 
   const close = () => {
     setDismissed();
@@ -136,7 +150,7 @@ export function InstallCTA() {
   const loggedIn = !!(session?.user as { id?: string } | undefined)?.id;
   const isHandyman = session?.user?.role === "HANDYMAN";
   const isAdmin = session?.user?.role === "ADMIN";
-  const canPush = !!vapid && typeof window !== "undefined" && "PushManager" in window;
+  const canPush = !!vapidPublicKey && typeof window !== "undefined" && "PushManager" in window;
 
   return (
     <>
