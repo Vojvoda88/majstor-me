@@ -95,7 +95,7 @@ function normalizeSubscribeErrorMessage(err: unknown): string {
   const msg = raw.toLowerCase();
 
   // Česta greška na nekim Android uređajima / preglednicima bez dostupnog push servisa.
-  if (msg.includes("registration failed - push service error")) {
+  if (msg.includes("push service error") || msg.includes("registration failed")) {
     return "Preglednik na ovom uređaju trenutno ne može registrovati push servis. Probajte Chrome (ažuriran), uključite Google Play Services i ponovo pokrenite preglednik.";
   }
   if (msg.includes("notsupportederror")) {
@@ -112,6 +112,34 @@ function normalizeSubscribeErrorMessage(err: unknown): string {
   }
 
   return raw && raw !== "[object Object]" ? raw : "Greška pri uključivanju obavještenja.";
+}
+
+function shouldRetrySubscribeError(err: unknown): boolean {
+  const raw = err instanceof Error ? err.message : String(err ?? "");
+  const msg = raw.toLowerCase();
+  return (
+    msg.includes("push service error") ||
+    msg.includes("registration failed") ||
+    msg.includes("invalidstateerror") ||
+    msg.includes("aborterror") ||
+    msg.includes("networkerror") ||
+    msg.includes("sw_ready_timeout")
+  );
+}
+
+async function ensureFreshServiceWorkerRegistration(): Promise<ServiceWorkerRegistration | null> {
+  try {
+    const reg = await navigator.serviceWorker.register("/sw.js", { scope: "/" });
+    try {
+      await reg.update();
+    } catch {
+      /* ignore */
+    }
+    if (reg.active) return reg;
+    return await withTimeout(SW_READY_TIMEOUT_MS, navigator.serviceWorker.ready);
+  } catch {
+    return getServiceWorkerRegistrationForPush();
+  }
 }
 
 async function saveSubscriptionOnServer(sub: PushSubscription): Promise<SubscribeResult> {
@@ -145,15 +173,61 @@ async function saveSubscriptionOnServer(sub: PushSubscription): Promise<Subscrib
 }
 
 async function subscribeWithRegistration(reg: ServiceWorkerRegistration, vapidPublicKey: string): Promise<SubscribeResult> {
-  let sub = await reg.pushManager.getSubscription();
-  if (!sub) {
-    console.info("[push-client] pushManager.subscribe() …");
-    sub = await reg.pushManager.subscribe({
-      userVisibleOnly: true,
-      applicationServerKey: urlBase64ToUint8Array(vapidPublicKey) as BufferSource,
+  const subscribeOnce = async (r: ServiceWorkerRegistration): Promise<SubscribeResult> => {
+    let sub = await r.pushManager.getSubscription();
+    if (!sub) {
+      console.info("[push-client] pushManager.subscribe() …");
+      sub = await r.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(vapidPublicKey) as BufferSource,
+      });
+    }
+    return saveSubscriptionOnServer(sub);
+  };
+
+  try {
+    return await subscribeOnce(reg);
+  } catch (e) {
+    if (!shouldRetrySubscribeError(e)) {
+      return {
+        ok: false,
+        reason: "subscribe_failed",
+        message: normalizeSubscribeErrorMessage(e),
+      };
+    }
+    console.warn("[push-client] subscribe failed, trying recovery re-register", {
+      name: e instanceof Error ? e.name : typeof e,
+      message: e instanceof Error ? e.message : String(e),
     });
+
+    try {
+      const existing = await reg.pushManager.getSubscription();
+      if (existing) {
+        await existing.unsubscribe().catch(() => {});
+      }
+    } catch {
+      /* ignore */
+    }
+
+    const freshReg = await ensureFreshServiceWorkerRegistration();
+    if (!freshReg) {
+      return {
+        ok: false,
+        reason: "subscribe_failed",
+        message: "Service worker nije spreman. Ažurirajte aplikaciju i pokušajte ponovo.",
+      };
+    }
+
+    try {
+      return await subscribeOnce(freshReg);
+    } catch (e2) {
+      return {
+        ok: false,
+        reason: "subscribe_failed",
+        message: normalizeSubscribeErrorMessage(e2),
+      };
+    }
   }
-  return saveSubscriptionOnServer(sub);
 }
 
 /** Broj pretplata za trenutnog korisnika u bazi (0 ako nije sačuvano ili niste prijavljeni). */
