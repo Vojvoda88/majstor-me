@@ -73,6 +73,16 @@ export function AdminPushEntryCard() {
     setStatus(s);
   }, [vapid]);
 
+  const toUiError = (e: unknown): string => {
+    if (e instanceof Error) {
+      if (e.message === "request_timeout") {
+        return "Traje predugo. Ako vidite dugme „Ažuriraj“ za aplikaciju, kliknite ga i pokušajte ponovo.";
+      }
+      if (e.message?.trim()) return e.message;
+    }
+    return "Greška pri uključivanju obavještenja. Pokušajte ponovo.";
+  };
+
   useEffect(() => {
     setUiModeState(getUiMode());
     void refresh();
@@ -129,12 +139,8 @@ export function AdminPushEntryCard() {
         setTestMessage("Push je aktiviran na ovom telefonu.");
       }
     } catch (e) {
-      const isTimeout = e instanceof Error && e.message === "request_timeout";
-      setError(
-        isTimeout
-          ? "Traje predugo. Ako vidite dugme „Ažuriraj“ za aplikaciju, kliknite ga i pokušajte ponovo."
-          : "Greška pri uključivanju obavještenja. Pokušajte ponovo."
-      );
+      console.warn("[admin-push] enable flow failed", e);
+      setError(toUiError(e));
     } finally {
       setBusy(false);
     }
