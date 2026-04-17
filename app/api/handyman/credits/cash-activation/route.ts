@@ -39,7 +39,7 @@ export async function POST(req: Request) {
       first.phone?.[0] ??
       first.city?.[0] ??
       first.packageId?.[0] ??
-      "Provjerite podatke.";
+      "Proverite podatke.";
     return NextResponse.json({ ok: false, error: msg }, { status: 400 });
   }
 

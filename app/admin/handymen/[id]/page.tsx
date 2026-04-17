@@ -317,7 +317,7 @@ export default async function AdminHandymanDetailPage({ params }: { params: Prom
               <strong>Završeni poslovi:</strong> {hp.completedJobsCount}
             </p>
             <p>
-              <strong>Ocjena:</strong> {ratingDisplay} ({hp.reviewCount} recenzija)
+              <strong>Ocena:</strong> {ratingDisplay} ({hp.reviewCount} recenzija)
             </p>
           </CardContent>
         </Card>

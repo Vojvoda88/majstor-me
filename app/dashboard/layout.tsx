@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 /**
  * SessionProvider je već u root layoutu (app/layout.tsx). Dupli <Providers> ovdje
- * udvostručuje next-auth context i u dev modu može doprinijeti ChunkLoadError / 404 na layout chunku.
+ * udvostručuje next-auth context i u dev modu može doprineti ChunkLoadError / 404 na layout chunku.
  */
 export default function DashboardLayout({
   children,

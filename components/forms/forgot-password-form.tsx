@@ -53,7 +53,7 @@ export function ForgotPasswordForm() {
       <Card className="w-full rounded-2xl border-[#E2E8F0] shadow-card">
         <CardContent className="pt-8">
           <p className="text-center text-sm leading-relaxed text-slate-700">
-            Ako nalog sa tim emailom postoji i ima lozinku, poslali smo link za novu lozinku. Provjerite poštu (i spam).
+            Ako nalog sa tim emailom postoji i ima lozinku, poslali smo link za novu lozinku. Proverite poštu (i spam).
           </p>
           <p className="mt-6 text-center">
             <Link href="/login" className="text-sm font-semibold text-[#2563EB] underline-offset-4 hover:underline">

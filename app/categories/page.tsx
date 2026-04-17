@@ -21,11 +21,11 @@ const categoriesDescription =
 
 const CATEGORY_SUBTEXT: Record<string, string> = {
   vodoinstalater: "Curenja, bojleri, slavine i hitne intervencije",
-  elektricar: "Kvarovi, osigurači, rasvjeta i instalacije",
+  elektricar: "Kvarovi, osigurači, rasveta i instalacije",
   "klima-servis": "Montaža, servis i sezonsko čišćenje klime",
   keramicar: "Kupatila, pločice, fugovanje i nivelacija",
   stolar: "Namještaj, kuhinje, vrata i popravke",
-  "pvc-stolarija": "Prozori, vrata, podešavanja i zamjene",
+  "pvc-stolarija": "Prozori, vrata, podešavanja i zamene",
   bravar: "Brave, sigurnost, metalni radovi i popravke",
   moler: "Krečenje, priprema zidova i završni radovi",
   gipsar: "Spušteni plafoni, pregrade i dekor gips",
@@ -79,7 +79,7 @@ export default function CategoriesPage() {
             Sve kategorije
           </h1>
           <p className="mt-4 max-w-2xl text-base leading-relaxed text-slate-600 md:text-lg">
-            {ACTIVE_PUBLIC_CATEGORY_COUNT} glavnih kategorija usluga — pronađite majstora za posao. Odaberite uslugu i
+            {ACTIVE_PUBLIC_CATEGORY_COUNT} glavnih kategorija usluga — pronađite majstora za posao. Izaberite uslugu i
             pregledajte profile.
           </p>
           <p className="mt-3 max-w-2xl text-sm text-slate-600">

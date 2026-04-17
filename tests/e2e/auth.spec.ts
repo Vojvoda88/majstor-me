@@ -8,7 +8,7 @@ import {
 } from "./helpers/auth";
 import { assertNoServerComponentError } from "./helpers/errors";
 
-/** Isto kao InstallCTA — spriječi modal koji prekriva login i pravi flaky E2E */
+/** Isto kao InstallCTA — spreči modal koji prekriva login i pravi flaky E2E */
 const PWA_MODAL_DISMISS_KEY = "pwa-entry-modal-dismissed";
 
 test.describe("Auth", () => {

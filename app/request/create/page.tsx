@@ -84,7 +84,7 @@ export default async function CreateRequestPage(props: {
         {!session?.user?.id && (
           <div className="mb-5 rounded-[1.35rem] border border-amber-200/80 bg-gradient-to-br from-amber-50 via-white to-slate-50 p-4 shadow-[0_16px_38px_-28px_rgba(15,23,42,0.28)]">
             <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-amber-700">Preporučeno</p>
-            <h2 className="mt-1.5 font-display text-lg font-bold text-slate-900">Registrujte se prije objave oglasa</h2>
+            <h2 className="mt-1.5 font-display text-lg font-bold text-slate-900">Registrujte se pre objave oglasa</h2>
             <p className="mt-2 text-sm leading-relaxed text-slate-600">
               Nije obavezno, ali je lakše da kasnije pratite zahtjev, ponude i status na jednom mjestu.
             </p>

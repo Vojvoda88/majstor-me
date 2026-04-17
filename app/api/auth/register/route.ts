@@ -25,7 +25,7 @@ function normalizeStringArray(raw: unknown): string[] {
   return out;
 }
 
-/** Ako majstor ne izabere gradove — rad u svim gradovima iz konstante. */
+/** Ako majstor ne odabere gradove — rad u svim gradovima iz konstante. */
 function resolveHandymanWorkCities(selectedNormalized: string[]): string[] {
   const canon: string[] = [];
   for (const t of selectedNormalized) {
@@ -37,7 +37,7 @@ function resolveHandymanWorkCities(selectedNormalized: string[]): string[] {
   return unique;
 }
 
-/** Jednostavna shema — sve stringove normalizujemo prije safeParse (bez z.preprocess). */
+/** Jednostavna shema — sve stringove normalizujemo pre safeParse (bez z.preprocess). */
 const registerSchema = z
   .object({
     name: z.string().min(2, "Naziv mora imati najmanje 2 karaktera"),

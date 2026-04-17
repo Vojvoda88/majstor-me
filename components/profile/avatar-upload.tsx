@@ -142,7 +142,7 @@ export function AvatarUpload({
               ) : (
                 <Camera className="h-4 w-4" />
               )}
-              <span className="ml-2">Slikaj / izaberi sliku</span>
+              <span className="ml-2">Slikaj / odaberi sliku</span>
             </Button>
             <Button
               type="button"

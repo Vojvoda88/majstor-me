@@ -2,7 +2,7 @@ import { ShieldCheck, Star, Map } from "lucide-react";
 
 const TRUST_ITEMS = [
   { icon: ShieldCheck, text: "Verifikovani" },
-  { icon: Star, text: "4.8 ocjena" },
+  { icon: Star, text: "4,8 ocjena" },
   { icon: Map, text: "Cijela CG" },
 ];
 

@@ -40,7 +40,7 @@ export function buildSeoLandingDescription(parsed: SeoCombinedParsed): string {
   const gen = cityGenitive(parsed.cityDisplayName);
 
   const byCategory: Record<string, string> = {
-    vodoinstalater: `Vodoinstalater u ${loc}: profili ispod ili besplatan zahtjev — opišite curenje, zamjenu ili instalaciju i uporedite ponude.`,
+    vodoinstalater: `Vodoinstalater u ${loc}: profili ispod ili besplatan zahtjev — opišite curenje,zamenu ili instalaciju i uporedite ponude.`,
     elektricar: `Električar u ${loc} za instalacije, priključenje ili popravke. Profili ispod; ako želite više ponuda, jedan zahtjev ide majstorima iz ${gen} koji rade tu vrstu posla.`,
     "klima-servis": `Klima servis u ${loc}: montaža, punjenje, servis. Pregledajte profile ili objavite zahtjev ako želite više ponuda za isti posao.`,
     keramicar: `Keramičar u ${loc} za kupatila, pločice i završne radove. Lista ispod; jedan zahtjev šalje opis majstorima ako želite da vam se jave više njih.`,

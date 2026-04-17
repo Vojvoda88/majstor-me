@@ -1,5 +1,5 @@
 /**
- * Samo interne putanje istog origin-a — spriječava zloupotrebu callbackUrl parametra.
+ * Samo interne putanje istog origin-a — sprečava zloupotrebu callbackUrl parametra.
  * Klijentski kod (window); na serveru ne koristiti bez Request URL-a.
  */
 export function getSafeInternalCallbackPath(

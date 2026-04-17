@@ -29,7 +29,7 @@ export function GuestRequestReturnCard() {
     <div className="mb-5 rounded-2xl border border-sky-200 bg-sky-50/70 p-4">
       <p className="text-sm font-semibold text-sky-950">Imate sačuvan privatni link za praćenje zahtjeva</p>
       <p className="mt-1 text-xs text-sky-900">
-        {savedAt ? `Sačuvano: ${savedAt}.` : "Sačuvano na ovom uređaju."} Možete odmah nastaviti gdje ste stali.
+        {savedAt ? `Sačuvano: ${savedAt}.` : "Sačuvano na ovom uređaju."} Možete odmah nastaviti gde ste stali.
       </p>
       <div className="mt-3 flex flex-wrap gap-2">
         <Button asChild size="sm" className="rounded-xl">

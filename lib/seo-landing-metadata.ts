@@ -20,7 +20,7 @@ export type SeoLandingJsonLdInput = {
   parsed: SeoCombinedParsed;
 };
 
-/** WebPage + BreadcrumbList + dijeljeni Organization/WebSite @id (bez odvojenog Service — sadržaj je već u opisu stranice). */
+/** WebPage + BreadcrumbList + deljeni Organization/WebSite @id (bez odvojenog Service — sadržaj je već u opisu stranice). */
 export function buildSeoLandingJsonLd({
   canonicalUrl,
   siteUrl,

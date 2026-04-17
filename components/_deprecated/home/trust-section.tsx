@@ -1,7 +1,7 @@
 import { ShieldCheck, Star, Zap, MapPin } from "lucide-react";
 
 const TRUST_ITEMS = [
-  { icon: ShieldCheck, title: "Provjereni majstori", description: "Svi majstori su lično verifikovani." },
+  { icon: ShieldCheck, title: "Provereni majstori", description: "Svi majstori su lično verifikovani." },
   { icon: Star, title: "Visoke ocjene", description: "Prosječna ocjena od zadovoljnih korisnika." },
   { icon: Zap, title: "Brze ponude", description: "Ponude stižu u roku od 24h." },
   { icon: MapPin, title: "Lokalna podrška", description: "Tu smo, lokalno u vašem gradu." },

@@ -99,6 +99,10 @@ export function HandymanPushNotificationsCard() {
       if (e.message === "request_timeout") {
         return "Traje predugo. Ako vidite dugme „Ažuriraj“ za aplikaciju, kliknite ga i pokušajte ponovo.";
       }
+      const m = e.message.toLowerCase();
+      if (m.includes("push service error") || m.includes("registration failed")) {
+        return "Ovaj telefon trenutno ne podržava registraciju web push servisa. Ažurirajte Chrome i Google Play Services, pa pokušajte ponovo.";
+      }
       if (e.message?.trim()) return e.message;
     }
     return "Greška pri uključivanju obavještenja. Pokušajte ponovo.";

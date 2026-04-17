@@ -52,7 +52,7 @@ const LAST_NAMES = [
 ];
 
 const BIO_SNIPPETS = [
-  "Radim brzo i čisto, dolazim na vrijeme.",
+  "Radim brzo i čisto, dolazim na vreme.",
   "Iskustvo u stanovanju i poslovnim objektima.",
   "Besplatna procjena na licu mjesta.",
   "Koristim kvalitetan materijal, račun i garancija.",
@@ -77,16 +77,16 @@ const REQUEST_TEMPLATES: Tpl[] = [
     category: "Vodoinstalater",
     title: "Curanje ispod sudopere u kuhinji",
     shortDesc:
-      "Voda kaplje ispod sudopere, vjerovatno staro učvršćenje. Treba pregled i zaptivanje.",
+      "Voda kaplje ispod sudopere, verovatno staro učvršćenje. Treba pregled i zaptivanje.",
     longDesc:
-      "Curanje ispod sudopere u kuhinji primijećeno prije par dana. Voda se skuplja u ormariću ispod, brisao sam ali se opet pojavi. Stan je u starijoj zgradi, cijevi su vjerovatno stare. Treba detaljan pregled, eventualno zamjena creva ili zaptivanje spojeva. Molim termin što prije jer koristim kuhinju svakodnevno. Lokacija centar grada, parking u blizini.",
+      "Curanje ispod sudopere u kuhinji primećeno prije par dana. Voda se skuplja u ormariću ispod, brisao sam ali se opet pojavi. Stan je u starijoj zgradi, cijevi su verovatno stare. Treba detaljan pregled, eventualno zamjena creva ili zaptivanje spojeva. Molim termin što pre jer koristim kuhinju svakodnevno. Lokacija centar grada, parking u blizini.",
   },
   {
     category: "Električar",
-    title: "Zamjena utičnica u dnevnoj sobi",
+    title: "Zamena utičnica u dnevnoj sobi",
     shortDesc: "Tri utičnice labave, jedna ponekad iskreće pri uključivanju.",
     longDesc:
-      "U dnevnoj sobi imam tri utičnice koje su labave; kad uključim produžni kabl lampa povremeno treperi. Jedna je i blago zagrijana na dodir. Bojim se požara pa želim provjeru instalacije i zamjenu ako treba. Stan iz sedamdesetih, nije mijenjana elektrika. Može termin poslije podne.",
+      "U dnevnoj sobi imam tri utičnice koje su labave; kad uključim produžni kabl lampa povremeno treperi. Jedna je i blago zagrejana na dodir. Bojim se požara pa želim provjeru instalacije i zamjenu ako treba. Stan iz sedamdesetih, nije mijenjana elektrika. Može termin poslije podne.",
   },
   {
     category: "Klima servis",
@@ -97,17 +97,17 @@ const REQUEST_TEMPLATES: Tpl[] = [
   },
   {
     category: "Sitni kućni poslovi",
-    title: "Krečenje stana prije useljenja",
+    title: "Krečenje stana pre useljenja",
     shortDesc: "Dvosoban stan, oko pedeset pet kvadrata, neutralna boja.",
     longDesc:
-      "Kupili smo stan, treba krečenje prije namještaja. Zidovi su uglavnom u redu, par manjih pukotina u hodniku. Želimo neutralnu bijelu ili svijetlo sivu boju, kvalitetnu boju koja traje. Plafoni isto. Može ponuda po kvadratu sa materijalom ili bez, dogovorljivo oko termina.",
+      "Kupili smo stan, treba krečenje pre nameštaja. Zidovi su uglavnom u redu, par manjih pukotina u hodniku. Želimo neutralnu belu ili svetlo sivu boju, kvalitetnu boju koja traje. Plafoni isto. Može ponuda po kvadratu sa materijalom ili bez, dogovorljivo oko termina.",
   },
   {
     category: "Keramičar",
     title: "Postavljanje pločica u kupatilu",
     shortDesc: "Mala kupatila, pod i dio zida do visine tuša.",
     longDesc:
-      "Renoviramo kupatilo, imamo pločice kupljene, treba majstor za postavljanje. Pod je pripremljen, hidroizolacija urađena od prethodne faze. Treba nivelacija, ljepilo i fugovanje. Roštilj za tuš već postoji. Rok nam je za tri sedmice ako je moguće.",
+      "Renoviramo kupatilo, imamo pločice kupljene, treba majstor za postavljanje. Pod je pripremljen, hidroizolacija urađena od prethodne faze. Treba nivelacija, lepak i fugovanje. Roštilj za tuš već postoji. Rok nam je za tri sedmice ako je moguće.",
   },
   {
     category: "Selidbe",
@@ -126,7 +126,7 @@ const REQUEST_TEMPLATES: Tpl[] = [
   {
     category: "Bravar",
     title: "Popravka brave na ulaznim vratima",
-    shortDesc: "Ključ teško ulazi, brava škripi, možda zamjena cilindra.",
+    shortDesc: "Ključ teško ulazi, brava škripi, moždazamena cilindra.",
     longDesc:
       "Na ulaznim vratima stana brava postaje sve tvrđa. Ponekad moram dva puta okrenuti ključ. Želim da neko pogleda da li se može popraviti ili treba novi cilindar. Hitno nije, ali u narednih deset dana.",
   },
@@ -142,28 +142,28 @@ const REQUEST_TEMPLATES: Tpl[] = [
     title: "Zamjena dijela PVC stolarije",
     shortDesc: "Jedan prozor ne zatvara kako treba, dihtung oštećen.",
     longDesc:
-      "U dnevnoj sobi PVC prozor donji dio ne zatvara hermetički, puše na vjetru. Dihtung je očigledno star. Treba pregled i zamjena dihtunga ili cijelog krila ako je potrebno. Sprat četvrti, lift postoji.",
+      "U dnevnoj sobi PVC prozor donji dio ne zatvara hermetički, puše na vjetru. Dihtung je očigledno star. Treba pregled izamena dihtunga ili cijelog krila ako je potrebno. Sprat četvrti, lift postoji.",
   },
   {
     category: "Stolar",
     title: "Prilagođavanje unutrašnjih vrata",
-    shortDesc: "Vrata od stana u stubište ne prilježu, treba struganje i šarke.",
+    shortDesc: "Vrata od stana u stubište ne prianjaju, treba struganje i šarke.",
     longDesc:
-      "Drvena vrata u hodniku nakon postavljanja novog poda više ne prilježu kako treba. Treba majstor stolar da skinu, prilagodi visinu i vrati. Rok fleksibilan.",
+      "Drvena vrata u hodniku nakon postavljanja novog poda više ne prianjaju kako treba. Treba majstor stolar da skinu, prilagodi visinu i vrati. Rok fleksibilan.",
   },
   {
-    category: "Montaža namještaja",
+    category: "Montaža nameštaja",
     title: "Montaža kuhinjskih elemenata",
     shortDesc: "Elementi kupljeni, treba sklapanje i kačenje na zid.",
     longDesc:
-      "Imam kuhinju iz jednog poznatog lanca, kutije su u stanu. Treba profesionalna montaža, nivelacija, bušenje za šine i vodu za sudoperu. Procjena jednog ili dva dana rada. Molim iskustvo sa sličnim montažama.",
+      "Imam kuhinju iz jednog poznatog lanca, kutije su u stanu. Treba profesionalna montaža, nivelacija, bušenje za šine i vodu za sudoperu. Procena jednog ili dva dana rada. Molim iskustvo sa sličnim montažama.",
   },
   {
     category: "Čišćenje",
-    title: "Generalno čišćenje stana prije praznika",
+    title: "Generalno čišćenje stana pre praznika",
     shortDesc: "Trosoban stan, fokus kupatilo i kuhinja.",
     longDesc:
-      "Trebamo generalno čišćenje prije dolaska gostiju. Trosoban stan, oko osamdeset kvadrata. Posebno kupatilo i kuhinja, podovi parket i pločice. Može subotom.",
+      "Trebamo generalno čišćenje pre dolaska gostiju. Trosoban stan, oko osamdeset kvadrata. Posebno kupatilo i kuhinja, podovi parket i pločice. Može subotom.",
   },
   {
     category: "Građevinski radovi",
@@ -191,7 +191,7 @@ const REQUEST_TEMPLATES: Tpl[] = [
     title: "Curenje krova poslije jakih padavina",
     shortDesc: "Kapljice u potkrovlju, treba inspekcija i krpljenje.",
     longDesc:
-      "Poslije prošlog pljuska primijetili smo mokre mrlje na plafonu potkrovlja. Treba neko da izađe na krov, pronađe pukotinu i zalije. Krov je crijep, kuća u starijem naselju.",
+      "Posle prošlog pljuska primetili smo mokre mrlje na plafonu potkrovlja. Treba neko da izađe na krov, pronađe pukotinu i zalije. Krov je crijep, kuća u starijem naselju.",
   },
   {
     category: "Fasade / izolacija",
@@ -203,9 +203,9 @@ const REQUEST_TEMPLATES: Tpl[] = [
   {
     category: "Parketar",
     title: "Škripanje parketa u hodniku",
-    shortDesc: "Laminat ili parket stariji, škripi na jednom dijelu.",
+    shortDesc: "Laminat ili parket stariji, škripi na jednom delu.",
     longDesc:
-      "U hodniku pod škripi kad se pređe preko jedne trake. Nije bilo prije renoviranja zida. Treba majstor parketar da procijeni da li treba ponovno pričvršćivanje ili djelimična zamjena.",
+      "U hodniku pod škripi kad se pređe preko jedne trake. Nije bilo pre renoviranja zida. Treba majstor parketar da procijeni da li treba ponovno pričvršćivanje ili delimična zamena.",
   },
   {
     category: "TV / antene / internet instalacije",
@@ -219,7 +219,7 @@ const REQUEST_TEMPLATES: Tpl[] = [
     title: "Više sitnih poslova u stanu",
     shortDesc: "Viseća polica, ručka na ormanu, jedna lampa.",
     longDesc:
-      "Treba majstor za sitne popravke: montaža viseće police u kuhinji, zamjena ručke na ormanu, kačenje lustera u hodniku. Procjena pola dana rada, materijal već kupljen gdje treba.",
+      "Treba majstor za sitne popravke: montaža viseće police u kuhinji,zamena ručke na ormanu, kačenje lustera u hodniku. Procena pola dana rada, materijal već kupljen gde treba.",
   },
   {
     category: "Gipsani radovi",
@@ -233,7 +233,7 @@ const REQUEST_TEMPLATES: Tpl[] = [
     title: "Mikroorganizmi u uglu spavaće sobe",
     shortDesc: "Osjećaj vlage, treba inspekcija i tretman.",
     longDesc:
-      "U uglu spavaće sobe zida blizu kupatila pojavila se tamna mrlja. Treba stručnjak za vlagu da uradi mjerenje i predloži sanaciju prije krečenja.",
+      "U uglu spavaće sobe zida blizu kupatila pojavila se tamna mrlja. Treba stručnjak za vlagu da uradi merenje i predloži sanaciju pre krečenja.",
   },
   {
     category: "Odvoz šuta / otpada",
@@ -251,17 +251,17 @@ const REQUEST_TEMPLATES: Tpl[] = [
   },
   {
     category: "Roletne / tende",
-    title: "Zamjena roletni na jednom prozoru",
+    title: "Zamena roletni na jednom prozoru",
     shortDesc: "Roletna ne ide do kraja, mehanizam oštećen.",
     longDesc:
-      "Spoljna roletna na spavaćoj sobi zaglavila se na pola. Treba servis ili zamjena mehanizma. Dimenzije standardne za dvokrilni prozor.",
+      "Spoljna roletna na spavaćoj sobi zaglavila se na pola. Treba servis ilizamena mehanizma. Dimenzije standardne za dvokrilni prozor.",
   },
   {
     category: "Servis bojlera",
-    title: "Bojler dugo grije vodu",
+    title: "Bojler dugo greje vodu",
     shortDesc: "Električni bojter u kupatilu, voda topla tek nakon pola sata.",
     longDesc:
-      "Bojler je star oko deset godina, kapacitet osamdeset litara. Prije je grijao brže. Treba servis ili zamjena grijača ako je potrebno. Stan na drugom spratu.",
+      "Bojler je star oko deset godina, kapacitet osamdeset litara. Prije je grejao brže. Treba servis ilizamena grijača ako je potrebno. Stan na drugom spratu.",
   },
   {
     category: "Ugradnja kuhinja",

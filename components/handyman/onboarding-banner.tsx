@@ -19,9 +19,9 @@ export function OnboardingBanner({
     <div className={`rounded-2xl border border-amber-200 bg-amber-50/80 p-4 sm:p-5 ${className ?? ""}`}>
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h3 className="font-semibold text-amber-900">Dovršite profil</h3>
+          <h3 className="font-semibold text-amber-900">Završite profil</h3>
           <p className="mt-1 text-sm text-amber-800">
-            Kompletiran profil privlači više klijenata. Preostalo još {remaining.length} koraka. {percent}% dovršeno.
+            Kompletiran profil privlači više klijenata. Preostalo još {remaining.length} koraka. {percent}% završeno.
           </p>
           <div className="mt-2 h-2 w-full max-w-xs overflow-hidden rounded-full bg-amber-200">
             <div

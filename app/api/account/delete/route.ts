@@ -5,7 +5,7 @@ import { auth } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
-/** Ne abortuje PG transakciju — koristi se prije `$transaction`. */
+/** Ne abortuje PG transakciju — koristi se pre `$transaction`. */
 async function deleteDistributionJobsIfTableExists(
   prisma: PrismaClient,
   userId: string
@@ -38,7 +38,7 @@ export async function POST() {
 
   if (session.user.role === "ADMIN") {
     return NextResponse.json(
-      { success: false, error: "Admin nalog se ne može obrisati ovdje. Koristite admin panel." },
+      { success: false, error: "Admin nalog se ne može obrisati ovdje. Koristite administraciju." },
       { status: 400 }
     );
   }
@@ -66,7 +66,7 @@ export async function POST() {
           data: { userId: null },
         });
 
-        // 2) Direktne veze na korisnika (sigurno prije brisanja zahtjeva / naloga)
+        // 2) Direktne veze na korisnika (sigurno pre brisanja zahtjeva / naloga)
         await tx.pushSubscription.deleteMany({ where: { userId } });
         await tx.notification.deleteMany({ where: { userId } });
         await tx.creditTransaction.deleteMany({ where: { handymanId: userId } });

@@ -1,5 +1,5 @@
 /**
- * Jednom prije suite-a: admin prijava i snimanje `storageState` za `admin.spec.ts`.
+ * Jednom pre suite-a: admin prijava i snimanje `storageState` za `admin.spec.ts`.
  * Zahtijeva pokrenut app na `PLAYWRIGHT_BASE_URL` (default http://localhost:3010).
  */
 import * as fs from "fs";

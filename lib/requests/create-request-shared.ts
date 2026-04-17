@@ -65,7 +65,7 @@ export type CreateRequestSharedResult =
     }
   | { ok: false; error: string; status: number };
 
-/** NFC + mapiranje slug/label → internal prije Zod enum validacije. */
+/** NFC + mapiranje slug/label → internal pre Zod enum validacije. */
 function normalizeCategoryInRaw(raw: Record<string, unknown>): void {
   if (typeof raw.category !== "string") return;
   const t = raw.category.trim().normalize("NFC");

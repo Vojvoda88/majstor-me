@@ -1,7 +1,7 @@
 /**
  * Jedan izvor istine za kategorije (BrziMajstor.ME).
  * - internalCategory = vrijednost u Request.category i Category.name (baza)
- * - displayName = SEO / javne stranice / UI gdje treba konzistentan prikaz
+ * - displayName = SEO / javne stranice / UI gde treba konzistentan prikaz
  * - slug = /category/[slug], hero, ?category= mapiranje
  */
 
@@ -37,7 +37,7 @@ export const ACTIVE_INTERNAL_CATEGORY_NAMES = [
 export const LEGACY_INTERNAL_CATEGORY_NAMES = [
   "Moler / gipsar",
   "Moler / sitne kućne popravke",
-  "Montaža namještaja",
+  "Montaža nameštaja",
   "Krovopokrivač",
   "Parketar",
   "Građevinski radovi",

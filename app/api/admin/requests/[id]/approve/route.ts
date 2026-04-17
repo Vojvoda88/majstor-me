@@ -4,7 +4,7 @@ import { createAuditLog } from "@/lib/admin/audit";
 import { createDistributionJob, processDistributionJob } from "@/lib/distribution-job";
 
 export const dynamic = "force-dynamic";
-/** Isto kao cron za distribuciju — approve sada čeka kraj procesa (Vercel inače ubije „fire-and-forget“ prije logova). */
+/** Isto kao cron za distribuciju — approve sada čeka kraj procesa (Vercel inače ubije „fire-and-forget“ pre logova). */
 export const maxDuration = 60;
 
 export async function POST(

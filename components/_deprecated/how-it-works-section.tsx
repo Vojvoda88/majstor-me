@@ -3,7 +3,7 @@ import { FileText, Mail, UserCheck } from "lucide-react";
 const steps = [
   { icon: FileText, title: "Objavi zahtjev", description: "Opišite svoj problem i pošaljite zahtjev." },
   { icon: Mail, title: "Dobij ponude", description: "Primite ponude od majstora." },
-  { icon: UserCheck, title: "Izaberi majstora", description: "Odaberite & ugovorite najpovoljnijeg." },
+  { icon: UserCheck, title: "Izaberi majstora", description: "Izaberite & ugovorite najpovoljnijeg." },
 ];
 
 export function HowItWorksSection() {

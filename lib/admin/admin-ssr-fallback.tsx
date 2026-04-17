@@ -50,7 +50,7 @@ export function AdminRouteLoadError({
             <span className="font-medium">Snapshot:</span> {JSON.stringify(snapshot)}
           </p>
           <p className="text-xs text-amber-900/90">
-            Ako je P2022 (nepostojeća kolona), baza je vjerovatno iza šeme — pokrenite{" "}
+            Ako je P2022 (nepostojeća kolona), baza je verovatno iza šeme — pokrenite{" "}
             <code className="rounded bg-amber-100 px-1">prisma migrate deploy</code> na produkciji.
           </p>
           <Link href={resetHref} className="inline-block font-medium text-[#2563EB] underline">

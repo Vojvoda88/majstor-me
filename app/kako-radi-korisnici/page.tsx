@@ -117,7 +117,7 @@ export default function KakoRadiKorisniciPage() {
         <section className="mt-8 rounded-3xl border border-slate-200/80 bg-white p-6 sm:p-8">
           <h2 className="font-display text-2xl font-bold text-slate-900">Šta se dešava poslije objave?</h2>
           <p className="mt-3 text-[15px] leading-relaxed text-slate-600 sm:text-base">
-            Poslije objave vaš zahtjev ne “nestaje”. Ide na kratak pregled, zatim ga vide odgovarajući majstori i mogu slati
+            Posle objave vaš zahtjev ne “nestaje”. Ide na kratak pregled, zatim ga vide odgovarajući majstori i mogu slati
             ponude. Vi pratite situaciju i birate šta vam najviše odgovara.
           </p>
         </section>

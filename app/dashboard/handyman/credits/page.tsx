@@ -73,7 +73,7 @@ export default async function HandymanCreditsPage({
       )}
       {params.canceled === "1" && (
         <div className="mb-6 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700" role="status">
-          <p className="font-semibold text-slate-900">Plaćanje nije dovršeno</p>
+          <p className="font-semibold text-slate-900">Plaćanje nije završeno</p>
           <p className="mt-1">Možete pokušati ponovo ili dopuniti kredite putem aktivacije u kešu.</p>
         </div>
       )}
@@ -135,7 +135,7 @@ export default async function HandymanCreditsPage({
         <section id="online-paketi" className="scroll-mt-24">
           <h2 className="mt-10 font-display text-xl font-bold tracking-tight text-slate-900 md:text-2xl">Kupovina online</h2>
           <p className="mt-2 max-w-2xl text-sm leading-relaxed text-slate-600">
-            Sigurno plaćanje karticom. Odaberite paket — preusmjerit ćemo vas na Stripe Checkout. Nakon uplate krediti se
+            Sigurno plaćanje karticom. Izaberite paket — preusmerićemo vas na Stripe Checkout. Nakon uplate krediti se
             knjiže na vaš nalog (kad je webhook podešen).
           </p>
           <CreditPackagesPremium packages={CREDIT_PACKAGES} />

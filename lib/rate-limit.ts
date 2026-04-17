@@ -22,7 +22,7 @@ if (typeof setInterval !== "undefined") {
 }
 
 /**
- * Provjerava da li je limit prekoračen. Vraća true ako JE prekoračen (treba odbiti).
+ * Proverava da li je limit prekoračen. Vraća true ako JE prekoračen (treba odbiti).
  */
 export function isRateLimited(
   key: string,

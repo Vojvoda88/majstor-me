@@ -150,7 +150,7 @@ async function main() {
   console.log("\n[EXECUTE] changed_count (updateMany):", result.count);
   if (result.count !== eligibleCount) {
     console.warn(
-      "[EXECUTE] Upozorenje: changed_count !== eligible_count prije updatea (mogući paralelni update). Provjeri ručno."
+      "[EXECUTE] Upozorenje: changed_count !== eligible_count pre updatea (mogući paralelni update). Proveri ručno."
     );
   }
 }

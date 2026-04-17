@@ -26,7 +26,7 @@ export function RightInfoPanel({ title = "Primjer zahtjeva" }: Props) {
             <Paperclip className="h-4 w-4 text-[#475569]" />
           </p>
           <p className="mt-1 text-sm text-[#475569]">
-            Slavina curi i potrebno je zamijeniti mehanizam. Hitno potrebna popravka.
+            Slavina curi i potrebno je zameniti mehanizam. Hitno potrebna popravka.
           </p>
         </div>
       </div>

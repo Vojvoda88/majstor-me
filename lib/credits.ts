@@ -39,7 +39,7 @@ export function getCreditsRequiredForLead(input: LeadInput): number {
 }
 
 /**
- * Provjeri da li majstor ima dovoljno kredita za otključaj leada.
+ * Proveri da li majstor ima dovoljno kredita za otključaj leada.
  */
 export async function hasEnoughCreditsForUnlock(
   prisma: { handymanProfile: { findUnique: any } },

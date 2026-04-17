@@ -6,7 +6,7 @@ import { assertNoServerComponentError } from "./helpers/errors";
 
 const PWA_MODAL_DISMISS_KEY = "pwa-entry-modal-dismissed";
 
-/** Telefon iz forme — ne smije biti vidljiv kao tel: link prije unlock-a */
+/** Telefon iz forme — ne smije biti vidljiv kao tel: link pre unlock-a */
 const HIDDEN_USER_PHONE = "+38269123456";
 
 const gotoOpts = { waitUntil: "domcontentloaded" as const, timeout: 60_000 };

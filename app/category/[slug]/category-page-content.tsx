@@ -44,7 +44,7 @@ export function CategoryPageContent({
   slug: string;
   /** Grad iz ?city= prosleđen sa servera – izbjegava useSearchParams + Suspense zaglavljivanje */
   initialCity: string;
-  /** Prva stranica sa servera — puni prvi render prije klijentskog fetch-a */
+  /** Prva stranica sa servera — puni prvi render pre klijentskog fetch-a */
   initialListing: PublicHandymenListResult | null;
 }) {
   const router = useRouter();

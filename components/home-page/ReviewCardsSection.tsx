@@ -11,7 +11,7 @@ const FEATURED = [
     rating: "5.0",
     reviews: 34,
     reviewsLabel: "recenzije",
-    blurb: "Pouzdan majstor zanata, rješavam vaše poslove kvalitetno i na vrijeme.",
+    blurb: "Pouzdan majstor zanata, rješavam vaše poslove kvalitetno i na vreme.",
     profileHref: "/grad/tivat",
   },
   {

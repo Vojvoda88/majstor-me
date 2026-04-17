@@ -114,7 +114,7 @@ export async function POST(request: Request) {
   }
 }
 
-/** Provjera da li je upload dostupan */
+/** Provera da li je upload dostupan */
 export async function GET() {
   return NextResponse.json({
     uploadAvailable: isStorageConfigured(),

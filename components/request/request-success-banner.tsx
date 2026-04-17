@@ -15,7 +15,7 @@ export function RequestSuccessBanner({
 }: {
   adminStatus: AdminStatus;
   urgency: UrgencyLevel;
-  /** Guest / privatni link — jači savjet da se link sačuva. */
+  /** Guest / privatni link — jači savet da se link sačuva. */
   guestTracking?: boolean;
 }) {
   const searchParams = useSearchParams();

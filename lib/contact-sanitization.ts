@@ -52,7 +52,7 @@ function testPatterns(text: string, patterns: RegExp[]): RegExp | null {
 }
 
 /**
- * Provjeri da li tekst sadrži kontakt podatke koji zaobilaze unlock.
+ * Proveri da li tekst sadrži kontakt podatke koji zaobilaze unlock.
  * Koristi se za title i description.
  */
 export function containsContactBypass(text: string): ContactBypassResult {

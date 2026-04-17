@@ -26,7 +26,7 @@ export default async function LoginPage() {
       <div className="flex min-h-[calc(100vh-4rem)] flex-col items-center justify-center px-4 py-12">
         <div className="w-full max-w-md rounded-[2rem] border border-slate-200/80 bg-white p-8 shadow-marketplace md:p-10">
           <div className="mb-8 text-center">
-            <h1 className="font-display text-2xl font-bold text-brand-navy md:text-3xl">Dobrodošli natrag</h1>
+            <h1 className="font-display text-2xl font-bold text-brand-navy md:text-3xl">Dobrodošli nazad</h1>
             <p className="mt-3 text-slate-600">Prijavite se na svoj nalog da nastavite</p>
           </div>
           <LoginForm />

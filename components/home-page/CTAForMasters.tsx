@@ -17,7 +17,7 @@ export function CTAForMasters() {
           <p className="mx-auto mt-4 max-w-2xl text-[15px] leading-relaxed text-slate-600 sm:text-base md:text-lg">
             <strong className="font-semibold text-slate-800">Bez pretplate.</strong> Poslove pregledate bez plaćanja, a
             kredite trošite tek kada želite da otključate kontakt za konkretan posao. Detalji paketa i cijena su
-            transparentni prije svake kupovine.
+            transparentni pre svake kupovine.
           </p>
 
           <div

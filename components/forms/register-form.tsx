@@ -235,7 +235,7 @@ export function RegisterForm({
                 <strong className="font-semibold text-slate-800">Za majstore:</strong> Registracija je besplatna; dobijate{" "}
                 {HANDYMAN_START_BONUS_CREDITS.toLocaleString("sr-Latn-ME")} start kredita. Nema pretplate — krediti idu na
                 otključavanje kontakta kad vam posao odgovara (standardni, nije hitno posao = {STANDARD_LEAD_CREDITS}{" "}
-                kredita). Admin kratko odobri profil prije punog pristupa poslovima.
+                kredita). Admin kratko odobri profil pre punog pristupa poslovima.
               </div>
             )}
           </div>
@@ -303,7 +303,7 @@ export function RegisterForm({
             <Input id="city" placeholder="npr. Podgorica, Nikšić..." {...register("city")} />
             {role === "HANDYMAN" ? (
               <p className="text-xs text-[#64748B]">
-                Glavni grad na profilu. Područje poslovanja (više gradova) birate ispod, prije registracije.
+                Glavni grad na profilu. Područje poslovanja (više gradova) birate ispod, pre registracije.
               </p>
             ) : null}
           </div>

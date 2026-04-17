@@ -252,7 +252,7 @@ export default async function AdminDashboardPage() {
     { label: "Prijave na čekanju", value: reportsPending, href: "/admin/moderation" },
     { label: "Prihod od kredita danas", value: creditsToday, sub: "otključanja" },
     { label: "Prihod ove sedmice", value: creditsWeek, sub: "transakcije" },
-    { label: "Prihod ovog mjeseca", value: creditsMonth, sub: "transakcije" },
+    { label: "Prihod ovog meseca", value: creditsMonth, sub: "transakcije" },
   ];
 
   return (

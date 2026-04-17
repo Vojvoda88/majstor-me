@@ -212,7 +212,7 @@ export function UnlockContactButton({
               formu ispod ili odmah pozvati korisnika.
             </p>
             <ul className="mt-3 list-disc space-y-1 pl-5 text-sm text-slate-600">
-              <li>Telefon, zatim Viber i WhatsApp gdje je dostupno</li>
+              <li>Telefon, zatim Viber i WhatsApp gde je dostupno</li>
               <li>Slanje ponude kroz platformu (nakon otključavanja)</li>
               <li>Direktan poziv ili poruka korisniku</li>
             </ul>

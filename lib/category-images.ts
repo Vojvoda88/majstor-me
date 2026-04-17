@@ -26,7 +26,7 @@ const UNSPLASH = {
   default: "https://images.unsplash.com/photo-1504148455328-c376907d081c?w=800&auto=format&fit=crop&q=80",
 } as const;
 
-/** Kategorije bez lokalne slike — privremeno Unsplash (zamijeni kasnije vlastitim fajlovima). */
+/** Kategorije bez lokalne slike — privremeno Unsplash (zameni kasnije vlastitim fajlovima). */
 const SLUG_IMAGE_REMOTE: Record<string, string> = {
   "servis-bojlera": UNSPLASH.bojler,
   krovopokrivac: UNSPLASH.krov,

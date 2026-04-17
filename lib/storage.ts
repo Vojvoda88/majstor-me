@@ -46,7 +46,7 @@ export function validateImageFile(
   return null;
 }
 
-/** Provjera magic bytes — ne vjeruj samo Content-Type / ekstenziji. */
+/** Provera magic bytes — ne veruj samo Content-Type / ekstenziji. */
 export function validateImageMagicBytes(buffer: Buffer, claimedMime: string): boolean {
   if (buffer.length < 12) return false;
   if (claimedMime === "image/jpeg") {

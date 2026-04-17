@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
+import { notifyAdminsNewPendingRequest } from "@/lib/admin-signals";
 
 const prisma = new PrismaClient();
 
@@ -58,11 +59,21 @@ async function main() {
     select: {
       id: true,
       title: true,
+      category: true,
       city: true,
+      urgency: true,
       status: true,
       adminStatus: true,
       createdAt: true,
     },
+  });
+
+  await notifyAdminsNewPendingRequest({
+    requestId: request.id,
+    category: request.category,
+    city: request.city,
+    title: request.title,
+    urgency: request.urgency,
   });
 
   console.log(

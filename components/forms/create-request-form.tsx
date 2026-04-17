@@ -25,7 +25,7 @@ import { createRequestAction } from "@/app/actions/create-request";
 const createRequestSchema = z
   .object({
     requesterName: z.string().min(2, "Unesite ime"),
-    category: z.string().min(1, "Odaberite kategoriju"),
+    category: z.string().min(1, "Izaberite kategoriju"),
     title: z.string().min(3, "Naslov mora imati najmanje 3 karaktera"),
     description: z.string().min(10, "Opis mora imati najmanje 10 karaktera").max(2000),
     city: z.string().min(1, "Unesite grad"),
@@ -172,7 +172,7 @@ export function CreateRequestForm({ initialCategory, initialCity }: CreateReques
               className="select-premium"
               {...register("category")}
             >
-              <option value="">Odaberite…</option>
+              <option value="">Izaberite…</option>
               {categorySelectOptions.map((cat) => (
                 <option key={cat} value={cat}>
                   {displayLabelForRequestCategory(cat)}
@@ -201,7 +201,7 @@ export function CreateRequestForm({ initialCategory, initialCity }: CreateReques
             <Label htmlFor="description">Opis posla *</Label>
             <Textarea
               id="description"
-              placeholder="Šta treba uraditi, gdje, rok ako je bitan. Što jasnije — to bolje ponude."
+              placeholder="Šta treba uraditi, gde, rok ako je bitan. Što jasnije — to bolje ponude."
               rows={4}
               className="min-h-[100px] text-base"
               {...register("description")}
@@ -218,7 +218,7 @@ export function CreateRequestForm({ initialCategory, initialCity }: CreateReques
               className="select-premium"
               {...register("city")}
             >
-              <option value="">Odaberite grad</option>
+              <option value="">Izaberite grad</option>
               {CITIES.map((c) => (
                 <option key={c} value={c}>{c}</option>
               ))}

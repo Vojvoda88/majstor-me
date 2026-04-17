@@ -64,6 +64,14 @@ export function Hero() {
             Registruj se kao majstor
           </Link>
         </div>
+        <div className="mt-3 md:mt-4">
+          <Link
+            href="/login"
+            className="inline-flex min-h-[44px] items-center justify-center rounded-xl border border-white/25 bg-black/15 px-5 py-2.5 text-sm font-semibold text-white/95 backdrop-blur-sm transition hover:bg-black/25 hover:text-white active:scale-[0.98]"
+          >
+            Već imate nalog? Prijavi se
+          </Link>
+        </div>
 
         <div className="mt-4 flex flex-wrap items-center justify-center gap-2 sm:gap-3 md:mt-6 md:gap-4">
           {TRUST.map(({ icon: Icon, label }) => (

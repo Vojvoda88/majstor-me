@@ -1,5 +1,5 @@
 /**
- * Postavlja kredit majstoru prije E2E marketplace toka (CREDITS_REQUIRED=true).
+ * Postavlja kredit majstoru pre E2E marketplace toka (CREDITS_REQUIRED=true).
  * Pokretanje: npx tsx scripts/e2e-marketplace-prep.ts
  */
 import { PrismaClient } from "@prisma/client";

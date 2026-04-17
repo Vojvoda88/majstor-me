@@ -1,6 +1,6 @@
 /**
  * READ-ONLY: broji obrasce koji u kodu označavaju demo/test podatke.
- * Ne briše ništa. Pokreni uz produkcijski DATABASE_URL samo za pregled prije čišćenja.
+ * Ne briše ništa. Pokreni uz produkcijski DATABASE_URL samo za pregled pre čišćenja.
  *
  *   npx tsx scripts/audit-production-demo-patterns.ts
  */

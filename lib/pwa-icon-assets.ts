@@ -1,5 +1,5 @@
 /**
- * Kad zamijeniš public/launcher-icon-192.png ili launcher-icon-512.png, promijeni verziju da
+ * Kad zameniš public/launcher-icon-192.png ili launcher-icon-512.png, promeni verziju da
  * preglednici i “Dodaj na početni ekran” povuku novu sliku umjesto starog keša.
  * Uskladi i public/sw.js: ICON_192 i po potrebi CACHE_NAME.
  */

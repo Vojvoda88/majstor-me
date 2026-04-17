@@ -170,7 +170,7 @@ export function GradPageContent({
 
           <h2 className="mb-3 text-lg font-bold text-slate-900">Usluge po kategorijama {phraseUGradu(cityName)}</h2>
           <p className="mb-4 max-w-2xl text-sm text-slate-600">
-            Odaberite vrstu usluge — prikazuje se pregled za isti grad i kategoriju.
+            Izaberite vrstu usluge — prikazuje se pregled za isti grad i kategoriju.
           </p>
           <div className="mb-10 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
             {PUBLIC_CATEGORY_LISTING.map((cat) => (

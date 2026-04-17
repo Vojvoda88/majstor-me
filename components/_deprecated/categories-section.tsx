@@ -8,7 +8,7 @@ const CATEGORY_ICONS: Record<string, LucideIcon> = {
   "Električar": Zap,
   "Klima servis": Wind,
   "Moler / sitne kućne popravke": Paintbrush,
-  "Montaža namještaja": Sofa,
+  "Montaža nameštaja": Sofa,
   "Čišćenje": Sparkles,
   "Selidbe": Truck,
 };

@@ -75,7 +75,7 @@ export function InstallHints() {
       <section className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
         <h2 className="font-display text-lg font-bold text-brand-navy">Zašto ne vidim „Instaliraj“?</h2>
         <ul className="mt-3 list-disc space-y-1.5 pl-5 text-sm text-slate-600">
-          <li>Na iPhone-u <strong>ne postoji</strong> isti dijalog kao na Androidu — uvijek preko Dijeli → Početni ekran.</li>
+          <li>Na iPhone-u <strong>ne postoji</strong> isti dijalog kao na Androidu — uvijek preko Podijeli → Početni ekran.</li>
           <li>Ako si već dodao aplikaciju ili je otvoriš iz „installed“ moda, ponuda se ne prikazuje.</li>
           <li>Sajt mora biti otvoren preko <strong>HTTPS</strong> (produkcija na domeni).</li>
         </ul>

@@ -34,7 +34,7 @@ export function HeroSearch() {
             value={city}
             onChange={(e) => setCity(e.target.value)}
             className="min-h-[48px] w-full cursor-pointer appearance-none rounded-2xl bg-transparent py-3.5 pl-5 pr-12 text-left text-[16px] font-semibold text-slate-800 outline-none transition hover:bg-slate-100/80 sm:py-4 sm:text-[15px]"
-            aria-label="Odaberi grad"
+            aria-label="Izaberi grad"
           >
             <option value="">Svi gradovi</option>
             {CITIES.map((c) => (
@@ -54,9 +54,9 @@ export function HeroSearch() {
             onChange={(e) => setCategory(e.target.value)}
             required
             className="min-h-[48px] w-full cursor-pointer appearance-none rounded-2xl bg-transparent py-3.5 pl-5 pr-12 text-left text-[16px] font-semibold text-slate-800 outline-none transition hover:bg-slate-100/80 sm:py-4 sm:text-[15px]"
-            aria-label="Odaberi kategoriju"
+            aria-label="Izaberi kategoriju"
           >
-            <option value="">Odaberi kategoriju</option>
+            <option value="">Izaberi kategoriju</option>
             {PUBLIC_CATEGORY_LISTING.map((cat) => (
               <option key={cat.slug} value={cat.internalCategory}>
                 {cat.displayName}

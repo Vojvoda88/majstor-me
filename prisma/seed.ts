@@ -29,7 +29,7 @@ async function main() {
   const adminEmail = process.env.ADMIN_EMAIL ?? "admin@majstor.me";
   const admin = await prisma.user.upsert({
     where: { email: adminEmail },
-    // Uvijek uskladi lozinku sa seedom (Test123!) da E2E / lokalni smoke ne padaju na starom hash-u
+    // Uvek uskladi lozinku sa seedom (Test123!) da E2E / lokalni smoke ne padaju na starom hash-u
     update: { role: "ADMIN", name: "Admin Korisnik", passwordHash: password, emailVerified: new Date() },
     create: {
       email: adminEmail,
@@ -159,7 +159,7 @@ async function main() {
   const profileCategories: string[][] = [
     ["Vodoinstalater"],
     ["Električar"],
-    ["Moler / sitne kućne popravke", "Montaža namještaja"],
+    ["Moler / sitne kućne popravke", "Montaža nameštaja"],
     ["Čišćenje"],
     ["Klima servis"],
   ];
@@ -249,7 +249,7 @@ async function main() {
     },
     {
       userId: users[2].id,
-      category: "Montaža namještaja",
+      category: "Montaža nameštaja",
       description: "Montaža IKEA kuhinje, oko 3m.",
       city: "Nikšić",
       urgency: "NIJE_HITNO" as const,
@@ -277,7 +277,7 @@ async function main() {
     {
       userId: users[1].id,
       category: "Vodoinstalater",
-      description: "Zamjena stare bojler baterije, procuruje.",
+      description: "Zamena stare bojler baterije, procuruje.",
       city: "Nikšić",
       urgency: "HITNO_DANAS" as const,
       status: "COMPLETED" as const,
@@ -367,7 +367,7 @@ async function main() {
   }
 
   // Add more offers to reach 10 total
-  const montazaRequest = requests.find((r) => r.category === "Montaža namještaja")!;
+  const montazaRequest = requests.find((r) => r.category === "Montaža nameštaja")!;
   const molerRequest = requests.find((r) => r.category === "Moler / sitne kućne popravke")!;
 
   await prisma.offer.create({
@@ -376,7 +376,7 @@ async function main() {
       handymanId: handymanUsers[2].id,
       priceType: "FIKSNA",
       priceValue: 120,
-      message: "Montaža IKEA namještaja, iskustvo 8 godina.",
+      message: "Montaža IKEA nameštaja, iskustvo 8 godina.",
     },
   });
   await prisma.offer.create({

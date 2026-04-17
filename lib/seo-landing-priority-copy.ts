@@ -32,17 +32,17 @@ export type PrioritySeoLandingContent = {
 const PRIORITY_COPY: Record<PrioritySeoLandingSlug, PrioritySeoLandingContent> = {
   "vodoinstalater-podgorica": {
     intro:
-      "U Podgorici su uobičajeni radovi na instalacijama u stanovima i kućama — curenja, zamjena sanitarija, bojlera ili cijelih trasa, ponekad i hitno. Ispod su profili majstora u gradu. Umjesto da zovete više ljudi redom, možete besplatno objaviti jedan zahtjev: opišite šta curi ili šta ne radi, navedite da li je hitno, po želji dodajte fotografije — zainteresovani majstori šalju ponude, a vi birate.",
+      "U Podgorici su uobičajeni radovi na instalacijama u stanovima i kućama — curenja,zamena sanitarija, bojlera ili cijelih trasa, ponekad i hitno. Ispod su profili majstora u gradu. Umesto da zovete više ljudi redom, možete besplatno objaviti jedan zahtjev: opišite šta curi ili šta ne radi, navedite da li je hitno, po želji dodajte fotografije — zainteresovani majstori šalju ponude, a vi birate.",
     metaTitle: "Vodoinstalater Podgorica — curenja, instalacije, besplatan zahtjev",
     metaDescription:
       "Vodoinstalater u Podgorici: pregled profila za popravke i instalacije. Jedan besplatan zahtjev opišite problem jednom i uporedite ponude — bez obaveze da odmah birate izvođača.",
     ctaTitle: "Jedan zahtjev, više ponuda",
     ctaBody:
-      "Objava zahtjeva je besplatna. Napišite šta treba uraditi (curenje, zamjena, hitan kvar), gdje je lokacija u gradu i kada vam odgovara dolazak — majstori kojima posao odgovara šalju ponude, bez obaveze prijema.",
+      "Objava zahtjeva je besplatna. Napišite šta treba uraditi (curenje, zamjena, hitan kvar), gde je lokacija u gradu i kada vam odgovara dolazak — majstori kojima posao odgovara šalju ponude, bez obaveze prijema.",
     faq: [
       {
         q: "Kako da opišem curenje ili kvar?",
-        a: "Napišite gdje se vidi voda, da li kaplje stalno ili povremeno, i da li je potrebno hitno reagovanje. Ako imate fotografiju, može pomoći procjeni prije dolaska.",
+        a: "Napišite gde se vidi voda, da li kaplje stalno ili povremeno, i da li je potrebno hitno reagovanje. Ako imate fotografiju, može pomoći procjeni prije dolaska.",
       },
       {
         q: "Zašto jedan zahtjev umjesto više poziva?",
@@ -50,13 +50,13 @@ const PRIORITY_COPY: Record<PrioritySeoLandingSlug, PrioritySeoLandingContent> =
       },
       {
         q: "Šta vidim na profilu majstora?",
-        a: "Kategorije koje nudi, ocjene i broj recenzija gdje postoje. Na osnovu toga možete odlučiti kome da odgovorite.",
+        a: "Kategorije koje nudi, ocjene i broj recenzija gde postoje. Na osnovu toga možete odlučiti kome da odgovorite.",
       },
     ],
   },
   "vodoinstalater-niksic": {
     intro:
-      "U Nikšiću tražite vodoinstalatera za stan, kuću ili poslovni prostor — od sitnih popravki do zamjene sanitarija ili radova na cjevovodu. Lista profila ispod je za brzi pregled. Ako želite da isti opis vide više majstora i dobijete uporedive ponude, koristite besplatan zahtjev: unesite lokaciju u gradu i kratko šta treba uraditi.",
+      "U Nikšiću tražite vodoinstalatera za stan, kuću ili poslovni prostor — od sitnih popravki do zamjene sanitarija ili radova na cijevovodu. Lista profila ispod je za brzi pregled. Ako želite da isti opis vide više majstora i dobijete usporedive ponude, koristite besplatan zahtjev: unesite lokaciju u gradu i kratko šta treba uraditi.",
     metaTitle: "Vodoinstalater Nikšić — stan, kuća, zahtjev bez naknade",
     metaDescription:
       "Vodoinstalater u Nikšiću: majstori za instalacije i popravke. Besplatno objavite zahtjev s opisom posla u gradu i sačekajte ponude — bez obaveze prijema.",
@@ -80,7 +80,7 @@ const PRIORITY_COPY: Record<PrioritySeoLandingSlug, PrioritySeoLandingContent> =
   },
   "vodoinstalater-budva": {
     intro:
-      "U Budvi su česti radovi u stanovima, apartmanima i kućama uz more — curenja, zamjena instalacija u kuhinji ili kupatilu, bojleri, ponekad radovi između sezona. Pregledajte profile ispod. Ako želite da majstori brže shvate obim posla, u zahtjevu opišite tip objekta (stan, apartman, kuća) i dodajte slike ako pomažu; jedan zahtjev je besplatan i šalje opis svima koji mogu da odgovore.",
+      "U Budvi su česti radovi u stanovima, apartmanima i kućama uz more — curenja,zamena instalacija u kuhinji ili kupatilu, bojleri, ponekad radovi između sezona. Pregledajte profile ispod. Ako želite da majstori brže shvate obim posla, u zahtjevu opišite tip objekta (stan, apartman, kuća) i dodajte slike ako pomažu; jedan zahtjev je besplatan i šalje opis svima koji mogu da odgovore.",
     metaTitle: "Vodoinstalater Budva — apartmani, kuće, zahtjev besplatno",
     metaDescription:
       "Vodoinstalater u Budvi: profili za popravke i instalacije. Objavite jedan besplatan zahtjev s opisom i po potrebi fotografijama — uporedite ponude prije angažmana.",
@@ -104,13 +104,13 @@ const PRIORITY_COPY: Record<PrioritySeoLandingSlug, PrioritySeoLandingContent> =
   },
   "elektricar-podgorica": {
     intro:
-      "U Podgorici su česti radovi na osiguračima, zamjeni utičnica, rasvjeti, priključenjima i manjim kvarovima u stanovima i poslovnim prostorima. Ispod su profili električara. Ako ne znate uzrok, u zahtjevu opišite šta se dešava (isključuje osigurač, varira svjetlo, miris plastike). Jedan besplatan zahtjev šalje taj opis majstorima u gradu kojima posao odgovara — bez zvanja liste brojeva jedan po jedan.",
+      "U Podgorici su česti radovi na osiguračima, zamijeni utičnica, rasvjeti, priključenjima i manjim kvarovima u stanovima i poslovnim prostorima. Ispod su profili električara. Ako ne znate uzrok, u zahtjevu opišite šta se dešava (isključuje osigurač, varira svjetlo, miris plastike). Jedan besplatan zahtjev šalje taj opis majstorima u gradu kojima posao odgovara — bez zvanja liste brojeva jedan po jedan.",
     metaTitle: "Električar Podgorica — instalacije, kvarovi, besplatan zahtjev",
     metaDescription:
       "Električar u Podgorici: profili za električne radove i popravke. Objavite jedan besplatan zahtjev s opisom problema i uporedite ponude.",
     ctaTitle: "Opišite simptom jednom, sačekajte ponude",
     ctaBody:
-      "Objava zahtjeva je besplatna. Napišite šta ne radi ili šta treba povezati, gdje u gradu i kada vam odgovara dolazak. Majstori odgovaraju ako mogu preuzeti posao — vi birate kome da se javite.",
+      "Objava zahtjeva je besplatna. Napišite šta ne radi ili šta treba povezati, gde u gradu i kada vam odgovara dolazak. Majstori odgovaraju ako mogu preuzeti posao — vi birate kome da se javite.",
     faq: [
       {
         q: "Šta ako iskaču osigurači?",
@@ -138,11 +138,11 @@ const PRIORITY_COPY: Record<PrioritySeoLandingSlug, PrioritySeoLandingContent> =
     faq: [
       {
         q: "Kako da opišem posao ako nisam stručnjak?",
-        a: "Dovoljno je svakodnevni opis: šta ne radi, gdje u stanu/kući, i da li je bilo skorijih radova.",
+        a: "Dovoljno je svakodnevni opis: šta ne radi, gde u stanu/kući, i da li je bilo skorijih radova.",
       },
       {
-        q: "Mogu li vidjeti iskustvo majstora prije kontakta?",
-        a: "Na profilu su kategorije i, gdje postoje, ocjene od ranijih korisnika.",
+        q: "Mogu li videti iskustvo majstora prije kontakta?",
+        a: "Na profilu su kategorije i, gde postoje, ocjene od ranijih korisnika.",
       },
       {
         q: "Da li moram odmah prihvatiti ponudu?",
@@ -182,7 +182,7 @@ const PRIORITY_COPY: Record<PrioritySeoLandingSlug, PrioritySeoLandingContent> =
       "Klima servis u Podgorici: profili za servis i montažu. Besplatno objavite zahtjev — opišite uređaj i problem, sačekajte ponude i uporedite prije odluke.",
     ctaTitle: "Jedan opis problema, više ponuda za servis klime",
     ctaBody:
-      "Objava zahtjeva je besplatna. Napišite šta klima radi ili ne radi, gdje je ugradnja i kada vam odgovara dolazak — odgovaraju majstori iz Podgorice šalju ponude; nema obaveze prijema.",
+      "Objava zahtjeva je besplatna. Napišite šta klima radi ili ne radi, gde je ugradnja i kada vam odgovara dolazak — odgovaraju majstori iz Podgorice šalju ponude; nema obaveze prijema.",
     faq: [
       {
         q: "Šta navesti ako ne znam tačan model klime?",
@@ -190,7 +190,7 @@ const PRIORITY_COPY: Record<PrioritySeoLandingSlug, PrioritySeoLandingContent> =
       },
       {
         q: "Da li zahtjev pokriva i punjenje gasa?",
-        a: "U opisu navedite ako sumnjate na nedostatak hladnog medija ili slabo hlađenje; majstor procjenjuje šta je potrebno.",
+        a: "U opisu navedite ako sumnjate na nedostatak hladnog medija ili slabo hlađenje; majstor procenjuje šta je potrebno.",
       },
       {
         q: "Zašto jedan zahtjev umjesto više poziva?",
@@ -200,7 +200,7 @@ const PRIORITY_COPY: Record<PrioritySeoLandingSlug, PrioritySeoLandingContent> =
   },
   "klima-servis-budva": {
     intro:
-      "Na obali su klime u apartmanima i kućama često pod većim opterećenjem u sezoni — redovni servis i čišćenje mogu spriječiti kvarove. U Budvi pregledajte profile ispod. Prije ljetnje sezone ili kad primijetite slabo hlađenje ili buku, jedan besplatan zahtjev može zamijeniti više poziva: opišite lokaciju u gradu, sprat ako utiče na pristup, i šta klima radi.",
+      "Na obali su klime u apartmanima i kućama često pod većim opterećenjem u sezoni — redovni servis i čišćenje mogu sprečiti kvarove. U Budvi pregledajte profile ispod. Pre letnje sezone ili kad primetite slabo hlađenje ili buku, jedan besplatan zahtjev može zameniti više poziva: opišite lokaciju u gradu, sprat ako utiče na pristup, i šta klima radi.",
     metaTitle: "Klima servis Budva — apartmani, kuće, zahtjev besplatno",
     metaDescription:
       "Klima servis u Budvi: majstori za servis i montažu. Objavite besplatan zahtjev s opisom uređaja i problema — uporedite ponude.",

@@ -206,12 +206,12 @@ export default async function HandymanDashboardPage({
             </p>
             <p className="mt-1 text-xs leading-relaxed text-slate-600">
               {pendingSteps.length > 0
-                ? `Preostalo još ${pendingSteps.length} stvari prije punijeg profila.`
+                ? `Preostalo još ${pendingSteps.length} stvari pre punijeg profila.`
                 : "Svi osnovni elementi profila su popunjeni."}
             </p>
             <Link href="/dashboard/handyman/profile" className="mt-3 inline-block">
               <Button size="sm" className="w-full">
-                Otvori profil i dovrši
+                Otvori profil i završi
               </Button>
             </Link>
           </div>
@@ -238,7 +238,7 @@ export default async function HandymanDashboardPage({
             ((profile as { creditsBalance?: number }).creditsBalance ?? 0) < LOW_CREDITS_THRESHOLD &&
             ((profile as { creditsBalance?: number }).creditsBalance ?? 0) > 0 && (
             <p className="mt-1 text-xs font-medium text-amber-600">
-              Malo kredita — dopunite prije nego što vam zatreba kontakt.
+              Malo kredita — dopunite pre nego što vam zatreba kontakt.
             </p>
           )}
           <Link
@@ -287,7 +287,7 @@ export default async function HandymanDashboardPage({
           </>
         ) : (
           <p className="mt-3 text-sm text-slate-600">
-            U ovom okruženju otključavanje kontakta je trenutno bez kredita — i dalje potvrdite kontakt prije nego što
+            U ovom okruženju otključavanje kontakta je trenutno bez kredita — i dalje potvrdite kontakt pre nego što
             vidite broj telefona.
           </p>
         )}

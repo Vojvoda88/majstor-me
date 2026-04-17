@@ -288,7 +288,7 @@ export function SeoLandingContent({
                 },
                 {
                   q: "Šta vidim na profilu majstora?",
-                  a: "Ocjene i broj recenzija od ranijih korisnika, kad postoje. Na profilu možete vidjeti i kategorije koje majstor nudi.",
+                  a: "Ocjene i broj recenzija od ranijih korisnika, kad postoje. Na profilu možete videti i kategorije koje majstor nudi.",
                 },
               ]).map((item, i) => (
                 <div key={i}>

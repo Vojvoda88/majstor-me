@@ -25,7 +25,7 @@ const profileSchema = z.object({
   bio: z.string().optional(),
   categories: z
     .array(z.string())
-    .min(1, "Odaberite najmanje jednu kategoriju")
+    .min(1, "Izaberite najmanje jednu kategoriju")
     .max(MAX_CATEGORIES, "Možete izabrati maksimalno 5 kategorija."),
   cities: z.array(z.string()), // prazan = svi gradovi (server čuva punu listu)
   galleryImages: z.array(z.string().url()).optional(),
@@ -126,7 +126,7 @@ export function HandymanProfileForm({
     <form onSubmit={handleSubmit((data) => mutation.mutate(data))} className="space-y-6">
       {mutation.error && <div className="form-error">{mutation.error.message}</div>}
       <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950">
-        Sve izmjene opisa, slika i ostalih javnih podataka idu administratoru na pregled prije javne objave profila.
+        Sve izmjene opisa, slika i ostalih javnih podataka idu administratoru na pregled pre javne objave profila.
       </div>
 
       {/* Osnovni podaci */}
@@ -175,7 +175,7 @@ export function HandymanProfileForm({
           <div>
             <Label>Kategorije *</Label>
             <p className="text-sm text-muted-foreground">
-              Odaberite kategorije u kojima nudite usluge (maks. {MAX_CATEGORIES})
+              Izaberite kategorije u kojima nudite usluge (maks. {MAX_CATEGORIES})
             </p>
             <div className="mt-2 flex flex-wrap gap-2">
               {handymanCategoryChoices.map((cat) => (
@@ -199,7 +199,7 @@ export function HandymanProfileForm({
           <div>
             <Label>Gradovi (opciono)</Label>
             <p className="text-sm text-muted-foreground">
-              Ako ne izaberete ni jedan, tretiraćemo kao da radite u svim gradovima na platformi.
+              Ako ne odaberete ni jedan, tretiraćemo kao da radite u svim gradovima na platformi.
             </p>
             <div className="mt-2 flex flex-wrap gap-2">
               {CITIES_LIST.map((city) => (

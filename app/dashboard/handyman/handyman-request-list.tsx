@@ -87,7 +87,7 @@ export function HandymanRequestList({
       {requests.length === 0 ? (
         <EmptyState
           title="Nema otvorenih zahtjeva"
-          description="Nema zahtjeva za izabrane filtere. Pokušajte promijeniti kategoriju ili grad."
+          description="Nema zahtjeva za izabrane filtere. Pokušajte promeniti kategoriju ili grad."
         />
       ) : (
         <div className="space-y-4">
