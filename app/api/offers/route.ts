@@ -235,11 +235,11 @@ export async function POST(request: NextRequest) {
       req.requesterEmail
     );
     if (req.userId) {
-      createNotification(req.userId, "NEW_OFFER", `Nova ponuda: ${req.category}`, {
+      await createNotification(req.userId, "NEW_OFFER", `Nova ponuda: ${req.category}`, {
         body: `${handyman?.name ?? "Majstor"} vam je poslao ponudu`,
         link: `/request/${requestId}`,
       });
-      void sendPushToUser(prisma, req.userId, {
+      await sendPushToUser(prisma, req.userId, {
         title: "Stigla vam je nova ponuda",
         body: "Za posao koji ste objavili stigla je nova ponuda. Otvorite zahtjev i pogledajte detalje.",
         link: `/request/${requestId}`,

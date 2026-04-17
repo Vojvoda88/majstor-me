@@ -50,7 +50,7 @@ export async function notifyAdminsNewPendingRequest(params: {
         body,
         link,
       });
-      void sendPushToUser(prisma, uid, {
+      await sendPushToUser(prisma, uid, {
         title,
         body: body || "Otvori zahtjev u admin panelu.",
         link,
@@ -79,7 +79,7 @@ export async function notifyAdminsNewPendingHandyman(params: {
         body,
         link,
       });
-      void sendPushToUser(prisma, uid, {
+      await sendPushToUser(prisma, uid, {
         title,
         body,
         link,
@@ -107,7 +107,7 @@ export async function notifyAdminsHandymanReturnedToReview(params: {
         body,
         link,
       });
-      void sendPushToUser(prisma, uid, {
+      await sendPushToUser(prisma, uid, {
         title,
         body,
         link,

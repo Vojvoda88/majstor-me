@@ -35,15 +35,21 @@ export function getPushServerConfig(): PushServerConfig {
 
 function ensureVapid() {
   if (vapidConfigured) return;
-  const { hasPublicKey, hasPrivateKey } = getPushServerConfig();
-  const publicKey = process.env.VAPID_PUBLIC_KEY;
-  const privateKey = process.env.VAPID_PRIVATE_KEY;
-  if (hasPublicKey && hasPrivateKey && publicKey && privateKey) {
+  const cfg = getPushServerConfig();
+  const publicKey = process.env.VAPID_PUBLIC_KEY?.trim();
+  const privateKey = process.env.VAPID_PRIVATE_KEY?.trim();
+  // Isti uslov kao /api/push/subscribe: inače pretplate ne bi trebale postojati, ali bez poklapanja javnog ključa FCM vraća grešku.
+  if (cfg.canSend && publicKey && privateKey) {
     webpush.setVapidDetails("mailto:support@brzimajstor.me", publicKey, privateKey);
     vapidConfigured = true;
   } else if (!vapidMissingLogged) {
     vapidMissingLogged = true;
-    console.warn("[push] Missing VAPID_PUBLIC_KEY or VAPID_PRIVATE_KEY — server cannot send push");
+    console.warn("[push] VAPID nije spreman za slanje (potrebni su oba tajna ključa i NEXT_PUBLIC_VAPID_PUBLIC_KEY koji se poklapa sa VAPID_PUBLIC_KEY)", {
+      hasPublicKey: cfg.hasPublicKey,
+      hasPrivateKey: cfg.hasPrivateKey,
+      hasClientPublicKey: cfg.hasClientPublicKey,
+      publicKeysMatch: cfg.publicKeysMatch,
+    });
   }
 }
 
