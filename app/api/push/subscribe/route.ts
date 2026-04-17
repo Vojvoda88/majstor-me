@@ -4,6 +4,7 @@ import { logError } from "@/lib/logger";
 import { z } from "zod";
 import { isRateLimited, getRetryAfterSeconds } from "@/lib/rate-limit";
 import { getRequestClientIp } from "@/lib/request-ip";
+import { getPushServerConfig } from "@/lib/push";
 
 export const dynamic = "force-dynamic";
 
@@ -17,6 +18,26 @@ const subscribeSchema = z.object({
 
 export async function POST(request: Request) {
   try {
+    const pushConfig = getPushServerConfig();
+    if (!pushConfig.canSend) {
+      const details = !pushConfig.hasPublicKey
+        ? "Nedostaje VAPID_PUBLIC_KEY."
+        : !pushConfig.hasPrivateKey
+          ? "Nedostaje VAPID_PRIVATE_KEY."
+          : !pushConfig.hasClientPublicKey
+            ? "Nedostaje NEXT_PUBLIC_VAPID_PUBLIC_KEY."
+            : !pushConfig.publicKeysMatch
+              ? "VAPID_PUBLIC_KEY i NEXT_PUBLIC_VAPID_PUBLIC_KEY se ne poklapaju."
+              : "VAPID konfiguracija nije validna.";
+      return NextResponse.json(
+        {
+          success: false,
+          error: `Push server nije kompletno podešen. ${details}`,
+        },
+        { status: 503 }
+      );
+    }
+
     const session = await auth();
     if (!session?.user?.id) {
       return NextResponse.json(

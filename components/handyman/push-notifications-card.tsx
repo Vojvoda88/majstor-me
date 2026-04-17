@@ -4,6 +4,8 @@ import { useCallback, useEffect, useState } from "react";
 import { Bell, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
+  forceResubscribe,
+  getCurrentPushSubscriptionEndpoint,
   getPushUiState,
   requestPermissionAndSubscribe,
   type PushUiState,
@@ -64,6 +66,7 @@ export function HandymanPushNotificationsCard() {
   const [error, setError] = useState<string | null>(null);
   const [testMessage, setTestMessage] = useState<string | null>(null);
   const [uiMode, setUiModeState] = useState<UiMode>("full");
+  const [selfHealTried, setSelfHealTried] = useState(false);
 
   const vapid = typeof process !== "undefined" ? process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY : undefined;
 
@@ -90,6 +93,46 @@ export function HandymanPushNotificationsCard() {
       }
     }
     await refresh();
+
+    // Jedan klik: odmah testiraj baš ovaj uređaj.
+    const runDeviceTest = async () => {
+      const endpoint = await getCurrentPushSubscriptionEndpoint();
+      const testRes = await fetch("/api/push/test", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(endpoint ? { endpoint } : {}),
+      });
+      const testJson = await testRes.json().catch(() => ({}));
+      return { ok: !!(testRes.ok && testJson?.success), error: typeof testJson?.error === "string" ? testJson.error : null };
+    };
+
+    let deviceTest = { ok: false, error: null as string | null };
+    try {
+      deviceTest = await runDeviceTest();
+    } catch {
+      deviceTest = { ok: false, error: null };
+    }
+
+    if (!deviceTest.ok) {
+      const repaired = await forceResubscribe(vapid);
+      if (!repaired.ok && repaired.reason !== "permission_denied") {
+        setError(repaired.message ?? "Automatska popravka push pretplate nije uspjela.");
+      }
+      await refresh();
+      try {
+        const afterRepair = await runDeviceTest();
+        if (afterRepair.ok) {
+          setTestMessage("Push je aktiviran na ovom telefonu.");
+        } else if (!error) {
+          setError(afterRepair.error ?? "Push nije aktiviran za ovaj uređaj. Probajte ponovo.");
+        }
+      } catch {
+        if (!error) setError("Push nije aktiviran za ovaj uređaj. Probajte ponovo.");
+      }
+    } else {
+      setTestMessage("Push je aktiviran na ovom telefonu.");
+    }
+
     setBusy(false);
   };
 
@@ -140,6 +183,31 @@ export function HandymanPushNotificationsCard() {
     status.permission === "granted" &&
     status.subscribed &&
     status.serverSubscriptionCount > 0;
+
+  // Auto self-heal bez ručnih koraka: ako je dozvola grantovana, a push ipak nije "enabled", pokušaj reparaciju jednom.
+  useEffect(() => {
+    if (selfHealTried || !vapid || busy) return;
+    if (status.kind !== "ready") return;
+    const shouldHeal =
+      status.permission === "granted" &&
+      (!status.subscribed || status.serverSubscriptionCount < 1);
+    if (!shouldHeal) return;
+
+    let cancelled = false;
+    setSelfHealTried(true);
+    void (async () => {
+      const repaired = await forceResubscribe(vapid);
+      if (cancelled) return;
+      if (!repaired.ok && repaired.reason !== "permission_denied") {
+        setError(repaired.message ?? "Automatska popravka push pretplate nije uspjela.");
+      }
+      await refresh();
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [selfHealTried, status, vapid, busy, refresh]);
 
   if (enabled) {
     return (

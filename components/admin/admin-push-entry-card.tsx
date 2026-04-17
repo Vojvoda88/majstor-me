@@ -4,6 +4,8 @@ import { useCallback, useEffect, useState } from "react";
 import { Bell, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
+  forceResubscribe,
+  getCurrentPushSubscriptionEndpoint,
   getPushUiState,
   requestPermissionAndSubscribe,
   type PushUiState,
@@ -34,13 +36,16 @@ function setUiMode(mode: UiMode): void {
 }
 
 /**
- * Admin: naknadno uključivanje push-a (pending zahtjevi/majstori). Uvijek dostupan put na dashboardu / notifikacije.
+ * Admin: naknadno uključivanje push-a (pending zahtjevi/majstori). Uvek dostupan put na dashboardu / notifikacije.
  */
 export function AdminPushEntryCard() {
   const [status, setStatus] = useState<PushUiState | { kind: "loading" }>({ kind: "loading" });
   const [busy, setBusy] = useState(false);
+  const [testBusy, setTestBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [testMessage, setTestMessage] = useState<string | null>(null);
   const [uiMode, setUiModeState] = useState<UiMode>("full");
+  const [selfHealTried, setSelfHealTried] = useState(false);
 
   const vapid = typeof process !== "undefined" ? process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY : undefined;
 
@@ -63,6 +68,45 @@ export function AdminPushEntryCard() {
       setError(result.message ?? "Nije moguće uključiti obavještenja. Pokušajte ponovo.");
     }
     await refresh();
+
+    const runDeviceTest = async () => {
+      const endpoint = await getCurrentPushSubscriptionEndpoint();
+      const testRes = await fetch("/api/push/test", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(endpoint ? { endpoint } : {}),
+      });
+      const testJson = await testRes.json().catch(() => ({}));
+      return { ok: !!(testRes.ok && testJson?.success), error: typeof testJson?.error === "string" ? testJson.error : null };
+    };
+
+    let deviceTest = { ok: false, error: null as string | null };
+    try {
+      deviceTest = await runDeviceTest();
+    } catch {
+      deviceTest = { ok: false, error: null };
+    }
+
+    if (!deviceTest.ok) {
+      const repaired = await forceResubscribe(vapid);
+      if (!repaired.ok && repaired.reason !== "permission_denied") {
+        setError(repaired.message ?? "Automatska popravka push pretplate nije uspjela.");
+      }
+      await refresh();
+      try {
+        const afterRepair = await runDeviceTest();
+        if (afterRepair.ok) {
+          setTestMessage("Push je aktiviran na ovom telefonu.");
+        } else if (!error) {
+          setError(afterRepair.error ?? "Push nije aktiviran za ovaj uređaj. Probajte ponovo.");
+        }
+      } catch {
+        if (!error) setError("Push nije aktiviran za ovaj uređaj. Probajte ponovo.");
+      }
+    } else {
+      setTestMessage("Push je aktiviran na ovom telefonu.");
+    }
+
     setBusy(false);
   };
 
@@ -88,7 +132,56 @@ export function AdminPushEntryCard() {
     status.subscribed &&
     status.serverSubscriptionCount > 0;
 
+  useEffect(() => {
+    if (selfHealTried || !vapid || busy) return;
+    if (status.kind !== "ready") return;
+    const shouldHeal =
+      status.permission === "granted" &&
+      (!status.subscribed || status.serverSubscriptionCount < 1);
+    if (!shouldHeal) return;
+
+    let cancelled = false;
+    setSelfHealTried(true);
+    void (async () => {
+      const repaired = await forceResubscribe(vapid);
+      if (cancelled) return;
+      if (!repaired.ok && repaired.reason !== "permission_denied") {
+        setError(repaired.message ?? "Automatska popravka push pretplate nije uspjela.");
+      }
+      await refresh();
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [selfHealTried, status, vapid, busy, refresh]);
+
   if (enabled) {
+    const handleSendTest = async () => {
+      if (testBusy) return;
+      setTestBusy(true);
+      setError(null);
+      setTestMessage(null);
+      try {
+        const endpoint = await getCurrentPushSubscriptionEndpoint();
+        const res = await fetch("/api/push/test", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(endpoint ? { endpoint } : {}),
+        });
+        const json = await res.json().catch(() => ({}));
+        if (res.ok && json?.success) {
+          setTestMessage("Test obavještenje je poslato za ovaj uređaj.");
+        } else {
+          setError(typeof json?.error === "string" ? json.error : "Test obavještenje nije poslato.");
+        }
+      } catch {
+        setError("Greška pri slanju test obavještenja.");
+      } finally {
+        setTestBusy(false);
+      }
+    };
+
     return (
       <div className="rounded-xl border border-emerald-200 bg-emerald-50/90 p-4 shadow-sm">
         <div className="flex flex-wrap items-center gap-2">
@@ -97,6 +190,20 @@ export function AdminPushEntryCard() {
             Push obavještenja su uključena na ovom uređaju — dobićete obavještenje za nove stvari koje čekaju pregled.
           </p>
         </div>
+        <div className="mt-3 flex flex-wrap items-center gap-2">
+          <Button
+            type="button"
+            size="sm"
+            variant="outline"
+            className="border-emerald-300 bg-white text-emerald-900 hover:bg-emerald-100"
+            disabled={testBusy}
+            onClick={() => void handleSendTest()}
+          >
+            {testBusy ? "Slanje testa..." : "Pošalji test obavještenje"}
+          </Button>
+        </div>
+        {testMessage && <p className="mt-2 text-sm text-emerald-900">{testMessage}</p>}
+        {error && <p className="mt-2 text-sm text-red-700">{error}</p>}
       </div>
     );
   }

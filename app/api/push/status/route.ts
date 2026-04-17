@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
+import { getPushServerConfig } from "@/lib/push";
 
 export const dynamic = "force-dynamic";
 
@@ -8,6 +9,7 @@ export const dynamic = "force-dynamic";
  */
 export async function GET() {
   try {
+    const pushConfig = getPushServerConfig();
     const session = await auth();
     if (!session?.user?.id) {
       return NextResponse.json({ success: false, error: "Morate biti prijavljeni" }, { status: 401 });
@@ -18,7 +20,19 @@ export async function GET() {
       where: { userId: session.user.id },
     });
 
-    return NextResponse.json({ success: true, data: { count } });
+    return NextResponse.json({
+      success: true,
+      data: {
+        count,
+        serverCanSendPush: pushConfig.canSend,
+        vapid: {
+          hasPublicKey: pushConfig.hasPublicKey,
+          hasPrivateKey: pushConfig.hasPrivateKey,
+          hasClientPublicKey: pushConfig.hasClientPublicKey,
+          publicKeysMatch: pushConfig.publicKeysMatch,
+        },
+      },
+    });
   } catch {
     return NextResponse.json({ success: false, error: "Greška" }, { status: 500 });
   }

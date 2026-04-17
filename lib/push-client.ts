@@ -16,7 +16,7 @@ export function browserSupportsWebPush(): boolean {
   return "Notification" in window && "serviceWorker" in navigator && "PushManager" in window;
 }
 
-/** `navigator.serviceWorker.ready` može vječno čekati ako SW nikad ne postane aktivan (npr. neuspjeli register). */
+/** `navigator.serviceWorker.ready` može vječno čekati ako SW nikad ne postane aktivan (npr. neuspješni register). */
 const SW_READY_TIMEOUT_MS = 12_000;
 
 function withTimeout<T>(ms: number, p: Promise<T>): Promise<T> {
@@ -69,7 +69,7 @@ export async function getPushReadyState(vapidPublicKey: string | undefined): Pro
       return {
         kind: "unsupported",
         reason:
-          "Service worker se nije učitao u roku (npr. blokiran ili neuspjeli SW). Osvježite stranicu; na HTTPS provjerite da /sw.js radi.",
+          "Service worker se nije učitao u roku (npr. blokiran ili neuspješni SW). Osvježite stranicu; na HTTPS provjerite da /sw.js radi.",
       };
     }
     const sub = await reg.pushManager.getSubscription();
@@ -90,16 +90,95 @@ export type SubscribeResult =
   | { ok: true }
   | { ok: false; reason: "permission_denied" | "server_error" | "subscribe_failed"; message?: string };
 
+function normalizeSubscribeErrorMessage(err: unknown): string {
+  const raw = err instanceof Error ? err.message : String(err ?? "");
+  const msg = raw.toLowerCase();
+
+  // Česta greška na nekim Android uređajima / preglednicima bez dostupnog push servisa.
+  if (msg.includes("registration failed - push service error")) {
+    return "Preglednik na ovom uređaju trenutno ne može registrovati push servis. Probajte Chrome (ažuriran), uključite Google Play Services i ponovo pokrenite preglednik.";
+  }
+  if (msg.includes("notsupportederror")) {
+    return "Push obavještenja nijesu podržana u ovom pregledniku/na ovom uređaju.";
+  }
+  if (msg.includes("invalidstateerror")) {
+    return "Push pretplata nije uspjela zbog stanja preglednika. Osvježite stranicu i pokušajte ponovo.";
+  }
+  if (msg.includes("aborterror")) {
+    return "Registracija push obavještenja je prekinuta. Provjerite mrežu i pokušajte ponovo.";
+  }
+  if (msg.includes("networkerror")) {
+    return "Mrežna greška pri registraciji push obavještenja. Provjerite internet i pokušajte ponovo.";
+  }
+
+  return raw && raw !== "[object Object]" ? raw : "Greška pri uključivanju obavještenja.";
+}
+
+async function saveSubscriptionOnServer(sub: PushSubscription): Promise<SubscribeResult> {
+  const json = sub.toJSON();
+  console.info("[push-client] POST /api/push/subscribe …", { endpointPrefix: (json.endpoint ?? "").slice(0, 48) });
+  const res = await fetch("/api/push/subscribe", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      endpoint: json.endpoint,
+      keys: json.keys,
+    }),
+  });
+  if (!res.ok) {
+    const j = (await res.json().catch(() => ({}))) as { error?: string };
+    console.warn("[push-client] subscribe save failed", { httpStatus: res.status, error: j.error });
+    try {
+      await sub.unsubscribe();
+      console.info("[push-client] local subscription unsubscribed after failed server save");
+    } catch (u) {
+      console.warn("[push-client] unsubscribe after failed save failed", u);
+    }
+    return {
+      ok: false,
+      reason: "server_error",
+      message: j.error ?? "Podešavanja nisu sačuvana. Pokušajte ponovo.",
+    };
+  }
+  console.info("[push-client] subscribe save ok");
+  return { ok: true };
+}
+
+async function subscribeWithRegistration(reg: ServiceWorkerRegistration, vapidPublicKey: string): Promise<SubscribeResult> {
+  let sub = await reg.pushManager.getSubscription();
+  if (!sub) {
+    console.info("[push-client] pushManager.subscribe() …");
+    sub = await reg.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: urlBase64ToUint8Array(vapidPublicKey) as BufferSource,
+    });
+  }
+  return saveSubscriptionOnServer(sub);
+}
+
 /** Broj pretplata za trenutnog korisnika u bazi (0 ako nije sačuvano ili niste prijavljeni). */
-export async function fetchServerPushSubscriptionCount(): Promise<number> {
+export type ServerPushStatus = {
+  count: number;
+  serverCanSendPush: boolean;
+};
+
+export async function fetchServerPushStatus(): Promise<ServerPushStatus> {
   try {
     const res = await fetch("/api/push/status", { credentials: "include" });
-    const j = (await res.json().catch(() => ({}))) as { success?: boolean; data?: { count?: number } };
-    if (j.success && typeof j.data?.count === "number") return j.data.count;
+    const j = (await res.json().catch(() => ({}))) as {
+      success?: boolean;
+      data?: { count?: number; serverCanSendPush?: boolean };
+    };
+    if (j.success && typeof j.data?.count === "number") {
+      return {
+        count: j.data.count,
+        serverCanSendPush: j.data.serverCanSendPush !== false,
+      };
+    }
   } catch {
     /* ignore */
   }
-  return 0;
+  return { count: 0, serverCanSendPush: true };
 }
 
 export type PushUiReadyState = {
@@ -108,6 +187,8 @@ export type PushUiReadyState = {
   subscribed: boolean;
   /** Koliko pretplata ima ovaj nalog na serveru — UI „uključeno“ samo ako je >0 i lokalno subscribed */
   serverSubscriptionCount: number;
+  /** Da li je backend sposoban da šalje push (VAPID public+private). */
+  serverCanSendPush: boolean;
 };
 
 export type PushUiState =
@@ -122,8 +203,11 @@ export type PushUiState =
 export async function getPushUiState(vapidPublicKey: string | undefined): Promise<PushUiState> {
   const base = await getPushReadyState(vapidPublicKey);
   if (base.kind !== "ready") return base;
-  const serverSubscriptionCount = await fetchServerPushSubscriptionCount();
-  return { ...base, serverSubscriptionCount };
+  const server = await fetchServerPushStatus();
+  if (!server.serverCanSendPush) {
+    return { kind: "no_vapid" };
+  }
+  return { ...base, serverSubscriptionCount: server.count, serverCanSendPush: server.serverCanSendPush };
 }
 
 /**
@@ -147,46 +231,71 @@ export async function requestPermissionAndSubscribe(vapidPublicKey: string): Pro
         message: "Service worker nije spreman. Osvježite stranicu i pokušajte ponovo.",
       };
     }
-    let sub = await reg.pushManager.getSubscription();
-    if (!sub) {
-      console.info("[push-client] pushManager.subscribe() …");
-      sub = await reg.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(vapidPublicKey) as BufferSource,
-      });
-    }
-    const json = sub.toJSON();
-    console.info("[push-client] POST /api/push/subscribe …", { endpointPrefix: (json.endpoint ?? "").slice(0, 48) });
-    const res = await fetch("/api/push/subscribe", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        endpoint: json.endpoint,
-        keys: json.keys,
-      }),
+    return subscribeWithRegistration(reg, vapidPublicKey);
+  } catch (e) {
+    console.warn("[push-client] subscribe failed", {
+      name: e instanceof Error ? e.name : typeof e,
+      message: e instanceof Error ? e.message : String(e),
     });
-    if (!res.ok) {
-      const j = (await res.json().catch(() => ({}))) as { error?: string };
-      console.warn("[push-client] subscribe save failed", { httpStatus: res.status, error: j.error });
-      try {
-        await sub.unsubscribe();
-        console.info("[push-client] local subscription unsubscribed after failed server save");
-      } catch (u) {
-        console.warn("[push-client] unsubscribe after failed save failed", u);
-      }
+    return {
+      ok: false,
+      reason: "subscribe_failed",
+      message: normalizeSubscribeErrorMessage(e),
+    };
+  }
+}
+
+/** Endpoint trenutne lokalne pretplate (ako postoji). */
+export async function getCurrentPushSubscriptionEndpoint(): Promise<string | null> {
+  if (!browserSupportsWebPush()) return null;
+  try {
+    const reg = await getServiceWorkerRegistrationForPush();
+    if (!reg) return null;
+    const sub = await reg.pushManager.getSubscription();
+    return sub?.endpoint ?? null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * "Self-heal" pretplate:
+ * - ukloni postojeću lokalnu pretplatu (ako postoji),
+ * - kreiraj novu,
+ * - sačuvaj na serveru.
+ */
+export async function forceResubscribe(vapidPublicKey: string): Promise<SubscribeResult> {
+  if (!browserSupportsWebPush()) {
+    return { ok: false, reason: "subscribe_failed", message: "Preglednik ne podržava obavještenja." };
+  }
+  try {
+    if (Notification.permission !== "granted") {
+      const perm = await Notification.requestPermission();
+      if (perm !== "granted") return { ok: false, reason: "permission_denied" };
+    }
+    const reg = await getServiceWorkerRegistrationForPush();
+    if (!reg) {
       return {
         ok: false,
-        reason: "server_error",
-        message: j.error ?? "Podešavanja nisu sačuvana. Pokušajte ponovo.",
+        reason: "subscribe_failed",
+        message: "Service worker nije spreman. Osvježite stranicu i pokušajte ponovo.",
       };
     }
-    console.info("[push-client] subscribe save ok");
-    return { ok: true };
+    const existing = await reg.pushManager.getSubscription();
+    if (existing) {
+      try {
+        await existing.unsubscribe();
+        console.info("[push-client] existing subscription removed for self-heal");
+      } catch (e) {
+        console.warn("[push-client] failed to remove existing subscription", e);
+      }
+    }
+    return subscribeWithRegistration(reg, vapidPublicKey);
   } catch (e) {
     return {
       ok: false,
       reason: "subscribe_failed",
-      message: e instanceof Error ? e.message : "Greška pri uključivanju.",
+      message: normalizeSubscribeErrorMessage(e),
     };
   }
 }

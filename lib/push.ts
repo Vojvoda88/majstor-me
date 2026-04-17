@@ -8,11 +8,37 @@ import type { PrismaClient } from "@prisma/client";
 let vapidConfigured = false;
 let vapidMissingLogged = false;
 
+export type PushServerConfig = {
+  hasPublicKey: boolean;
+  hasPrivateKey: boolean;
+  hasClientPublicKey: boolean;
+  publicKeysMatch: boolean;
+  canSend: boolean;
+};
+
+export function getPushServerConfig(): PushServerConfig {
+  const serverPublicKey = process.env.VAPID_PUBLIC_KEY?.trim() ?? "";
+  const serverPrivateKey = process.env.VAPID_PRIVATE_KEY?.trim() ?? "";
+  const clientPublicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY?.trim() ?? "";
+  const hasPublicKey = serverPublicKey.length > 0;
+  const hasPrivateKey = serverPrivateKey.length > 0;
+  const hasClientPublicKey = clientPublicKey.length > 0;
+  const publicKeysMatch = hasPublicKey && hasClientPublicKey && serverPublicKey === clientPublicKey;
+  return {
+    hasPublicKey,
+    hasPrivateKey,
+    hasClientPublicKey,
+    publicKeysMatch,
+    canSend: hasPublicKey && hasPrivateKey && hasClientPublicKey && publicKeysMatch,
+  };
+}
+
 function ensureVapid() {
   if (vapidConfigured) return;
+  const { hasPublicKey, hasPrivateKey } = getPushServerConfig();
   const publicKey = process.env.VAPID_PUBLIC_KEY;
   const privateKey = process.env.VAPID_PRIVATE_KEY;
-  if (publicKey && privateKey) {
+  if (hasPublicKey && hasPrivateKey && publicKey && privateKey) {
     webpush.setVapidDetails("mailto:support@brzimajstor.me", publicKey, privateKey);
     vapidConfigured = true;
   } else if (!vapidMissingLogged) {
