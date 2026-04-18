@@ -72,6 +72,12 @@ async function main() {
         adminUrl: `/admin/handymen/${handyman.id}`,
         notify: "in-app + push (ako VAPID u ovom procesu)",
         pushFromThisShell: pushCfg.canSend,
+        ifNoPushOnPhone:
+          pushCfg.canSend
+            ? null
+            : "Push na telefon ide sa Vercela. POST /api/cron/replay-admin-handyman-notify + Bearer CRON_SECRET + JSON {\"handymanUserId\":\"" +
+              handyman.id +
+              "\"}",
       },
       null,
       2
