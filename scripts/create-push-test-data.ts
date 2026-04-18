@@ -1,6 +1,11 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import { notifyAdminsNewPendingRequest } from "@/lib/admin-signals";
+import {
+  productionReplayConfigured,
+  replayAdminRequestNotifyOnProduction,
+  type ReplayResult,
+} from "./replay-production-admin-notify";
 
 const prisma = new PrismaClient();
 
@@ -76,6 +81,16 @@ async function main() {
     urgency: request.urgency,
   });
 
+  let productionReplay: ReplayResult | { skipped: string } | null = null;
+  if (productionReplayConfigured()) {
+    productionReplay = await replayAdminRequestNotifyOnProduction(request.id);
+    if (!productionReplay.ok) {
+      console.warn("[create-push-test-data] production replay failed", productionReplay);
+    }
+  } else {
+    productionReplay = { skipped: "PRODUCTION_URL + CRON_SECRET u .env za push sa Vercela" };
+  }
+
   console.log(
     JSON.stringify(
       {
@@ -86,6 +101,7 @@ async function main() {
           profile: handyman.handymanProfile,
         },
         request,
+        productionReplay,
       },
       null,
       2

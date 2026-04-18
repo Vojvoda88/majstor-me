@@ -1,6 +1,11 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import { notifyAdminsNewPendingHandyman } from "@/lib/admin-signals";
+import {
+  productionReplayConfigured,
+  replayAdminHandymanNotifyOnProduction,
+  type ReplayResult,
+} from "./replay-production-admin-notify";
 
 const prisma = new PrismaClient();
 
@@ -59,6 +64,19 @@ async function main() {
 
   const pushCfg = await import("@/lib/push").then((m) => m.getPushServerConfig());
 
+  let productionReplay: ReplayResult | { skipped: string } | null = null;
+  if (productionReplayConfigured()) {
+    productionReplay = await replayAdminHandymanNotifyOnProduction(handyman.id);
+    if (!productionReplay.ok) {
+      console.warn("[create-pending-handyman-demo] production replay failed", productionReplay);
+    }
+  } else {
+    productionReplay = {
+      skipped:
+        "Postavi PRODUCTION_URL i CRON_SECRET u .env da automatski pošalješ push sa Vercela nakon skripte.",
+    };
+  }
+
   console.log(
     JSON.stringify(
       {
@@ -72,12 +90,7 @@ async function main() {
         adminUrl: `/admin/handymen/${handyman.id}`,
         notify: "in-app + push (ako VAPID u ovom procesu)",
         pushFromThisShell: pushCfg.canSend,
-        ifNoPushOnPhone:
-          pushCfg.canSend
-            ? null
-            : "Push na telefon ide sa Vercela. POST /api/cron/replay-admin-handyman-notify + Bearer CRON_SECRET + JSON {\"handymanUserId\":\"" +
-              handyman.id +
-              "\"}",
+        productionReplay,
       },
       null,
       2

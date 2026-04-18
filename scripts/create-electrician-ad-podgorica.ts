@@ -1,6 +1,11 @@
 import { PrismaClient } from "@prisma/client";
 import { notifyAdminsNewPendingRequest } from "@/lib/admin-signals";
 import { getPushServerConfig } from "@/lib/push";
+import {
+  productionReplayConfigured,
+  replayAdminRequestNotifyOnProduction,
+  type ReplayResult,
+} from "./replay-production-admin-notify";
 
 const prisma = new PrismaClient();
 
@@ -42,6 +47,20 @@ async function main() {
   });
 
   const pushCfg = getPushServerConfig();
+
+  let productionReplay: ReplayResult | { skipped: string } | null = null;
+  if (productionReplayConfigured()) {
+    productionReplay = await replayAdminRequestNotifyOnProduction(request.id);
+    if (!productionReplay.ok) {
+      console.warn("[create-electrician-ad-podgorica] production replay failed", productionReplay);
+    }
+  } else {
+    productionReplay = {
+      skipped:
+        "Postavi PRODUCTION_URL i CRON_SECRET u .env da automatski pošalješ push sa Vercela nakon skripte.",
+    };
+  }
+
   console.log(
     JSON.stringify(
       {
@@ -51,12 +70,7 @@ async function main() {
           inApp: "uvijek upisano u bazu iz ove skripte",
           devicePushFromThisShell: pushCfg.canSend,
         },
-        ifNoPushLocally:
-          pushCfg.canSend
-            ? null
-            : "Na ovom računaru nema VAPID u env — uređajski push ide sa Vercela. Nakon deploya: POST /api/cron/replay-admin-request-notify sa Authorization: Bearer CRON_SECRET i JSON {\"requestId\":\"" +
-              request.id +
-              "\"}",
+        productionReplay,
       },
       null,
       2
