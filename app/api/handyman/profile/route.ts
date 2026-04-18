@@ -212,7 +212,7 @@ export async function PATCH(request: Request) {
 
     if (!hadProfileBefore) {
       const { notifyAdminsNewPendingHandyman } = await import("@/lib/admin-signals");
-      void notifyAdminsNewPendingHandyman({
+      await notifyAdminsNewPendingHandyman({
         handymanUserId: session.user.id,
         displayName: userForSignals?.name?.trim() ?? "",
       });
@@ -220,7 +220,7 @@ export async function PATCH(request: Request) {
 
     if (existingProfile?.workerStatus === "ACTIVE") {
       const { notifyAdminsHandymanReturnedToReview } = await import("@/lib/admin-signals");
-      void notifyAdminsHandymanReturnedToReview({
+      await notifyAdminsHandymanReturnedToReview({
         handymanUserId: session.user.id,
         displayName: userForSignals?.name?.trim() ?? "",
       });

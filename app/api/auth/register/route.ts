@@ -286,7 +286,7 @@ export async function POST(request: Request) {
 
     if (role === "HANDYMAN") {
       const { notifyAdminsNewPendingHandyman } = await import("@/lib/admin-signals");
-      void notifyAdminsNewPendingHandyman({
+      await notifyAdminsNewPendingHandyman({
         handymanUserId: user.id,
         displayName: user.name ?? "",
       });
