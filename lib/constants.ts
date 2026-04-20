@@ -17,7 +17,7 @@ export const URGENCY_OPTIONS = [
   {
     value: "HITNO_DANAS",
     label: "Hitno danas",
-    hint: "Potreban još danas — oglas se vidi pre.",
+    hint: "Potreban još danas — oglas se prikazuje prije ostalih.",
   },
   {
     value: "U_NAREDNA_2_DANA",

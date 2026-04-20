@@ -10,12 +10,20 @@ import { REQUEST_CATEGORIES, CITIES } from "@/lib/constants";
 import { MapPin, MessageSquare, Calendar, User } from "lucide-react";
 import { UrgencyBadge } from "@/components/request/urgency-badge";
 
+const URGENCY_FILTER_OPTIONS = [
+  { value: "", label: "Sve hitnosti" },
+  { value: "HITNO_DANAS", label: "🔴 Hitno danas" },
+  { value: "U_NAREDNA_2_DANA", label: "🟡 Hitno (7 dana)" },
+  { value: "NIJE_HITNO", label: "Nije hitno" },
+] as const;
+
 export function HandymanRequestList({
   requests,
   profileCategories,
   profileCities,
   currentCategory = "",
   currentCity = "",
+  currentUrgency = "",
   total = 0,
   page = 1,
   limit = 20,
@@ -37,16 +45,18 @@ export function HandymanRequestList({
   profileCities: string[];
   currentCategory?: string;
   currentCity?: string;
+  currentUrgency?: string;
   total?: number;
   page?: number;
   limit?: number;
 }) {
   const router = useRouter();
 
-  const buildUrl = (cat: string, city: string, p = 1) => {
+  const buildUrl = (cat: string, city: string, urg: string, p = 1) => {
     const params = new URLSearchParams();
     if (cat) params.set("category", cat);
     if (city) params.set("city", city);
+    if (urg) params.set("urgency", urg);
     if (p > 1) params.set("page", String(p));
     const q = params.toString();
     return `/dashboard/handyman${q ? `?${q}` : ""}`;
@@ -61,7 +71,7 @@ export function HandymanRequestList({
         <select
           className="min-h-[44px] flex-1 rounded-xl border border-gray-200 bg-white px-4 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 sm:min-h-0 sm:flex-initial sm:h-11"
           value={currentCategory}
-          onChange={(e) => router.push(buildUrl(e.target.value, currentCity, 1))}
+          onChange={(e) => router.push(buildUrl(e.target.value, currentCity, currentUrgency, 1))}
         >
           <option value="">Sve kategorije</option>
           {profileCategories.length > 0
@@ -75,11 +85,20 @@ export function HandymanRequestList({
         <select
           className="min-h-[44px] flex-1 rounded-xl border border-gray-200 bg-white px-4 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 sm:min-h-0 sm:flex-initial sm:h-11"
           value={currentCity}
-          onChange={(e) => router.push(buildUrl(currentCategory, e.target.value, 1))}
+          onChange={(e) => router.push(buildUrl(currentCategory, e.target.value, currentUrgency, 1))}
         >
           <option value="">Svi gradovi</option>
           {(profileCities.length > 0 ? profileCities : [...CITIES]).map((c) => (
             <option key={c} value={c}>{c}</option>
+          ))}
+        </select>
+        <select
+          className="min-h-[44px] flex-1 rounded-xl border border-gray-200 bg-white px-4 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 sm:min-h-0 sm:flex-initial sm:h-11"
+          value={currentUrgency}
+          onChange={(e) => router.push(buildUrl(currentCategory, currentCity, e.target.value, 1))}
+        >
+          {URGENCY_FILTER_OPTIONS.map((o) => (
+            <option key={o.value} value={o.value}>{o.label}</option>
           ))}
         </select>
       </div>
@@ -92,7 +111,14 @@ export function HandymanRequestList({
       ) : (
         <div className="space-y-4">
           {requests.map((req) => (
-            <Card key={req.id} className="overflow-hidden rounded-xl shadow-sm transition hover:shadow-md">
+            <Card
+              key={req.id}
+              className={`overflow-hidden rounded-xl shadow-sm transition hover:shadow-md ${
+                req.urgency === "HITNO_DANAS"
+                  ? "border-l-4 border-l-red-400 bg-red-50/40"
+                  : ""
+              }`}
+            >
               <CardHeader className="pb-3">
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                   <div className="min-w-0 flex-1">
@@ -142,7 +168,7 @@ export function HandymanRequestList({
       {totalPages > 1 && (
         <div className="flex items-center justify-center gap-2 pt-4">
           <Link
-            href={buildUrl(currentCategory, currentCity, page - 1)}
+            href={buildUrl(currentCategory, currentCity, currentUrgency, page - 1)}
             className={`rounded-lg px-4 py-2 text-sm ${page <= 1 ? "pointer-events-none text-[#94A3B8]" : "text-[#475569] hover:bg-[#F1F5F9]"}`}
           >
             ← Prethodna
@@ -151,7 +177,7 @@ export function HandymanRequestList({
             Strana {page} / {totalPages}
           </span>
           <Link
-            href={buildUrl(currentCategory, currentCity, page + 1)}
+            href={buildUrl(currentCategory, currentCity, currentUrgency, page + 1)}
             className={`rounded-lg px-4 py-2 text-sm ${page >= totalPages ? "pointer-events-none text-[#94A3B8]" : "text-[#475569] hover:bg-[#F1F5F9]"}`}
           >
             Sljedeća →

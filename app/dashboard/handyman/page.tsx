@@ -29,10 +29,16 @@ export const metadata: Metadata = {
 
 export const dynamic = "force-dynamic";
 
+const URGENCY_TIER: Record<string, number> = {
+  HITNO_DANAS: 0,
+  U_NAREDNA_2_DANA: 1,
+  NIJE_HITNO: 2,
+};
+
 export default async function HandymanDashboardPage({
   searchParams,
 }: {
-  searchParams: Promise<{ category?: string; city?: string; page?: string }>;
+  searchParams: Promise<{ category?: string; city?: string; page?: string; urgency?: string }>;
 }) {
   const session = await auth();
   if (!session) redirect("/login");
@@ -41,6 +47,7 @@ export default async function HandymanDashboardPage({
   const params = await searchParams;
   const category = params.category ?? "";
   const city = params.city ?? "";
+  const urgency = params.urgency ?? "";
   const page = Math.max(1, parseInt(params.page ?? "1"));
   const limit = 20;
   const skip = (page - 1) * limit;
@@ -105,6 +112,9 @@ export default async function HandymanDashboardPage({
       delete where.OR;
     }
     if (city) where.city = city;
+    if (urgency && ["HITNO_DANAS", "U_NAREDNA_2_DANA", "NIJE_HITNO"].includes(urgency)) {
+      where.urgency = urgency;
+    }
     // Bez city filtra: majstori vide sve zahtjeve; sa city: samo taj grad
 
   const handymanCity = profile.user?.city ?? null;
@@ -133,16 +143,22 @@ export default async function HandymanDashboardPage({
     return full.trim().split(/\s+/)[0] ?? full;
   }
 
-  // Sort by distance (closest first), then by createdAt
+  // Sort: hitnost (HITNO_DANAS first) → distanca → createdAt desc
   let sorted = [...requestsRaw]
     .map((r) => ({
       ...r,
       _distance: handymanCity
         ? getDistanceBetweenCities(handymanCity, r.city)
         : 9999,
+      _urgencyTier: URGENCY_TIER[r.urgency] ?? 2,
     }))
-    .sort((a, b) => a._distance - b._distance || new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-  const requests = sorted.slice(skip, skip + limit).map(({ _distance, ...r }) => ({
+    .sort(
+      (a, b) =>
+        a._urgencyTier - b._urgencyTier ||
+        a._distance - b._distance ||
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
+  const requests = sorted.slice(skip, skip + limit).map(({ _distance, _urgencyTier, ...r }) => ({
     ...r,
     requesterDisplayName: getFirstName(r.requesterName ?? r.user?.name),
     isRequesterVerified: isRequesterVerifiedUser(
@@ -299,6 +315,7 @@ export default async function HandymanDashboardPage({
         profileCities={profile.cities}
         currentCategory={category}
         currentCity={city}
+        currentUrgency={urgency}
         total={totalDisplayed}
         page={page}
         limit={limit}
