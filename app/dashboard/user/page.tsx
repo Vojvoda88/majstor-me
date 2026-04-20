@@ -3,12 +3,13 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { UrgencyBadge } from "@/components/request/urgency-badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { MapPin, Calendar, MessageSquare } from "lucide-react";
 import { DeleteMyAccount } from "@/components/account/delete-my-account";
 import { UserPushNotificationsCard } from "@/components/user/push-notifications-card";
+import { LeaveReviewForm } from "@/components/user/leave-review-form";
 
 export const dynamic = "force-dynamic";
 
@@ -29,8 +30,9 @@ export default async function UserDashboardPage() {
     where: { userId: session.user.id },
     include: {
       offers: {
-        include: { handyman: { select: { name: true } } },
+        include: { handyman: { select: { id: true, name: true } } },
       },
+      review: { select: { id: true } },
     },
     orderBy: { createdAt: "desc" },
   });
@@ -74,6 +76,10 @@ export default async function UserDashboardPage() {
           {requests.map((req) => {
             const acceptedOffer = req.offers.find((o) => o.status === "ACCEPTED");
             const totalOffers = req.offers.length;
+            const canReview =
+              req.status === "COMPLETED" &&
+              acceptedOffer != null &&
+              req.review == null;
             return (
               <Card
                 key={req.id}
@@ -135,8 +141,21 @@ export default async function UserDashboardPage() {
                         Majstor: {acceptedOffer.handyman.name}
                       </p>
                     )}
+                    {req.status === "COMPLETED" && req.review != null && (
+                      <p className="mt-2 flex items-center gap-1 text-sm text-slate-500">
+                        ★ Recenzija ostavljena
+                      </p>
+                    )}
                   </CardHeader>
                 </Link>
+                {canReview && (
+                  <div className="border-t border-slate-100 px-6 pb-4">
+                    <LeaveReviewForm
+                      requestId={req.id}
+                      handymanName={acceptedOffer!.handyman.name ?? "majstora"}
+                    />
+                  </div>
+                )}
               </Card>
             );
           })}
