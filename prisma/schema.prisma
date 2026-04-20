@@ -130,6 +130,8 @@ model User {
   contactUnlocks     RequestContactUnlock[]
   pushSubscriptions  PushSubscription[]
   adminProfile       AdminProfile?
+  savedHandymen      SavedHandyman[]      @relation("SavedBySaver")
+  savedByUsers       SavedHandyman[]      @relation("SavedHandymanTarget")
 
   @@index([role])
   @@map("users")
@@ -581,4 +583,18 @@ model FunnelEvent {
   @@index([userId])
   @@index([createdAt])
   @@map("funnel_events")
+}
+
+model SavedHandyman {
+  id         String   @id @default(cuid())
+  userId     String   @map("user_id")
+  handymanId String   @map("handyman_id")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  user     User @relation("SavedBySaver", fields: [userId], references: [id], onDelete: Cascade)
+  handyman User @relation("SavedHandymanTarget", fields: [handymanId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, handymanId])
+  @@index([userId])
+  @@map("saved_handymen")
 }

@@ -10,6 +10,7 @@ import { MapPin, Calendar, MessageSquare } from "lucide-react";
 import { DeleteMyAccount } from "@/components/account/delete-my-account";
 import { UserPushNotificationsCard } from "@/components/user/push-notifications-card";
 import { LeaveReviewForm } from "@/components/user/leave-review-form";
+import { Heart, Star } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -26,16 +27,43 @@ export default async function UserDashboardPage() {
   if (session.user.role !== "USER") redirect("/");
 
   const { prisma } = await import("@/lib/db");
-  const requests = await prisma.request.findMany({
-    where: { userId: session.user.id },
-    include: {
-      offers: {
-        include: { handyman: { select: { id: true, name: true } } },
+  const [requests, savedHandymen] = await Promise.all([
+    prisma.request.findMany({
+      where: { userId: session.user.id },
+      include: {
+        offers: {
+          include: { handyman: { select: { id: true, name: true } } },
+        },
+        review: { select: { id: true } },
       },
-      review: { select: { id: true } },
-    },
-    orderBy: { createdAt: "desc" },
-  });
+      orderBy: { createdAt: "desc" },
+    }),
+    prisma.savedHandyman.findMany({
+      where: { userId: session.user.id },
+      include: {
+        handyman: {
+          select: {
+            id: true,
+            name: true,
+            city: true,
+            handymanProfile: {
+              select: {
+                avatarUrl: true,
+                verifiedStatus: true,
+                ratingAvg: true,
+                reviewCount: true,
+                workerCategories: {
+                  include: { category: { select: { name: true } } },
+                  take: 2,
+                },
+              },
+            },
+          },
+        },
+      },
+      orderBy: { createdAt: "desc" },
+    }),
+  ]);
 
   return (
     <div className="min-h-screen bg-[#F4F7FB] pb-28 md:pb-10">
@@ -59,6 +87,66 @@ export default async function UserDashboardPage() {
       <div className="mt-6">
         <UserPushNotificationsCard />
       </div>
+
+      {/* Sačuvani majstori */}
+      {savedHandymen.length > 0 && (
+        <div className="mt-8">
+          <h2 className="mb-3 flex items-center gap-2 text-lg font-semibold text-slate-900">
+            <Heart className="h-5 w-5 fill-rose-400 text-rose-400" />
+            Sačuvani majstori
+          </h2>
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {savedHandymen.map(({ handyman }) => {
+              const cats = handyman.handymanProfile?.workerCategories.map((wc) => wc.category.name) ?? [];
+              const isVerified = handyman.handymanProfile?.verifiedStatus === "VERIFIED";
+              const rating = handyman.handymanProfile?.ratingAvg ?? 0;
+              const reviewCount = handyman.handymanProfile?.reviewCount ?? 0;
+              return (
+                <Link
+                  key={handyman.id}
+                  href={`/handyman/${handyman.id}`}
+                  className="flex items-start gap-3 rounded-xl border border-slate-200 bg-white p-4 transition hover:shadow-md"
+                >
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-slate-100 text-lg font-bold text-slate-500">
+                    {handyman.handymanProfile?.avatarUrl ? (
+                      <img
+                        src={handyman.handymanProfile.avatarUrl}
+                        alt=""
+                        className="h-12 w-12 rounded-full object-cover"
+                      />
+                    ) : (
+                      handyman.name?.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2) ?? "?"
+                    )}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="font-semibold text-slate-900">{handyman.name}</p>
+                    {cats.length > 0 && (
+                      <p className="truncate text-xs text-slate-500">{cats.join(", ")}</p>
+                    )}
+                    <div className="mt-1 flex flex-wrap items-center gap-2">
+                      {reviewCount > 0 && (
+                        <span className="flex items-center gap-0.5 text-xs text-amber-600">
+                          <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
+                          {rating.toFixed(1)}
+                        </span>
+                      )}
+                      {isVerified && (
+                        <span className="rounded-full bg-emerald-50 px-1.5 py-0.5 text-[10px] font-medium text-emerald-700 ring-1 ring-emerald-200">
+                          Verifikovan
+                        </span>
+                      )}
+                      {handyman.city && (
+                        <span className="text-xs text-slate-400">{handyman.city}</span>
+                      )}
+                    </div>
+                  </div>
+                  <span className="shrink-0 text-xs font-medium text-blue-600">Pogledaj →</span>
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {requests.length === 0 ? (
         <EmptyState

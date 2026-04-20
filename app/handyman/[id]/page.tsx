@@ -22,6 +22,7 @@ import { getSiteUrl } from "@/lib/site-url";
 import { localBusinessJsonLd } from "@/lib/json-ld";
 import { AVATAR_IMAGE_FALLBACK } from "@/lib/homepage-data";
 import { prismaWhereUserActiveHandymanForPublicCatalog } from "@/lib/handyman-truth";
+import { SaveHandymanButton } from "@/components/handyman/save-handyman-button";
 
 export const dynamic = "force-dynamic";
 
@@ -128,6 +129,14 @@ export default async function HandymanProfilePage({
       : session?.user?.role === "HANDYMAN"
         ? "/dashboard/handyman"
         : "/";
+
+  const isSaved =
+    session?.user?.role === "USER"
+      ? !!(await (await import("@/lib/db")).prisma.savedHandyman.findUnique({
+          where: { userId_handymanId: { userId: session.user.id, handymanId: user.id } },
+          select: { id: true },
+        }))
+      : false;
 
   const createParams = new URLSearchParams();
   if (profile.cities.length > 0) createParams.set("city", profile.cities[0]);
@@ -277,12 +286,15 @@ export default async function HandymanProfilePage({
           {session?.user?.role === "USER" && (
             <div className="mb-8 md:mb-10">
               <p className="mb-2 text-xs text-[#64748B]">Besplatno. Bez obaveze.</p>
-              <Link href={`/request/create?${createParams}`} className="block w-full">
-                <span className="flex h-14 w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-br from-[#2563eb] to-[#1d4ed8] text-base font-bold text-white shadow-btn-cta transition hover:brightness-105">
-                  <MessageSquare className="h-5 w-5" />
-                  Pošalji zahtjev
-                </span>
-              </Link>
+              <div className="flex flex-col gap-3 sm:flex-row">
+                <Link href={`/request/create?${createParams}`} className="flex-1">
+                  <span className="flex h-14 w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-br from-[#2563eb] to-[#1d4ed8] text-base font-bold text-white shadow-btn-cta transition hover:brightness-105">
+                    <MessageSquare className="h-5 w-5" />
+                    Pošalji zahtjev
+                  </span>
+                </Link>
+                <SaveHandymanButton handymanId={user.id} initialSaved={isSaved} />
+              </div>
             </div>
           )}
           {!session && (
