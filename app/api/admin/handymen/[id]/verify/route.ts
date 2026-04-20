@@ -67,7 +67,7 @@ export async function POST(
     const isVerified = parsed.data.status === "VERIFIED";
     await createNotification(
       handymanUserId,
-      isVerified ? "PROFILE_VERIFIED" : "PROFILE_REJECTED",
+      "VERIFIED",
       isVerified ? "Profil verifikovan" : "Verifikacija nije odobrena",
       {
         body: isVerified
