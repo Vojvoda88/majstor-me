@@ -15,6 +15,7 @@ import { isCreditsRequired, LOW_CREDITS_THRESHOLD } from "@/lib/credits";
 import { REQUEST_CATEGORY_FALLBACK } from "@/lib/constants";
 import { isPaymentConfigured } from "@/lib/payment";
 import { HandymanCreditsCtaBlock } from "@/components/credits/handyman-credits-cta-block";
+import { CheckCircle2, Clock, XCircle } from "lucide-react";
 
 function isRequesterVerifiedUser(
   user: { emailVerified?: Date | null; phoneVerified?: Date | null } | null | undefined
@@ -214,6 +215,25 @@ export default async function HandymanDashboardPage({
                 ? "Profil je javno vidljiv i možete normalno pratiti zahtjeve, otključavati kontakte i slati ponude."
                 : "Profil još nije javno objavljen. Popunite što više podataka da admin može brže pregledati i odobriti profil."}
             </p>
+            {/* Verifikacijski status */}
+            {profile.verifiedStatus === "VERIFIED" && (
+              <div className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1 text-sm font-medium text-emerald-700 ring-1 ring-emerald-200">
+                <CheckCircle2 className="h-4 w-4" />
+                Profil verifikovan
+              </div>
+            )}
+            {profile.verifiedStatus === "PENDING" && (
+              <div className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-3 py-1 text-sm font-medium text-amber-700 ring-1 ring-amber-200">
+                <Clock className="h-4 w-4" />
+                Verifikacija u toku
+              </div>
+            )}
+            {profile.verifiedStatus === "REJECTED" && (
+              <div className="inline-flex items-center gap-1.5 rounded-full bg-red-50 px-3 py-1 text-sm font-medium text-red-700 ring-1 ring-red-200">
+                <XCircle className="h-4 w-4" />
+                Verifikacija nije odobrena — kontaktirajte podršku
+              </div>
+            )}
           </div>
           <div className="min-w-[220px] rounded-xl border border-slate-200 bg-slate-50 p-4">
             <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Sledeći korak</p>

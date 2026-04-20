@@ -289,6 +289,40 @@ export async function sendEmailVerificationEmail(
   }
 }
 
+export async function sendVerificationStatusEmail(
+  handymanId: string,
+  status: "VERIFIED" | "REJECTED"
+) {
+  const resend = getResend();
+  if (!resend) return;
+  const to = await getUserEmail(handymanId);
+  if (!to) return;
+
+  const subject =
+    status === "VERIFIED"
+      ? "Vaš profil je verifikovan — BrziMajstor.ME"
+      : "Verifikacija profila nije odobrena — BrziMajstor.ME";
+
+  const body =
+    status === "VERIFIED"
+      ? `<p>Zdravo,</p>
+         <p>Čestitamo! Vaš profil na BrziMajstor.ME je <strong>verifikovan</strong>.</p>
+         <p>Na vašem profilu sada se prikazuje bedž <strong>"Verifikovan"</strong> koji povećava povjerenje korisnika i šanse da dobijete posao.</p>
+         <p><a href="${appBaseUrl}/dashboard/handyman">Pogledaj profil →</a></p>
+         <p>— BrziMajstor.ME</p>`
+      : `<p>Zdravo,</p>
+         <p>Nažalost, verifikacija vašeg profila nije odobrena.</p>
+         <p>Ako smatrate da je ovo greška ili imate pitanja, kontaktirajte nas na podršci.</p>
+         <p><a href="${appBaseUrl}/kontakt">Kontaktirajte podršku →</a></p>
+         <p>— BrziMajstor.ME</p>`;
+
+  try {
+    await resend.emails.send({ from, to, subject, html: body });
+  } catch {
+    // Silently fail - email is non-critical
+  }
+}
+
 export async function sendNewReviewEmail(
   handymanId: string,
   rating: number,

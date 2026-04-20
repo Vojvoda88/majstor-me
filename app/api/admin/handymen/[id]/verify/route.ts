@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { requireAdminApi } from "@/lib/admin/api-auth";
 import { createAuditLog } from "@/lib/admin/audit";
+import { sendVerificationStatusEmail } from "@/lib/email";
+import { createNotification } from "@/lib/notifications";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -61,6 +63,20 @@ export async function POST(
       oldValue: { verifiedStatus: oldStatus },
       newValue: { verifiedStatus: parsed.data.status, emailVerified: parsed.data.status === "VERIFIED" },
     });
+
+    const isVerified = parsed.data.status === "VERIFIED";
+    await createNotification(
+      handymanUserId,
+      isVerified ? "PROFILE_VERIFIED" : "PROFILE_REJECTED",
+      isVerified ? "Profil verifikovan ✓" : "Verifikacija nije odobrena",
+      {
+        body: isVerified
+          ? "Vaš profil je verifikovan. Na profilu se sada prikazuje bedž „Verifikovan"."
+          : "Verifikacija profila nije odobrena. Kontaktirajte podršku za više informacija.",
+        link: "/dashboard/handyman",
+      }
+    );
+    void sendVerificationStatusEmail(handymanUserId, parsed.data.status);
 
     return NextResponse.json({ success: true, data: updated });
   } catch (error) {
