@@ -322,7 +322,7 @@ async function main() {
     await prisma.offer.create({
       data: {
         ...o,
-        message: "Mogu doći u naredna 2 dana.",
+        message: "Mogu doći u narednih 7 dana.",
         status: o.requestId === inProgressRequest.id ? "ACCEPTED" : "PENDING",
       },
     });

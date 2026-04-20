@@ -13,7 +13,7 @@ import { UrgencyBadge } from "@/components/request/urgency-badge";
 const URGENCY_FILTER_OPTIONS = [
   { value: "", label: "Sve hitnosti" },
   { value: "HITNO_DANAS", label: "🔴 Hitno danas" },
-  { value: "U_NAREDNA_2_DANA", label: "🟡 Hitno (7 dana)" },
+  { value: "U_NAREDNA_2_DANA", label: "🟡 Hitno (u narednih 7 dana)" },
   { value: "NIJE_HITNO", label: "Nije hitno" },
 ] as const;
 
