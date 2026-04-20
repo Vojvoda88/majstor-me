@@ -68,11 +68,11 @@ export async function POST(
     await createNotification(
       handymanUserId,
       isVerified ? "PROFILE_VERIFIED" : "PROFILE_REJECTED",
-      isVerified ? "Profil verifikovan ✓" : "Verifikacija nije odobrena",
+      isVerified ? "Profil verifikovan" : "Verifikacija nije odobrena",
       {
         body: isVerified
-          ? "Vaš profil je verifikovan. Na profilu se sada prikazuje bedž „Verifikovan"."
-          : "Verifikacija profila nije odobrena. Kontaktirajte podršku za više informacija.",
+          ? "Va\u0161 profil je verifikovan. Na profilu se sada prikazuje bed\u017e Verifikovan."
+          : "Verifikacija profila nije odobrena. Kontaktirajte podr\u0161ku za vi\u0161e informacija.",
         link: "/dashboard/handyman",
       }
     );
