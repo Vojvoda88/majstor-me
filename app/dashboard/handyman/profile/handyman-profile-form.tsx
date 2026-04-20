@@ -126,7 +126,7 @@ export function HandymanProfileForm({
     <form onSubmit={handleSubmit((data) => mutation.mutate(data))} className="space-y-6">
       {mutation.error && <div className="form-error">{mutation.error.message}</div>}
       <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950">
-        Sve izmjene opisa, slika i ostalih javnih podataka idu administratoru na pregled pre javne objave profila.
+        Sve izmjene opisa, slika i ostalih javnih podataka idu administratoru na pregled prije javne objave profila.
       </div>
 
       {/* Osnovni podaci */}

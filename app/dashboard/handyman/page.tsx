@@ -206,7 +206,7 @@ export default async function HandymanDashboardPage({
             </p>
             <p className="mt-1 text-xs leading-relaxed text-slate-600">
               {pendingSteps.length > 0
-                ? `Preostalo još ${pendingSteps.length} stvari pre punijeg profila.`
+                ? `Preostalo još ${pendingSteps.length} stvari prije punijeg profila.`
                 : "Svi osnovni elementi profila su popunjeni."}
             </p>
             <Link href="/dashboard/handyman/profile" className="mt-3 inline-block">
@@ -224,7 +224,7 @@ export default async function HandymanDashboardPage({
           <p className="mt-1 text-2xl font-bold text-[#0F172A]">{totalDisplayed}</p>
         </div>
         <div className="rounded-xl bg-white p-5 shadow-sm transition hover:shadow-md sm:p-6">
-          <p className="text-sm font-medium text-[#64748B]">Moje poslate ponude</p>
+          <p className="text-sm font-medium text-[#64748B]">Moje poslane ponude</p>
           <p className="mt-1 text-2xl font-bold text-[#0F172A]">{myOffersCount}</p>
         </div>
         <div className="rounded-xl bg-white p-5 shadow-sm transition hover:shadow-md sm:p-6">
@@ -238,7 +238,7 @@ export default async function HandymanDashboardPage({
             ((profile as { creditsBalance?: number }).creditsBalance ?? 0) < LOW_CREDITS_THRESHOLD &&
             ((profile as { creditsBalance?: number }).creditsBalance ?? 0) > 0 && (
             <p className="mt-1 text-xs font-medium text-amber-600">
-              Malo kredita — dopunite pre nego što vam zatreba kontakt.
+              Malo kredita — dopunite prije nego što vam zatreba kontakt.
             </p>
           )}
           <Link
@@ -287,7 +287,7 @@ export default async function HandymanDashboardPage({
           </>
         ) : (
           <p className="mt-3 text-sm text-slate-600">
-            U ovom okruženju otključavanje kontakta je trenutno bez kredita — i dalje potvrdite kontakt pre nego što
+            U ovom okruženju otključavanje kontakta je trenutno bez kredita — i dalje potvrdite kontakt prije nego što
             vidite broj telefona.
           </p>
         )}

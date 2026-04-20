@@ -37,7 +37,7 @@ function resolveHandymanWorkCities(selectedNormalized: string[]): string[] {
   return unique;
 }
 
-/** Jednostavna shema — sve stringove normalizujemo pre safeParse (bez z.preprocess). */
+/** Jednostavna shema — sve stringove normalizujemo prije safeParse (bez z.preprocess). */
 const registerSchema = z
   .object({
     name: z.string().min(2, "Naziv mora imati najmanje 2 karaktera"),
@@ -52,6 +52,7 @@ const registerSchema = z
     galleryImages: z.array(z.string().url()).default([]),
     categories: z.array(z.string()).default([]),
     workCities: z.array(z.string()).default([]),
+    inviteToken: z.string().optional(),
   })
   .superRefine((data, ctx) => {
     if (data.role !== "HANDYMAN") return;
@@ -142,8 +143,13 @@ function normalizeRegisterBody(raw: unknown): z.infer<typeof registerSchema> {
   const categories = normalizeStringArray(b.categories);
   const workCities = normalizeStringArray(b.workCities);
   const galleryImages = normalizeStringArray(b.galleryImages);
+  const inviteTokenRaw = b.inviteToken;
+  const inviteToken =
+    inviteTokenRaw === null || inviteTokenRaw === undefined || inviteTokenRaw === ""
+      ? undefined
+      : String(inviteTokenRaw).trim() || undefined;
 
-  return { name, email, password, phone, viberPhone, whatsappPhone, city, role, bio, galleryImages, categories, workCities };
+  return { name, email, password, phone, viberPhone, whatsappPhone, city, role, bio, galleryImages, categories, workCities, inviteToken };
 }
 
 export async function POST(request: Request) {
@@ -174,7 +180,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const { name, email, password, phone, viberPhone, whatsappPhone, city, role, bio, galleryImages, categories, workCities } = parsed.data;
+    const { name, email, password, phone, viberPhone, whatsappPhone, city, role, bio, galleryImages, categories, workCities, inviteToken } = parsed.data;
 
     /**
      * Rate limit NAKON validacije JSON-a — da ne trošimo slot na loš JSON.
@@ -290,6 +296,17 @@ export async function POST(request: Request) {
         handymanUserId: user.id,
         displayName: user.name ?? "",
       });
+    }
+
+    if (inviteToken) {
+      try {
+        await prisma.handymanInvite.updateMany({
+          where: { token: inviteToken, status: "PENDING" },
+          data: { status: "ACCEPTED" },
+        });
+      } catch {
+        // nema blokade registracije ako invite update ne uspije
+      }
     }
 
     return NextResponse.json({

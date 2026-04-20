@@ -172,7 +172,7 @@ export default async function AdminHandymenPage({
                     </div>
                     {hp.workerStatus === "PENDING_REVIEW" && (
                       <p className="mt-2 text-xs font-medium text-amber-700">
-                        Čeka admin pregled profila pre javne objave.
+                        Čeka admin pregled profila prije javne objave.
                       </p>
                     )}
                     <div className="mt-3">

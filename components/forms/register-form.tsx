@@ -63,8 +63,10 @@ type RegisterFormData = z.infer<typeof registerSchema>;
 
 export function RegisterForm({
   defaultRole = "USER",
+  inviteToken,
 }: {
   defaultRole?: "USER" | "HANDYMAN";
+  inviteToken?: string;
 }) {
   const router = useRouter();
   const [error, setError] = useState<string>("");
@@ -100,6 +102,10 @@ export function RegisterForm({
       payload.workCities = data.workCities;
       payload.bio = data.bio?.trim() || "";
       payload.galleryImages = data.galleryImages ?? [];
+    }
+
+    if (inviteToken) {
+      payload.inviteToken = inviteToken;
     }
 
     const res = await fetch("/api/auth/register", {
@@ -235,7 +241,7 @@ export function RegisterForm({
                 <strong className="font-semibold text-slate-800">Za majstore:</strong> Registracija je besplatna; dobijate{" "}
                 {HANDYMAN_START_BONUS_CREDITS.toLocaleString("sr-Latn-ME")} start kredita. Nema pretplate — krediti idu na
                 otključavanje kontakta kad vam posao odgovara (standardni, nije hitno posao = {STANDARD_LEAD_CREDITS}{" "}
-                kredita). Admin kratko odobri profil pre punog pristupa poslovima.
+                kredita). Admin kratko odobri profil prije punog pristupa poslovima.
               </div>
             )}
           </div>
@@ -303,7 +309,7 @@ export function RegisterForm({
             <Input id="city" placeholder="npr. Podgorica, Nikšić..." {...register("city")} />
             {role === "HANDYMAN" ? (
               <p className="text-xs text-[#64748B]">
-                Glavni grad na profilu. Područje poslovanja (više gradova) birate ispod, pre registracije.
+                Glavni grad na profilu. Područje poslovanja (više gradova) birate ispod, prije registracije.
               </p>
             ) : null}
           </div>

@@ -20,6 +20,7 @@ export function NotificationsDropdown() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [fetchError, setFetchError] = useState(false);
   const [liveBanner, setLiveBanner] = useState<Notification | null>(null);
   const [panelStyle, setPanelStyle] = useState<{
     top: number;
@@ -37,6 +38,7 @@ export function NotificationsDropdown() {
       const res = await fetch("/api/notifications?limit=15", { cache: "no-store" });
       const json = await res.json().catch(() => ({}));
       if (json.success && json.data) {
+        setFetchError(false);
         const incoming = (json.data.notifications ?? []) as Notification[];
         setNotifications(incoming);
         setUnreadCount(json.data.unreadCount ?? 0);
@@ -54,7 +56,11 @@ export function NotificationsDropdown() {
             latestIdRef.current = latest.id;
           }
         }
+      } else if (!opts?.silent) {
+        setFetchError(true);
       }
+    } catch {
+      if (!opts?.silent) setFetchError(true);
     } finally {
       if (!opts?.silent) setLoading(false);
     }
@@ -185,6 +191,18 @@ export function NotificationsDropdown() {
               {loading ? (
                 <div className="p-5 text-center text-sm text-slate-500">
                   Učitavanje...
+                </div>
+              ) : fetchError ? (
+                <div className="flex flex-col items-center justify-center gap-2 p-8 text-center">
+                  <Bell className="h-10 w-10 text-slate-300" />
+                  <p className="text-sm font-medium text-slate-600">Greška pri učitavanju</p>
+                  <button
+                    type="button"
+                    onClick={() => void fetchNotifications()}
+                    className="mt-1 text-xs font-medium text-blue-600 hover:underline"
+                  >
+                    Pokušaj ponovo
+                  </button>
                 </div>
               ) : notifications.length === 0 ? (
                 <div className="flex flex-col items-center justify-center gap-2 p-8 text-center">

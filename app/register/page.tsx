@@ -19,12 +19,13 @@ export const dynamic = "force-dynamic";
 export default async function RegisterPage({
   searchParams,
 }: {
-  searchParams: Promise<{ type?: string }>;
+  searchParams: Promise<{ type?: string; invite?: string }>;
 }) {
-  const { type } = await searchParams;
+  const { type, invite } = await searchParams;
   const wantsHandyman = String(type ?? "")
     .toLowerCase()
     .trim() === "majstor";
+  const inviteToken = typeof invite === "string" && invite.length > 0 ? invite : undefined;
 
   const session = await auth();
   if (session) {
@@ -47,7 +48,7 @@ export default async function RegisterPage({
     redirect("/login?callbackUrl=/register");
   }
 
-  const defaultRole = wantsHandyman ? "HANDYMAN" : "USER";
+  const defaultRole = wantsHandyman || inviteToken ? "HANDYMAN" : "USER";
 
   return (
     <div className="min-h-screen bg-brand-page">
@@ -56,11 +57,15 @@ export default async function RegisterPage({
         <div className="w-full max-w-md rounded-[2rem] border border-slate-200/80 bg-white p-8 shadow-marketplace sm:p-10">
           <div className="mb-8 text-center">
             <h1 className="font-display text-2xl font-bold text-brand-navy sm:text-3xl">Kreirajte nalog</h1>
-            <p className="mt-3 text-slate-600">
-              Korisnik ili majstor — izaberite kako želite da koristite platformu
-            </p>
+            {inviteToken ? (
+              <p className="mt-3 text-slate-600">Pozvani ste da se registrujete kao majstor.</p>
+            ) : (
+              <p className="mt-3 text-slate-600">
+                Korisnik ili majstor — izaberite kako želite da koristite platformu
+              </p>
+            )}
           </div>
-          <RegisterForm defaultRole={defaultRole} />
+          <RegisterForm defaultRole={defaultRole} inviteToken={inviteToken} />
           <p className="mt-6 text-center">
             <Link href="/">
               <Button variant="ghost" size="sm">← Nazad na početnu</Button>

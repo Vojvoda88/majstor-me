@@ -421,7 +421,7 @@ export function PublicHeader() {
             </Link>
           )}
           {status === "loading" ? (
-            desktopGuestNav
+            <div className="w-[200px]" aria-hidden />
           ) : session ? (
             desktopAuthNav
           ) : (

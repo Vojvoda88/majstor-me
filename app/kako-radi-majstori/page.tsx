@@ -174,7 +174,7 @@ export default function KakoRadiMajstoriPage() {
             </li>
             <li className="flex gap-2">
               <span className="font-bold text-slate-900">•</span>
-              <span>Hitniji oglasi i jači leadovi mogu koštati više kredita (u aplikaciji vidite tačan broj pre otključavanja).</span>
+              <span>Hitniji oglasi i jači leadovi mogu koštati više kredita (u aplikaciji vidite tačan broj prije otključavanja).</span>
             </li>
             <li className="flex gap-2">
               <span className="font-bold text-slate-900">•</span>
