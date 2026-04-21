@@ -16,7 +16,7 @@ export function GoogleSignInButton({
   return (
     <button
       type="button"
-      onClick={() => signIn("google", { callbackUrl })}
+      onClick={() => signIn("google", { callbackUrl, prompt: "select_account" })}
       className={`flex items-center justify-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 active:scale-[0.98] ${className}`}
     >
       <svg className="h-5 w-5 shrink-0" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
