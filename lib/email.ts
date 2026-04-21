@@ -261,13 +261,25 @@ export async function sendEmailVerificationEmail(
     };
   }
   const link = `${appBaseUrl}/verify-email?token=${encodeURIComponent(plainToken)}`;
+  const greeting = name ? `Zdravo ${name.split(/\s+/)[0]},` : "Zdravo,";
+  const textBody = `${greeting}
+
+Potvrdite email adresu kako biste nastavili korištenje naloga.
+
+Otvorite link u pregledaču (kopirajte cijeli red ako ne radi klik):
+${link}
+
+Link važi 24 sata. Ako niste vi tražili registraciju, zanemarite ovu poruku.
+
+— BrziMajstor.ME`;
 
   try {
-    // Resend v4+ vraća { data, error } — ne baca izuzetak za API greške; moramo provjeriti error.
-    const { error } = await resend.emails.send({
+    // Resend v4+ vraća { data, error } — ne baca izuzetak za API greške.
+    const result = await resend.emails.send({
       from,
       to,
       subject: "Potvrdite email adresu — BrziMajstor.ME",
+      text: textBody,
       html: `
         <p>Zdravo${name ? ` ${name.split(/\s+/)[0]}` : ""},</p>
         <p>Potvrdite email adresu kako biste nastavili korištenje naloga.</p>
@@ -276,7 +288,8 @@ export async function sendEmailVerificationEmail(
         <p>— BrziMajstor.ME</p>
       `,
     });
-    if (error) {
+    if (result.error) {
+      const { error } = result;
       console.error("[email] sendEmailVerificationEmail Resend API error", {
         to,
         name: error.name,
@@ -293,6 +306,19 @@ export async function sendEmailVerificationEmail(
         error: friendly,
       };
     }
+    const resendId =
+      result.data && typeof result.data === "object" && "id" in result.data
+        ? String((result.data as { id: unknown }).id)
+        : "";
+    if (!resendId) {
+      console.error("[email] sendEmailVerificationEmail Resend odgovor bez id", { to, result });
+      return {
+        ok: false,
+        code: "EMAIL_SEND_FAILED",
+        error: "Email servis nije potvrdio slanje. Pokušajte ponovo ili provjerite Resend Logs.",
+      };
+    }
+    console.info("[email] sendEmailVerificationEmail ok", { to, resendId });
     return { ok: true };
   } catch (e) {
     console.error("[email] sendEmailVerificationEmail Resend error", {

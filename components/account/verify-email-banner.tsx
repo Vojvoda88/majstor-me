@@ -37,7 +37,10 @@ export function VerifyEmailBanner({ userEmail }: { userEmail?: string | null }) 
         {status === "sent" ? (
           <div className="space-y-2">
             <p className="font-medium text-amber-800">
-              Link poslan! Otvorite email i kliknite na link u poruci (provjerite i spam).
+              Zahtjev za slanje je prihvaćen. Poruka obično stigne za 1–3 minute. Otvorite inbox i
+              provjerite <strong>Spam</strong> i <strong>Promocije</strong>. Ako ništa nema, u Resend
+              panelu otvorite <strong>Logs</strong> i potražite ovaj email — tamo piše da li je isporučen
+              ili odbijen.
             </p>
             {userEmail && getWebmailInboxLink(userEmail) && (
               <OpenInboxLink email={userEmail} variant="secondary" className="w-full" />
