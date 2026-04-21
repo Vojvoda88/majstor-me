@@ -7,12 +7,14 @@ import { getWebmailInboxLink } from "@/lib/webmail-url";
 
 export function VerifyEmailBanner({ userEmail }: { userEmail?: string | null }) {
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
+  const [errorDetail, setErrorDetail] = useState<string | null>(null);
   const [dismissed, setDismissed] = useState(false);
 
   if (dismissed) return null;
 
   async function handleResend() {
     setStatus("sending");
+    setErrorDetail(null);
     try {
       const res = await fetch("/api/auth/resend-verification", { method: "POST" });
       const json = await res.json();
@@ -20,9 +22,11 @@ export function VerifyEmailBanner({ userEmail }: { userEmail?: string | null }) 
         setStatus("sent");
       } else {
         setStatus("error");
+        setErrorDetail(typeof json.error === "string" ? json.error : null);
       }
     } catch {
       setStatus("error");
+      setErrorDetail(null);
     }
   }
 
@@ -59,7 +63,8 @@ export function VerifyEmailBanner({ userEmail }: { userEmail?: string | null }) 
             </div>
             {status === "error" && (
               <p className="mt-1.5 text-xs text-red-600">
-                Greška pri slanju. Pokušajte ponovo ili kontaktirajte podršku.
+                {errorDetail ??
+                  "Greška pri slanju. Pokušajte ponovo, provjerite spam ili kontaktirajte podršku."}
               </p>
             )}
           </>

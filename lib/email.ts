@@ -263,7 +263,8 @@ export async function sendEmailVerificationEmail(
   const link = `${appBaseUrl}/verify-email?token=${encodeURIComponent(plainToken)}`;
 
   try {
-    await resend.emails.send({
+    // Resend v4+ vraća { data, error } — ne baca izuzetak za API greške; moramo provjeriti error.
+    const { error } = await resend.emails.send({
       from,
       to,
       subject: "Potvrdite email adresu — BrziMajstor.ME",
@@ -275,6 +276,23 @@ export async function sendEmailVerificationEmail(
         <p>— BrziMajstor.ME</p>
       `,
     });
+    if (error) {
+      console.error("[email] sendEmailVerificationEmail Resend API error", {
+        to,
+        name: error.name,
+        message: error.message,
+      });
+      const msg = error.message?.toLowerCase() ?? "";
+      const friendly =
+        error.name === "invalid_from_address" || msg.includes("from") || msg.includes("domain")
+          ? "Adresa pošiljaoca (EMAIL_FROM) nije prihvaćena. Provjerite da je ista domena kao u Resend-u."
+          : "Slanje emaila nije uspjelo. Pokušajte ponovo za nekoliko minuta ili kontaktirajte podršku.";
+      return {
+        ok: false,
+        code: "EMAIL_SEND_FAILED",
+        error: friendly,
+      };
+    }
     return { ok: true };
   } catch (e) {
     console.error("[email] sendEmailVerificationEmail Resend error", {
