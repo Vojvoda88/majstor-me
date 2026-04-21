@@ -8,10 +8,24 @@ export type AdminPendingReviewCounts = {
   urgentPendingRequests: number;
 };
 
+const EMPTY_PENDING_COUNTS: AdminPendingReviewCounts = {
+  pendingRequests: 0,
+  pendingHandymen: 0,
+  urgentPendingRequests: 0,
+};
+
+let pendingCountsCache: { value: AdminPendingReviewCounts; ts: number } | null = null;
+const PENDING_COUNTS_TTL_MS = 20_000;
+
 /**
  * Broj stvari koje čekaju admin akciju (za badge u admin shell-u i dashboard).
  */
 export const getAdminPendingReviewCounts = cache(async (): Promise<AdminPendingReviewCounts> => {
+  const now = Date.now();
+  if (pendingCountsCache && now - pendingCountsCache.ts < PENDING_COUNTS_TTL_MS) {
+    return pendingCountsCache.value;
+  }
+
   const { prisma } = await import("@/lib/db");
 
   const openPendingRequestWhere = {
@@ -30,5 +44,7 @@ export const getAdminPendingReviewCounts = cache(async (): Promise<AdminPendingR
     }),
   ]);
 
-  return { pendingRequests, pendingHandymen, urgentPendingRequests };
+  const value = { pendingRequests, pendingHandymen, urgentPendingRequests };
+  pendingCountsCache = { value, ts: now };
+  return value;
 });

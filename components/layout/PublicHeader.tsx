@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Bell, Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { NotificationsDropdown } from "@/components/layout/notifications-dropdown";
@@ -19,11 +19,13 @@ export function PublicHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [isDesktopViewport, setIsDesktopViewport] = useState(false);
   const [hash, setHash] = useState("");
   const pathname = usePathname();
+  const router = useRouter();
   const { data: session, status } = useSession();
 
-  const linkProps = { prefetch: false as const };
+  const linkProps = { prefetch: true as const };
 
   useEffect(() => setMounted(true), []);
 
@@ -59,12 +61,38 @@ export function PublicHeader() {
   }, []);
 
   useEffect(() => {
+    const media = window.matchMedia("(min-width: 768px)");
+    const syncViewport = () => setIsDesktopViewport(media.matches);
+    syncViewport();
+
     const onResize = () => {
-      if (window.matchMedia("(min-width: 768px)").matches) setMenuOpen(false);
+      syncViewport();
+      if (media.matches) setMenuOpen(false);
     };
     window.addEventListener("resize", onResize);
-    return () => window.removeEventListener("resize", onResize);
+    return () => {
+      window.removeEventListener("resize", onResize);
+    };
   }, []);
+
+  useEffect(() => {
+    // Zagrij najčešće rute da navigacija djeluje instant.
+    router.prefetch("/categories");
+    if (session?.user?.role === "ADMIN") {
+      router.prefetch("/admin");
+      return;
+    }
+    if (session?.user?.role === "HANDYMAN") {
+      router.prefetch("/dashboard/handyman");
+      return;
+    }
+    if (session?.user?.role === "USER") {
+      router.prefetch("/dashboard/user");
+      return;
+    }
+    router.prefetch("/login");
+    router.prefetch("/register");
+  }, [router, session?.user?.role]);
 
   const isHome = pathname === "/";
   const homeTheme = isHome;
@@ -410,12 +438,12 @@ export function PublicHeader() {
           <Link href="/kontakt" className={navLinkDesktop(isKontaktActive)} data-testid="nav-kontakt-desktop" {...linkProps}>
             Kontakt
           </Link>
-          {session ? (
+          {session && isDesktopViewport ? (
             <NotificationsDropdown
               buttonClassName={homeTheme ? "text-white hover:bg-white/10" : "text-gray-700 hover:bg-black/[0.04]"}
               iconClassName={homeTheme ? "text-white" : "text-current"}
             />
-          ) : (
+          ) : !session ? (
             <Link
               href={loginForNotificationsHref}
               aria-label="Prijava za obavještenja"
@@ -427,7 +455,7 @@ export function PublicHeader() {
             >
               <Bell className="h-5 w-5" />
             </Link>
-          )}
+          ) : null}
           {status === "loading" ? (
             <div className="w-[200px]" aria-hidden />
           ) : session ? (
@@ -438,12 +466,12 @@ export function PublicHeader() {
         </nav>
 
         <div className="flex items-center gap-1 md:hidden">
-          {session ? (
+          {session && !isDesktopViewport ? (
             <NotificationsDropdown
               buttonClassName={homeTheme ? "text-white hover:bg-white/10" : "text-gray-700 hover:bg-black/[0.04]"}
               iconClassName={homeTheme ? "text-white" : "text-current"}
             />
-          ) : (
+          ) : !session ? (
             <Link
               href={loginForNotificationsHref}
               aria-label="Prijava za obavještenja"
@@ -455,7 +483,7 @@ export function PublicHeader() {
             >
               <Bell className="h-5 w-5" />
             </Link>
-          )}
+          ) : null}
           <button
             type="button"
             onClick={() => setMenuOpen(!menuOpen)}

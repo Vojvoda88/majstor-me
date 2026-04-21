@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { useRouter } from "next/navigation";
 import { Send } from "lucide-react";
 import { Input } from "@/components/ui/input";
 
@@ -15,7 +14,6 @@ type Message = {
 };
 
 export function RequestChatPanel({ requestId }: { requestId: string }) {
-  const router = useRouter();
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(true);
@@ -58,7 +56,6 @@ export function RequestChatPanel({ requestId }: { requestId: string }) {
     setSending(false);
     if (json.success && json.data) {
       setMessages((prev) => [...prev, json.data]);
-      router.refresh();
     }
   };
 

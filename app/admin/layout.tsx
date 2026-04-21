@@ -16,12 +16,13 @@ export default async function AdminLayout({
   children: React.ReactNode;
 }) {
   const { session, adminRole } = await requireAdmin();
-  let pendingReview = { pendingRequests: 0, pendingHandymen: 0, urgentPendingRequests: 0 };
-  try {
-    pendingReview = await getAdminPendingReviewCounts();
-  } catch {
-    /* non-blocking */
-  }
+  const pendingFallback = { pendingRequests: 0, pendingHandymen: 0, urgentPendingRequests: 0 };
+  const pendingPromise = getAdminPendingReviewCounts().catch(() => pendingFallback);
+  // Ne blokirati admin shell ako su DB count upiti trenutno spori.
+  const pendingReview = await Promise.race([
+    pendingPromise,
+    new Promise<typeof pendingFallback>((resolve) => setTimeout(() => resolve(pendingFallback), 350)),
+  ]);
 
   return (
     <AppProviders>
