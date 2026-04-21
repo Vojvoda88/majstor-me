@@ -67,7 +67,7 @@ export default async function HandymanDashboardPage({
     }),
     prisma.user.findUnique({
       where: { id: session.user.id },
-      select: { emailVerified: true },
+      select: { emailVerified: true, email: true },
     }),
   ]);
   const profile = profileRaw
@@ -188,7 +188,7 @@ export default async function HandymanDashboardPage({
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-5 sm:px-6 sm:py-8">
-      {!currentUser?.emailVerified && <VerifyEmailBanner />}
+      {!currentUser?.emailVerified && <VerifyEmailBanner userEmail={currentUser?.email} />}
       {profile.workerStatus === "PENDING_REVIEW" && <HandymanPendingReviewBanner />}
       {onboarding.percent < 100 && (
         <OnboardingBanner percent={onboarding.percent} steps={onboarding.steps} className="mb-6" />

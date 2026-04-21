@@ -2,8 +2,10 @@
 
 import { useState } from "react";
 import { MailCheck, X } from "lucide-react";
+import { OpenInboxLink } from "@/components/account/open-inbox-link";
+import { getWebmailInboxLink } from "@/lib/webmail-url";
 
-export function VerifyEmailBanner() {
+export function VerifyEmailBanner({ userEmail }: { userEmail?: string | null }) {
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [dismissed, setDismissed] = useState(false);
 
@@ -29,22 +31,32 @@ export function VerifyEmailBanner() {
       <MailCheck className="mt-0.5 h-5 w-5 shrink-0 text-amber-600" />
       <div className="flex-1">
         {status === "sent" ? (
-          <p className="font-medium text-amber-800">
-            Link poslan! Provjerite inbox (i spam folder) i kliknite na link.
-          </p>
+          <div className="space-y-2">
+            <p className="font-medium text-amber-800">
+              Link poslan! Otvorite email i kliknite na link u poruci (provjerite i spam).
+            </p>
+            {userEmail && getWebmailInboxLink(userEmail) && (
+              <OpenInboxLink email={userEmail} variant="secondary" className="w-full" />
+            )}
+          </div>
         ) : (
           <>
             <p className="font-medium text-amber-800">Email adresa nije verifikovana</p>
             <p className="mt-0.5 text-amber-700">
               Potvrdite email kako biste povećali povjerenje korisnika i osigurali nalog.
             </p>
-            <button
-              onClick={handleResend}
-              disabled={status === "sending"}
-              className="mt-2 inline-flex items-center gap-1.5 rounded-lg bg-amber-600 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-amber-700 disabled:opacity-60"
-            >
-              {status === "sending" ? "Šalje se..." : "Pošalji link za verifikaciju"}
-            </button>
+            <div className="mt-2 flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
+              <button
+                onClick={handleResend}
+                disabled={status === "sending"}
+                className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-amber-600 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-amber-700 disabled:opacity-60"
+              >
+                {status === "sending" ? "Šalje se..." : "Pošalji link za verifikaciju"}
+              </button>
+              {userEmail && getWebmailInboxLink(userEmail) && (
+                <OpenInboxLink email={userEmail} variant="secondary" className="flex-1 sm:flex-initial" />
+              )}
+            </div>
             {status === "error" && (
               <p className="mt-1.5 text-xs text-red-600">
                 Greška pri slanju. Pokušajte ponovo ili kontaktirajte podršku.

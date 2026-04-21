@@ -3,7 +3,9 @@ import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { SiteHeaderSimple } from "@/components/layout/site-header-simple";
 import { VerifyEmailBanner } from "@/components/account/verify-email-banner";
+import { OpenInboxLink } from "@/components/account/open-inbox-link";
 import { SignOutButton } from "@/components/account/sign-out-button";
+import { getWebmailInboxLink } from "@/lib/webmail-url";
 import { Mail } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -41,6 +43,8 @@ export default async function VerifyPendingPage() {
   }
 
   const isHandyman = user?.role === "HANDYMAN";
+  const emailAddr = user?.email ?? "";
+  const webmail = emailAddr ? getWebmailInboxLink(emailAddr) : null;
 
   return (
     <div className="min-h-screen bg-[#F8FAFC]">
@@ -70,8 +74,22 @@ export default async function VerifyPendingPage() {
               </p>
             )}
 
+            <p className="mt-5 text-sm font-medium text-slate-700">
+              Da potvrdite nalog, otvorite email i kliknite na link u poruci od BrziMajstor.ME.
+            </p>
+            {emailAddr && (
+              <div className="mt-3 space-y-2">
+                <OpenInboxLink email={emailAddr} />
+                {!webmail && (
+                  <p className="text-xs text-slate-500">
+                    Otvorite aplikaciju ili web stranicu vašeg emaila i potražite poruku od BrziMajstor.ME (provjerite i spam).
+                  </p>
+                )}
+              </div>
+            )}
+
             <div className="mt-6">
-              <VerifyEmailBanner />
+              <VerifyEmailBanner userEmail={emailAddr} />
             </div>
 
             <div className="mt-4 border-t border-slate-100 pt-4">

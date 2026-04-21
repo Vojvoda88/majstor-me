@@ -68,14 +68,14 @@ export default async function UserDashboardPage() {
     }),
     prisma.user.findUnique({
       where: { id: session.user.id },
-      select: { emailVerified: true },
+      select: { emailVerified: true, email: true },
     }),
   ]);
 
   return (
     <div className="min-h-screen bg-[#F4F7FB] pb-28 md:pb-10">
     <div className="mx-auto max-w-[430px] px-4 py-6 md:max-w-4xl md:py-8">
-      {!currentUser?.emailVerified && <VerifyEmailBanner />}
+      {!currentUser?.emailVerified && <VerifyEmailBanner userEmail={currentUser?.email} />}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-[#0F172A] sm:text-3xl">
