@@ -27,6 +27,10 @@ export default async function RegisterPage({
     .toLowerCase()
     .trim() === "majstor";
   const inviteToken = typeof invite === "string" && invite.length > 0 ? invite : undefined;
+  const googleRole = wantsHandyman || inviteToken ? "HANDYMAN" : "USER";
+  const googleCallbackUrl = `/auth/complete-google?role=${googleRole}${
+    inviteToken ? `&invite=${encodeURIComponent(inviteToken)}` : ""
+  }`;
 
   const session = await auth();
   if (session) {
@@ -66,9 +70,17 @@ export default async function RegisterPage({
               </p>
             )}
           </div>
-          {!wantsHandyman && !inviteToken && (
+          {(
             <>
-              <GoogleSignInButton callbackUrl="/dashboard" className="mb-4 w-full" />
+              <GoogleSignInButton
+                callbackUrl={googleCallbackUrl}
+                className="mb-4 w-full"
+                label={
+                  wantsHandyman || inviteToken
+                    ? "Nastavi sa Google (dopunite profil poslije)"
+                    : "Nastavi sa Google"
+                }
+              />
               <div className="relative mb-4 flex items-center gap-3">
                 <div className="h-px flex-1 bg-slate-200" />
                 <span className="text-xs text-slate-400">ili registruj se s emailom</span>

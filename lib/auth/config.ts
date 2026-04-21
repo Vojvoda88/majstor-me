@@ -172,8 +172,40 @@ export const authOptions: NextAuthOptions = {
         token.role = adminProfile ? "ADMIN" : (dbUser?.role ?? u.role ?? "USER");
         if (u.email) token.email = u.email;
         if (u.name !== undefined) token.name = u.name;
+        if (account?.provider === "google") {
+          // Google registracija može naknadno prebaciti USER -> HANDYMAN na /auth/complete-google.
+          // Kratko držimo sync prozor da JWT preuzme novu ulogu bez ponovne prijave.
+          (token as { authProvider?: string }).authProvider = "google";
+          (token as { googleRoleSyncUntil?: number }).googleRoleSyncUntil = Date.now() + 15 * 60 * 1000;
+          (token as { googleRoleLastCheckAt?: number }).googleRoleLastCheckAt = 0;
+        }
+      } else {
+        const provider = (token as { authProvider?: string }).authProvider;
+        const syncUntil = Number((token as { googleRoleSyncUntil?: number }).googleRoleSyncUntil ?? 0);
+        const lastCheck = Number((token as { googleRoleLastCheckAt?: number }).googleRoleLastCheckAt ?? 0);
+        const now = Date.now();
+
+        // Samo za Google tokene sa USER ulogom, i uz mali debounce da ne spamujemo bazu.
+        if (provider === "google" && token.id && token.role === "USER" && syncUntil > now && now - lastCheck > 10_000) {
+          (token as { googleRoleLastCheckAt?: number }).googleRoleLastCheckAt = now;
+          const { prisma } = await import("@/lib/db");
+          const [adminProfile, dbUser] = await Promise.all([
+            prisma.adminProfile.findUnique({
+              where: { userId: token.id as string },
+              select: { id: true },
+            }),
+            prisma.user.findUnique({
+              where: { id: token.id as string },
+              select: { role: true },
+            }),
+          ]);
+          const resolvedRole = adminProfile ? "ADMIN" : (dbUser?.role ?? "USER");
+          token.role = resolvedRole;
+          if (resolvedRole !== "USER") {
+            (token as { googleRoleSyncUntil?: number }).googleRoleSyncUntil = 0;
+          }
+        }
       }
-      void account;
       return token;
     },
     async session({ session, token }) {
