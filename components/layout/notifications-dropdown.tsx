@@ -15,7 +15,13 @@ type Notification = {
   createdAt: string;
 };
 
-export function NotificationsDropdown() {
+export function NotificationsDropdown({
+  buttonClassName = "",
+  iconClassName = "",
+}: {
+  buttonClassName?: string;
+  iconClassName?: string;
+}) {
   const [open, setOpen] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -147,9 +153,9 @@ export function NotificationsDropdown() {
             computePanelStyle();
           }
         }}
-        className="relative h-10 min-h-[44px] w-10"
+        className={`relative h-10 min-h-[44px] w-10 ${buttonClassName}`}
       >
-        <Bell className="h-5 w-5" />
+        <Bell className={`h-5 w-5 ${iconClassName}`} />
         {unreadCount > 0 && (
           <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white">
             {unreadCount > 99 ? "99+" : unreadCount}

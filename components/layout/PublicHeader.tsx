@@ -93,8 +93,8 @@ export function PublicHeader() {
 
   const sheetNavLink = (active: boolean) =>
     cn(
-      "flex rounded-xl px-3.5 py-3 text-[15px] font-medium text-slate-700 transition-colors hover:bg-slate-50",
-      active && "bg-slate-100 font-semibold text-slate-900"
+      "flex rounded-2xl border border-transparent px-3.5 py-3 text-[15px] font-medium text-slate-700 transition-colors hover:border-slate-200 hover:bg-slate-50",
+      active && "border-blue-100 bg-blue-50/70 font-semibold text-slate-900"
     );
 
   const desktopGuestNav = (
@@ -199,21 +199,21 @@ export function PublicHeader() {
           className="fixed inset-0 z-[9998] h-[100dvh] min-h-[100dvh] w-full bg-slate-950/60 backdrop-blur-[3px] md:hidden"
         />
         <aside
-          className="fixed right-0 top-0 z-[9999] flex h-[100dvh] max-h-[100dvh] w-[min(92vw,23.5rem)] flex-col border-l border-slate-200/90 bg-white shadow-[0_22px_55px_-15px_rgba(15,23,42,0.5)] md:hidden"
+          className="fixed right-0 top-0 z-[9999] flex h-[100dvh] max-h-[100dvh] w-[min(92vw,23.5rem)] flex-col border-l border-slate-200/90 bg-gradient-to-b from-white via-white to-slate-50 shadow-[0_22px_55px_-15px_rgba(15,23,42,0.5)] md:hidden"
           data-testid="mobile-nav"
           aria-modal="true"
           role="dialog"
           aria-label="Mobilni meni"
         >
-          <div className="flex shrink-0 items-center justify-between border-b border-slate-200/80 px-4 pb-3 pt-[max(0.75rem,env(safe-area-inset-top))]">
+          <div className="flex shrink-0 items-center justify-between border-b border-slate-200/80 bg-gradient-to-r from-blue-600 to-blue-700 px-4 pb-3 pt-[max(0.75rem,env(safe-area-inset-top))]">
             <div className="min-w-0 pr-2">
-              <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-slate-500">BrziMajstor.ME</p>
-              <p className="mt-0.5 truncate text-sm font-semibold text-slate-900">Meni</p>
+              <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-blue-100/90">BrziMajstor.ME</p>
+              <p className="mt-0.5 truncate text-sm font-semibold text-white">Meni</p>
             </div>
             <button
               type="button"
               onClick={() => setMenuOpen(false)}
-              className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-slate-600 transition hover:bg-slate-100"
+              className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-white transition hover:bg-white/10"
               aria-label="Zatvori meni"
             >
               <X className="h-5 w-5" />
@@ -221,7 +221,11 @@ export function PublicHeader() {
           </div>
 
           <nav className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-4 pb-[max(1.25rem,env(safe-area-inset-bottom))]">
-            <div className="flex flex-col gap-1">
+            <div className="rounded-2xl border border-slate-200/80 bg-white/90 p-2 shadow-[0_12px_30px_-24px_rgba(15,23,42,0.45)]">
+              <p className="px-2 pb-2 pt-1 text-[11px] font-bold uppercase tracking-[0.12em] text-slate-400">
+                Navigacija
+              </p>
+              <div className="flex flex-col gap-1">
               <Link
                 href="/"
                 className={sheetNavLink(isPocetnaActive)}
@@ -267,10 +271,11 @@ export function PublicHeader() {
               >
                 Kontakt / podrška
               </Link>
+              </div>
             </div>
 
             {session ? (
-              <div className="mt-6 border-t border-slate-200/90 pt-5">
+              <div className="mt-6 rounded-2xl border border-slate-200/80 bg-white/90 p-3 shadow-[0_12px_30px_-24px_rgba(15,23,42,0.45)]">
                 <p className="mb-2 px-1 text-[11px] font-bold uppercase tracking-[0.12em] text-slate-400">Nalog</p>
                 <div className="flex flex-col gap-1">
                   {session.user?.role === "ADMIN" && (
@@ -305,7 +310,7 @@ export function PublicHeader() {
                   )}
                   <button
                     type="button"
-                    className="mt-2 flex w-full rounded-xl px-3.5 py-3 text-left text-[15px] font-medium text-rose-600 transition hover:bg-rose-50"
+                    className="mt-2 flex w-full rounded-2xl border border-transparent px-3.5 py-3 text-left text-[15px] font-medium text-rose-600 transition hover:border-rose-100 hover:bg-rose-50"
                     onClick={() => {
                       setMenuOpen(false);
                       signOut({ callbackUrl: "/" });
@@ -316,10 +321,10 @@ export function PublicHeader() {
                 </div>
               </div>
             ) : (
-              <div className="mt-6 border-t border-slate-200/90 pt-5">
+              <div className="mt-6 rounded-2xl border border-slate-200/80 bg-white/90 p-3 shadow-[0_12px_30px_-24px_rgba(15,23,42,0.45)]">
                 <Link
                   href="/register?type=majstor"
-                  className="flex rounded-xl px-3.5 py-3 text-[15px] font-medium text-slate-700 transition hover:bg-slate-50"
+                  className="flex rounded-2xl border border-transparent px-3.5 py-3 text-[15px] font-medium text-slate-700 transition hover:border-slate-200 hover:bg-slate-50"
                   onClick={() => setMenuOpen(false)}
                   data-testid="nav-registracija-majstor"
                   {...linkProps}
@@ -329,7 +334,7 @@ export function PublicHeader() {
                 <div className="mt-4 flex flex-col gap-2">
                   <Link
                     href="/login"
-                    className="flex rounded-xl px-3.5 py-3 text-center text-[15px] font-medium text-slate-700 transition hover:bg-slate-50"
+                    className="flex rounded-2xl border border-slate-200 bg-white px-3.5 py-3 text-center text-[15px] font-medium text-slate-700 transition hover:bg-slate-50"
                     onClick={() => setMenuOpen(false)}
                     data-testid="nav-prijava"
                     {...linkProps}
@@ -406,7 +411,10 @@ export function PublicHeader() {
             Kontakt
           </Link>
           {session ? (
-            <NotificationsDropdown />
+            <NotificationsDropdown
+              buttonClassName={homeTheme ? "text-white hover:bg-white/10" : "text-gray-700 hover:bg-black/[0.04]"}
+              iconClassName={homeTheme ? "text-white" : "text-current"}
+            />
           ) : (
             <Link
               href={loginForNotificationsHref}
@@ -431,7 +439,10 @@ export function PublicHeader() {
 
         <div className="flex items-center gap-1 md:hidden">
           {session ? (
-            <NotificationsDropdown />
+            <NotificationsDropdown
+              buttonClassName={homeTheme ? "text-white hover:bg-white/10" : "text-gray-700 hover:bg-black/[0.04]"}
+              iconClassName={homeTheme ? "text-white" : "text-current"}
+            />
           ) : (
             <Link
               href={loginForNotificationsHref}
