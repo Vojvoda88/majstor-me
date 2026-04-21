@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { RegisterForm } from "@/components/forms/register-form";
+import { GoogleSignInButton } from "@/components/auth/google-sign-in-button";
 import { Button } from "@/components/ui/button";
 import { SiteHeaderSimple } from "@/components/layout/site-header-simple";
 import { RegisterMajstorSignOutCta } from "@/components/auth/register-majstor-sign-out-cta";
@@ -65,6 +66,16 @@ export default async function RegisterPage({
               </p>
             )}
           </div>
+          {!wantsHandyman && !inviteToken && (
+            <>
+              <GoogleSignInButton callbackUrl="/dashboard" className="mb-4 w-full" />
+              <div className="relative mb-4 flex items-center gap-3">
+                <div className="h-px flex-1 bg-slate-200" />
+                <span className="text-xs text-slate-400">ili registruj se s emailom</span>
+                <div className="h-px flex-1 bg-slate-200" />
+              </div>
+            </>
+          )}
           <RegisterForm defaultRole={defaultRole} inviteToken={inviteToken} />
           <p className="mt-6 text-center">
             <Link href="/">

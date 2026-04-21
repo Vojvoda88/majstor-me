@@ -1,5 +1,7 @@
 import type { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import GoogleProvider from "next-auth/providers/google";
+import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { compare } from "bcryptjs";
 import { getClientIpFromNextAuthReq } from "@/lib/request-ip";
 import { isRateLimited } from "@/lib/rate-limit";
@@ -7,7 +9,11 @@ import { isRateLimited } from "@/lib/rate-limit";
 const authStepsLog =
   process.env.LOGIN_AUTH_DEBUG === "1" || process.env.LOG_AUTH_STEPS === "1";
 
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const { prisma: _prismaForAdapter } = require("@/lib/db");
+
 export const authOptions: NextAuthOptions = {
+  adapter: PrismaAdapter(_prismaForAdapter),
   session: {
     strategy: "jwt",
     maxAge: 30 * 24 * 60 * 60, // 30 days
@@ -16,6 +22,15 @@ export const authOptions: NextAuthOptions = {
     signIn: "/login",
   },
   providers: [
+    ...(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
+      ? [
+          GoogleProvider({
+            clientId: process.env.GOOGLE_CLIENT_ID,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+            allowDangerousEmailAccountLinking: true,
+          }),
+        ]
+      : []),
     CredentialsProvider({
       name: "credentials",
       credentials: {
@@ -121,11 +136,21 @@ export const authOptions: NextAuthOptions = {
   ],
   callbacks: {
     async signIn({ user, account }) {
-      void user;
-      void account;
+      // For OAuth providers (Google), mark email as verified automatically
+      if (account?.provider && account.provider !== "credentials" && user.id) {
+        try {
+          const { prisma } = await import("@/lib/db");
+          await prisma.user.update({
+            where: { id: user.id },
+            data: { emailVerified: new Date() },
+          });
+        } catch {
+          // ignore — user might not exist yet on very first creation (adapter handles it)
+        }
+      }
       return true;
     },
-    async jwt({ token, user }) {
+    async jwt({ token, user, account }) {
       if (user) {
         const u = user as { id?: string; role?: string; email?: string; name?: string | null };
         if (u.id) {
@@ -133,15 +158,22 @@ export const authOptions: NextAuthOptions = {
           token.sub = u.id;
         }
         const { prisma } = await import("@/lib/db");
-        const adminProfile = await prisma.adminProfile.findUnique({
-          where: { userId: u.id as string },
-          select: { id: true },
-        });
-        /** requireAdmin() gleda session.role; legacy redovi mogu imati AdminProfile a User.role još USER. */
-        token.role = adminProfile ? "ADMIN" : (u.role ?? "USER");
+        const [adminProfile, dbUser] = await Promise.all([
+          prisma.adminProfile.findUnique({
+            where: { userId: u.id as string },
+            select: { id: true },
+          }),
+          // Always fetch from DB so OAuth users (who have no role in token) get the right role
+          prisma.user.findUnique({
+            where: { id: u.id as string },
+            select: { role: true },
+          }),
+        ]);
+        token.role = adminProfile ? "ADMIN" : (dbUser?.role ?? u.role ?? "USER");
         if (u.email) token.email = u.email;
         if (u.name !== undefined) token.name = u.name;
       }
+      void account;
       return token;
     },
     async session({ session, token }) {

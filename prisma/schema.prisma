@@ -100,7 +100,7 @@ model User {
   name          String
   email         String   @unique
   phone         String?
-  passwordHash  String   @map("password_hash")
+  passwordHash  String?  @map("password_hash")
   city          String?
   emailVerified DateTime? @map("email_verified")
   // SHA-256 heks tokena za potvrdu emaila (password registracija)
@@ -132,9 +132,30 @@ model User {
   adminProfile       AdminProfile?
   savedHandymen      SavedHandyman[]      @relation("SavedBySaver")
   savedByUsers       SavedHandyman[]      @relation("SavedHandymanTarget")
+  accounts           Account[]
 
   @@index([role])
   @@map("users")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String  @map("user_id")
+  type              String
+  provider          String
+  providerAccountId String  @map("provider_account_id")
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
 }
 
 enum AvailabilityStatus {
