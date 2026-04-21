@@ -328,11 +328,18 @@ export async function RequestDetailView({
         </Card>
       )}
 
-      {session?.user?.role === "HANDYMAN" && req.status === "OPEN" && handymanUnlocked && (
-        <div className="mt-6">
-          <SendOfferForm requestId={req.id} />
-        </div>
-      )}
+      {session?.user?.role === "HANDYMAN" && req.status === "OPEN" && handymanUnlocked && (() => {
+        const alreadySent = req.offers.some((o) => o.handyman.id === session.user.id);
+        return alreadySent ? (
+          <div className="mt-6 rounded-xl border border-emerald-200 bg-emerald-50 px-5 py-4 text-sm font-medium text-emerald-800">
+            Već ste poslali ponudu na ovaj zahtjev. Čekate odgovor od klijenta.
+          </div>
+        ) : (
+          <div className="mt-6">
+            <SendOfferForm requestId={req.id} />
+          </div>
+        );
+      })()}
 
       {isOwner && req.offers.length === 0 && (
         <Card className="mt-6 rounded-xl border border-dashed border-slate-200 bg-slate-50/80">

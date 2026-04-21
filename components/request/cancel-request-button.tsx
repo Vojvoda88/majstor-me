@@ -31,7 +31,7 @@ export function CancelRequestButton({ requestId }: { requestId: string }) {
         onClick={() => mutation.mutate()}
         disabled={mutation.isPending}
       >
-        {mutation.isPending ? "Otkazivanje..." : "Otkazi zahtjev"}
+        {mutation.isPending ? "Otkazivanje..." : "Otkaži zahtjev"}
       </Button>
     </div>
   );

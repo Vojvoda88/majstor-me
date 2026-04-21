@@ -1,5 +1,6 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
+import { requireVerified } from "@/lib/auth/require-verified";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { UrgencyBadge } from "@/components/request/urgency-badge";
@@ -10,6 +11,7 @@ import { MapPin, Calendar, MessageSquare } from "lucide-react";
 import { DeleteMyAccount } from "@/components/account/delete-my-account";
 import { UserPushNotificationsCard } from "@/components/user/push-notifications-card";
 import { LeaveReviewForm } from "@/components/user/leave-review-form";
+import { VerifyEmailBanner } from "@/components/account/verify-email-banner";
 import { Heart, Star } from "lucide-react";
 
 export const dynamic = "force-dynamic";
@@ -25,9 +27,10 @@ export default async function UserDashboardPage() {
   const session = await auth();
   if (!session) redirect("/login");
   if (session.user.role !== "USER") redirect("/");
+  await requireVerified(session);
 
   const { prisma } = await import("@/lib/db");
-  const [requests, savedHandymen] = await Promise.all([
+  const [requests, savedHandymen, currentUser] = await Promise.all([
     prisma.request.findMany({
       where: { userId: session.user.id },
       include: {
@@ -63,11 +66,16 @@ export default async function UserDashboardPage() {
       },
       orderBy: { createdAt: "desc" },
     }),
+    prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { emailVerified: true },
+    }),
   ]);
 
   return (
     <div className="min-h-screen bg-[#F4F7FB] pb-28 md:pb-10">
     <div className="mx-auto max-w-[430px] px-4 py-6 md:max-w-4xl md:py-8">
+      {!currentUser?.emailVerified && <VerifyEmailBanner />}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-[#0F172A] sm:text-3xl">

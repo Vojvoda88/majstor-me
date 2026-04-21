@@ -76,6 +76,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const { isVerified } = await import("@/lib/auth/require-verified");
+    if (!(await isVerified(session.user.id, session.user.role))) {
+      return NextResponse.json(
+        { success: false, error: "Morate verifikovati email adresu ili sačekati odobrenje admina prije slanja ponuda." },
+        { status: 403 }
+      );
+    }
+
     if (isRateLimited(`offer:${session.user.id}`, 30, 60 * 60 * 1000)) {
       return NextResponse.json(
         { success: false, error: "Previše ponuda. Pokušajte ponovo kasnije." },

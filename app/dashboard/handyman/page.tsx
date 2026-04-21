@@ -16,6 +16,8 @@ import { REQUEST_CATEGORY_FALLBACK } from "@/lib/constants";
 import { isPaymentConfigured } from "@/lib/payment";
 import { HandymanCreditsCtaBlock } from "@/components/credits/handyman-credits-cta-block";
 import { CheckCircle2, Clock, XCircle } from "lucide-react";
+import { VerifyEmailBanner } from "@/components/account/verify-email-banner";
+import { requireVerified } from "@/lib/auth/require-verified";
 
 function isRequesterVerifiedUser(
   user: { emailVerified?: Date | null; phoneVerified?: Date | null } | null | undefined
@@ -44,6 +46,7 @@ export default async function HandymanDashboardPage({
   const session = await auth();
   if (!session) redirect("/login");
   if (session.user.role !== "HANDYMAN") redirect("/");
+  await requireVerified(session);
 
   const params = await searchParams;
   const category = params.category ?? "";
@@ -54,13 +57,19 @@ export default async function HandymanDashboardPage({
   const skip = (page - 1) * limit;
 
   const { prisma } = await import("@/lib/db");
-  const profileRaw = await prisma.handymanProfile.findUnique({
-    where: { userId: session.user.id },
-    include: {
-      user: { select: { city: true, phone: true } },
-      workerCategories: { include: { category: true } },
-    },
-  });
+  const [profileRaw, currentUser] = await Promise.all([
+    prisma.handymanProfile.findUnique({
+      where: { userId: session.user.id },
+      include: {
+        user: { select: { city: true, phone: true } },
+        workerCategories: { include: { category: true } },
+      },
+    }),
+    prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { emailVerified: true },
+    }),
+  ]);
   const profile = profileRaw
     ? {
         ...profileRaw,
@@ -179,6 +188,7 @@ export default async function HandymanDashboardPage({
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-5 sm:px-6 sm:py-8">
+      {!currentUser?.emailVerified && <VerifyEmailBanner />}
       {profile.workerStatus === "PENDING_REVIEW" && <HandymanPendingReviewBanner />}
       {onboarding.percent < 100 && (
         <OnboardingBanner percent={onboarding.percent} steps={onboarding.steps} className="mb-6" />
@@ -259,10 +269,11 @@ export default async function HandymanDashboardPage({
           <p className="text-sm font-medium text-[#64748B]">Otvoreni zahtjevi</p>
           <p className="mt-1 text-2xl font-bold text-[#0F172A]">{totalDisplayed}</p>
         </div>
-        <div className="rounded-xl bg-white p-5 shadow-sm transition hover:shadow-md sm:p-6">
+        <Link href="/dashboard/handyman/offers" className="rounded-xl bg-white p-5 shadow-sm transition hover:shadow-md sm:p-6 block">
           <p className="text-sm font-medium text-[#64748B]">Moje poslane ponude</p>
           <p className="mt-1 text-2xl font-bold text-[#0F172A]">{myOffersCount}</p>
-        </div>
+          <p className="mt-1 text-xs font-medium text-blue-600">Pogledaj sve →</p>
+        </Link>
         <div className="rounded-xl bg-white p-5 shadow-sm transition hover:shadow-md sm:p-6">
           <p className="text-sm font-medium text-[#64748B]">Prihvaćeni poslovi</p>
           <p className="mt-1 text-2xl font-bold text-[#16A34A]">{acceptedCount}</p>

@@ -244,6 +244,15 @@ export default async function HandymanProfilePage({
                         Verifikacija profila u toku
                       </span>
                     )}
+                    {profileExt.availabilityStatus && profileExt.availabilityStatus !== "AVAILABLE" && (
+                      <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                        profileExt.availabilityStatus === "BUSY"
+                          ? "bg-red-500/40 text-white"
+                          : "bg-amber-400/60 text-white"
+                      }`}>
+                        {AVAILABILITY_LABELS[profileExt.availabilityStatus] ?? profileExt.availabilityStatus}
+                      </span>
+                    )}
                     {profileExt.isPromoted && (
                       <span className="rounded-full bg-amber-400/80 px-2.5 py-0.5 text-xs font-medium text-white">
                         <Award className="mr-1 inline h-3.5 w-3.5" /> Premium

@@ -293,10 +293,6 @@ export function HowItWorksForHandymen() {
             <p className="text-sm font-medium leading-relaxed text-slate-700 sm:text-[15px]">
               Krediti nijesu pretplata. Troše se samo kada otključate kontakt za posao koji želite.
             </p>
-            <p className="mt-2 text-sm leading-relaxed text-slate-600 sm:text-[15px]">
-              Hitniji poslovi i dodaci mogu koštati više kredita (do plafona u aplikaciji). Standardni, nije hitno:{" "}
-              {STANDARD_LEAD_CREDITS} kredita.
-            </p>
           </div>
 
           <div className="mt-5 flex flex-col items-stretch gap-3 sm:items-center">

@@ -3,6 +3,7 @@ import { z } from "zod";
 import { auth } from "@/lib/auth";
 import { logError } from "@/lib/logger";
 import { zodErrorToString } from "@/lib/api-response";
+import { sendInviteEmail } from "@/lib/email";
 import crypto from "crypto";
 
 export const dynamic = "force-dynamic";
@@ -65,16 +66,24 @@ export async function POST(request: Request) {
       },
     });
 
-    // TODO: sendInviteEmail(invite) - kada email provider bude spreman
-    // Link: /register?invite=TOKEN ili /register/invite/TOKEN
+    const inviteLink = `${process.env.NEXTAUTH_URL ?? "https://brzimajstor.me"}/register?invite=${token}`;
+
+    if (parsed.data.email) {
+      const { prisma: prismaDb } = await import("@/lib/db");
+      const inviter = await prismaDb.user.findUnique({
+        where: { id: session.user.id },
+        select: { name: true },
+      });
+      sendInviteEmail(parsed.data.email, token, inviter?.name).catch(() => {});
+    }
 
     return NextResponse.json({
       success: true,
       data: {
         inviteId: invite.id,
-        inviteLink: `${process.env.NEXTAUTH_URL ?? "https://brzimajstor.me"}/register?invite=${token}`,
+        inviteLink,
         message: parsed.data.email
-          ? "Pozivnica će biti poslata kada email servis bude konfigurisan."
+          ? "Pozivnica je poslata na email."
           : "Pozivnica je kreirana. Pošaljite majstoru link za registraciju.",
       },
     });

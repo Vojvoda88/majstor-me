@@ -349,3 +349,40 @@ export async function sendNewReviewEmail(
     // Silently fail - email is non-critical
   }
 }
+
+export async function sendInviteEmail(
+  toEmail: string,
+  inviteToken: string,
+  inviterName?: string | null
+) {
+  const resend = getResend();
+  if (!resend) return;
+
+  const configErr = getEmailConfigError();
+  if (configErr) return;
+
+  const registerLink = `${appBaseUrl}/register?invite=${inviteToken}`;
+  const inviterLabel = inviterName?.trim() ? inviterName.trim() : "Korisnik BrziMajstor.ME platforme";
+
+  try {
+    await resend.emails.send({
+      from,
+      to: toEmail,
+      subject: "Poziv za registraciju — BrziMajstor.ME",
+      html: `
+        <p>Zdravo,</p>
+        <p><strong>${inviterLabel}</strong> vas je pozvao da se registrujete kao majstor na platformi <strong>BrziMajstor.ME</strong>.</p>
+        <p>Na platformi možete primati zahtjeve od korisnika, slati ponude i graditi svoju bazu klijenata.</p>
+        <p>
+          <a href="${registerLink}" style="display:inline-block;padding:12px 24px;background:#2563EB;color:#fff;border-radius:8px;text-decoration:none;font-weight:600;">
+            Registruj se kao majstor →
+          </a>
+        </p>
+        <p style="font-size:12px;color:#94a3b8;">Ako link ne radi, kopirajte ovu adresu u browser: ${registerLink}</p>
+        <p>— BrziMajstor.ME</p>
+      `,
+    });
+  } catch {
+    // Silently fail - email is non-critical
+  }
+}

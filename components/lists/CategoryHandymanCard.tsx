@@ -94,7 +94,7 @@ export function CategoryHandymanCard({
           </p>
         </div>
 
-        {/* Right: Rating + CTA */}
+        {/* Right: Rating + Price + CTA */}
         <div className="flex flex-col justify-between p-8">
           <div>
             <div className="inline-flex items-center gap-2 rounded-full bg-[#FEF3C7] px-4 py-2 text-[#92400E]">

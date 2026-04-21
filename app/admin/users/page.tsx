@@ -2,6 +2,7 @@ import { requireAdminPermission } from "@/lib/admin/auth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
+import { AdminVerifyEmailButton } from "@/components/admin/verify-email-button";
 
 export const dynamic = "force-dynamic";
 
@@ -31,6 +32,7 @@ export default async function AdminUsersPage({
           phone: true,
           city: true,
           role: true,
+          emailVerified: true,
           suspendedAt: true,
           bannedAt: true,
           createdAt: true,
@@ -70,6 +72,7 @@ export default async function AdminUsersPage({
                   <th className="pb-3 pr-4">Grad</th>
                   <th className="pb-3 pr-4">Zahtjevi</th>
                   <th className="pb-3 pr-4">Status</th>
+                  <th className="pb-3 pr-4">Email</th>
                   <th className="pb-3 pr-4">Registracija</th>
                   <th className="pb-3"></th>
                 </tr>
@@ -92,6 +95,13 @@ export default async function AdminUsersPage({
                           <Badge variant="secondary">Suspendovan</Badge>
                         ) : (
                           <Badge variant="success">Aktivan</Badge>
+                        )}
+                      </td>
+                      <td className="py-3 pr-4">
+                        {u.emailVerified ? (
+                          <Badge variant="success">Verifikovan</Badge>
+                        ) : (
+                          <AdminVerifyEmailButton userId={u.id} />
                         )}
                       </td>
                       <td className="py-3 pr-4 text-[#64748B]">{new Date(u.createdAt).toLocaleDateString("sr")}</td>

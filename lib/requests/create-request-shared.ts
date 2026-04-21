@@ -148,6 +148,15 @@ export async function createRequestShared(
       return { ok: false, error: "Samo korisnici mogu kreirati zahtjeve", status: 403 };
     }
 
+    // Blokiraj logirane korisnike bez verifikovanog emaila
+    if (!isGuest) {
+      const { isVerified } = await import("@/lib/auth/require-verified");
+      const verified = await isVerified(session!.user!.id, session!.user!.role);
+      if (!verified) {
+        return { ok: false, error: "Morate verifikovati email adresu prije objave zahtjeva.", status: 403 };
+      }
+    }
+
     if (!isGuest) {
       const yesterday = new Date();
       yesterday.setDate(yesterday.getDate() - 1);

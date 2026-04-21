@@ -5,6 +5,7 @@ import { Providers } from "@/app/providers";
 import { auth } from "@/lib/auth";
 import { InstallCTA } from "@/components/pwa/install-cta";
 import { ServiceWorkerRegister } from "@/components/pwa/service-worker-register";
+import { GoogleTranslate } from "@/components/layout/google-translate";
 import { pwaIconSrc } from "@/lib/pwa-icon-assets";
 import { getSiteUrl } from "@/lib/site-url";
 import "./globals.css";
@@ -106,6 +107,7 @@ export default async function RootLayout({
           <Analytics />
           <ServiceWorkerRegister />
           <InstallCTA />
+          <GoogleTranslate />
         </Providers>
       </body>
     </html>

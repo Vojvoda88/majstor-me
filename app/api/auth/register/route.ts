@@ -8,6 +8,8 @@ import { HANDYMAN_START_BONUS_CREDITS } from "@/lib/credit-packages";
 import { getRegisterRateLimitKey, getRequestClientIp } from "@/lib/request-ip";
 import { CITIES, MAX_HANDYMAN_CATEGORIES } from "@/lib/constants";
 import { HANDYMAN_SELECTABLE_INTERNAL_NAMES } from "@/lib/categories";
+import { generateEmailVerificationSecret } from "@/lib/email-verification-token";
+import { sendEmailVerificationEmail } from "@/lib/email";
 
 export const dynamic = "force-dynamic";
 
@@ -216,6 +218,8 @@ export async function POST(request: Request) {
     }
 
     const passwordHash = await hash(password, 10);
+    const verificationSecret = generateEmailVerificationSecret();
+    const verificationExpiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24h
 
     const user = await prisma.$transaction(async (tx) => {
       const u = await tx.user.create({
@@ -227,6 +231,8 @@ export async function POST(request: Request) {
           city: city ?? null,
           role,
           emailVerified: null,
+          emailVerificationTokenHash: verificationSecret.hash,
+          emailVerificationExpiresAt: verificationExpiresAt,
         },
         select: {
           id: true,
@@ -308,6 +314,9 @@ export async function POST(request: Request) {
         // nema blokade registracije ako invite update ne uspije
       }
     }
+
+    // Šalji email verifikacije — ne blokira registraciju ako ne uspije
+    sendEmailVerificationEmail(email, name, verificationSecret.plain).catch(() => {});
 
     return NextResponse.json({
       success: true,

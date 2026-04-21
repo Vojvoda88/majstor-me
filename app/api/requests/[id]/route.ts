@@ -7,6 +7,7 @@ import { sendJobCompletedEmail } from "@/lib/email";
 import { logError } from "@/lib/logger";
 import { zodErrorToString } from "@/lib/api-response";
 import { isApprovedForHandymen } from "@/lib/request-approval-gates";
+import { createNotification } from "@/lib/notifications";
 
 const PRIVATE_REQUEST_DETAIL_SELECT = {
   id: true,
@@ -189,7 +190,35 @@ export async function PATCH(
           where: { userId: acceptedOffer.handymanId },
           data: { completedJobsCount: { increment: 1 } },
         });
+        createNotification(
+          acceptedOffer.handymanId,
+          "NEW_REVIEW",
+          "Posao završen",
+          {
+            body: `Klijent je označio posao (${updated.category}) kao završen. Hvala na saradnji!`,
+            link: `/request/${id}`,
+          }
+        ).catch(() => {});
       }
+    }
+
+    if (status === "CANCELLED") {
+      const pendingOffers = await prisma.offer.findMany({
+        where: { requestId: id, status: "PENDING" },
+        select: { handymanId: true },
+      });
+      await Promise.allSettled(
+        pendingOffers.map((o) =>
+          createNotification(
+            o.handymanId,
+            "NEW_JOB",
+            "Zahtjev otkazan",
+            {
+              body: `Zahtjev za ${updated.category} u ${updated.city || "nepoznatom gradu"} je otkazan od strane klijenta.`,
+            }
+          )
+        )
+      );
     }
 
     return NextResponse.json({ success: true, data: updated });
