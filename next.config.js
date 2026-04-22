@@ -11,6 +11,15 @@ const nextConfig = {
       ...(isProd ? [] : ["'unsafe-eval'"]),
       "https://va.vercel-scripts.com",
       "https://vercel.live",
+      // Google Translate widget (components/layout/google-translate.tsx)
+      "https://translate.google.com",
+      "https://www.gstatic.com",
+    ].join(" ");
+    const frameSrc = [
+      "'self'",
+      "https://translate.google.com",
+      "https://www.google.com",
+      "https://translate.googleapis.com",
     ].join(" ");
     const security = [
       { key: "X-DNS-Prefetch-Control", value: "on" },
@@ -32,6 +41,7 @@ const nextConfig = {
           "img-src 'self' data: blob: https:",
           "font-src 'self' data:",
           "connect-src 'self' https: wss:",
+          `frame-src ${frameSrc}`,
           "object-src 'none'",
           "frame-ancestors 'none'",
           "base-uri 'self'",

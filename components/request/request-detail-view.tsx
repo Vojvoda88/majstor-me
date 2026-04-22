@@ -20,7 +20,7 @@ import { InviteHandymanForm } from "@/components/invite/invite-handyman-form";
 import { UnlockContactButton } from "@/components/request/unlock-contact-button";
 import { LeadPriceBreakdown } from "@/components/request/lead-price-breakdown";
 import { UrgencyBadge } from "@/components/request/urgency-badge";
-import { MapPin, Calendar, User } from "lucide-react";
+import { MapPin, Calendar, User, MessageCircle, MessageCircleMore } from "lucide-react";
 import { trackFunnelEvent } from "@/lib/funnel-events";
 import type { RequestDetailPayload } from "@/lib/requests/request-detail-include";
 import { viberHref, whatsappHref } from "@/lib/contact-links";
@@ -215,6 +215,38 @@ export async function RequestDetailView({
                     </a>
                   </p>
                 )}
+                {session?.user?.role === "HANDYMAN" &&
+                  !isOwner &&
+                  handymanUnlocked &&
+                  (req.requesterViberPhone || req.requesterWhatsappPhone) && (
+                    <div className="mt-4 flex flex-col gap-3 border-t border-slate-200/80 pt-4 sm:flex-row sm:flex-wrap">
+                      <p className="w-full text-xs font-medium text-slate-600">
+                        Brzi kontakt klijenta prije ili uz slanje ponude:
+                      </p>
+                      {req.requesterViberPhone && (
+                        <a
+                          href={viberHref(req.requesterViberPhone)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-xl bg-[#7360F2] px-4 text-sm font-semibold text-white transition hover:bg-[#6350E0] sm:min-w-[200px] sm:flex-initial"
+                        >
+                          <MessageCircleMore className="h-5 w-5 shrink-0" />
+                          Viber korisniku
+                        </a>
+                      )}
+                      {req.requesterWhatsappPhone && (
+                        <a
+                          href={whatsappHref(req.requesterWhatsappPhone)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-xl bg-[#25D366] px-4 text-sm font-semibold text-white transition hover:bg-[#20BD5A] sm:min-w-[200px] sm:flex-initial"
+                        >
+                          <MessageCircle className="h-5 w-5 shrink-0" />
+                          WhatsApp korisniku
+                        </a>
+                      )}
+                    </div>
+                  )}
               </div>
             </div>
           )}
@@ -228,9 +260,11 @@ export async function RequestDetailView({
                 200 kredita ≈ 2&nbsp;€; hitnije oglase više).
               </p>
               <p className="mt-2 text-sm leading-relaxed text-slate-600">
-                Prvo <strong className="font-semibold text-slate-800">otključavate kontakt kreditima</strong> (potvrda u
-                koraku ispod). Tek onda vidite telefon / Viber / WhatsApp i možete poslati ponudu kroz formu ili direktno
-                kontaktirati klijenta.
+                Prvo <strong className="font-semibold text-slate-800">otključavate kontakt kreditima</strong> (korak
+                ispod). Zatim odmah vidite telefon / Viber / WhatsApp — možete kontaktirati klijenta i poslati ponudu
+                kroz formu. <strong className="font-semibold text-slate-800">Nije potrebno</strong> da korisnik prihvati
+                ponudu da biste mu pisali na Viber ili WhatsApp; in-app chat u platformi otvara se tek nakon prihvaćene
+                ponude.
               </p>
               <LeadPriceBreakdown breakdown={creditsBreakdown} />
               <div className="mt-5">

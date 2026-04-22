@@ -266,16 +266,16 @@ export default async function HandymanProfilePage({
         </div>
 
         <div className="mx-auto max-w-4xl px-4 py-8 md:px-6 md:py-10">
-          {(profileExt.viberPhone || profileExt.whatsappPhone) && (
+          {session?.user?.role === "USER" && (profileExt.viberPhone || profileExt.whatsappPhone) && (
             <div className="mb-8 flex flex-wrap gap-3 md:mb-10">
               {profileExt.viberPhone && (
                 <a
                   href={viberLink(profileExt.viberPhone)}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex h-14 items-center justify-center gap-2 rounded-xl bg-[#7360F2] px-6 font-semibold text-white transition hover:bg-[#6350E0]"
+                  className="inline-flex h-14 min-w-[min(100%,280px)] flex-1 items-center justify-center gap-2 rounded-xl bg-[#7360F2] px-6 font-semibold text-white transition hover:bg-[#6350E0] sm:flex-initial"
                 >
-                  <MessageCircleMore className="h-5 w-5" />
+                  <MessageCircleMore className="h-5 w-5 shrink-0" />
                   Kontaktiraj putem Viber-a
                 </a>
               )}
@@ -284,9 +284,9 @@ export default async function HandymanProfilePage({
                   href={whatsappLink(profileExt.whatsappPhone)}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex h-14 items-center justify-center gap-2 rounded-xl bg-[#25D366] px-6 font-semibold text-white transition hover:bg-[#20BD5A]"
+                  className="inline-flex h-14 min-w-[min(100%,280px)] flex-1 items-center justify-center gap-2 rounded-xl bg-[#25D366] px-6 font-semibold text-white transition hover:bg-[#20BD5A] sm:flex-initial"
                 >
-                  <MessageCircle className="h-5 w-5" />
+                  <MessageCircle className="h-5 w-5 shrink-0" />
                   Kontaktiraj putem WhatsApp-a
                 </a>
               )}
