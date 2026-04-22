@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 export const metadata: Metadata = {
   title: "Kontakt i podrška",
   description: "Pitanja za tim BrziMajstor.ME — korisnici, majstori, tehnička podrška.",
+  robots: { index: false, follow: false },
 };
 
 export default async function KontaktPage() {

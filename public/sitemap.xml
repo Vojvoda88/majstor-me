@@ -1,12 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://brzimajstor.me/</loc>
+    <loc>https://www.brzimajstor.me/</loc>
   </url>
   <url>
-    <loc>https://brzimajstor.me/categories</loc>
+    <loc>https://www.brzimajstor.me/categories</loc>
   </url>
   <url>
-    <loc>https://brzimajstor.me/request/create</loc>
+    <loc>https://www.brzimajstor.me/request/create</loc>
+  </url>
+  <url>
+    <loc>https://www.brzimajstor.me/kako-radi-korisnici</loc>
+  </url>
+  <url>
+    <loc>https://www.brzimajstor.me/kako-radi-majstori</loc>
+  </url>
+  <url>
+    <loc>https://www.brzimajstor.me/politika-privatnosti</loc>
+  </url>
+  <url>
+    <loc>https://www.brzimajstor.me/uslovi-koriscenja</loc>
   </url>
 </urlset>

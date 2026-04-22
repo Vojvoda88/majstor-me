@@ -2,8 +2,12 @@ import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { HANDYMAN_START_BONUS_CREDITS } from "@/lib/credit-packages";
 import { CITIES } from "@/lib/constants";
+import type { Metadata } from "next";
 
 export const dynamic = "force-dynamic";
+export const metadata: Metadata = {
+  robots: { index: false, follow: false },
+};
 
 function normalizeRole(raw?: string): "USER" | "HANDYMAN" {
   const v = String(raw ?? "").toUpperCase().trim();

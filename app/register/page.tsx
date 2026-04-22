@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   title: "Registracija",
   description:
     "Novi nalog: korisnik (besplatna objava zahtjeva) ili majstor (bez pretplate; krediti za otključavanje kontakta).",
-  robots: { index: false, follow: true },
+  robots: { index: false, follow: false },
 };
 
 export const dynamic = "force-dynamic";

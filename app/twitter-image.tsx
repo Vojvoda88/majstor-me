@@ -1,0 +1,63 @@
+import { ImageResponse } from "next/og";
+
+export const runtime = "edge";
+export const size = {
+  width: 1200,
+  height: 630,
+};
+export const contentType = "image/png";
+export const alt = "BrziMajstor.ME - Majstori u Crnoj Gori";
+
+export default function TwitterImage() {
+  return new ImageResponse(
+    (
+      <div
+        style={{
+          width: "100%",
+          height: "100%",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-between",
+          padding: "56px",
+          background:
+            "linear-gradient(135deg, #0F172A 0%, #1E293B 45%, #2563EB 100%)",
+          color: "#F8FAFC",
+          fontFamily: "Inter, system-ui, sans-serif",
+        }}
+      >
+        <div
+          style={{
+            fontSize: 34,
+            fontWeight: 700,
+            letterSpacing: 0.2,
+            opacity: 0.95,
+          }}
+        >
+          BrziMajstor.ME
+        </div>
+
+        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          <div style={{ fontSize: 66, fontWeight: 800, lineHeight: 1.06, maxWidth: 980 }}>
+            Nadji majstora brzo
+          </div>
+          <div style={{ fontSize: 30, opacity: 0.9, maxWidth: 1040 }}>
+            Crna Gora: objavi zahtjev i uporedi ponude.
+          </div>
+        </div>
+
+        <div style={{ display: "flex", alignItems: "center", gap: 12, fontSize: 24, opacity: 0.9 }}>
+          <div
+            style={{
+              width: 12,
+              height: 12,
+              borderRadius: 9999,
+              background: "#22C55E",
+            }}
+          />
+          BrziMajstor.ME
+        </div>
+      </div>
+    ),
+    size
+  );
+}

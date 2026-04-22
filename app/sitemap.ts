@@ -10,24 +10,29 @@ const SEO_CORE_CITY_SLUGS = new Set<string>(SEO_LANDING_CITIES);
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = getSiteUrl();
+  const now = new Date();
 
   const staticPages: MetadataRoute.Sitemap = [
-    { url: base, lastModified: new Date(), changeFrequency: "weekly", priority: 1 },
-    { url: `${base}/categories`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.92 },
-    { url: `${base}/request/create`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.85 },
-    { url: `${base}/instaliraj`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.5 },
+    { url: base, lastModified: now, changeFrequency: "weekly", priority: 1 },
+    { url: `${base}/categories`, lastModified: now, changeFrequency: "weekly", priority: 0.92 },
+    { url: `${base}/request/create`, lastModified: now, changeFrequency: "monthly", priority: 0.85 },
+    { url: `${base}/kako-radi-korisnici`, lastModified: now, changeFrequency: "monthly", priority: 0.72 },
+    { url: `${base}/kako-radi-majstori`, lastModified: now, changeFrequency: "monthly", priority: 0.72 },
+    { url: `${base}/politika-privatnosti`, lastModified: now, changeFrequency: "yearly", priority: 0.35 },
+    { url: `${base}/uslovi-koriscenja`, lastModified: now, changeFrequency: "yearly", priority: 0.35 },
+    { url: `${base}/instaliraj`, lastModified: now, changeFrequency: "monthly", priority: 0.5 },
   ];
 
   const categoryPages: MetadataRoute.Sitemap = PUBLIC_CATEGORY_LISTING.map((c) => ({
     url: `${base}/category/${c.slug}`,
-    lastModified: new Date(),
+    lastModified: now,
     changeFrequency: "weekly" as const,
     priority: 0.8,
   }));
 
   const cityPages: MetadataRoute.Sitemap = HOMEPAGE_CITIES.map((c) => ({
     url: `${base}/grad/${c.slug}`,
-    lastModified: new Date(),
+    lastModified: now,
     changeFrequency: "weekly" as const,
     priority: 0.75,
   }));
@@ -39,7 +44,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const seoCombinedPages: MetadataRoute.Sitemap = PUBLIC_CATEGORY_LISTING.flatMap((cat) =>
     HOMEPAGE_CITIES.map((city) => ({
       url: `${base}/${cat.slug}-${city.slug}`,
-      lastModified: new Date(),
+      lastModified: now,
       changeFrequency: "weekly" as const,
       priority: SEO_CORE_CITY_SLUGS.has(city.slug) ? 0.84 : 0.7,
     }))
@@ -55,7 +60,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     });
     handymanPages = handymen.map((u) => ({
       url: `${base}/handyman/${u.id}`,
-      lastModified: new Date(),
+      lastModified: now,
       changeFrequency: "weekly" as const,
       priority: 0.55,
     }));

@@ -9,7 +9,7 @@ import { SiteHeaderSimple } from "@/components/layout/site-header-simple";
 export const metadata: Metadata = {
   title: "Prijava",
   description: "Prijava na nalog — korisnik ili majstor na BrziMajstor.ME.",
-  robots: { index: false, follow: true },
+  robots: { index: false, follow: false },
 };
 
 export const dynamic = "force-dynamic";

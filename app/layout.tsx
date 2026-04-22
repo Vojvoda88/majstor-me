@@ -57,6 +57,7 @@ export const metadata: Metadata = {
     "BrziMajstor",
   ],
   alternates: { canonical: "/" },
+  manifest: "/manifest.webmanifest",
   icons: {
     icon: pwaIconSrc(192),
     apple: pwaIconSrc(192),
@@ -69,16 +70,32 @@ export const metadata: Metadata = {
     siteName: "BrziMajstor.ME",
     locale: "sr_ME",
     type: "website",
+    images: [
+      {
+        url: "/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: "BrziMajstor.ME - Majstori u Crnoj Gori",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "BrziMajstor.ME – Zahtjev za majstore u Crnoj Gori",
     description:
       "Besplatna objava zahtjeva; ponude stižu uz zahtjev — uporedite prije odluke.",
+    images: ["/twitter-image"],
   },
   robots: {
     index: true,
     follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-snippet": -1,
+      "max-image-preview": "large",
+      "max-video-preview": -1,
+    },
   },
   /** Standardni PWA tag; smanjuje deprecation upozorenje uz apple-mobile-web-app-capable iz appleWebApp. */
   other: {
@@ -100,7 +117,7 @@ export default async function RootLayout({
 }>) {
   const session = await auth();
   return (
-    <html lang="sr" className={`${inter.variable} ${dmSans.variable} ${outfit.variable}`}>
+    <html lang="sr-Latn-ME" className={`${inter.variable} ${dmSans.variable} ${outfit.variable}`}>
       <body className="min-h-[100dvh] overflow-x-hidden font-sans antialiased bg-[#FAFBFC] text-[#0F172A] [padding-bottom:env(safe-area-inset-bottom)]">
         <Providers session={session}>
           {children}

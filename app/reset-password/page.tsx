@@ -9,7 +9,7 @@ import { SiteHeaderSimple } from "@/components/layout/site-header-simple";
 export const metadata: Metadata = {
   title: "Nova lozinka",
   description: "Postavite novu lozinku — BrziMajstor.ME",
-  robots: { index: false, follow: true },
+  robots: { index: false, follow: false },
 };
 
 export const dynamic = "force-dynamic";
