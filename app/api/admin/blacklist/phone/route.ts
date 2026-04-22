@@ -11,7 +11,7 @@ const bodySchema = z.object({
 });
 
 export async function POST(req: Request) {
-  const auth = await requireAdminApi("trust_safety");
+  const auth = await requireAdminApi("trust_safety", req);
   if (!auth.ok) return auth.response;
 
   try {

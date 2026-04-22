@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 
 export async function POST(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const auth = await requireAdminApi("workers_write");
+    const auth = await requireAdminApi("workers_write", _req);
     if (!auth.ok) return auth.response;
 
     const { prisma } = await import("@/lib/db");

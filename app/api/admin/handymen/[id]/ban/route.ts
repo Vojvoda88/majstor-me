@@ -11,7 +11,7 @@ export async function POST(_req: Request, { params }: { params: Promise<{ id: st
   let adminUserId: string | undefined;
 
   try {
-    const auth = await requireAdminApi("workers_write");
+    const auth = await requireAdminApi("workers_write", _req);
     if (!auth.ok) return auth.response;
     adminUserId = auth.session.user.id;
 

@@ -17,7 +17,7 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const authResult = await requireAdminApi("workers_write");
+    const authResult = await requireAdminApi("workers_write", _request);
     if (!authResult.ok) return authResult.response;
 
     const { prisma } = await import("@/lib/db");

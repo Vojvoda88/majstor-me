@@ -1,15 +1,16 @@
 import { NextResponse } from "next/server";
-import { requireAdminPermission } from "@/lib/admin/auth";
+import { requireAdminApi } from "@/lib/admin/api-auth";
 import { logError } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(
-  _request: Request,
+  request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    await requireAdminPermission("users");
+    const auth = await requireAdminApi("users_write", request);
+    if (!auth.ok) return auth.response;
     const { id } = await params;
     const { prisma } = await import("@/lib/db");
 

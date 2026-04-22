@@ -9,7 +9,7 @@ const schema = z.object({ amount: z.number().int().refine((n) => n !== 0, "Iznos
 
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const auth = await requireAdminApi("credits_write");
+    const auth = await requireAdminApi("credits_write", req);
     if (!auth.ok) return auth.response;
 
     const { prisma } = await import("@/lib/db");

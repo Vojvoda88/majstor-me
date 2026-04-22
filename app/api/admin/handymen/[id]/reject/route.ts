@@ -12,7 +12,7 @@ export async function POST(_req: Request, { params }: { params: Promise<{ id: st
 
   try {
     console.info("[AdminHandymanRejectAPI] step_require_auth", { handymanUserId, adminUserId });
-    const auth = await requireAdminApi("workers_write");
+    const auth = await requireAdminApi("workers_write", _req);
     if (!auth.ok) return auth.response;
 
     adminUserId = auth.session.user.id;

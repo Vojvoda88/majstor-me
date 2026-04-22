@@ -10,7 +10,7 @@ const statusSchema = z.object({
 
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const auth = await requireAdminApi("credits_write");
+    const auth = await requireAdminApi("credits_write", req);
     if (!auth.ok) return auth.response;
 
     const { id } = await params;

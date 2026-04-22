@@ -4,11 +4,20 @@ const nextConfig = {
     serverComponentsExternalPackages: ["@prisma/client", "bcryptjs"],
   },
   async headers() {
+    const isProd = process.env.NODE_ENV === "production";
+    const scriptSrc = [
+      "'self'",
+      "'unsafe-inline'",
+      ...(isProd ? [] : ["'unsafe-eval'"]),
+      "https://va.vercel-scripts.com",
+      "https://vercel.live",
+    ].join(" ");
     const security = [
       { key: "X-DNS-Prefetch-Control", value: "on" },
       { key: "X-Frame-Options", value: "DENY" },
       { key: "X-Content-Type-Options", value: "nosniff" },
       { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+      ...(isProd ? [{ key: "Strict-Transport-Security", value: "max-age=31536000; includeSubDomains; preload" }] : []),
       {
         key: "Permissions-Policy",
         value:
@@ -18,11 +27,12 @@ const nextConfig = {
         key: "Content-Security-Policy",
         value: [
           "default-src 'self'",
-          "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://va.vercel-scripts.com https://vercel.live",
+          `script-src ${scriptSrc}`,
           "style-src 'self' 'unsafe-inline'",
           "img-src 'self' data: blob: https:",
           "font-src 'self' data:",
           "connect-src 'self' https: wss:",
+          "object-src 'none'",
           "frame-ancestors 'none'",
           "base-uri 'self'",
           "form-action 'self'",
