@@ -1,7 +1,7 @@
 // BrziMajstor.ME - PWA Service Worker
 // Ikone za push: drži u skladu sa lib/pwa-icon-assets.ts (PWA_ICON_CACHE_VERSION).
-const ICON_192 = "/launcher-icon-192.png?v=20260423-8b061cb7";
-const CACHE_NAME = "majstor-me-v20260423-8b061cb7";
+const ICON_192 = "/launcher-icon-192.png?v=20260423-8a2d4a06";
+const CACHE_NAME = "majstor-me-v20260423-8a2d4a06";
 const START_URL = "/";
 
 self.addEventListener("install", (event) => {

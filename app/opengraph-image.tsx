@@ -39,7 +39,7 @@ export default function OpenGraphImage() {
           }}
         >
           <img
-            src={`${siteUrl}/brand/brzimajstor-logo-icon.svg`}
+            src={`${siteUrl}/brand/brzimajstor-logo-icon-user.png`}
             width={56}
             height={56}
             alt=""
