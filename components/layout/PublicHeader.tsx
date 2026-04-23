@@ -404,7 +404,7 @@ export function PublicHeader() {
         <div className="relative z-[100] mx-auto flex min-h-14 max-w-6xl items-center justify-between px-4 sm:px-6">
         <Link
           href="/"
-          className="inline-flex items-center gap-2.5 font-display text-xl font-bold tracking-tight md:text-2xl"
+          className="inline-flex shrink-0 items-center gap-2 font-display text-lg font-bold tracking-tight lg:text-xl"
           data-testid="header-home"
           {...linkProps}
         >
@@ -422,7 +422,7 @@ export function PublicHeader() {
           </span>
         </Link>
 
-        <nav className="relative z-[100] hidden items-center gap-x-8 md:flex" aria-label="Glavna navigacija">
+        <nav className="relative z-[100] ml-4 hidden items-center gap-x-4 lg:ml-6 lg:gap-x-6 xl:gap-x-8 md:flex" aria-label="Glavna navigacija">
           <Link href="/" className={navLinkDesktop(isPocetnaActive)} data-testid="nav-pocetna" {...linkProps}>
             Početna
           </Link>
