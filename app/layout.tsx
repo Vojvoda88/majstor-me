@@ -59,8 +59,8 @@ export const metadata: Metadata = {
   alternates: { canonical: "/" },
   manifest: "/manifest.webmanifest",
   icons: {
-    icon: pwaIconSrc(192),
-    apple: pwaIconSrc(192),
+    icon: [pwaIconSrc(192), pwaIconSrc(512)],
+    apple: "/apple-touch-icon.png",
   },
   openGraph: {
     title: "BrziMajstor.ME – Zahtjev za majstore u Crnoj Gori",

@@ -409,11 +409,11 @@ export function PublicHeader() {
           {...linkProps}
         >
           <Image
-            src="/icon-192.png"
+            src="/brand/brzimajstor-logo-icon.svg"
             alt=""
-            width={24}
-            height={24}
-            className="rounded-md"
+            width={28}
+            height={28}
+            className="rounded-md bg-white/90 p-0.5"
             aria-hidden
           />
           <span className={cn("flex items-baseline", homeTheme ? "text-slate-100" : "text-brand-navy")}>

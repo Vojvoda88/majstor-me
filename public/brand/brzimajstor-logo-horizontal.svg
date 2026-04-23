@@ -1,0 +1,19 @@
+<svg width="1280" height="320" viewBox="0 0 1280 320" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1280" height="320" fill="white"/>
+  <g transform="translate(40,20)">
+    <rect x="0" y="0" width="280" height="280" rx="62" fill="white"/>
+    <path d="M56 112L140 44L224 112" stroke="#0F172A" stroke-width="20" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M74 112V214C74 228 85 240 99 240H140V96L74 112Z" fill="#0F2E63"/>
+    <path d="M206 112V214C206 228 195 240 181 240H140V96L206 112Z" fill="#2563EB"/>
+    <path d="M140 96V240" stroke="white" stroke-width="8"/>
+    <path d="M112 130V118C112 102 126 88 142 88C158 88 172 102 172 118V130C172 139 166 147 158 151V208C158 216 151 223 142 223C133 223 126 216 126 208V151C118 147 112 139 112 130Z" fill="white"/>
+    <circle cx="142" cy="208" r="6.5" fill="#0F2E63"/>
+    <path d="M162 192L208 126H185L216 88L175 88L135 154H159L130 192H162Z" fill="#2563EB"/>
+  </g>
+
+  <g transform="translate(370,64)">
+    <text x="0" y="122" fill="#0F172A" font-family="Inter, Arial, sans-serif" font-size="96" font-weight="800" letter-spacing="1">BRZIMAJSTOR</text>
+    <text x="835" y="122" fill="#2563EB" font-family="Inter, Arial, sans-serif" font-size="96" font-weight="800" letter-spacing="1">.ME</text>
+    <text x="4" y="182" fill="#334155" font-family="Inter, Arial, sans-serif" font-size="34" font-weight="600" letter-spacing="9">BRZO. POUZDANO. PROFESIONALNO.</text>
+  </g>
+</svg>

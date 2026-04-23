@@ -1,0 +1,17 @@
+<svg width="1600" height="1000" viewBox="0 0 1600 1000" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1600" height="1000" fill="#F8FAFC"/>
+  <text x="60" y="70" fill="#0F172A" font-size="42" font-family="Inter, Arial, sans-serif" font-weight="800">BrziMajstor.ME Master Brand Sheet</text>
+
+  <g transform="translate(60,120)">
+    <text x="0" y="0" fill="#334155" font-size="22" font-family="Inter, Arial, sans-serif" font-weight="700">Primary Horizontal</text>
+    <image href="/brand/brzimajstor-logo-horizontal.svg" x="0" y="20" width="1120" height="280"/>
+  </g>
+
+  <g transform="translate(60,500)">
+    <text x="0" y="0" fill="#334155" font-size="22" font-family="Inter, Arial, sans-serif" font-weight="700">Stacked + Icon + Monochrome</text>
+    <image href="/brand/brzimajstor-logo-stacked.svg" x="0" y="20" width="420" height="420"/>
+    <image href="/brand/brzimajstor-logo-icon.svg" x="470" y="40" width="280" height="280"/>
+    <image href="/brand/brzimajstor-logo-mono-dark-on-light.svg" x="790" y="40" width="700" height="160"/>
+    <image href="/brand/brzimajstor-logo-mono-light-on-dark.svg" x="790" y="220" width="700" height="160"/>
+  </g>
+</svg>

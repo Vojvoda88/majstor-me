@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 import { headers } from "next/headers";
-import { pwaIconSrc } from "@/lib/pwa-icon-assets";
+import { PWA_ICON_CACHE_VERSION, pwaIconSrc } from "@/lib/pwa-icon-assets";
 import { getSiteUrl } from "@/lib/site-url";
 
 /** Na kanonskom www hostu PWA uvijek otvara www (ne relativni origin — izbjegava mrtve *.vercel.app instalacije). */
@@ -32,9 +32,19 @@ export default function manifest(): MetadataRoute.Manifest {
     orientation: "portrait-primary",
     icons: [
       { src: pwaIconSrc(192), sizes: "192x192", type: "image/png", purpose: "any" },
-      { src: pwaIconSrc(192), sizes: "192x192", type: "image/png", purpose: "maskable" },
       { src: pwaIconSrc(512), sizes: "512x512", type: "image/png", purpose: "any" },
-      { src: pwaIconSrc(512), sizes: "512x512", type: "image/png", purpose: "maskable" },
+      {
+        src: `/launcher-icon-192-maskable.png?v=${PWA_ICON_CACHE_VERSION}`,
+        sizes: "192x192",
+        type: "image/png",
+        purpose: "maskable",
+      },
+      {
+        src: `/launcher-icon-512-maskable.png?v=${PWA_ICON_CACHE_VERSION}`,
+        sizes: "512x512",
+        type: "image/png",
+        purpose: "maskable",
+      },
     ],
     categories: ["business", "utilities"],
   };

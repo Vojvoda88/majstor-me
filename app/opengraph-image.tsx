@@ -1,4 +1,5 @@
 import { ImageResponse } from "next/og";
+import { getSiteUrl } from "@/lib/site-url";
 
 export const runtime = "edge";
 export const size = {
@@ -7,6 +8,7 @@ export const size = {
 };
 export const contentType = "image/png";
 export const alt = "BrziMajstor.ME - Majstori u Crnoj Gori";
+const siteUrl = getSiteUrl().replace(/\/$/, "");
 
 export default function OpenGraphImage() {
   return new ImageResponse(
@@ -27,13 +29,22 @@ export default function OpenGraphImage() {
       >
         <div
           style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 18,
             fontSize: 34,
             fontWeight: 700,
             letterSpacing: 0.2,
             opacity: 0.95,
           }}
         >
-          BrziMajstor.ME
+          <img
+            src={`${siteUrl}/brand/brzimajstor-logo-icon.svg`}
+            width={56}
+            height={56}
+            alt=""
+          />
+          <span>BrziMajstor.ME</span>
         </div>
 
         <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
@@ -41,7 +52,7 @@ export default function OpenGraphImage() {
             Majstori u Crnoj Gori
           </div>
           <div style={{ fontSize: 30, opacity: 0.9, maxWidth: 1040 }}>
-            Jedan zahtjev, vise ponuda. Brzo i jasno.
+            Jedan zahtjev, vise ponuda. Brzo, pouzdano, profesionalno.
           </div>
         </div>
 
