@@ -13,15 +13,16 @@ export function SiteHeader() {
   return (
     <header className="sticky top-0 z-50 border-b border-[#E2E8F0] bg-white/95 backdrop-blur">
       <div className="container mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
-        <Link href="/" className="inline-flex items-center">
+        <Link href="/" className="inline-flex items-center gap-2 text-xl font-bold tracking-tight text-[#0F172A]">
           <Image
-            src="/brand/brzimajstor-logo-horizontal-user.png"
-            alt="BrziMajstor.ME"
-            width={220}
-            height={59}
-            priority
-            className="h-auto w-[170px] rounded-md shadow-[0_1px_8px_rgba(15,23,42,0.12)]"
+            src="/brand/brzimajstor-logo-icon-user.png"
+            alt=""
+            width={28}
+            height={28}
+            className="rounded-md"
+            aria-hidden
           />
+          <span>BrziMajstor.ME</span>
         </Link>
         <nav className="hidden items-center gap-2 md:flex">
           {status === "loading" ? (

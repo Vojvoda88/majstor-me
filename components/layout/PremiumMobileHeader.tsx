@@ -46,15 +46,19 @@ export function PremiumMobileHeader() {
     <>
     <header className="fixed left-0 right-0 top-0 z-[100] border-b border-slate-200/80 bg-white/95 pt-[env(safe-area-inset-top)] shadow-sm backdrop-blur-md">
       <div className="mx-auto flex h-[3.75rem] max-w-6xl items-center justify-between px-3 sm:h-16 sm:px-6">
-        <Link href="/" className="inline-flex items-center">
+        <Link href="/" className="inline-flex items-center gap-2">
           <Image
-            src="/brand/brzimajstor-logo-horizontal-user.png"
-            alt="BrziMajstor.ME"
-            width={220}
-            height={59}
-            priority
-            className="h-auto w-[160px] rounded-md shadow-[0_1px_8px_rgba(15,23,42,0.12)] sm:w-[200px]"
+            src="/brand/brzimajstor-logo-icon-user.png"
+            alt=""
+            width={30}
+            height={30}
+            className="rounded-md"
+            aria-hidden
           />
+          <span className="font-display text-xl font-bold tracking-tight md:text-2xl">
+            <span className="text-[#1d4ed8]">BrziMajstor</span>
+            <span className="text-slate-800">.ME</span>
+          </span>
         </Link>
 
         <nav className="hidden items-center gap-6 md:flex">

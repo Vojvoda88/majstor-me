@@ -404,21 +404,22 @@ export function PublicHeader() {
         <div className="relative z-[100] mx-auto flex min-h-14 max-w-6xl items-center justify-between px-4 sm:px-6">
         <Link
           href="/"
-          className="inline-flex items-center"
+          className="inline-flex items-center gap-2.5 font-display text-xl font-bold tracking-tight md:text-2xl"
           data-testid="header-home"
           {...linkProps}
         >
           <Image
-            src="/brand/brzimajstor-logo-horizontal-user.png"
-            alt="BrziMajstor.ME"
-            width={220}
-            height={59}
-            priority
-            className={cn(
-              "h-auto w-[170px] rounded-md md:w-[220px]",
-              homeTheme ? "opacity-95" : "shadow-[0_1px_8px_rgba(15,23,42,0.12)]"
-            )}
+            src="/brand/brzimajstor-logo-icon-user.png"
+            alt=""
+            width={30}
+            height={30}
+            className="rounded-md"
+            aria-hidden
           />
+          <span className={cn("flex items-baseline", homeTheme ? "text-slate-100" : "text-brand-navy")}>
+            <span>BrziMajstor</span>
+            <span className={cn(homeTheme ? "text-amber-300" : "text-blue-700")}>.ME</span>
+          </span>
         </Link>
 
         <nav className="relative z-[100] hidden items-center gap-x-8 md:flex" aria-label="Glavna navigacija">
