@@ -19,6 +19,7 @@ function manifestStartAndScope(): { start_url: string; scope: string } {
 export default function manifest(): MetadataRoute.Manifest {
   const { start_url, scope } = manifestStartAndScope();
   return {
+    id: `/?pwa=${PWA_ICON_CACHE_VERSION}`,
     /** Puno ime u installer dijalogu / nekim launcherima */
     name: "BrziMajstor.ME – Pronađi majstora",
     /** Ispod ikone na početnom ekranu (kratko, bez „majstor-me“ slug-a) */
