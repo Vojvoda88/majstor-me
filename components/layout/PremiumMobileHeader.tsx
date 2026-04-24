@@ -48,11 +48,11 @@ export function PremiumMobileHeader() {
       <div className="mx-auto flex h-[3.75rem] max-w-6xl items-center justify-between px-3 sm:h-16 sm:px-6">
         <Link href="/" className="inline-flex items-center gap-2">
           <Image
-            src="/brand/worker-cutout-blue.png"
+            src="/brand/worker-cutout-transparent.png"
             alt=""
             width={31}
             height={31}
-            className="h-auto w-auto drop-shadow-[0_1px_3px_rgba(15,23,42,0.55)]"
+            className="h-auto w-auto brightness-0 saturate-0"
             aria-hidden
           />
           <span className="font-display text-xl font-bold tracking-tight md:text-2xl">

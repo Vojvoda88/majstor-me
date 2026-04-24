@@ -404,18 +404,21 @@ export function PublicHeader() {
         <div className="relative z-[100] mx-auto flex min-h-14 max-w-6xl items-center justify-between px-4 sm:px-6">
         <Link
           href="/"
-          className="inline-flex shrink-0 items-center gap-2 font-display text-lg font-bold tracking-tight lg:text-xl"
+          className={cn(
+            "inline-flex shrink-0 items-center font-display text-lg font-bold tracking-tight lg:text-xl",
+            homeTheme ? "gap-1.5" : "gap-2"
+          )}
           data-testid="header-home"
           {...linkProps}
         >
           <Image
-            src={homeTheme ? "/brand/worker-cutout-transparent.png" : "/brand/worker-cutout-blue.png"}
+            src="/brand/worker-cutout-transparent.png"
             alt=""
-            width={31}
-            height={31}
+            width={homeTheme ? 34 : 31}
+            height={homeTheme ? 34 : 31}
             className={cn(
               "h-auto w-auto",
-              homeTheme ? "" : "drop-shadow-[0_1px_3px_rgba(15,23,42,0.55)]"
+              homeTheme ? "" : "brightness-0 saturate-0"
             )}
             aria-hidden
           />

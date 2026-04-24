@@ -9,11 +9,11 @@ export function SiteHeaderSimple() {
       <div className="container mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
         <Link href="/" className="inline-flex items-center gap-2 text-xl font-bold tracking-tight text-[#0F172A]">
           <Image
-            src="/brand/worker-cutout-blue.png"
+            src="/brand/worker-cutout-transparent.png"
             alt=""
             width={29}
             height={29}
-            className="h-auto w-auto drop-shadow-[0_1px_3px_rgba(15,23,42,0.55)]"
+            className="h-auto w-auto brightness-0 saturate-0"
             aria-hidden
           />
           <span>BrziMajstor.ME</span>
