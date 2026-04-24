@@ -48,10 +48,10 @@ export function PremiumMobileHeader() {
       <div className="mx-auto flex h-[3.75rem] max-w-6xl items-center justify-between px-3 sm:h-16 sm:px-6">
         <Link href="/" className="inline-flex items-center gap-2">
           <Image
-            src="/brand/brzimajstor-logo-icon-user.png"
+            src="/brand/worker-icon-brand.png"
             alt=""
-            width={30}
-            height={30}
+            width={34}
+            height={34}
             className="rounded-md"
             aria-hidden
           />

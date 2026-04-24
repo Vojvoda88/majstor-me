@@ -409,10 +409,10 @@ export function PublicHeader() {
           {...linkProps}
         >
           <Image
-            src="/brand/brzimajstor-logo-icon-user.png"
+            src="/brand/worker-icon-brand.png"
             alt=""
-            width={30}
-            height={30}
+            width={34}
+            height={34}
             className="rounded-md"
             aria-hidden
           />

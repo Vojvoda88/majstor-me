@@ -15,10 +15,10 @@ export function SiteHeader() {
       <div className="container mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
         <Link href="/" className="inline-flex items-center gap-2 text-xl font-bold tracking-tight text-[#0F172A]">
           <Image
-            src="/brand/brzimajstor-logo-icon-user.png"
+            src="/brand/worker-icon-brand.png"
             alt=""
-            width={28}
-            height={28}
+            width={32}
+            height={32}
             className="rounded-md"
             aria-hidden
           />
