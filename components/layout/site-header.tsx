@@ -15,11 +15,11 @@ export function SiteHeader() {
       <div className="container mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
         <Link href="/" className="inline-flex items-center gap-2 text-xl font-bold tracking-tight text-[#0F172A]">
           <Image
-            src="/brand/worker-icon-brand.png"
+            src="/brand/worker-cutout-transparent.png"
             alt=""
             width={32}
             height={32}
-            className="rounded-md"
+            className="h-auto w-auto"
             aria-hidden
           />
           <span>BrziMajstor.ME</span>
