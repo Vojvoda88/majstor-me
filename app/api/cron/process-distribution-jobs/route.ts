@@ -5,6 +5,7 @@ export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
 const CRON_SECRET = process.env.CRON_SECRET;
+const IS_PROD = process.env.NODE_ENV === "production";
 
 /**
  * Poziva se iz Vercel Cron ili eksternog cron-a.
@@ -12,6 +13,9 @@ const CRON_SECRET = process.env.CRON_SECRET;
  * Za više jobova postavite više cron poziva ili loop u jednom pozivu (pažnja na maxDuration).
  */
 export async function GET(req: Request) {
+  if (IS_PROD && !CRON_SECRET) {
+    return NextResponse.json({ error: "Cron nije konfigurisan" }, { status: 503 });
+  }
   if (CRON_SECRET && req.headers.get("authorization") !== `Bearer ${CRON_SECRET}`) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }

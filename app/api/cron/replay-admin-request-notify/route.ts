@@ -5,6 +5,7 @@ import { notifyAdminsNewPendingRequest } from "@/lib/admin-signals";
 export const dynamic = "force-dynamic";
 
 const CRON_SECRET = process.env.CRON_SECRET;
+const IS_PROD = process.env.NODE_ENV === "production";
 
 /**
  * Ponovo pošalji admin in-app + push za pending zahtjev (izvršava se na serveru gdje ima VAPID).
@@ -15,6 +16,9 @@ const CRON_SECRET = process.env.CRON_SECRET;
  *   -d "{\"requestId\":\"...\"}"
  */
 export async function POST(req: Request) {
+  if (IS_PROD && !CRON_SECRET) {
+    return NextResponse.json({ error: "Cron nije konfigurisan" }, { status: 503 });
+  }
   if (CRON_SECRET && req.headers.get("authorization") !== `Bearer ${CRON_SECRET}`) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
