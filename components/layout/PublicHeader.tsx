@@ -413,7 +413,10 @@ export function PublicHeader() {
             alt=""
             width={31}
             height={31}
-            className="h-auto w-auto"
+            className={cn(
+              "h-auto w-auto",
+              homeTheme ? "" : "drop-shadow-[0_1px_3px_rgba(15,23,42,0.55)]"
+            )}
             aria-hidden
           />
           <span className={cn("flex items-baseline", homeTheme ? "text-slate-100" : "text-brand-navy")}>

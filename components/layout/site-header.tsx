@@ -19,7 +19,7 @@ export function SiteHeader() {
             alt=""
             width={29}
             height={29}
-            className="h-auto w-auto"
+            className="h-auto w-auto drop-shadow-[0_1px_3px_rgba(15,23,42,0.55)]"
             aria-hidden
           />
           <span>BrziMajstor.ME</span>

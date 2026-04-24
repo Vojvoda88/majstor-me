@@ -52,7 +52,7 @@ export function PremiumMobileHeader() {
             alt=""
             width={31}
             height={31}
-            className="h-auto w-auto"
+            className="h-auto w-auto drop-shadow-[0_1px_3px_rgba(15,23,42,0.55)]"
             aria-hidden
           />
           <span className="font-display text-xl font-bold tracking-tight md:text-2xl">
