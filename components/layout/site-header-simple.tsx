@@ -11,8 +11,8 @@ export function SiteHeaderSimple() {
           <Image
             src="/brand/worker-cutout-transparent.png"
             alt=""
-            width={31}
-            height={31}
+            width={29}
+            height={29}
             className="h-auto w-auto"
             aria-hidden
           />

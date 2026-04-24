@@ -50,8 +50,8 @@ export function PremiumMobileHeader() {
           <Image
             src="/brand/worker-cutout-transparent.png"
             alt=""
-            width={33}
-            height={33}
+            width={31}
+            height={31}
             className="h-auto w-auto"
             aria-hidden
           />
