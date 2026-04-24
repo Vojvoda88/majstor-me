@@ -411,8 +411,8 @@ export function PublicHeader() {
           <Image
             src="/brand/worker-cutout-transparent.png"
             alt=""
-            width={34}
-            height={34}
+            width={33}
+            height={33}
             className="h-auto w-auto"
             aria-hidden
           />
