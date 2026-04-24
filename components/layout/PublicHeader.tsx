@@ -409,11 +409,11 @@ export function PublicHeader() {
           {...linkProps}
         >
           <Image
-            src="/brand/worker-cutout-transparent.png"
+            src={homeTheme ? "/brand/worker-cutout-transparent.png" : "/brand/worker-icon-brand.png"}
             alt=""
             width={31}
             height={31}
-            className="h-auto w-auto"
+            className={cn("h-auto w-auto", homeTheme ? "" : "rounded-md")}
             aria-hidden
           />
           <span className={cn("flex items-baseline", homeTheme ? "text-slate-100" : "text-brand-navy")}>
