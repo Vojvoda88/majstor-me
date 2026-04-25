@@ -18,6 +18,7 @@ export function GalleryEditor({ images, onChange }: GalleryEditorProps) {
   const [newUrl, setNewUrl] = useState("");
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
+  const [uploadingLabel, setUploadingLabel] = useState<string | null>(null);
   const [uploadAvailable, setUploadAvailable] = useState<boolean | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -48,42 +49,70 @@ export function GalleryEditor({ images, onChange }: GalleryEditorProps) {
   };
 
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+    const pickedFiles = Array.from(e.target.files ?? []);
     e.target.value = "";
-    if (!file || images.length >= MAX_GALLERY_IMAGES) return;
+    if (pickedFiles.length === 0 || images.length >= MAX_GALLERY_IMAGES) return;
 
-    if (!VALID_TYPES.includes(file.type)) {
+    const remainingSlots = Math.max(0, MAX_GALLERY_IMAGES - images.length);
+    const files = pickedFiles.slice(0, remainingSlots);
+    const ignoredCount = pickedFiles.length - files.length;
+
+    if (ignoredCount > 0) {
+      setUploadError(`Možete dodati još ${remainingSlots} slika. Višak je preskočen.`);
+      setTimeout(() => setUploadError(null), 3500);
+    }
+
+    const invalidType = files.find((file) => !VALID_TYPES.includes(file.type));
+    if (invalidType) {
       setUploadError("Dozvoljeni formati: JPEG, PNG, WebP.");
       setTimeout(() => setUploadError(null), 3000);
       return;
     }
-    if (file.size > MAX_IMAGE_SIZE_BYTES) {
-      setUploadError(`Maksimalna veličina ${MAX_SIZE_MB}MB.`);
+    const oversized = files.find((file) => file.size > MAX_IMAGE_SIZE_BYTES);
+    if (oversized) {
+      setUploadError(`Maksimalna veličina ${MAX_SIZE_MB}MB po slici.`);
       setTimeout(() => setUploadError(null), 3000);
       return;
     }
 
     setUploading(true);
     setUploadError(null);
+    setUploadingLabel(null);
+    let nextImages = [...images];
+    let successCount = 0;
     try {
-      const formData = new FormData();
-      formData.set("file", file);
-      formData.set("type", "gallery");
-      const res = await fetch("/api/upload", {
-        method: "POST",
-        body: formData,
-      });
-      const data = await res.json();
-      if (data.ok && data.url) {
-        onChange([...images, data.url]);
-      } else {
-        setUploadError(data.error || "Upload nije uspio. Koristite URL.");
-        if (data.uploadAvailable === false) setUploadAvailable(false);
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        setUploadingLabel(`Šaljem sliku ${i + 1} od ${files.length}...`);
+        const formData = new FormData();
+        formData.set("file", file);
+        formData.set("type", "gallery");
+        const res = await fetch("/api/upload", {
+          method: "POST",
+          body: formData,
+        });
+        const data = await res.json();
+        if (data.ok && data.url) {
+          nextImages = [...nextImages, data.url];
+          onChange(nextImages);
+          successCount += 1;
+        } else {
+          setUploadError(data.error || "Upload nije uspio. Koristite URL.");
+          if (data.uploadAvailable === false) setUploadAvailable(false);
+          break;
+        }
+      }
+
+      if (successCount > 0 && successCount < files.length) {
+        setUploadError(`Uspješno poslato ${successCount}/${files.length} slika.`);
+      } else if (successCount > 0) {
+        setUploadError(null);
       }
     } catch {
       setUploadError("Greška pri uploadu.");
     } finally {
       setUploading(false);
+      setUploadingLabel(null);
     }
   };
 
@@ -97,6 +126,7 @@ export function GalleryEditor({ images, onChange }: GalleryEditorProps) {
         ref={fileInputRef}
         type="file"
         accept="image/jpeg,image/png,image/webp"
+        multiple
         className="hidden"
         onChange={handleFileSelect}
       />
@@ -112,7 +142,7 @@ export function GalleryEditor({ images, onChange }: GalleryEditorProps) {
           disabled={uploading || images.length >= MAX_GALLERY_IMAGES}
         >
           <Upload className="mr-2 h-4 w-4 shrink-0" />
-          {uploading ? "Šaljem sliku..." : "Dodaj sliku sa telefona ili galerije"}
+          {uploading ? uploadingLabel ?? "Šaljem slike..." : "Dodaj slike sa telefona ili galerije"}
         </Button>
         <details className="rounded-lg border border-slate-200 bg-slate-50/80 px-3 py-2 text-sm">
           <summary className="cursor-pointer font-medium text-slate-700">
