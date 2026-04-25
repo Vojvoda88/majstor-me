@@ -108,11 +108,12 @@ export default function KakoRadiMajstoriPage() {
             Jasno, bez pretplate i bez skrivenih troškova
           </h1>
           <p className="mt-4 max-w-3xl text-[15px] leading-relaxed text-slate-100/95 sm:text-base">
-            Registracija je besplatna i nema pretplate. Dobijate {HANDYMAN_START_BONUS_CREDITS.toLocaleString("sr-Latn-ME")}{" "}
-            start kredita. Kad vam treba više, paket od {CREDITS_STARTER_PACK.credits.toLocaleString("sr-Latn-ME")} kredita
-            košta {STARTER_PRICE_LABEL}. Standardan posao kad nije hitno = {STANDARD_LEAD_CREDITS} kredita — to je oko 1,99 €
-            (ispod 2 €) iz tog paketa. Plaćate samo kad želite otključati kontakt klijenta. Obavještenja stižu čim se pojavi
-            posao koji odgovara vašoj branši i zoni.
+            Registracija je besplatna i traje manje od 1 minuta. Na startu dobijate{" "}
+            {HANDYMAN_START_BONUS_CREDITS.toLocaleString("sr-Latn-ME")} kredita gratis. Kad se pojavi posao koji odgovara
+            vašoj branši i zoni, obavještenje stiže direktno na telefon. Ako ste slobodni, pošaljete ponudu odmah. Nema
+            pretplate i nema fiksnih mjesečnih troškova - kontakt klijenta otključavate samo kada vi želite. Ponude šaljete
+            već od {STANDARD_LEAD_CREDITS} kredita (oko 1,99 €), tako da su vam prvih 5 ponuda praktično besplatne iz start
+            kredita.
           </p>
           <div className="mt-6">
             <Link
