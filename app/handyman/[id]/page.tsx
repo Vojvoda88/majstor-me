@@ -23,6 +23,7 @@ import { localBusinessJsonLd } from "@/lib/json-ld";
 import { AVATAR_IMAGE_FALLBACK } from "@/lib/homepage-data";
 import { prismaWhereUserActiveHandymanForPublicCatalog } from "@/lib/handyman-truth";
 import { SaveHandymanButton } from "@/components/handyman/save-handyman-button";
+import { GalleryLightbox } from "@/components/handyman/gallery-lightbox";
 
 export const dynamic = "force-dynamic";
 
@@ -323,19 +324,7 @@ export default async function HandymanProfilePage({
                 Galerija radova
               </h3>
               {galleryImages.length > 0 ? (
-                <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
-                  {galleryImages.map((url, idx) => (
-                    <a
-                      key={idx}
-                      href={url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="relative aspect-square overflow-hidden rounded-lg bg-[#F3F4F6]"
-                    >
-                      <Image src={url} alt={`Rad ${idx + 1}`} fill className="object-cover" sizes="200px" />
-                    </a>
-                  ))}
-                </div>
+                <GalleryLightbox images={galleryImages} />
               ) : (
                 <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-[#CBD5E1] bg-[#F8FAFC] px-4 py-8 text-center">
                   <ImageIcon className="mb-3 h-8 w-8 text-[#94A3B8]" />
