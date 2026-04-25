@@ -6,8 +6,8 @@ import { Sparkles, Zap } from "lucide-react";
 import { HERO_IMAGE } from "@/lib/homepage-data";
 
 const TRUST = [
-  { icon: Sparkles, label: "Treba vam majstor? Besplatno objavite oglas" },
-  { icon: Zap, label: "Za majstore: besplatna registracija + 1.000 kredita poklon" },
+  { icon: Sparkles, label: "Besplatna objava za korisnike" },
+  { icon: Zap, label: "Majstorima stiže obavještenje čim se pojavi posao u blizini" },
 ];
 
 export function Hero() {
@@ -38,10 +38,10 @@ export function Hero() {
         <h1 className="font-display mb-4 text-[1.72rem] font-extrabold leading-[1.12] tracking-tight text-white sm:text-[2rem] md:mb-5 md:text-5xl lg:text-[3.25rem] lg:leading-[1.08]">
           Treba vam majstor?
           <br />
-          <span className="bg-gradient-to-r from-white to-white/85 bg-clip-text text-transparent">Objavite zahtjev za manje od 1 minuta.</span>
+          <span className="bg-gradient-to-r from-white to-white/85 bg-clip-text text-transparent">Objavite oglas za manje od 1 minuta.</span>
         </h1>
         <p className="mx-auto mb-6 max-w-xl text-[15px] font-medium leading-relaxed text-slate-100 sm:text-base md:mb-8 md:text-lg md:leading-relaxed">
-          Jedan zahtjev, više ponuda. Za korisnike je objava potpuno besplatna, a za majstore registracija je besplatna.
+          Besplatna objava za korisnike.
         </p>
 
         <div className="mt-2 flex flex-col items-stretch gap-2.5 sm:flex-row sm:items-center sm:justify-center sm:gap-3 md:mt-4">
