@@ -6,7 +6,7 @@ import { Sparkles, Zap } from "lucide-react";
 import { HERO_IMAGE } from "@/lib/homepage-data";
 
 const TRUST = [
-  { icon: Sparkles, label: "Za vas kao korisnika — potpuno besplatno" },
+  { icon: Sparkles, label: "Treba vam majstor? Besplatno objavite oglas" },
   { icon: Zap, label: "Za majstore: besplatna registracija + 1.000 kredita poklon" },
 ];
 
