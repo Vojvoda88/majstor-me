@@ -5,6 +5,7 @@ import { calcProfileCompletion } from "@/lib/handyman-onboarding";
 import { OnboardingBanner } from "@/components/handyman/onboarding-banner";
 import { DeleteMyAccount } from "@/components/account/delete-my-account";
 import { mapHandymanProfileForClient } from "@/lib/handyman-profile-for-client";
+import { isHandymanAiSuggestConfigured } from "@/lib/ai-handyman-suggest";
 
 export const dynamic = "force-dynamic";
 
@@ -27,6 +28,7 @@ export default async function HandymanProfilePage() {
   const profileData = mapHandymanProfileForClient(profileRaw, user?.phone);
 
   const onboarding = calcProfileCompletion(profileData, user);
+  const aiSuggestEnabled = isHandymanAiSuggestConfigured();
 
   return (
     <div className="container mx-auto max-w-lg px-4 py-8">
@@ -37,7 +39,11 @@ export default async function HandymanProfilePage() {
       {onboarding.percent < 100 && (
         <OnboardingBanner percent={onboarding.percent} steps={onboarding.steps} className="mb-6" />
       )}
-      <HandymanProfileForm profile={profileData} userName={session.user.name} />
+      <HandymanProfileForm
+        profile={profileData}
+        userName={session.user.name}
+        aiSuggestEnabled={aiSuggestEnabled}
+      />
       <div className="mt-10">
         <DeleteMyAccount />
       </div>

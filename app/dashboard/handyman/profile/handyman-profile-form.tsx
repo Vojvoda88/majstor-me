@@ -15,6 +15,7 @@ import { CITIES, AVAILABILITY_STATUS_OPTIONS } from "@/lib/constants";
 import { displayLabelForRequestCategory, HANDYMAN_SELECTABLE_INTERNAL_NAMES } from "@/lib/categories";
 import { GalleryEditor } from "@/components/profile/gallery-editor";
 import { AvatarUpload } from "@/components/profile/avatar-upload";
+import { AiSuggestTextButton } from "@/components/handyman/ai-suggest-text-button";
 import type { HandymanProfileClientProps } from "@/lib/handyman-profile-for-client";
 
 const MAX_CATEGORIES = 5;
@@ -46,9 +47,12 @@ const CITIES_LIST = [...CITIES];
 export function HandymanProfileForm({
   profile,
   userName,
+  aiSuggestEnabled = false,
 }: {
   profile: HandymanProfileClientProps | null;
   userName?: string | null;
+  /** Ako je true i OPENAI_API_KEY postoji na serveru, prikazuje se pomoć za pisanje tekstova. */
+  aiSuggestEnabled?: boolean;
 }) {
   const router = useRouter();
   const {
@@ -87,6 +91,11 @@ export function HandymanProfileForm({
   }, [profile?.categories]);
   const galleryImages = watch("galleryImages") ?? [];
   const avatarUrl = watch("avatarUrl");
+  const bio = watch("bio");
+  const serviceAreasDescription = watch("serviceAreasDescription");
+  const yearsOfExperience = watch("yearsOfExperience");
+  const travelRadiusKm = watch("travelRadiusKm");
+  const availabilityStatus = watch("availabilityStatus");
 
   const mutation = useMutation({
     mutationFn: async (data: ProfileFormData) => {
@@ -285,7 +294,24 @@ export function HandymanProfileForm({
             </select>
           </div>
           <div>
-            <Label>Opis područja rada (opciono)</Label>
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+              <Label>Opis područja rada (opciono)</Label>
+              <AiSuggestTextButton
+                enabled={aiSuggestEnabled}
+                field="serviceAreasDescription"
+                getPayload={() => ({
+                  field: "serviceAreasDescription",
+                  notes: serviceAreasDescription?.trim() ?? "",
+                  categories,
+                  cities,
+                  yearsOfExperience,
+                  travelRadiusKm,
+                  availabilityStatus,
+                })}
+                onApply={(text) => setValue("serviceAreasDescription", text, { shouldDirty: true })}
+                label="Predloži tekst (AI)"
+              />
+            </div>
             <Textarea
               {...register("serviceAreasDescription")}
               className="mt-2"
@@ -314,10 +340,26 @@ export function HandymanProfileForm({
         <CardHeader>
           <CardTitle>Opis profila</CardTitle>
           <p className="text-sm text-muted-foreground">
-            Na kraju napišite jasan opis: šta radite, za koga radite i zašto bi klijent izabrao baš vas.
+            Na kraju napišite jasan opis: šta radite, za koga radite i zašto bi klijent izabrao baš vas. Možete
+            napisati nacrt ili stavke ispod, pa koristiti AI predlog — obavezno provjerite prije spremanja.
           </p>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-2">
+          <AiSuggestTextButton
+            enabled={aiSuggestEnabled}
+            field="bio"
+            getPayload={() => ({
+              field: "bio",
+              notes: bio?.trim() ?? "",
+              categories,
+              cities,
+              yearsOfExperience,
+              travelRadiusKm,
+              availabilityStatus,
+            })}
+            onApply={(text) => setValue("bio", text, { shouldDirty: true })}
+            label="Predloži opis pomoću AI"
+          />
           <Textarea
             {...register("bio")}
             rows={5}
