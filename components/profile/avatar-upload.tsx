@@ -15,6 +15,14 @@ type AvatarUploadProps = {
 const VALID_TYPES = ["image/jpeg", "image/png", "image/webp"];
 const MAX_SIZE_MB = MAX_IMAGE_SIZE_BYTES / (1024 * 1024);
 
+/** Uskladiti s API: neki telefoni šalju prazan type ili `application/octet-stream`. */
+function isLikelyUploadableImage(file: File) {
+  const t = (file.type || "").toLowerCase();
+  if (!t || t === "application/octet-stream") return true;
+  if (t === "image/jpg" || t === "image/pjpeg") return true;
+  return VALID_TYPES.includes(t);
+}
+
 export function AvatarUpload({
   currentUrl,
   onChange,
@@ -105,7 +113,7 @@ export function AvatarUpload({
       <input
         ref={fileInputRef}
         type="file"
-        accept="image/jpeg,image/png,image/webp"
+        accept="image/jpeg,image/jpg,image/pjpeg,image/png,image/webp,image/*"
         className="hidden"
         onChange={handleFileSelect}
       />

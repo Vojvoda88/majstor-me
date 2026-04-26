@@ -2,9 +2,9 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import {
   isStorageConfigured,
-  validateImageFile,
   validateImageMagicBytes,
   uploadImage,
+  detectImageMimeFromBuffer,
 } from "@/lib/storage";
 import { MAX_IMAGE_SIZE_BYTES, MAX_GALLERY_IMAGES } from "@/lib/constants";
 import { isRateLimited, getRetryAfterSeconds } from "@/lib/rate-limit";
@@ -12,7 +12,13 @@ import { getRequestClientIp } from "@/lib/request-ip";
 
 export const dynamic = "force-dynamic";
 
-const VALID_TYPES = ["image/jpeg", "image/png", "image/webp"];
+const VALID_TYPES = ["image/jpeg", "image/png", "image/webp"] as const;
+
+function normalizeClientMimeType(raw: string): string {
+  const t = (raw || "").toLowerCase().trim();
+  if (t === "image/jpg" || t === "image/pjpeg") return "image/jpeg";
+  return t;
+}
 
 export async function POST(request: Request) {
   try {
@@ -62,13 +68,6 @@ export async function POST(request: Request) {
       );
     }
 
-    if (!VALID_TYPES.includes(file.type)) {
-      return NextResponse.json(
-        { ok: false, error: "Tip fajla nije dozvoljen (JPEG, PNG, WebP)" },
-        { status: 400 }
-      );
-    }
-
     if (file.size > MAX_IMAGE_SIZE_BYTES) {
       return NextResponse.json(
         {
@@ -79,7 +78,25 @@ export async function POST(request: Request) {
       );
     }
 
-    const ext = file.type === "image/jpeg" ? "jpg" : file.type === "image/png" ? "png" : "webp";
+    const buffer = Buffer.from(await file.arrayBuffer());
+    const declared = normalizeClientMimeType(file.type);
+    let effectiveMime: (typeof VALID_TYPES)[number] | null = null;
+    if ((VALID_TYPES as readonly string[]).includes(declared) && validateImageMagicBytes(buffer, declared)) {
+      effectiveMime = declared as (typeof VALID_TYPES)[number];
+    } else {
+      const detected = detectImageMimeFromBuffer(buffer);
+      if (detected && validateImageMagicBytes(buffer, detected)) {
+        effectiveMime = detected;
+      }
+    }
+    if (!effectiveMime) {
+      return NextResponse.json(
+        { ok: false, error: "Fajl nije valjana slika (JPEG, PNG ili WebP)." },
+        { status: 400 }
+      );
+    }
+
+    const ext = effectiveMime === "image/jpeg" ? "jpg" : effectiveMime === "image/png" ? "png" : "webp";
     const filename = `${Date.now()}-${Math.random().toString(36).slice(2, 10)}.${ext}`;
     const path =
       type === "avatar"
@@ -88,14 +105,7 @@ export async function POST(request: Request) {
           ? `requests/${session.user.id}/${filename}`
           : `gallery/${session.user.id}/${filename}`;
 
-    const buffer = Buffer.from(await file.arrayBuffer());
-    if (!validateImageMagicBytes(buffer, file.type)) {
-      return NextResponse.json(
-        { ok: false, error: "Fajl nije valjana slika (JPEG, PNG ili WebP)." },
-        { status: 400 }
-      );
-    }
-    const result = await uploadImage(buffer, file.type, path);
+    const result = await uploadImage(buffer, effectiveMime, path);
 
     if (!result.ok) {
       return NextResponse.json(

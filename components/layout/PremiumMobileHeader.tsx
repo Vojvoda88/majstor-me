@@ -45,17 +45,20 @@ export function PremiumMobileHeader() {
   return (
     <>
     <header className="fixed left-0 right-0 top-0 z-[100] border-b border-slate-200/80 bg-white/95 pt-[env(safe-area-inset-top)] shadow-sm backdrop-blur-md">
-      <div className="mx-auto flex h-[3.75rem] max-w-6xl items-center justify-between px-3 sm:h-16 sm:px-6">
-        <Link href="/" className="inline-flex items-center gap-2">
+      <div className="mx-auto flex h-[3.75rem] max-w-6xl items-center gap-2 px-2 sm:h-16 sm:gap-4 sm:px-6">
+        <Link
+          href="/"
+          className="inline-flex min-w-0 flex-1 items-center gap-1.5 sm:gap-2"
+        >
           <Image
             src="/brand/worker-cutout-transparent.png"
             alt=""
             width={31}
             height={31}
-            className="h-auto w-auto brightness-0 saturate-0"
+            className="h-auto w-[28px] shrink-0 brightness-0 saturate-0 sm:w-auto"
             aria-hidden
           />
-          <span className="font-display text-xl font-bold tracking-tight md:text-2xl">
+          <span className="font-display min-w-0 truncate text-base font-bold tracking-tight sm:text-xl md:text-2xl">
             <span className="text-[#1d4ed8]">BrziMajstor</span>
             <span className="text-slate-800">.ME</span>
           </span>
@@ -118,7 +121,7 @@ export function PremiumMobileHeader() {
           )}
         </nav>
 
-        <div className="flex items-center gap-2 md:hidden">
+        <div className="flex shrink-0 items-center gap-1 sm:gap-2 md:hidden">
           {session?.user?.role === "HANDYMAN" && <HandymanCreditsPill />}
           {session && <NotificationsDropdown />}
           <button

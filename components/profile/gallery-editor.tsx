@@ -14,6 +14,13 @@ type GalleryEditorProps = {
 const VALID_TYPES = ["image/jpeg", "image/png", "image/webp"];
 const MAX_SIZE_MB = MAX_IMAGE_SIZE_BYTES / (1024 * 1024);
 
+function isLikelyUploadableImage(file: File) {
+  const t = (file.type || "").toLowerCase();
+  if (!t || t === "application/octet-stream") return true;
+  if (t === "image/jpg" || t === "image/pjpeg") return true;
+  return VALID_TYPES.includes(t);
+}
+
 export function GalleryEditor({ images, onChange }: GalleryEditorProps) {
   const [newUrl, setNewUrl] = useState("");
   const [uploading, setUploading] = useState(false);
@@ -62,7 +69,7 @@ export function GalleryEditor({ images, onChange }: GalleryEditorProps) {
       setTimeout(() => setUploadError(null), 3500);
     }
 
-    const invalidType = files.find((file) => !VALID_TYPES.includes(file.type));
+    const invalidType = files.find((file) => !isLikelyUploadableImage(file));
     if (invalidType) {
       setUploadError("Dozvoljeni formati: JPEG, PNG, WebP.");
       setTimeout(() => setUploadError(null), 3000);
@@ -125,7 +132,7 @@ export function GalleryEditor({ images, onChange }: GalleryEditorProps) {
       <input
         ref={fileInputRef}
         type="file"
-        accept="image/jpeg,image/png,image/webp"
+        accept="image/jpeg,image/jpg,image/pjpeg,image/png,image/webp,image/*"
         multiple
         className="hidden"
         onChange={handleFileSelect}
