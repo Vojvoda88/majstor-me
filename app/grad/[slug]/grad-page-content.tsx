@@ -130,7 +130,7 @@ export function GradPageContent({
               href={`/request/create?city=${encodeURIComponent(cityName)}`}
               className="font-medium text-blue-700 hover:underline"
             >
-              Objavi zahtjev {phraseUGradu(cityName)}
+              Zatraži majstora {phraseUGradu(cityName)}
             </Link>
           </div>
 
@@ -211,13 +211,13 @@ export function GradPageContent({
                 Trenutno nema majstora {phraseUGradu(cityName)}.
               </p>
               <p className="mt-2 text-sm leading-relaxed text-slate-600">
-                Objavite besplatan zahtjev — javljaju se majstori iz ovog i okolnih gradova kojima posao odgovara, bez obaveze.
+                Zatražite majstora besplatno — javljaju se majstori iz ovog i okolnih gradova kojima posao odgovara, bez obaveze.
               </p>
               <Link
                 href={`/request/create?city=${encodeURIComponent(cityName)}`}
                 className="mt-8 inline-flex h-14 items-center justify-center rounded-2xl bg-gradient-to-br from-[#2563eb] to-[#1d4ed8] px-8 text-base font-bold text-white shadow-btn-cta transition hover:brightness-105"
               >
-                Objavi besplatan zahtjev za {cityName}
+                Zatraži majstora za {cityName}
               </Link>
             </div>
           ) : (

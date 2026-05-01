@@ -12,25 +12,25 @@ import { auth } from "@/lib/auth";
 const baseUrl = getSiteUrl();
 
 export const metadata: Metadata = {
-  title: "Besplatan zahtjev majstoru",
+  title: "Zatraži majstora",
   description:
-    "Objavite zahtjev besplatno — birajte grad i opis posla. Ponude stižu nakon odobrenja; birate šta vam odgovara.",
+    "Zatražite majstora besplatno — birajte grad i opišite posao. Nakon provjere, majstori kojima odgovara mogu da odgovore.",
   alternates: {
     canonical: `${baseUrl}/request/create`,
   },
   openGraph: {
-    title: "Besplatan zahtjev majstoru | BrziMajstor.ME",
+    title: "Zatraži majstora | BrziMajstor.ME",
     description:
-      "Jedan zahtjev umjesto niza poziva. Objava je besplatna za korisnike.",
+      "Zatražite majstora besplatno — birajte grad i opišite posao. Odgovori nakon provjere.",
     url: `${baseUrl}/request/create`,
     siteName: "BrziMajstor.ME",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Besplatan zahtjev majstoru | BrziMajstor.ME",
+    title: "Zatraži majstora | BrziMajstor.ME",
     description:
-      "Objavite zahtjev besplatno — birajte grad i opis. Ponude nakon odobrenja.",
+      "Zatražite majstora besplatno — birajte grad i opišite posao. Odgovori nakon provjere.",
   },
 };
 
@@ -74,17 +74,17 @@ export default async function CreateRequestPage(props: {
 
         <header className="mb-6 md:mb-8">
           <h1 className="font-display text-2xl font-bold tracking-tight text-brand-navy md:text-3xl">
-            Objavi zahtjev
+            Zatraži majstora
           </h1>
           <p className="mt-3 text-[15px] leading-relaxed text-slate-600 md:text-base">
-            Objava je besplatna. Opišite posao što jasnije — jedan zahtjev umjesto više poziva. Administrator prvo
-            pregleda zahtjev, zatim zainteresovani majstori mogu poslati ponude.
+            Besplatno za vas. Opišite posao što jasnije — jedan zahtjev umjesto više poziva. Administrator prvo
+            pregleda zahtjev, zatim se javljaju majstori kojima posao odgovara.
           </p>
         </header>
         {!session?.user?.id && (
           <div className="mb-5 rounded-[1.35rem] border border-amber-200/80 bg-gradient-to-br from-amber-50 via-white to-slate-50 p-4 shadow-[0_16px_38px_-28px_rgba(15,23,42,0.28)]">
             <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-amber-700">Preporučeno</p>
-            <h2 className="mt-1.5 font-display text-lg font-bold text-slate-900">Registrujte se prije objave oglasa</h2>
+            <h2 className="mt-1.5 font-display text-lg font-bold text-slate-900">Otvorite nalog prije slanja (opciono)</h2>
             <p className="mt-2 text-sm leading-relaxed text-slate-600">
               Nije obavezno, ali je lakše da kasnije pratite zahtjev, ponude i status na jednom mjestu.
             </p>

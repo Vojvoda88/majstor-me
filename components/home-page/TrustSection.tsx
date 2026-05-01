@@ -14,7 +14,7 @@ const items = [
   {
     icon: Zap,
     title: "Brz odgovor",
-    desc: "Za par minuta opišite posao — majstori se javljaju sami; vi birate.",
+    desc: "Za par minuta opišite posao; majstori vide zahtjev i odgovaraju ako mogu.",
   },
   {
     icon: HandHeart,

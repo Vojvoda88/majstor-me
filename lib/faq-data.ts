@@ -1,7 +1,7 @@
 export const FAQ_ITEMS = [
   {
     q: "Kako pronaći majstora?",
-    a: "Objavite zahtjev sa opisom posla i gradom. Kada zahtjev bude odobren, majstori mogu poslati ponude; vi birate ponudu koja vam odgovara, uz uvid u ocjene i cijenu u ponudi.",
+    a: "Zatražite majstora: opišite posao i grad. Kada zahtjev bude odobren, majstori kojima posao odgovara mogu poslati ponude; vi birate ponudu koja vam odgovara, uz uvid u ocjene i cijenu u ponudi.",
   },
   {
     q: "Kako objaviti zahtjev?",

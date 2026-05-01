@@ -29,20 +29,20 @@ const USER_STEPS = [
   {
     n: 1,
     icon: FileText,
-    title: "Objavite zahtjev besplatno",
+    title: "Zatražite majstora besplatno",
     desc: "Kratak opis, grad i po želji slike. Objavljivanje je besplatno.",
   },
   {
     n: 2,
     icon: MessageSquare,
-    title: "Stižu odgovori",
-    desc: "Nakon provjere oglasa, javljaju se majstori kojima posao odgovara — poziv ili ponuda.",
+    title: "Majstori vide oglas",
+    desc: "Nakon provjere, zahtjev je vidljiv majstorima kojima odgovara grad i vrsta posla.",
   },
   {
     n: 3,
     icon: CheckCircle2,
-    title: "Dogovor i posao",
-    desc: "Izaberete kome odgovarate i nastavite direktno — bez da vi zovete redom.",
+    title: "Dogovor",
+    desc: "Nastavljate razgovor s majstorom kako vama odgovara.",
   },
 ] as const;
 
@@ -215,7 +215,7 @@ export function HowItWorksForUsers() {
           Kako radi za korisnike
         </h2>
         <p className="mx-auto mt-3 max-w-2xl text-[15px] font-medium leading-relaxed text-slate-600 sm:text-base md:text-lg">
-          Tri koraka: objavite, stignu odgovori, dogovorite se.
+          Tri koraka: objavite zahtjev, majstori reaguju, dogovor.
         </p>
       </div>
       <div className="mx-auto mt-8 max-w-6xl md:mt-10">
@@ -228,7 +228,7 @@ export function HowItWorksForUsers() {
         </div>
         <div className="mx-auto mt-4 max-w-2xl text-center md:mt-5">
           <p className="text-sm text-slate-500 md:text-[15px]">
-            Bez obilaska brojeva — sve kroz jedan oglas.
+            Jedan zahtjev umjesto niza pojedinačnih poziva.
           </p>
           <Link
             href="/kako-radi-korisnici"
@@ -340,7 +340,7 @@ export function HowItWorks() {
           href="/request/create"
           className="inline-flex min-h-[52px] items-center justify-center rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 px-8 text-base font-bold text-brand-navy shadow-[0_14px_36px_-10px_rgba(245,158,11,0.45)] transition hover:brightness-105 active:scale-[0.99]"
         >
-          Objavi besplatan zahtjev
+          Zatraži majstora
         </Link>
         <Link
           href="/register?type=majstor"

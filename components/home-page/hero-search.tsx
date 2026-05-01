@@ -74,7 +74,7 @@ export function HeroSearch() {
           className="flex min-h-[52px] w-full shrink-0 touch-manipulation items-center justify-center gap-2 rounded-2xl bg-gradient-to-br from-[#2563eb] to-[#1d4ed8] px-6 text-[16px] font-bold text-white shadow-btn-cta transition hover:brightness-105 active:scale-[0.98] sm:w-auto sm:text-[15px] md:px-8"
         >
           <Search className="h-5 w-5 opacity-90" aria-hidden />
-          Objavi zahtjev
+          Zatraži majstora
         </button>
       </div>
     </form>

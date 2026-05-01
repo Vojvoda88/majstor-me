@@ -43,7 +43,7 @@ export function LandingValueBlock({ heading, href }: LandingValueBlockProps) {
           href={href}
           className="inline-flex min-h-[48px] items-center justify-center rounded-2xl bg-gradient-to-br from-[#2563eb] to-[#1d4ed8] px-6 text-base font-bold text-white shadow-btn-cta transition hover:brightness-105 active:scale-[0.99]"
         >
-          Objavi besplatan zahtjev
+          Zatraži majstora
         </Link>
         <Link href="/categories" className="text-sm font-semibold text-blue-800 underline-offset-4 hover:underline">
           Sve kategorije

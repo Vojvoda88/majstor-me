@@ -13,7 +13,7 @@ export default function NotFound() {
         </h1>
         <p className="mt-3 max-w-xl text-sm text-[#64748B] sm:text-base">
           Stranica koju tražite više ne postoji ili nikada nije postojala. Možete se vratiti na početnu stranicu, pregledati
-          kategorije ili odmah objaviti besplatan zahtjev za majstora.
+          kategorije ili odmah zatražiti majstora besplatno.
         </p>
         <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-center">
           <Link href="/">
@@ -34,7 +34,7 @@ export default function NotFound() {
               variant="outline"
               className="h-11 px-6 text-sm font-semibold text-[#0F172A] sm:h-12 sm:px-7"
             >
-              Objavi zahtjev
+              Zatraži majstora
             </Button>
           </Link>
         </div>

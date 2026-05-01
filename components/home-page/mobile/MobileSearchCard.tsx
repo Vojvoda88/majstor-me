@@ -65,7 +65,7 @@ export function MobileSearchCard() {
         type="submit"
         className="flex h-[52px] w-full items-center justify-center rounded-[14px] bg-gradient-to-br from-[#3B82F6] to-[#2563EB] text-base font-semibold text-white shadow-lg transition active:scale-[0.98]"
       >
-        Objavi zahtjev
+        Zatraži majstora
       </button>
     </form>
   );

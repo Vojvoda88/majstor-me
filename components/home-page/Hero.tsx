@@ -46,7 +46,7 @@ export function Hero() {
             href="/request/create"
             className="inline-flex h-14 min-h-[52px] items-center justify-center rounded-2xl bg-gradient-to-br from-[#3b82f6] to-[#1d4ed8] px-8 text-base font-bold text-white shadow-lg shadow-blue-600/30 transition hover:brightness-105 active:scale-[0.98] md:h-[52px] md:px-10"
           >
-            Objavi zahtjev
+            Zatraži majstora
           </Link>
           <Link
             href="/categories"

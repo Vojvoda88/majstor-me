@@ -3,7 +3,7 @@ import Link from "next/link";
 const FOOTER_NAV = [
   { href: "/", label: "Početna" },
   { href: "/categories", label: "Kategorije" },
-  { href: "/request/create", label: "Objavi zahtjev" },
+  { href: "/request/create", label: "Zatraži majstora" },
   { href: "/#kako-radi", label: "Kako funkcioniše" },
   { href: "/register?type=majstor", label: "Za majstore" },
   { href: "/#faq", label: "Česta pitanja" },
@@ -30,7 +30,7 @@ export function PublicFooter() {
               BrziMajstor.ME
             </p>
             <p className="mt-2 text-sm leading-relaxed text-slate-600">
-              Platforma za lakše povezivanje korisnika i majstora u Crnoj Gori — objavite zahtjev i dobijte ponude.
+              Platforma za lakše povezivanje korisnika i majstora u Crnoj Gori — zatražite majstora, besplatno za korisnike.
             </p>
           </div>
 

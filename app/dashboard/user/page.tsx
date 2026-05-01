@@ -160,10 +160,10 @@ export default async function UserDashboardPage() {
         <EmptyState
           className="mt-8"
           title="Nemate objavljenih zahtjeva"
-          description="Objavite zahtjev da biste primali ponude od majstora kojima posao odgovara"
+          description="Zatražite majstora da biste primali ponude od majstora kojima posao odgovara"
           action={
             <Link href="/request/create">
-              <Button size="lg">Objavite prvi zahtjev</Button>
+              <Button size="lg">Zatraži majstora</Button>
             </Link>
           }
         />

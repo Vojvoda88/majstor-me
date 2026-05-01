@@ -96,7 +96,7 @@ export default function KakoRadiKorisniciPage() {
               href="/request/create"
               className="inline-flex min-h-[50px] items-center justify-center rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 px-7 text-sm font-bold text-brand-navy shadow-[0_12px_30px_-14px_rgba(245,158,11,0.5)] transition hover:brightness-105"
             >
-              Objavi zahtjev
+              Zatraži majstora
             </Link>
           </div>
         </section>
@@ -139,7 +139,7 @@ export default function KakoRadiKorisniciPage() {
             href="/request/create"
             className="inline-flex min-h-[52px] items-center justify-center rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 px-8 text-base font-bold text-brand-navy shadow-[0_14px_32px_-14px_rgba(245,158,11,0.5)] transition hover:brightness-105"
           >
-            Objavi besplatan zahtjev
+            Zatraži majstora
           </Link>
         </section>
       </div>

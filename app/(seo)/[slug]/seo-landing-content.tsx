@@ -212,7 +212,7 @@ export function SeoLandingContent({
                   href={createUrl}
                   className="inline-flex h-11 items-center justify-center rounded-xl bg-[#2563eb] px-5 text-sm font-semibold text-white transition hover:bg-[#1d4ed8]"
                 >
-                  Objavi zahtjev
+                  Zatraži majstora
                 </Link>
                 <Link
                   href={`/grad/${citySlug}`}
@@ -269,7 +269,7 @@ export function SeoLandingContent({
               href={createUrl}
               className="mt-5 inline-flex items-center gap-2 rounded-2xl bg-gradient-to-br from-[#2563eb] to-[#1d4ed8] px-6 py-3.5 text-base font-bold text-white shadow-btn-cta transition hover:brightness-105"
             >
-              Objavi zahtjev
+              Zatraži majstora
               <ArrowRight className="h-5 w-5" />
             </Link>
           </section>

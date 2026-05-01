@@ -291,7 +291,7 @@ export function CategoryPageContent({
                       href={`/request/create?category=${encodeURIComponent(internalCategory)}${cityFilter ? `&city=${encodeURIComponent(cityFilter)}` : ""}`}
                       className="inline-flex h-14 min-h-[52px] items-center justify-center rounded-2xl bg-gradient-to-br from-[#2563eb] to-[#1d4ed8] px-10 text-base font-bold text-white shadow-btn-cta transition hover:brightness-105"
                     >
-                      Objavi besplatan zahtjev
+                      Zatraži majstora
                     </Link>
                     {cityFilter ? (
                       <Link
@@ -448,7 +448,7 @@ export function CategoryPageContent({
       </div>
 
       <PublicFooter />
-      <StickyBottomCTA href="/request/create" label="Objavi zahtjev" />
+      <StickyBottomCTA href="/request/create" label="Zatraži majstora" />
       <MobileFilterSheet
         open={filterSheetOpen}
         onClose={() => setFilterSheetOpen(false)}

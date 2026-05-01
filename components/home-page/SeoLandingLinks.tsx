@@ -63,7 +63,7 @@ export function SeoLandingLinks() {
             href="/request/create"
             className="font-semibold text-blue-700 underline-offset-2 hover:text-blue-900 hover:underline"
           >
-            Objavi zahtjev
+            Zatraži majstora
           </Link>
         </p>
       </div>

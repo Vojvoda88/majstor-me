@@ -21,10 +21,10 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     id: `/?pwa=${PWA_ICON_CACHE_VERSION}`,
     /** Puno ime u installer dijalogu / nekim launcherima */
-    name: "BrziMajstor.ME – Pronađi majstora",
+    name: "BrziMajstor.ME – Zatraži majstora",
     /** Ispod ikone na početnom ekranu (kratko, bez „majstor-me“ slug-a) */
     short_name: "BrziMajstor",
-    description: "Marketplace za majstore u Crnoj Gori. Brzo pošaljite zahtjev, majstori vam šalju ponude.",
+    description: "Zatražite majstora u Crnoj Gori. Besplatno za korisnike; majstori se javljaju preko platforme.",
     start_url,
     scope,
     display: "standalone",

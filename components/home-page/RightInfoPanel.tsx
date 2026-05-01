@@ -34,7 +34,7 @@ export function RightInfoPanel({ title = "Primjer zahtjeva" }: Props) {
         href="/request/create"
         className="mt-6 flex h-12 w-full items-center justify-center rounded-lg bg-[#2563EB] text-[15px] font-semibold text-white transition hover:bg-[#1D4ED8]"
       >
-        Objavi zahtjev
+        Zatraži majstora
       </Link>
     </div>
   );

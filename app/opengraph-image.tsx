@@ -52,7 +52,7 @@ export default function OpenGraphImage() {
             Majstori u Crnoj Gori
           </div>
           <div style={{ fontSize: 30, opacity: 0.9, maxWidth: 1040 }}>
-            Opišite posao — majstori se javljaju. Brzo i jasno.
+            Zahtjevi za majstore u Crnoj Gori. Besplatno za korisnike.
           </div>
         </div>
 

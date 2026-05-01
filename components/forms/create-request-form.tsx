@@ -336,7 +336,7 @@ export function CreateRequestForm({ initialCategory, initialCity }: CreateReques
             className="btn-primary mt-2 hidden w-full items-center justify-center disabled:opacity-50 md:flex"
             data-testid="create-request-submit"
           >
-            {mutation.isPending ? "Šaljem zahtjev..." : "Objavi zahtjev"}
+            {mutation.isPending ? "Šaljem zahtjev..." : "Pošalji zahtjev"}
           </button>
         </form>
       </CardContent>
@@ -349,7 +349,7 @@ export function CreateRequestForm({ initialCategory, initialCity }: CreateReques
         className="flex h-14 w-full items-center justify-center rounded-[16px] bg-gradient-to-br from-[#60A5FA] to-[#2563EB] text-lg font-bold text-white shadow-[0_10px_25px_rgba(37,99,235,0.35)] transition active:scale-[0.98] disabled:opacity-60"
         data-testid="create-request-submit"
       >
-        {mutation.isPending ? "Šaljem zahtjev..." : "Objavi zahtjev"}
+        {mutation.isPending ? "Šaljem zahtjev..." : "Pošalji zahtjev"}
       </button>
     </div>
   </>

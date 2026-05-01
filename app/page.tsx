@@ -14,7 +14,7 @@ import { FAQ_ITEMS } from "@/lib/faq-data";
 const siteUrl = getSiteUrl();
 
 const homeDescription =
-  "Treba vam majstor danas? Objavite zahtjev za manje od 1 minuta — zainteresovani i dostupni majstori javljaju vam se direktno. Crna Gora.";
+  "Treba vam majstor danas? Zatražite majstora za manje od 1 minuta — zainteresovani i dostupni majstori javljaju vam se direktno. Crna Gora.";
 
 /** Naslov koristi template iz root layout-a: „… | BrziMajstor.ME“ */
 export const metadata: Metadata = {
