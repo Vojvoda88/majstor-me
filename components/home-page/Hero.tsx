@@ -2,12 +2,13 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Sparkles, Zap } from "lucide-react";
+import { Gift, PhoneOff, Zap } from "lucide-react";
 import { HERO_IMAGE } from "@/lib/homepage-data";
 
 const TRUST = [
-  { icon: Sparkles, label: "Objava zahtjeva za korisnike: 0 €" },
-  { icon: Zap, label: "Majstori: start 1.000 kredita" },
+  { icon: Gift, label: "100% besplatno" },
+  { icon: PhoneOff, label: "Bez zvanja na više mjesta" },
+  { icon: Zap, label: "Brzo i jednostavno" },
 ];
 
 export function Hero() {
@@ -37,7 +38,7 @@ export function Hero() {
         </h1>
         <p className="mx-auto mb-6 max-w-2xl text-[15px] font-medium leading-relaxed text-slate-100 sm:text-base md:mb-8 md:text-lg md:leading-relaxed">
           <span className="bg-gradient-to-r from-white to-white/85 bg-clip-text font-semibold text-transparent">
-            Objavite zahtjev za manje od 1 minuta, a zainteresovani i dostupni majstori će vam se javiti direktno.
+            Zatražite majstora za manje od 1 minuta, a zainteresovani i dostupni majstori će vam se javiti direktno.
           </span>
         </p>
 
@@ -56,9 +57,9 @@ export function Hero() {
           </Link>
           <Link
             href="/register?type=majstor"
-            className="inline-flex h-14 min-h-[52px] items-center justify-center rounded-2xl border border-amber-300/45 bg-white/12 px-6 text-base font-semibold text-amber-100 shadow-lg shadow-amber-500/10 backdrop-blur-md transition hover:bg-white/18 hover:text-white active:scale-[0.98] md:px-8"
+            className="inline-flex h-14 min-h-[52px] items-center justify-center rounded-2xl border border-amber-300/45 bg-white/12 px-6 text-base font-semibold text-amber-100 shadow-lg shadow-amber-500/10 backdrop-blur-md transition hover:bg-white/18 hover:text-white active:scale-[0.98] max-[380px]:text-sm md:px-8"
           >
-            Registruj se kao majstor
+            Za majstore → poslovi u vašem području
           </Link>
         </div>
         <div className="mt-3 md:mt-4">

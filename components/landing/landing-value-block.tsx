@@ -23,8 +23,8 @@ export function LandingValueBlock({ heading, href }: LandingValueBlockProps) {
         <li className="flex gap-2.5">
           <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-emerald-600" aria-hidden />
           <span>
-            Pošaljite <strong className="font-semibold text-slate-900">jedan zahtjev besplatno</strong> — ne morate zvati
-            više brojeva redom.
+            <strong className="font-semibold text-slate-900">Zatražite majstora besplatno</strong> — ne morate zvati više
+            brojeva redom.
           </span>
         </li>
         <li className="flex gap-2.5">
