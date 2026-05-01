@@ -1,5 +1,18 @@
 import { Page } from "@playwright/test";
 
+async function clickFirstVisibleByTestId(page: Page, testId: string): Promise<void> {
+  const loc = page.getByTestId(testId);
+  const n = await loc.count();
+  for (let i = 0; i < n; i++) {
+    const b = loc.nth(i);
+    if (await b.isVisible()) {
+      await b.click();
+      return;
+    }
+  }
+  throw new Error(`Nema vidljivog [data-testid="${testId}"]`);
+}
+
 /** Minimal valid request form data (no photos). */
 export async function fillCreateRequestForm(page: Page, overrides?: Partial<{
   requesterName: string;
@@ -16,12 +29,16 @@ export async function fillCreateRequestForm(page: Page, overrides?: Partial<{
   const description = overrides?.description ?? "Opis za E2E test. Minimalno 10 karaktera.";
   const city = overrides?.city ?? "Nikšić";
 
-  await page.locator("#requesterName").fill(name);
-  await page.locator("#requesterPhone").fill(phone);
   await page.locator("#category").selectOption({ label: category });
   await page.locator("#title").fill(title);
   await page.locator("#description").fill(description);
+  await clickFirstVisibleByTestId(page, "create-request-next");
+
   await page.locator("#city").selectOption({ label: city });
+  await clickFirstVisibleByTestId(page, "create-request-next");
+
+  await page.locator("#requesterName").fill(name);
+  await page.locator("#requesterPhone").fill(phone);
 }
 
 /**

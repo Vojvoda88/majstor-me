@@ -4,9 +4,14 @@
  * Filtrira samo majstore sa workerStatus = ACTIVE (ne PENDING_REVIEW, SUSPENDED, BANNED).
  */
 
-import type { PrismaClient, UrgencyLevel } from "@prisma/client";
+import type { PrismaClient } from "@prisma/client";
 import { REQUEST_CATEGORY_FALLBACK } from "@/lib/constants";
 import { dbCategoryNamesForDistributionFilter, displayLabelForRequestCategory } from "@/lib/categories";
+import {
+  buildHandymanNewRequestNotifyMessages,
+  handymanNotifyVariantForRequest,
+  type HandymanNewRequestNotifyVariant,
+} from "@/lib/handyman-request-notify-copy";
 import { sendNewRequestEmail } from "@/lib/email";
 import { createNotificationsBulk } from "@/lib/notifications";
 import { sendPushToUser } from "@/lib/push";
@@ -20,45 +25,23 @@ export type DistributeRequestParams = {
   requestId: string;
   category: string;
   city: string;
-  title?: string | null;
-  description: string;
-  /** Za naslov push-a (hitno / uskoro). */
-  urgency?: UrgencyLevel;
 };
 
-export type DistributeResult = { handymenNotified: number; durationMs: number };
-
-function buildNewRequestNotificationTitle(
-  urgency: UrgencyLevel | undefined,
-  categoryLabel: string,
-  city: string
-): string {
-  const place = (city ?? "").trim() || "Crna Gora";
-  const cat = categoryLabel.trim();
-  if (urgency === "HITNO_DANAS") {
-    return `Novi hitan zahtjev za ${cat} u ${place}`;
-  }
-  if (urgency === "U_NAREDNA_2_DANA") {
-    return `Novi zahtjev (uskoro) za ${cat} u ${place}`;
-  }
-  return `Novi zahtjev za ${cat} u ${place}`;
-}
-
-function buildNewRequestNotificationBody(title: string | null | undefined, description: string): string {
-  const t = (title ?? "").trim();
-  const d = (description ?? "").trim().replace(/\s+/g, " ");
-  if (t.length >= 8) {
-    return t.slice(0, 160);
-  }
-  return d.slice(0, 160) || "Otvorite zahtjev i pošaljite ponudu ako vam odgovara.";
-}
+export type DistributeResult = {
+  handymenNotified: number;
+  durationMs: number;
+  notifyCopyVariant: HandymanNewRequestNotifyVariant;
+};
 
 export async function distributeRequestToHandymen(params: DistributeRequestParams): Promise<DistributeResult> {
   const start = Date.now();
-  const { prisma, requestId, category, city, title, description, urgency } = params;
+  const { prisma, requestId, category, city } = params;
   const categoryLabel = displayLabelForRequestCategory(category);
-  const pushTitle = buildNewRequestNotificationTitle(urgency, categoryLabel, city);
-  const pushBody = buildNewRequestNotificationBody(title, description);
+  const notifyVariant = handymanNotifyVariantForRequest(requestId);
+  const { title: pushTitle, body: pushBody } = buildHandymanNewRequestNotifyMessages(
+    notifyVariant,
+    categoryLabel
+  );
 
   /** Kad korisnik nije našao tačnu uslugu — obavještavamo majstore sa bilo kojom „pravom“ kategorijom (ne ovaj fallback). */
   const isFallbackCategory = category === REQUEST_CATEGORY_FALLBACK;
@@ -112,6 +95,7 @@ export async function distributeRequestToHandymen(params: DistributeRequestParam
 
   console.info("[distribution] toNotify batch", {
     requestId,
+    notifyCopyVariant: notifyVariant,
     count: toNotify.length,
     userIds: toNotify.map((h) => h.id),
     rankedPool: forDist.length,
@@ -148,11 +132,9 @@ export async function distributeRequestToHandymen(params: DistributeRequestParam
   });
 
   await Promise.allSettled(
-    toNotify.map((h) =>
-      sendNewRequestEmail(h.id, requestId, category, city)
-    )
+    toNotify.map((h) => sendNewRequestEmail(h.id, requestId, notifyVariant, categoryLabel, city))
   );
-  const pushBodyShort = `${pushBody} Otvorite zahtjev i pošaljite ponudu.`.replace(/\s+/g, " ").trim().slice(0, 220);
+  const pushBodyShort = pushBody.replace(/\s+/g, " ").trim().slice(0, 220);
 
   await Promise.allSettled(
     toNotify.map((h) =>
@@ -166,5 +148,5 @@ export async function distributeRequestToHandymen(params: DistributeRequestParam
   );
 
   const durationMs = Date.now() - start;
-  return { handymenNotified: toNotify.length, durationMs };
+  return { handymenNotified: toNotify.length, durationMs, notifyCopyVariant: notifyVariant };
 }

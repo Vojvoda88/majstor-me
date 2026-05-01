@@ -97,9 +97,6 @@ export async function processDistributionJob(jobId: string): Promise<boolean> {
       requestId: request.id,
       category: request.category,
       city: request.city,
-      title: request.title,
-      description: request.description,
-      urgency: request.urgency,
     });
 
     await prisma.distributionJob.update({
@@ -107,7 +104,11 @@ export async function processDistributionJob(jobId: string): Promise<boolean> {
       data: {
         status: "COMPLETED",
         processedAt: new Date(),
-        resultMeta: { handymenNotified: result.handymenNotified, durationMs: result.durationMs },
+        resultMeta: {
+          handymenNotified: result.handymenNotified,
+          durationMs: result.durationMs,
+          notifyCopyVariant: result.notifyCopyVariant,
+        },
       },
     });
     console.info(

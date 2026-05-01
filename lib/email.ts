@@ -1,6 +1,18 @@
 import { Resend } from "resend";
 import { getSiteUrl } from "@/lib/site-url";
 import { phraseUGradu } from "@/lib/slugs";
+import {
+  buildHandymanNewRequestNotifyMessages,
+  type HandymanNewRequestNotifyVariant,
+} from "@/lib/handyman-request-notify-copy";
+
+function escapeHtmlText(s: string): string {
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
 
 function getResend() {
   const key = process.env.RESEND_API_KEY;
@@ -60,7 +72,8 @@ async function getUserEmail(userId: string): Promise<string | null> {
 export async function sendNewRequestEmail(
   handymanId: string,
   requestId: string,
-  requestCategory: string,
+  variant: HandymanNewRequestNotifyVariant,
+  categoryLabel: string,
   requestCity: string
 ) {
   const resend = getResend();
@@ -68,17 +81,26 @@ export async function sendNewRequestEmail(
   const to = await getUserEmail(handymanId);
   if (!to) return;
 
+  const { title, body } = buildHandymanNewRequestNotifyMessages(variant, categoryLabel);
+
   const link = `${appBaseUrl}/request/${requestId}`;
+  const bodyParagraphs = body
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .map((line) => `<p>${escapeHtmlText(line)}</p>`)
+    .join("");
 
   try {
     await resend.emails.send({
       from,
       to,
-      subject: `Novi zahtjev: ${requestCategory} ${phraseUGradu(requestCity)}`,
+      subject: title,
       html: `
         <p>Zdravo,</p>
-        <p>Novi zahtjev za <strong>${requestCategory}</strong> ${phraseUGradu(requestCity)}.</p>
+        ${bodyParagraphs}
         <p><a href="${link}">Pogledaj zahtjev i pošalji ponudu →</a></p>
+        <p><small>${escapeHtmlText(phraseUGradu(requestCity))}</small></p>
         <p>— BrziMajstor.ME</p>
       `,
     });
