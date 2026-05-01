@@ -14,7 +14,7 @@ const items = [
   {
     icon: Zap,
     title: "Brz odgovor",
-    desc: "Objavite zahtjev za par minuta — zainteresovani majstori se javljaju; vi birate bez zvanja redom.",
+    desc: "Objavite zahtjev za par minuta — slobodni majstori vas mogu pozvati ili poslati ponudu; vi birate.",
   },
   {
     icon: HandHeart,

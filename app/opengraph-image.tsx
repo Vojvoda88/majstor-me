@@ -52,7 +52,7 @@ export default function OpenGraphImage() {
             Majstori u Crnoj Gori
           </div>
           <div style={{ fontSize: 30, opacity: 0.9, maxWidth: 1040 }}>
-            Objavite zahtjev za minut. Brzo, pouzdano, profesionalno.
+            Majstori vas zovu ili šalju ponudu. Brzo i jasno.
           </div>
         </div>
 
