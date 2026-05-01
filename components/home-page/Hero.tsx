@@ -6,7 +6,7 @@ import { Sparkles, Zap } from "lucide-react";
 import { HERO_IMAGE } from "@/lib/homepage-data";
 
 const TRUST = [
-  { icon: Sparkles, label: "Jednostavno i brzo do pravog majstora" },
+  { icon: Sparkles, label: "Oglas za manje od minuta — majstori odmah dobijaju obavještenje" },
   { icon: Zap, label: "Za majstore: besplatna registracija + 1.000 kredita gratis" },
 ];
 
@@ -33,15 +33,18 @@ export function Hero() {
       />
       <div className="pointer-events-auto relative z-10 w-full max-w-4xl text-center">
         <p className="mb-3 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.16em] text-amber-200/95 backdrop-blur-sm md:mb-4 md:px-4 md:text-[13px] md:tracking-[0.18em]">
-          Pronađite pravog majstora za svoj posao
+          Hitno ili planirano — jedan oglas, više ponuda
         </p>
         <h1 className="font-display mb-4 text-[1.72rem] font-extrabold leading-[1.12] tracking-tight text-white sm:text-[2rem] md:mb-5 md:text-5xl lg:text-[3.25rem] lg:leading-[1.08]">
-          Treba vam majstor?
+          Treba vam majstor danas?
           <br />
-          <span className="bg-gradient-to-r from-white to-white/85 bg-clip-text text-transparent">Objavite oglas za manje od 1 minuta.</span>
+          <span className="bg-gradient-to-r from-white to-white/85 bg-clip-text text-transparent">
+            Objavite oglas za manje od jednog minuta.
+          </span>
         </h1>
         <p className="mx-auto mb-6 max-w-xl text-[15px] font-medium leading-relaxed text-slate-100 sm:text-base md:mb-8 md:text-lg md:leading-relaxed">
-          Besplatna objava za korisnike. Majstorima stiže obavještenje čim se pojavi posao u blizini.
+          Besplatno za vas. Čim oglas prođe kratku provjeru, majstorima kojima posao odgovara{" "}
+          <span className="font-semibold text-white">odmah stiže obavještenje</span> — da mogu brzo da pošalju ponudu.
         </p>
 
         <div className="mt-2 flex flex-col items-stretch gap-2.5 sm:flex-row sm:items-center sm:justify-center sm:gap-3 md:mt-4">

@@ -14,7 +14,7 @@ import { FAQ_ITEMS } from "@/lib/faq-data";
 const siteUrl = getSiteUrl();
 
 const homeDescription =
-  "Besplatna objava zahtjeva za majstore u Crnoj Gori. Ponude stižu uz zahtjev — uporedite prije odluke.";
+  "Treba majstor? Objavite oglas za minut — besplatno. Majstori odmah dobijaju obavještenje i šalju ponude; vi upoređujete u Crnoj Gori.";
 
 /** Naslov koristi template iz root layout-a: „… | BrziMajstor.ME“ */
 export const metadata: Metadata = {
