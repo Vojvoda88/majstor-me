@@ -40,9 +40,9 @@ export function buildSeoLandingDescription(parsed: SeoCombinedParsed): string {
   const gen = cityGenitive(parsed.cityDisplayName);
 
   const byCategory: Record<string, string> = {
-    vodoinstalater: `Vodoinstalater u ${loc}: profili ispod ili besplatan zahtjev — opišite curenje,zamenu ili instalaciju i uporedite ponude.`,
-    elektricar: `Električar u ${loc} za instalacije, priključenje ili popravke. Profili ispod; ako želite više ponuda, jedan zahtjev ide majstorima iz ${gen} koji rade tu vrstu posla.`,
-    "klima-servis": `Klima servis u ${loc}: montaža, punjenje, servis. Pregledajte profile ili objavite zahtjev ako želite više ponuda za isti posao.`,
+    vodoinstalater: `Vodoinstalater u ${loc}: profili ispod ili besplatan zahtjev — opišite curenje, zamenu ili instalaciju i sačekajte odgovore majstora.`,
+    elektricar: `Električar u ${loc} za instalacije, priključenje ili popravke. Profili ispod; jedan zahtjev šalje opis majstorima iz ${gen} koji rade tu vrstu posla.`,
+    "klima-servis": `Klima servis u ${loc}: montaža, punjenje, servis. Pregledajte profile ili objavite zahtjev da se zainteresovani majstori jave.`,
     keramicar: `Keramičar u ${loc} za kupatila, pločice i završne radove. Lista ispod; jedan zahtjev šalje opis majstorima ako želite da vam se jave više njih.`,
     stolar: `Stolar u ${loc} za namještaj, vrata i drvo. Profili ispod; zahtjev možete ostaviti sa dimenzijama i rokom.`,
     ciscenje: `Čišćenje stanova i poslovnih prostora u ${loc}. Pregledajte profile ili pošaljite zahtjev za procjenu površine i termina.`,
@@ -63,10 +63,10 @@ export function buildSeoCombinedIntroParagraph(parsed: SeoCombinedParsed): strin
   const d = parsed.categoryDisplayName.toLowerCase();
 
   const byCategory: Record<string, string> = {
-    vodoinstalater: `Ovdje ste ako vam treba vodoinstalaterski rad u ${loc}. Ispod su profili; ako želite da opišete posao jednom i dobijete više ponuda, koristite zahtjev — odgovaraju majstori iz ${gen}.`,
-    elektricar: `Električar u ${loc}: lista profila ispod. Za više ponuda odjednom, jedan zahtjev šalje opis majstorima koji rade tu vrstu radova u gradu.`,
-    "klima-servis": `Za klimu u ${loc} — montaža, servis, punjenje. Pregledajte profile; zahtjev koristite ako želite da više majstora procijeni isti problem.`,
-    keramicar: `Keramičar u ${loc}: pločice, kupatila, završni radovi. Jedan zahtjev pomaže kad želite da više majstora procijeni isti prostor.`,
+    vodoinstalater: `Ovdje ste ako vam treba vodoinstalaterski rad u ${loc}. Ispod su profili; opišite posao jednom putem zahtjeva — odgovaraju majstori iz ${gen}.`,
+    elektricar: `Električar u ${loc}: lista profila ispod. Jedan zahtjev šalje opis majstorima koji rade tu vrstu radova u gradu.`,
+    "klima-servis": `Za klimu u ${loc} — montaža, servis, punjenje. Pregledajte profile; zahtjevom isti problem mogu procijeniti zainteresovani majstori.`,
+    keramicar: `Keramičar u ${loc}: pločice, kupatila, završni radovi. Jedan zahtjev šalje opis jednom — bez ponavljanja poziva.`,
     stolar: `Stolar u ${loc}: namještaj, vrata, drvo. Profili ispod; u zahtjev unesite mjere i rok ako tražite ponude usporedive po cijeni.`,
     ciscenje: `Čišćenje u ${loc}: birajte profil ili pošaljite jedan zahtjev za površinu i termin.`,
   };

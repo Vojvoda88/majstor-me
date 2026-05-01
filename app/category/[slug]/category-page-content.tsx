@@ -172,7 +172,7 @@ export function CategoryPageContent({
               {displayName}
             </h1>
             <p className="mt-4 max-w-2xl text-base leading-relaxed text-slate-600 md:text-lg">
-              Jedna vrsta usluge, cijela Crna Gora — birajte grad filterom ili mapom, uporedite ocjene ili pošaljite{" "}
+              Jedna vrsta usluge, cijela Crna Gora — birajte grad filterom ili mapom, pogledajte ocjene ili pošaljite{" "}
               <span className="font-medium text-[#0F172A]">jedan besplatan zahtjev</span> ako želite ponude od više
               majstora.
               {cityFilter ? (

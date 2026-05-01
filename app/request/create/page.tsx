@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Besplatan zahtjev majstoru | BrziMajstor.ME",
     description:
-      "Jedan zahtjev, više majstora može da odgovori. Objava je besplatna za korisnike.",
+      "Jedan zahtjev umjesto niza poziva. Objava je besplatna za korisnike.",
     url: `${baseUrl}/request/create`,
     siteName: "BrziMajstor.ME",
     type: "website",

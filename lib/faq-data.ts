@@ -13,7 +13,7 @@ export const FAQ_ITEMS = [
   },
   {
     q: "Kako funkcionišu ocjene?",
-    a: "Ocjene dolaze od stvarnih korisnika nakon saradnje i pomažu vam da lakše uporedite majstore.",
+    a: "Ocjene dolaze od stvarnih korisnika nakon saradnje i pomažu vam da bolje procijenite majstora.",
   },
   {
     q: "Kako majstori dobijaju poslove?",

@@ -211,7 +211,7 @@ export function GradPageContent({
                 Trenutno nema majstora {phraseUGradu(cityName)}.
               </p>
               <p className="mt-2 text-sm leading-relaxed text-slate-600">
-                Objavite besplatan zahtjev – dobijate ponude od više majstora iz ovog i okolnih gradova, bez obaveze.
+                Objavite besplatan zahtjev — javljaju se majstori iz ovog i okolnih gradova kojima posao odgovara, bez obaveze.
               </p>
               <Link
                 href={`/request/create?city=${encodeURIComponent(cityName)}`}

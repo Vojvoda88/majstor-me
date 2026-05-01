@@ -13,8 +13,8 @@ const items = [
   },
   {
     icon: Zap,
-    title: "Brze ponude",
-    desc: "Objavite zahtjev za par minuta i dobijte ponude od više majstora umjesto da ih zovete redom.",
+    title: "Brz odgovor",
+    desc: "Objavite zahtjev za par minuta — zainteresovani majstori se javljaju; vi birate bez zvanja redom.",
   },
   {
     icon: HandHeart,

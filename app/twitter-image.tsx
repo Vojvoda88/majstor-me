@@ -52,7 +52,7 @@ export default function TwitterImage() {
             Pronadji pravog majstora
           </div>
           <div style={{ fontSize: 30, opacity: 0.9, maxWidth: 1040 }}>
-            Crna Gora: objavi zahtjev i uporedi ponude.
+            Crna Gora: objavi zahtjev — majstori se javljaju.
           </div>
         </div>
 

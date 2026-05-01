@@ -41,8 +41,8 @@ const USER_STEPS = [
   {
     n: 3,
     icon: CheckCircle2,
-    title: "Uporedite i izaberite",
-    desc: "Kada stignu ponude, birate majstora bez zvanja redom.",
+    title: "Izaberite majstora",
+    desc: "Kada vam odgovara, birate s kim nastavljate — bez zvanja redom.",
   },
 ] as const;
 
@@ -215,7 +215,7 @@ export function HowItWorksForUsers() {
           Kako radi za korisnike
         </h2>
         <p className="mx-auto mt-3 max-w-2xl text-[15px] font-medium leading-relaxed text-slate-600 sm:text-base md:text-lg">
-          Tri kratka koraka: objavite, dobijete ponude, izaberete.
+          Tri kratka koraka: objavite, majstori reaguju, izaberete.
         </p>
       </div>
       <div className="mx-auto mt-8 max-w-6xl md:mt-10">
@@ -228,7 +228,7 @@ export function HowItWorksForUsers() {
         </div>
         <div className="mx-auto mt-4 max-w-2xl text-center md:mt-5">
           <p className="text-sm text-slate-500 md:text-[15px]">
-            Dobijate više ponuda bez zvanja redom — sve na jednom mjestu.
+            Jedan oglas umjesto niza poziva — sve na jednom mjestu.
           </p>
           <Link
             href="/kako-radi-korisnici"

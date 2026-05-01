@@ -33,7 +33,7 @@ export function Hero() {
       />
       <div className="pointer-events-auto relative z-10 w-full max-w-4xl text-center">
         <p className="mb-3 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.16em] text-amber-200/95 backdrop-blur-sm md:mb-4 md:px-4 md:text-[13px] md:tracking-[0.18em]">
-          Hitno ili planirano — jedan oglas, više ponuda
+          Hitno ili planirano — oglas za minut, majstori na obavještenju
         </p>
         <h1 className="font-display mb-4 text-[1.72rem] font-extrabold leading-[1.12] tracking-tight text-white sm:text-[2rem] md:mb-5 md:text-5xl lg:text-[3.25rem] lg:leading-[1.08]">
           Treba vam majstor danas?

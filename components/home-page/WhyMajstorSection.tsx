@@ -3,7 +3,7 @@ import { MapPin, Sparkles } from "lucide-react";
 const BENEFITS = [
   {
     id: "01",
-    title: "Lokalno, uporedno, bez zvanja redom",
+    title: "Lokalno, bez zvanja redom",
     body: "Nakon kratke provjere zahtjeva, ponude šalju majstori kojima posao odgovara iz vaše okoline.",
     icon: MapPin,
   },
@@ -29,7 +29,7 @@ export function WhyMajstorSection() {
             Zašto BrziMajstor.ME?
           </h2>
           <p className="relative mt-4 max-w-lg text-[15px] leading-relaxed text-slate-100/95 sm:mt-6 md:text-base">
-            Jedan zahtjev, više ponuda — od sitnih popravki do većih radova, u Crnoj Gori.
+            Brza objava u Crnoj Gori — od sitnih popravki do većih radova, bez zvanja liste brojeva.
           </p>
           <div className="relative mt-8 grid gap-2.5 border-t border-white/10 pt-8 sm:grid-cols-2 sm:gap-3 md:mt-10 md:pt-10">
             <div className="rounded-2xl border border-white/10 bg-white/[0.07] px-4 py-4 backdrop-blur-sm">
@@ -38,7 +38,7 @@ export function WhyMajstorSection() {
             </div>
             <div className="rounded-2xl border border-white/10 bg-white/[0.07] px-4 py-4 backdrop-blur-sm">
               <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-amber-200/90">TRANSPARENTNO</p>
-              <p className="mt-2 text-sm font-semibold leading-snug">Ponude direktno od majstora</p>
+              <p className="mt-2 text-sm font-semibold leading-snug">Razgovor direktno s majstorom</p>
             </div>
           </div>
         </div>

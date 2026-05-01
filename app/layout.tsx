@@ -48,7 +48,7 @@ export const metadata: Metadata = {
     template: "%s | BrziMajstor.ME",
   },
   description:
-    "Besplatna objava zahtjeva za majstore u Crnoj Gori. Ponude i ocjene uz zahtjev — birate šta vam odgovara.",
+    "Besplatna objava zahtjeva za majstore u Crnoj Gori. Odgovori i ocjene uz zahtjev — birate šta vam odgovara.",
   keywords: [
     "majstori Crna Gora",
     "vodoinstalater Podgorica",
@@ -65,7 +65,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "BrziMajstor.ME – Zahtjev za majstore u Crnoj Gori",
     description:
-      "Povezivanje korisnika sa majstorima u Crnoj Gori. Besplatna objava zahtjeva; više majstora može da se javi — uporedite ponude prije odluke.",
+      "Povezivanje korisnika sa majstorima u Crnoj Gori. Besplatna objava zahtjeva; javljaju se majstori kojima posao odgovara.",
     url: siteUrl,
     siteName: "BrziMajstor.ME",
     locale: "sr_ME",
@@ -83,7 +83,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "BrziMajstor.ME – Zahtjev za majstore u Crnoj Gori",
     description:
-      "Besplatna objava zahtjeva; ponude stižu uz zahtjev — uporedite prije odluke.",
+      "Besplatna objava zahtjeva; birate s kim nastavljate kada vam odgovara.",
     images: ["/twitter-image"],
   },
   robots: {

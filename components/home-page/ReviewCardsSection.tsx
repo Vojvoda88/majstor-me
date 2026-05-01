@@ -44,7 +44,7 @@ export function ReviewCardsSection() {
           Istaknuti majstori
         </h2>
         <p className="mt-2 max-w-2xl text-[15px] font-medium leading-relaxed text-slate-700 sm:mt-3 sm:text-base md:text-lg">
-          Profili sa javnim ocjenama i recenzijama — lakše uporedite prije nego što odlučite.
+          Profili sa javnim ocjenama i recenzijama — lakše odlučite s kim nastaviti.
         </p>
       </div>
 

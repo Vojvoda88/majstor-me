@@ -280,7 +280,7 @@ export function SeoLandingContent({
               {(priority?.faq ?? [
                 {
                   q: `Koliko košta ${displayName.toLowerCase()} u ${cityNameLocative}?`,
-                  a: "Cijena zavisi od vrste posla i materijala. Na BrziMajstor.ME možete dobiti više ponuda pa uporediti prije angažmana.",
+                  a: "Cijena zavisi od vrste posla i materijala. Na BrziMajstor.ME dogovarate direktno s majstorom nakon zahtjeva.",
                 },
                 {
                   q: "Kada mogu očekivati odgovor?",
