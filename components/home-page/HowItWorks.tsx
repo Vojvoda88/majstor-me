@@ -35,14 +35,14 @@ const USER_STEPS = [
   {
     n: 2,
     icon: MessageSquare,
-    title: "Javljaju vam se majstori",
-    desc: "Nakon kratke provjere, slobodni majstori kojima posao odgovara mogu vas pozvati ili poslati ponudu.",
+    title: "Stižu odgovori",
+    desc: "Nakon provjere oglasa, javljaju se majstori kojima posao odgovara — poziv ili ponuda.",
   },
   {
     n: 3,
     icon: CheckCircle2,
-    title: "Izaberite majstora",
-    desc: "Kada vam odgovara, birate s kim nastavljate — bez da vi zovete redom.",
+    title: "Dogovor i posao",
+    desc: "Izaberete kome odgovarate i nastavite direktno — bez da vi zovete redom.",
   },
 ] as const;
 
@@ -215,7 +215,7 @@ export function HowItWorksForUsers() {
           Kako radi za korisnike
         </h2>
         <p className="mx-auto mt-3 max-w-2xl text-[15px] font-medium leading-relaxed text-slate-600 sm:text-base md:text-lg">
-          Tri kratka koraka: objavite, javljaju vam se majstori, izaberete.
+          Tri koraka: objavite, stignu odgovori, dogovorite se.
         </p>
       </div>
       <div className="mx-auto mt-8 max-w-6xl md:mt-10">
@@ -228,7 +228,7 @@ export function HowItWorksForUsers() {
         </div>
         <div className="mx-auto mt-4 max-w-2xl text-center md:mt-5">
           <p className="text-sm text-slate-500 md:text-[15px]">
-            Slobodni majstori vas mogu pozvati ili poslati ponudu — sve kroz jedan oglas.
+            Bez obilaska brojeva — sve kroz jedan oglas.
           </p>
           <Link
             href="/kako-radi-korisnici"
