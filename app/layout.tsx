@@ -6,7 +6,6 @@ import { auth } from "@/lib/auth";
 import { InstallCTA } from "@/components/pwa/install-cta";
 import { ServiceWorkerRegister } from "@/components/pwa/service-worker-register";
 import { GoogleTranslate } from "@/components/layout/google-translate";
-import { pwaIconSrc } from "@/lib/pwa-icon-assets";
 import { getSiteUrl } from "@/lib/site-url";
 import "./globals.css";
 
@@ -58,8 +57,8 @@ export const metadata: Metadata = {
   ],
   alternates: { canonical: "/" },
   manifest: "/manifest.webmanifest",
+  /** Favicon: `app/icon.tsx` (oštra mala ikona). PWA launcher ikone ostaju u manifest.webmanifest. */
   icons: {
-    icon: [pwaIconSrc(192), pwaIconSrc(512)],
     apple: "/apple-touch-icon.png",
   },
   openGraph: {
