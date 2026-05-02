@@ -5,7 +5,8 @@ import { PublicHeader } from "@/components/layout/PublicHeader";
 import { PublicFooter } from "@/components/layout/PublicFooter";
 import { Hero } from "@/components/home-page/Hero";
 import { WhyMajstorSection } from "@/components/home-page/WhyMajstorSection";
-import { CategoriesGrid } from "@/components/home-page/CategoriesGrid";
+import { FeaturedHandymenSection } from "@/components/home-page/FeaturedHandymenSection";
+import { getHomepageFeaturedHandymen } from "@/lib/handymen-listing";
 import { HowItWorksForUsers, HowItWorksForHandymen } from "@/components/home-page/HowItWorks";
 import { SeoLandingLinks } from "@/components/home-page/SeoLandingLinks";
 import { buildHomeJsonLdGraph } from "@/lib/json-ld";
@@ -41,7 +42,8 @@ const FAQ = nextDynamic(
   { loading: () => <div className="min-h-[220px] animate-pulse rounded-2xl bg-slate-100 md:min-h-[280px]" /> }
 );
 
-export default function HomePage() {
+export default async function HomePage() {
+  const featuredHandymen = await getHomepageFeaturedHandymen(6);
   const structuredData = buildHomeJsonLdGraph(FAQ_ITEMS);
   return (
     <main className="relative isolate min-h-screen overflow-x-hidden pb-8 md:pb-16 before:pointer-events-none before:absolute before:inset-0 before:bg-[radial-gradient(ellipse_90%_60%_at_50%_-10%,rgba(29,78,216,0.06),transparent_55%)]">
@@ -60,7 +62,7 @@ export default function HomePage() {
         </div>
         <div className="relative animate-fade-up pt-3 md:pt-5" style={{ animationDelay: "0.14s", animationFillMode: "both" }}>
           <div className="pointer-events-none absolute inset-x-4 top-0 h-px bg-gradient-to-r from-transparent via-slate-200/85 to-transparent" />
-          <CategoriesGrid />
+          <FeaturedHandymenSection items={featuredHandymen} />
         </div>
         <div className="relative animate-fade-up pt-2 md:pt-4" style={{ animationDelay: "0.18s", animationFillMode: "both" }}>
           <div className="pointer-events-none absolute inset-x-4 top-0 h-px bg-gradient-to-r from-transparent via-slate-200/75 to-transparent" />

@@ -76,6 +76,10 @@ export type PublicHandymanListItem = {
   ratingAvg: number;
   reviewCount: number;
   avatarUrl?: string | null;
+  /** Prva slika iz galerije (homepage kartica). */
+  firstGalleryImageUrl?: string | null;
+  /** Kratak bio za karticu (homepage). */
+  bioSnippet?: string | null;
   verifiedStatus?: string;
   completedJobsCount?: number;
   averageResponseMinutes?: number | null;
@@ -100,6 +104,7 @@ type HandymanProfileShape = {
   reviewCount: number;
   verifiedStatus: string;
   avatarUrl?: string | null;
+  galleryImages?: string[];
   availabilityStatus?: string | null;
   workerCategories?: { category: { name: string } }[];
 };
@@ -110,6 +115,31 @@ type UserWithProfile = {
   city: string | null;
   handymanProfile: HandymanProfileShape;
 };
+
+function mapItemFromUserCore(u: UserWithProfile, cityForCoords: string | null): PublicHandymanListItem {
+  const prof = u.handymanProfile;
+  const ext = profileExt(prof);
+  const cForCoords = cityForCoords?.trim() || u.city;
+  const coords = cForCoords ? getCityCoords(cForCoords) : null;
+  return {
+    id: u.id,
+    name: u.name,
+    city: u.city,
+    categories:
+      (prof as { workerCategories?: { category: { name: string } }[] }).workerCategories?.map(
+        (wc) => wc.category.name
+      ) ?? [],
+    ratingAvg: prof.ratingAvg ?? 0,
+    reviewCount: prof.reviewCount ?? 0,
+    avatarUrl: (prof as { avatarUrl?: string }).avatarUrl ?? null,
+    verifiedStatus: prof.verifiedStatus ?? "PENDING",
+    completedJobsCount: ext.completedJobsCount ?? 0,
+    averageResponseMinutes: ext.averageResponseMinutes ?? null,
+    availabilityStatus: (prof as { availabilityStatus?: string }).availabilityStatus ?? null,
+    isPromoted: ext.isPromoted ?? false,
+    ...(coords && { lat: coords.lat, lng: coords.lng }),
+  };
+}
 
 export async function getPublicHandymenList(params: {
   category?: string | null;
@@ -199,35 +229,78 @@ export async function getPublicHandymenList(params: {
 
   const totalPages = Math.ceil(total / limit) || 1;
 
-  const mapItem = (u: UserWithProfile): PublicHandymanListItem => {
-    const prof = u.handymanProfile;
-    const ext = profileExt(prof);
-    const cForCoords = city?.trim() || u.city;
-    const coords = cForCoords ? getCityCoords(cForCoords) : null;
-    return {
-      id: u.id,
-      name: u.name,
-      city: u.city,
-      categories:
-        (prof as { workerCategories?: { category: { name: string } }[] }).workerCategories?.map(
-          (wc) => wc.category.name
-        ) ?? [],
-      ratingAvg: prof.ratingAvg ?? 0,
-      reviewCount: prof.reviewCount ?? 0,
-      avatarUrl: (prof as { avatarUrl?: string }).avatarUrl ?? null,
-      verifiedStatus: prof.verifiedStatus ?? "PENDING",
-      completedJobsCount: ext.completedJobsCount ?? 0,
-      averageResponseMinutes: ext.averageResponseMinutes ?? null,
-      availabilityStatus: (prof as { availabilityStatus?: string }).availabilityStatus ?? null,
-      isPromoted: ext.isPromoted ?? false,
-      ...(coords && { lat: coords.lat, lng: coords.lng }),
-    };
-  };
-
   return {
-    items: items.map(mapItem),
+    items: items.map((u) => mapItemFromUserCore(u, city)),
     total,
     page,
     totalPages,
   };
+}
+
+const HOME_FEATURED_FETCH_CAP = 160;
+
+function compareHomepageFeatured(a: UserWithProfile, b: UserWithProfile): number {
+  const pa = a.handymanProfile;
+  const pb = b.handymanProfile;
+  const ga = pa.galleryImages?.length ?? 0;
+  const gb = pb.galleryImages?.length ?? 0;
+  const hasAv = (p: typeof pa) => (p.avatarUrl?.trim() ? 1 : 0);
+  const photoScore = (p: typeof pa, g: number) =>
+    hasAv(p) * 400 + Math.min(g, 20) * 25 + (g > 0 && !hasAv(p) ? 80 : 0);
+
+  const psA = photoScore(pa, ga);
+  const psB = photoScore(pb, gb);
+  if (psA !== psB) return psB - psA;
+
+  const promA = profileExt(pa).isPromoted ? 1 : 0;
+  const promB = profileExt(pb).isPromoted ? 1 : 0;
+  if (promA !== promB) return promB - promA;
+
+  const ra = (pa.ratingAvg ?? 0) - (pb.ratingAvg ?? 0);
+  if (Math.abs(ra) > 1e-6) return ra > 0 ? -1 : 1;
+
+  return (pb.reviewCount ?? 0) - (pa.reviewCount ?? 0);
+}
+
+function mapUserToPublicItemHome(u: UserWithProfile, cityForCoords: string | null): PublicHandymanListItem {
+  const prof = u.handymanProfile;
+  const gallery = (prof as { galleryImages?: string[] }).galleryImages ?? [];
+  const firstGal = gallery[0]?.trim() || null;
+  const avatar = (prof as { avatarUrl?: string | null }).avatarUrl?.trim() || null;
+  const bioRaw = (prof as { bio?: string | null }).bio?.trim() ?? "";
+  const bioSnippet =
+    bioRaw.length > 0 ? bioRaw.replace(/\s+/g, " ").slice(0, 96) + (bioRaw.length > 96 ? "…" : "") : null;
+
+  const base = mapItemFromUserCore(u, cityForCoords);
+  return {
+    ...base,
+    firstGalleryImageUrl: firstGal,
+    bioSnippet,
+    avatarUrl: avatar,
+  };
+}
+
+/**
+ * Početna strana: istaknuti aktivni majstori — prednost profilima sa avatarom i/ili galerijom, zatim ocjena i promocija.
+ */
+export async function getHomepageFeaturedHandymen(limit = 6): Promise<PublicHandymanListItem[]> {
+  const { prisma } = await import("@/lib/db");
+  const baseWhere = buildPublicHandymanListingWhere({ categoryDbNames: null, city: null });
+
+  const users = await prisma.user.findMany({
+    where: baseWhere,
+    include: {
+      handymanProfile: {
+        include: { workerCategories: { include: { category: true } } },
+      },
+    },
+    take: HOME_FEATURED_FETCH_CAP,
+  });
+
+  const filtered = users.filter((u) => u.handymanProfile) as UserWithProfile[];
+
+  filtered.sort(compareHomepageFeatured);
+
+  const slice = filtered.slice(0, Math.max(0, limit));
+  return slice.map((u) => mapUserToPublicItemHome(u, null));
 }
