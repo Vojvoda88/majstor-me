@@ -6,6 +6,7 @@ import { PremiumMobileHeader } from "@/components/layout/PremiumMobileHeader";
 import { GuestRequestReturnCard } from "@/components/request/guest-request-return-card";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { parseRequestCreateSearchParams } from "@/lib/request-create-query";
+import { SEO_REQUEST_CREATE_DESCRIPTION } from "@/lib/seo-brand";
 import { getSiteUrl } from "@/lib/site-url";
 import { auth } from "@/lib/auth";
 
@@ -13,15 +14,13 @@ const baseUrl = getSiteUrl();
 
 export const metadata: Metadata = {
   title: "Zatraži majstora",
-  description:
-    "Zatražite majstora besplatno — birajte grad i opišite posao. Nakon provjere, majstori kojima odgovara mogu da odgovore.",
+  description: SEO_REQUEST_CREATE_DESCRIPTION,
   alternates: {
     canonical: `${baseUrl}/request/create`,
   },
   openGraph: {
     title: "Zatraži majstora | BrziMajstor.ME",
-    description:
-      "Zatražite majstora besplatno — birajte grad i opišite posao. Odgovori nakon provjere.",
+    description: SEO_REQUEST_CREATE_DESCRIPTION,
     url: `${baseUrl}/request/create`,
     siteName: "BrziMajstor.ME",
     type: "website",
@@ -29,8 +28,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Zatraži majstora | BrziMajstor.ME",
-    description:
-      "Zatražite majstora besplatno — birajte grad i opišite posao. Odgovori nakon provjere.",
+    description: SEO_REQUEST_CREATE_DESCRIPTION,
   },
 };
 

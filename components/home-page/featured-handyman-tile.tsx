@@ -50,13 +50,12 @@ export function FeaturedHandymanTile({ item }: Props) {
             ? AVATAR_IMAGE_FALLBACK
             : "";
 
-  const catLabels = item.categories
-    .slice(0, 2)
-    .map(displayLabelForRequestCategory)
-    .filter(Boolean);
-  const subtitle =
-    item.bioSnippet ||
-    (catLabels.length > 0 ? catLabels.join(" · ") : "Profil majstora");
+  const categoryLabels = item.categories.map(displayLabelForRequestCategory).filter(Boolean);
+  const categoryLine =
+    categoryLabels.length > 0
+      ? categoryLabels.slice(0, 4).join(" · ") + (categoryLabels.length > 4 ? "…" : "")
+      : null;
+  const bioSnippet = item.bioSnippet?.trim();
 
   const handleError = () => {
     if (layer === "gallery" && avatar) {
@@ -159,9 +158,22 @@ export function FeaturedHandymanTile({ item }: Props) {
           <span className="block font-display text-lg font-bold tracking-tight text-white drop-shadow-md md:text-xl">
             {displayName}
           </span>
-          <span className="mt-1.5 block text-sm font-medium leading-snug text-white/[0.92] line-clamp-2 drop-shadow">
-            {subtitle}
-          </span>
+          {categoryLine ? (
+            <>
+              <span className="mt-1.5 block text-sm font-semibold leading-snug text-white/[0.95] line-clamp-2 drop-shadow">
+                {categoryLine}
+              </span>
+              {bioSnippet ? (
+                <span className="mt-1 block text-xs font-medium leading-snug text-white/[0.82] line-clamp-2 drop-shadow">
+                  {bioSnippet}
+                </span>
+              ) : null}
+            </>
+          ) : (
+            <span className="mt-1.5 block text-sm font-medium leading-snug text-white/[0.92] line-clamp-2 drop-shadow">
+              {bioSnippet || "Profil majstora"}
+            </span>
+          )}
           <span className="mt-3.5 inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.14em] text-amber-200/95 drop-shadow-sm">
             Pogledaj
             <ArrowRight className="h-3.5 w-3.5 transition duration-200 group-hover:translate-x-0.5" />

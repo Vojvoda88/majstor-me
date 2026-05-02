@@ -13,11 +13,11 @@ import { getCategoryImageUrl } from "@/lib/category-images";
 import { ArrowRight } from "lucide-react";
 import { buildPublicListingPageJsonLd } from "@/lib/json-ld";
 import { getSiteUrl } from "@/lib/site-url";
+import { SEO_CATEGORIES_DESCRIPTION } from "@/lib/seo-brand";
 
 const baseUrl = getSiteUrl();
 
-const categoriesDescription =
-  "Sve kategorije majstora u Crnoj Gori — od vode i struje do klime i čišćenja. Otvorite uslugu ili pošaljite zahtjev.";
+const categoriesDescription = SEO_CATEGORIES_DESCRIPTION;
 
 const CATEGORY_SUBTEXT: Record<string, string> = {
   vodoinstalater: "Curenja, bojleri, slavine i hitne intervencije",
@@ -30,7 +30,7 @@ const CATEGORY_SUBTEXT: Record<string, string> = {
   moler: "Krečenje, priprema zidova i završni radovi",
   gipsar: "Spušteni plafoni, pregrade i dekor gips",
   fasader: "Izolacija, fasada i obnova spoljašnjih zidova",
-  "servis-bijele-tehnike": "Mašine, frižideri, rerne i dijagnostika kvarova",
+  "grubi-gradjevinski-radovi": "Zidanje, beton, skela, grub zidar i glavni građevinski radovi",
   ciscenje: "Stanovi, lokali i dubinsko čišćenje",
   selidbe: "Selidbe stanova, kancelarija i transport",
   bastovanstvo: "Dvorišta, rezidba, održavanje i uređenje",

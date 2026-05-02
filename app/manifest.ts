@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { headers } from "next/headers";
 import { PWA_ICON_CACHE_VERSION, pwaIconSrc } from "@/lib/pwa-icon-assets";
+import { SEO_PWA_DESCRIPTION } from "@/lib/seo-brand";
 import { getSiteUrl } from "@/lib/site-url";
 
 /** Na kanonskom www hostu PWA uvijek otvara www (ne relativni origin — izbjegava mrtve *.vercel.app instalacije). */
@@ -24,7 +25,7 @@ export default function manifest(): MetadataRoute.Manifest {
     name: "BrziMajstor.ME – Zatraži majstora",
     /** Ispod ikone na početnom ekranu (kratko, bez „majstor-me“ slug-a) */
     short_name: "BrziMajstor",
-    description: "Zatražite majstora u Crnoj Gori. Besplatno za korisnike; majstori se javljaju preko platforme.",
+    description: SEO_PWA_DESCRIPTION,
     start_url,
     scope,
     display: "standalone",

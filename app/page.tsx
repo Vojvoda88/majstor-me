@@ -11,27 +11,25 @@ import { HowItWorksForUsers, HowItWorksForHandymen } from "@/components/home-pag
 import { SeoLandingLinks } from "@/components/home-page/SeoLandingLinks";
 import { buildHomeJsonLdGraph } from "@/lib/json-ld";
 import { FAQ_ITEMS } from "@/lib/faq-data";
+import { SEO_HOME_DESCRIPTION, SEO_HOME_TITLE } from "@/lib/seo-brand";
 
 const siteUrl = getSiteUrl();
 
-const homeDescription =
-  "Treba vam majstor danas? Zatražite majstora za manje od 1 minuta — zainteresovani i dostupni majstori javljaju vam se direktno. Crna Gora.";
-
-/** Naslov koristi template iz root layout-a: „… | BrziMajstor.ME“ */
+/** Naslov koristi template iz root layout-a: „… | BrziMajstor.ME“ (ovdje samo segment prije |) */
 export const metadata: Metadata = {
-  title: "Marketplace majstora u Crnoj Gori",
-  description: homeDescription,
+  title: SEO_HOME_TITLE,
+  description: SEO_HOME_DESCRIPTION,
   alternates: {
     canonical: siteUrl,
   },
   openGraph: {
-    title: "Marketplace majstora u Crnoj Gori | BrziMajstor.ME",
-    description: homeDescription,
+    title: `${SEO_HOME_TITLE} | BrziMajstor.ME`,
+    description: SEO_HOME_DESCRIPTION,
     url: siteUrl,
   },
   twitter: {
-    title: "Marketplace majstora u Crnoj Gori | BrziMajstor.ME",
-    description: homeDescription,
+    title: `${SEO_HOME_TITLE} | BrziMajstor.ME`,
+    description: SEO_HOME_DESCRIPTION,
   },
 };
 

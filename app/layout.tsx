@@ -6,6 +6,11 @@ import { auth } from "@/lib/auth";
 import { InstallCTA } from "@/components/pwa/install-cta";
 import { ServiceWorkerRegister } from "@/components/pwa/service-worker-register";
 import { GoogleTranslate } from "@/components/layout/google-translate";
+import {
+  SEO_DEFAULT_DESCRIPTION,
+  SEO_KEYWORDS,
+  SEO_ORGANIZATION_DESCRIPTION,
+} from "@/lib/seo-brand";
 import { getSiteUrl } from "@/lib/site-url";
 import "./globals.css";
 
@@ -43,18 +48,11 @@ export const metadata: Metadata = {
     statusBarStyle: "default",
   },
   title: {
-    default: "BrziMajstor.ME – Zahtjev za majstore u Crnoj Gori",
+    default: "BrziMajstor.ME — majstori Podgorica, Budva, cijela Crna Gora",
     template: "%s | BrziMajstor.ME",
   },
-  description:
-    "Zahtjevi za majstore u Crnoj Gori. Besplatno za korisnike; majstori vide oglas i odgovaraju preko BrziMajstor.ME.",
-  keywords: [
-    "majstori Crna Gora",
-    "vodoinstalater Podgorica",
-    "električar Nikšić",
-    "majstor hitno",
-    "BrziMajstor",
-  ],
+  description: SEO_DEFAULT_DESCRIPTION,
+  keywords: SEO_KEYWORDS,
   alternates: { canonical: "/" },
   manifest: "/manifest.webmanifest",
   /** Favicon: `app/icon.tsx` (oštra mala ikona). PWA launcher ikone ostaju u manifest.webmanifest. */
@@ -62,9 +60,8 @@ export const metadata: Metadata = {
     apple: "/apple-touch-icon.png",
   },
   openGraph: {
-    title: "BrziMajstor.ME – Zahtjev za majstore u Crnoj Gori",
-    description:
-      "Povezivanje korisnika i majstora u Crnoj Gori. Besplatna objava zahtjeva; odgovori preko platforme.",
+    title: "BrziMajstor.ME — zatraži majstora u Crnoj Gori",
+    description: SEO_ORGANIZATION_DESCRIPTION,
     url: siteUrl,
     siteName: "BrziMajstor.ME",
     locale: "sr_ME",
@@ -74,15 +71,14 @@ export const metadata: Metadata = {
         url: "/opengraph-image",
         width: 1200,
         height: 630,
-        alt: "BrziMajstor.ME - Majstori u Crnoj Gori",
+        alt: "BrziMajstor.ME — marketplace majstora u Crnoj Gori (Podgorica, Budva i drugi gradovi)",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "BrziMajstor.ME – Zahtjev za majstore u Crnoj Gori",
-    description:
-      "Besplatna objava zahtjeva za majstore u Crnoj Gori.",
+    title: "BrziMajstor.ME — majstori širom Crne Gore",
+    description: SEO_DEFAULT_DESCRIPTION,
     images: ["/twitter-image"],
   },
   robots: {
@@ -99,6 +95,8 @@ export const metadata: Metadata = {
   /** Standardni PWA tag; smanjuje deprecation upozorenje uz apple-mobile-web-app-capable iz appleWebApp. */
   other: {
     "mobile-web-app-capable": "yes",
+    "geo.region": "ME",
+    "geo.placename": "Montenegro",
   },
 };
 

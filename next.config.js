@@ -53,6 +53,15 @@ const nextConfig = {
       { source: "/:path*", headers: security },
     ];
   },
+  async redirects() {
+    return [
+      {
+        source: "/category/servis-bijele-tehnike",
+        destination: "/category/grubi-gradjevinski-radovi",
+        permanent: true,
+      },
+    ];
+  },
   images: {
     remotePatterns: [
       {

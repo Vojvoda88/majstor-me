@@ -180,11 +180,11 @@ const REQUEST_TEMPLATES: Tpl[] = [
       "Porodična kuća, treba jedna vanjska kamera iznad ulaznih vrata sa noćnim vidom i snimanjem. Mreža postoji u kući. Molim ponudu opreme i ugradnje.",
   },
   {
-    category: "Servis bijele tehnike",
-    title: "Frižider previše hladi donji dio",
-    shortDesc: "Gornja polica normalna, donja ledi površ namirnice.",
+    category: "Grubi građevinski radovi",
+    title: "Zidanje nosećeg zida proširenje terase",
+    shortDesc: "Blokovi, armatura, betoniranje — treba ekipa za grub rad.",
     longDesc:
-      "Kombinovani frižider, donji dio prehladjuje pa zelenjava povrće. Gornji dio deluje u redu. Treba serviser da pogleda termostat ili ventilator. Marka Beko, starija tri godine.",
+      "Proširujemo terasu prema dvorištu, noseći zid već dogovoren sa statičarom. Treba zidar za blokove, vezivanje armature i betoniranje ploče. Oko trideset kvadrata radišta, pristup dvorištu s ulice. Ponuda sa rokovima i materijalom ili samo rad.",
   },
   {
     category: "Krovopokrivač",

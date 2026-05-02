@@ -26,7 +26,7 @@ export const ACTIVE_INTERNAL_CATEGORY_NAMES = [
   "Moler",
   "Gipsar",
   "Fasade / izolacija",
-  "Servis bijele tehnike",
+  "Grubi građevinski radovi",
   "Čišćenje",
   "Selidbe",
   "Dvorište / bašta",
@@ -179,10 +179,10 @@ export const CATEGORY_CONFIG_FULL: CategoryConfig[] = [
     selectableForHandyman: true,
   },
   {
-    slug: "servis-bijele-tehnike",
-    displayName: "Servis bijele tehnike",
-    internalCategory: "Servis bijele tehnike",
-    icon: "Package",
+    slug: "grubi-gradjevinski-radovi",
+    displayName: "Grubi građevinski radovi",
+    internalCategory: "Grubi građevinski radovi",
+    icon: "Building2",
     publicListing: true,
     selectableForHandyman: true,
   },
@@ -354,6 +354,11 @@ const LEGACY_DISPLAY_ALIASES: Record<string, string> = {
   Fasader: "Fasade / izolacija",
 };
 
+/** Stari URL slug -> kanonski internal (301 na novi slug) */
+const LEGACY_SLUG_TO_INTERNAL: Record<string, string> = {
+  "servis-bijele-tehnike": "Grubi građevinski radovi",
+};
+
 export function getInternalCategory(input: string): string | null {
   const normalized = input.trim();
   const fromLegacy = LEGACY_DISPLAY_ALIASES[normalized];
@@ -362,6 +367,8 @@ export function getInternalCategory(input: string): string | null {
     .toLowerCase()
     .replace(/\s+/g, "-")
     .replace(/[^a-z0-9-]/g, "");
+  const fromLegacySlug = LEGACY_SLUG_TO_INTERNAL[slugKey];
+  if (fromLegacySlug) return fromLegacySlug;
   return (
     SLUG_TO_INTERNAL[slugKey] ??
     SLUG_TO_INTERNAL[normalized] ??

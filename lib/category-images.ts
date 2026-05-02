@@ -18,7 +18,7 @@ export const LOCAL_CATEGORY_SLUGS = [
   "ciscenje",
   "pvc-stolarija",
   "selidbe",
-  "servis-bijele-tehnike",
+  "grubi-gradjevinski-radovi",
   "klima-servis",
 ] as const;
 

@@ -2,6 +2,11 @@
  * JSON-LD structured data (SEO) — čisti, istiniti entiteti; bez lažnih ratinga.
  */
 
+import {
+  SEO_BRAND_SLOGAN,
+  SEO_HOME_DESCRIPTION,
+  SEO_ORGANIZATION_DESCRIPTION,
+} from "./seo-brand";
 import { getSiteUrl } from "./site-url";
 
 export type FaqItem = { q: string; a: string };
@@ -21,10 +26,29 @@ export function organizationEntity(siteUrl: string): Record<string, unknown> {
     "@type": "Organization",
     "@id": schemaOrganizationId(siteUrl),
     name: "BrziMajstor.ME",
+    alternateName: ["Brzi Majstor", "BrziMajstor ME"],
     url: root,
-    description:
-      "BrziMajstor.ME — besplatna objava zahtjeva za majstore u Crnoj Gori i pregled ponuda uz zahtjev.",
-    areaServed: { "@type": "Country", name: "Crna Gora" },
+    logo: `${root}/brand/brzimajstor-logo-horizontal-user.png`,
+    slogan: SEO_BRAND_SLOGAN,
+    description: SEO_ORGANIZATION_DESCRIPTION,
+    knowsAbout: [
+      "Majstorske usluge",
+      "Popravke u stanu i kući",
+      "Vodoinstalacija",
+      "Elektroinstalacije",
+      "Klima uređaji",
+      "Keramičarski radovi",
+      "Čišćenje",
+      "Selidbe",
+    ],
+    areaServed: [
+      { "@type": "Country", name: "Crna Gora" },
+      { "@type": "AdministrativeArea", name: "Podgorica" },
+      { "@type": "AdministrativeArea", name: "Budva" },
+      { "@type": "AdministrativeArea", name: "Nikšić" },
+      { "@type": "AdministrativeArea", name: "Bar" },
+      { "@type": "AdministrativeArea", name: "Kotor" },
+    ],
   };
 }
 
@@ -36,11 +60,12 @@ export function websiteEntity(siteUrl: string): Record<string, unknown> {
     name: "BrziMajstor.ME",
     url: root,
     inLanguage: "sr-Latn",
+    description: SEO_ORGANIZATION_DESCRIPTION,
     publisher: { "@id": schemaOrganizationId(siteUrl) },
   };
 }
 
-/** Jedan @graph: Organization + WebSite + FAQPage (FAQ mora odgovarati vidljivom FAQ u DOM-u). */
+/** Jedan @graph: Organization + WebSite + WebPage + FAQPage (FAQ mora odgovarati vidljivom FAQ u DOM-u). */
 export function buildHomeJsonLdGraph(faqs: FaqItem[]): Record<string, unknown> {
   const siteUrl = getSiteUrl().replace(/\/$/, "");
   return {
@@ -48,6 +73,15 @@ export function buildHomeJsonLdGraph(faqs: FaqItem[]): Record<string, unknown> {
     "@graph": [
       organizationEntity(siteUrl),
       websiteEntity(siteUrl),
+      {
+        "@type": "WebPage",
+        "@id": `${siteUrl}/#webpage`,
+        url: `${siteUrl}/`,
+        name: "BrziMajstor.ME — majstori i majstorske usluge u Crnoj Gori",
+        description: SEO_HOME_DESCRIPTION,
+        isPartOf: { "@id": schemaWebsiteId(siteUrl) },
+        about: { "@id": schemaOrganizationId(siteUrl) },
+      },
       {
         "@type": "FAQPage",
         "@id": `${siteUrl}/#faqpage`,
