@@ -2,11 +2,20 @@ import { MetadataRoute } from "next";
 import { getSiteUrl } from "@/lib/site-url";
 import { PUBLIC_CATEGORY_LISTING } from "@/lib/categories";
 import { HOMEPAGE_CITIES } from "@/lib/homepage-data";
-import { SEO_LANDING_CITIES } from "@/lib/seo-landing-config";
 import { prismaWhereHandymanSitemapEligible } from "@/lib/handyman-sitemap-eligibility";
+import { getProgrammaticServiceCityParams } from "@/lib/seo-programmatic-config";
+import { getProblemCityStaticParams } from "@/lib/seo-problems-data";
 
-/** Gradovi iz SEO FAZE 3 (kombinovane rute u generateStaticParams) — viši prioritet u sitemapu */
-const SEO_CORE_CITY_SLUGS = new Set<string>(SEO_LANDING_CITIES);
+/** Jezgro gradovi (Podgorica, primorski…) — malo viši prioritet u kombinovanim URL-ovima */
+const SEO_CORE_CITY_SLUGS = new Set([
+  "podgorica",
+  "niksic",
+  "budva",
+  "bar",
+  "herceg-novi",
+  "tivat",
+  "kotor",
+]);
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = getSiteUrl();
@@ -21,6 +30,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${base}/politika-privatnosti`, lastModified: now, changeFrequency: "yearly", priority: 0.35 },
     { url: `${base}/uslovi-koriscenja`, lastModified: now, changeFrequency: "yearly", priority: 0.35 },
     { url: `${base}/instaliraj`, lastModified: now, changeFrequency: "monthly", priority: 0.5 },
+    { url: `${base}/problemi`, lastModified: now, changeFrequency: "weekly", priority: 0.82 },
+    { url: `${base}/kontakt`, lastModified: now, changeFrequency: "monthly", priority: 0.55 },
   ];
 
   const categoryPages: MetadataRoute.Sitemap = PUBLIC_CATEGORY_LISTING.map((c) => ({
@@ -37,18 +48,22 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.75,
   }));
 
-  /**
-   * Kombinovane rute: jedan prolaz kategorija × gradova (homepage lista).
-   * Viši prioritet za gradove koji su u core SEO setu (7 gradova × kategorije).
-   */
-  const seoCombinedPages: MetadataRoute.Sitemap = PUBLIC_CATEGORY_LISTING.flatMap((cat) =>
-    HOMEPAGE_CITIES.map((city) => ({
-      url: `${base}/${cat.slug}-${city.slug}`,
-      lastModified: now,
-      changeFrequency: "weekly" as const,
-      priority: SEO_CORE_CITY_SLUGS.has(city.slug) ? 0.84 : 0.7,
-    }))
-  );
+  /** Kanonski format /{usluga}/{grad} — ~15×20 */
+  const pairs = getProgrammaticServiceCityParams();
+  const serviceCityPages: MetadataRoute.Sitemap = pairs.map(({ slug, city }) => ({
+    url: `${base}/${slug}/${city}`,
+    lastModified: now,
+    changeFrequency: "weekly" as const,
+    priority: SEO_CORE_CITY_SLUGS.has(city) ? 0.84 : 0.7,
+  }));
+
+  /** Long-tail /problemi/{problem}-{grad} */
+  const problemPages: MetadataRoute.Sitemap = getProblemCityStaticParams().map(({ slug }) => ({
+    url: `${base}/problemi/${slug}`,
+    lastModified: now,
+    changeFrequency: "weekly" as const,
+    priority: 0.72,
+  }));
 
   let handymanPages: MetadataRoute.Sitemap = [];
   try {
@@ -68,5 +83,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     /* build bez DB */
   }
 
-  return [...staticPages, ...categoryPages, ...cityPages, ...seoCombinedPages, ...handymanPages];
+  return [...staticPages, ...categoryPages, ...cityPages, ...serviceCityPages, ...problemPages, ...handymanPages];
 }

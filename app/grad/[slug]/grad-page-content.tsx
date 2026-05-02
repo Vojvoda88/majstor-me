@@ -27,11 +27,14 @@ export function GradPageContent({
   slug,
   cityImage,
   initialListing,
+  openRequestCount,
 }: {
   cityName: string;
   slug: string;
   cityImage?: string;
   initialListing: PublicHandymenListResult | null;
+  /** Broj otvorenih zahtjeva u istom gradu (ako je DB dostupan) */
+  openRequestCount?: number;
 }) {
   const [handymen, setHandymen] = useState<Handyman[]>(initialListing?.items ?? []);
   const [page, setPage] = useState(1);
@@ -161,6 +164,13 @@ export function GradPageContent({
           <p className="mb-6 max-w-2xl text-sm leading-relaxed text-slate-600 sm:text-base">
             Jedan grad, više kategorija — ispod su profili majstora {phraseUGradu(cityName)}. Možete otvoriti uslugu po kategoriji ili
             poslati jedan zahtjev i sačekati ponude; nema obaveze da birate odmah.
+            {typeof openRequestCount === "number" && openRequestCount > 0 ? (
+              <>
+                {" "}
+                Trenutno je na platformi oko <strong>{openRequestCount}</strong> otvorenih zahtjeva za ovaj grad (broj se
+                mijenja).
+              </>
+            ) : null}
           </p>
 
           <LandingValueBlock
@@ -176,7 +186,7 @@ export function GradPageContent({
             {PUBLIC_CATEGORY_LISTING.map((cat) => (
               <Link
                 key={cat.slug}
-                href={`/${cat.slug}-${slug}`}
+                href={`/${cat.slug}/${slug}`}
                 className="rounded-xl border border-white bg-white px-4 py-3 text-center text-sm font-medium text-slate-700 shadow-sm transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700"
               >
                 {cat.displayName}

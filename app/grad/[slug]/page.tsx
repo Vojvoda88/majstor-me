@@ -60,6 +60,22 @@ export default async function GradPage({
 
   const cityImage = HOMEPAGE_CITIES.find((c) => c.slug === slug)?.image;
 
+  let openRequestCount: number | undefined;
+  try {
+    const { prisma } = await import("@/lib/db");
+    const n = await prisma.request.count({
+      where: {
+        city: name,
+        status: "OPEN",
+        deletedAt: null,
+        adminStatus: { notIn: ["SPAM", "DELETED"] },
+      },
+    });
+    openRequestCount = n;
+  } catch {
+    openRequestCount = undefined;
+  }
+
   let initialListing = null as Awaited<ReturnType<typeof getPublicHandymenList>> | null;
   try {
     initialListing = await getPublicHandymenList({
@@ -94,6 +110,7 @@ export default async function GradPage({
         slug={slug}
         cityImage={cityImage}
         initialListing={initialListing}
+        openRequestCount={openRequestCount}
       />
     </>
   );

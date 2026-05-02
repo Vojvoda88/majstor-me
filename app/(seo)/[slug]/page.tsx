@@ -1,61 +1,10 @@
-import { notFound } from "next/navigation";
-import type { Metadata } from "next";
+import { notFound, permanentRedirect } from "next/navigation";
 import { parseCategoryCitySlug } from "@/lib/slugs";
-import { getSiteUrl } from "@/lib/site-url";
-import { getSeoLandingStaticParams } from "@/lib/seo-landing-config";
-import { getPrioritySeoLandingContent } from "@/lib/seo-landing-priority-copy";
-import { getPublicHandymenList } from "@/lib/handymen-listing";
-import {
-  buildSeoCanonical,
-  buildSeoLandingDescription,
-  buildSeoLandingJsonLd,
-  buildSeoLandingTitle,
-} from "@/lib/seo-landing-metadata";
-import { SeoLandingContent } from "./seo-landing-content";
 
-export const revalidate = 3600;
-
-/** Pregenerisane stranice za glavne gradove × kategorije (7×6 = 42) */
-export function generateStaticParams() {
-  return getSeoLandingStaticParams();
-}
-
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}): Promise<Metadata> {
-  const { slug } = await params;
-  const parsed = parseCategoryCitySlug(slug);
-  if (!parsed) {
-    return { title: { absolute: "BrziMajstor.ME" } };
-  }
-  const base = getSiteUrl();
-  const canonical = buildSeoCanonical(base, slug);
-  const priority = getPrioritySeoLandingContent(slug);
-  const title = priority?.metaTitle ?? buildSeoLandingTitle(parsed);
-  const description = priority?.metaDescription ?? buildSeoLandingDescription(parsed);
-
-  return {
-    title,
-    description,
-    alternates: { canonical },
-    openGraph: {
-      title: `${title} | BrziMajstor.ME`,
-      description,
-      url: canonical,
-      siteName: "BrziMajstor.ME",
-      type: "website",
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: `${title} | BrziMajstor.ME`,
-      description,
-    },
-  };
-}
-
-export default async function SeoLandingPage({
+/**
+ * Stari format jednog segmenta ({slug}-{grad}) — trajni preusmjeravanje na /{usluga}/{grad}.
+ */
+export default async function LegacySeoLandingRedirect({
   params,
 }: {
   params: Promise<{ slug: string }>;
@@ -63,41 +12,5 @@ export default async function SeoLandingPage({
   const { slug } = await params;
   const parsed = parseCategoryCitySlug(slug);
   if (!parsed) notFound();
-
-  const base = getSiteUrl();
-  const canonicalUrl = buildSeoCanonical(base, slug);
-  const priority = getPrioritySeoLandingContent(slug);
-  const title = priority?.metaTitle ?? buildSeoLandingTitle(parsed);
-  const description = priority?.metaDescription ?? buildSeoLandingDescription(parsed);
-  const jsonLd = buildSeoLandingJsonLd({
-    canonicalUrl,
-    siteUrl: base.replace(/\/$/, ""),
-    title,
-    description,
-    parsed,
-  });
-  const initialListing = await getPublicHandymenList({
-    category: parsed.internalCategory,
-    city: parsed.cityDisplayName,
-    sortBy: "rating",
-    page: 1,
-  }).catch(() => null);
-
-  return (
-    <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
-      <SeoLandingContent
-        slug={slug}
-        displayName={parsed.categoryDisplayName}
-        internalCategory={parsed.internalCategory}
-        cityName={parsed.cityDisplayName}
-        citySlug={parsed.citySlug}
-        categorySlug={parsed.categorySlug}
-        initialListing={initialListing}
-      />
-    </>
-  );
+  permanentRedirect(`/${parsed.categorySlug}/${parsed.citySlug}`);
 }

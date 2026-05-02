@@ -1,6 +1,7 @@
 import {
   breadcrumbListEntity,
   organizationEntity,
+  schemaOrganizationId,
   schemaWebsiteId,
   websiteEntity,
 } from "@/lib/json-ld";
@@ -20,7 +21,7 @@ export type SeoLandingJsonLdInput = {
   parsed: SeoCombinedParsed;
 };
 
-/** WebPage + BreadcrumbList + deljeni Organization/WebSite @id (bez odvojenog Service — sadržaj je već u opisu stranice). */
+/** WebPage + Service + BreadcrumbList + Organization/WebSite @id */
 export function buildSeoLandingJsonLd({
   canonicalUrl,
   siteUrl,
@@ -44,6 +45,18 @@ export function buildSeoLandingJsonLd({
         description,
         isPartOf: { "@id": schemaWebsiteId(root) },
       },
+      {
+        "@type": "Service",
+        "@id": `${canonicalUrl}#service`,
+        name: `${parsed.categoryDisplayName} — ${parsed.cityDisplayName}`,
+        serviceType: parsed.internalCategory,
+        provider: { "@id": schemaOrganizationId(root) },
+        areaServed: {
+          "@type": "AdministrativeArea",
+          name: parsed.cityDisplayName,
+          addressCountry: "ME",
+        },
+      },
       breadcrumbListEntity([
         { name: "Početna", itemUrl: root },
         { name: parsed.cityDisplayName, itemUrl: cityGradUrl },
@@ -51,6 +64,12 @@ export function buildSeoLandingJsonLd({
       ]),
     ],
   };
+}
+
+/** Kanonski URL za novi format /{kategorija}/{grad} */
+export function buildSeoServiceCityCanonical(base: string, categorySlug: string, citySlug: string): string {
+  const root = base.replace(/\/$/, "");
+  return `${root}/${categorySlug}/${citySlug}`;
 }
 
 /** Za <head> canonical — uvijek apsolutni URL bez duplog slash-a */

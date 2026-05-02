@@ -166,6 +166,54 @@ export function buildPublicListingPageJsonLd(opts: {
   };
 }
 
+/** Stranica problema (long-tail): Organization + WebSite + WebPage + FAQPage + Service + BreadcrumbList */
+export function buildProblemPageJsonLd(opts: {
+  canonicalUrl: string;
+  pageTitle: string;
+  description: string;
+  breadcrumbs: BreadcrumbItem[];
+  faqs: FaqItem[];
+  serviceTypeLabel: string;
+  cityName: string;
+}): Record<string, unknown> {
+  const siteUrl = getSiteUrl().replace(/\/$/, "");
+  const { canonicalUrl, pageTitle, description, breadcrumbs, faqs, serviceTypeLabel, cityName } = opts;
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      organizationEntity(siteUrl),
+      websiteEntity(siteUrl),
+      {
+        "@type": "WebPage",
+        "@id": `${canonicalUrl}#webpage`,
+        url: canonicalUrl,
+        name: `${pageTitle} | BrziMajstor.ME`,
+        description,
+        isPartOf: { "@id": schemaWebsiteId(siteUrl) },
+      },
+      {
+        "@type": "FAQPage",
+        "@id": `${canonicalUrl}#faq`,
+        isPartOf: { "@id": `${canonicalUrl}#webpage` },
+        mainEntity: faqs.map((faq) => ({
+          "@type": "Question",
+          name: faq.q,
+          acceptedAnswer: { "@type": "Answer", text: faq.a },
+        })),
+      },
+      {
+        "@type": "Service",
+        "@id": `${canonicalUrl}#service`,
+        name: `${serviceTypeLabel} — ${cityName}`,
+        serviceType: serviceTypeLabel,
+        provider: { "@id": schemaOrganizationId(siteUrl) },
+        areaServed: { "@type": "AdministrativeArea", name: cityName, addressCountry: "ME" },
+      },
+      breadcrumbListEntity(breadcrumbs),
+    ],
+  };
+}
+
 /**
  * Profil majstora: LocalBusiness samo sa podacima koji postoje na stranici (rating samo ako ima recenzija).
  */

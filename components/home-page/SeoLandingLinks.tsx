@@ -3,7 +3,8 @@ import { MapPin } from "lucide-react";
 import { SEO_LANDING_HOMEPAGE_LINKS } from "@/lib/seo-landing-config";
 import { HOMEPAGE_CITIES } from "@/lib/homepage-data";
 
-const HOMEPAGE_GRAD_LINKS = HOMEPAGE_CITIES.slice(0, 8);
+/** Puna mreža gradovskih hub-ova za crawl */
+const HOMEPAGE_GRAD_LINKS = HOMEPAGE_CITIES;
 
 /** Interni linkovi ka SEO landing stranicama (usluga + grad) i gradovskim hub-ovima */
 export function SeoLandingLinks() {
@@ -21,9 +22,9 @@ export function SeoLandingLinks() {
       </p>
       <ul className="mt-4 flex flex-wrap gap-2 md:mt-6 md:gap-3">
         {SEO_LANDING_HOMEPAGE_LINKS.map((item) => (
-          <li key={item.slug}>
+          <li key={`${item.slug}-${item.city}`}>
             <Link
-              href={`/${item.slug}`}
+              href={`/${item.slug}/${item.city}`}
               className="inline-flex items-center rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-800 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-800 md:px-4"
             >
               {item.label}

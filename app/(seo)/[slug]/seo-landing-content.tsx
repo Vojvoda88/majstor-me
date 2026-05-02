@@ -263,7 +263,8 @@ export function SeoLandingContent({
           <section className="mt-12 rounded-2xl border border-blue-100 bg-gradient-to-br from-blue-50 to-white p-6 shadow-sm sm:p-8">
             <h2 className="text-lg font-bold text-slate-900 sm:text-xl">Pošaljite zahtjev</h2>
             <p className="mt-2 max-w-2xl text-slate-600">
-              Jedan opis posla, jedan grad — majstori koji mogu da odgovore šalju ponude. Nema obaveze da prihvatite.
+              Objavi zahtjev i dobij ponude za 10 minuta — jedan opis posla, jedan grad; majstori koji mogu da odgovore šalju
+              ponude. Nema obaveze da prihvatite.
             </p>
             <Link
               href={createUrl}
