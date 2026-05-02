@@ -30,7 +30,8 @@ const CATEGORY_SUBTEXT: Record<string, string> = {
   moler: "Krečenje, priprema zidova i završni radovi",
   gipsar: "Spušteni plafoni, pregrade i dekor gips",
   fasader: "Izolacija, fasada i obnova spoljašnjih zidova",
-  "grubi-gradjevinski-radovi": "Zidanje, beton, skela, grub zidar i glavni građevinski radovi",
+  "grubi-gradjevinski-radovi":
+    "Zidanje, betoniranje, oplate, skele, temelji, podloge, noseći zidovi — glavna faza gradnje prije završnih radova",
   ciscenje: "Stanovi, lokali i dubinsko čišćenje",
   selidbe: "Selidbe stanova, kancelarija i transport",
   bastovanstvo: "Dvorišta, rezidba, održavanje i uređenje",
