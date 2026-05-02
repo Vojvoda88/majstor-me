@@ -10,7 +10,10 @@ import { dbCategoryNamesForDistributionFilter, getInternalCategory } from "@/lib
 import { DEFAULT_PAGE_SIZE } from "@/lib/constants";
 import { getCityCoords } from "@/lib/cities";
 import { calcHandymanScore } from "@/lib/handyman-score";
-import { prismaWherePublicHandymanListingUserNotExcluded } from "@/lib/demo-email";
+import {
+  prismaAndClausesForPublicHandymanManualExcludes,
+  prismaWherePublicHandymanListingUserNotExcluded,
+} from "@/lib/demo-email";
 
 const MAX_HANDYMEN_LOAD = 200;
 const MAX_PAGE_SIZE = 50;
@@ -57,6 +60,10 @@ function buildPublicHandymanListingWhere(params: {
         },
       ],
     });
+  }
+
+  for (const clause of prismaAndClausesForPublicHandymanManualExcludes()) {
+    andParts.push(clause);
   }
 
   return {

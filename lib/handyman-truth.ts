@@ -13,7 +13,11 @@
  */
 
 import type { Prisma } from "@prisma/client";
-import { prismaWhereHandymanEmailNotDemo, prismaWherePublicHandymanListingUserNotExcluded } from "@/lib/demo-email";
+import {
+  prismaAndClausesForPublicHandymanManualExcludes,
+  prismaWhereHandymanEmailNotDemo,
+  prismaWherePublicHandymanListingUserNotExcluded,
+} from "@/lib/demo-email";
 
 /** User-level where za findMany (listing, homepage) — aktivan majstor. */
 export function prismaWhereUserActiveHandymanTruth(): Prisma.UserWhereInput {
@@ -31,12 +35,14 @@ export function prismaWhereUserActiveHandymanTruth(): Prisma.UserWhereInput {
  * Koristi za /handyman/[id], početnu, sitemap — ne za admin KPI.
  */
 export function prismaWhereUserActiveHandymanForPublicCatalog(): Prisma.UserWhereInput {
+  const manual = prismaAndClausesForPublicHandymanManualExcludes();
   return {
     role: "HANDYMAN",
     bannedAt: null,
     suspendedAt: null,
     ...prismaWherePublicHandymanListingUserNotExcluded(),
     handymanProfile: { workerStatus: "ACTIVE" },
+    ...(manual.length > 0 ? { AND: manual } : {}),
   };
 }
 
