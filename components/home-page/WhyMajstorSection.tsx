@@ -10,7 +10,7 @@ const BENEFITS = [
   {
     id: "02",
     title: "Besplatno za vas",
-    body: "Objava zahtjeva je besplatna za korisnike.",
+    body: "Za vas je zahtjev besplatan — bez skrivenih naknada na vašoj strani.",
     icon: Sparkles,
   },
 ];
@@ -29,7 +29,7 @@ export function WhyMajstorSection() {
             Zašto BrziMajstor.ME?
           </h2>
           <p className="relative mt-4 max-w-lg text-[15px] leading-relaxed text-slate-100/95 sm:mt-6 md:text-base">
-            Brza objava u Crnoj Gori — od sitnih popravki do većih radova, bez zvanja liste brojeva.
+            Od sitnih popravki do većih radova — jedan zahtjev, odgovori majstora iz Crne Gore, bez zvanja liste brojeva.
           </p>
           <div className="relative mt-8 grid gap-2.5 border-t border-white/10 pt-8 sm:grid-cols-2 sm:gap-3 md:mt-10 md:pt-10">
             <div className="rounded-2xl border border-white/10 bg-white/[0.07] px-4 py-4 backdrop-blur-sm">

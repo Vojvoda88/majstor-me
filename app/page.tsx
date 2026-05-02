@@ -4,7 +4,6 @@ import { getSiteUrl } from "@/lib/site-url";
 import { PublicHeader } from "@/components/layout/PublicHeader";
 import { PublicFooter } from "@/components/layout/PublicFooter";
 import { Hero } from "@/components/home-page/Hero";
-import { PostHeroConversionSection } from "@/components/home-page/PostHeroConversionSection";
 import { WhyMajstorSection } from "@/components/home-page/WhyMajstorSection";
 import { CategoriesGrid } from "@/components/home-page/CategoriesGrid";
 import { HowItWorksForUsers, HowItWorksForHandymen } from "@/components/home-page/HowItWorks";
@@ -51,9 +50,7 @@ export default function HomePage() {
       <div className="pt-0 md:pt-8">
         <Hero />
       </div>
-      <PostHeroConversionSection />
-
-      <div className="mx-auto max-w-6xl px-4 pb-10 pt-8 sm:px-5 md:px-6 md:pb-20 md:pt-14">
+      <div className="mx-auto max-w-6xl px-4 pb-10 pt-6 sm:px-5 md:px-6 md:pb-20 md:pt-12">
         <div className="animate-fade-up" style={{ animationDelay: "0.05s", animationFillMode: "both" }}>
           <HowItWorksForUsers />
         </div>

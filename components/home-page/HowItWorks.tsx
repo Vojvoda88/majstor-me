@@ -215,7 +215,7 @@ export function HowItWorksForUsers() {
           Kako radi za korisnike
         </h2>
         <p className="mx-auto mt-3 max-w-2xl text-[15px] font-medium leading-relaxed text-slate-600 sm:text-base md:text-lg">
-          Tri koraka: objavite zahtjev, majstori reaguju, dogovor.
+          Jedan kratki zahtjev — majstori iz vašeg grada odgovaraju preko platforme, bez zvanja od vrata do vrata.
         </p>
       </div>
       <div className="mx-auto mt-8 max-w-6xl md:mt-10">
@@ -226,13 +226,19 @@ export function HowItWorksForUsers() {
           />
           <StepGrid steps={USER_STEPS} />
         </div>
-        <div className="mx-auto mt-4 max-w-2xl text-center md:mt-5">
-          <p className="text-sm text-slate-500 md:text-[15px]">
+        <div className="mx-auto mt-8 flex max-w-2xl flex-col items-center text-center md:mt-10">
+          <Link
+            href="/request/create"
+            className="inline-flex min-h-[52px] w-full max-w-md items-center justify-center rounded-2xl bg-gradient-to-br from-[#3b82f6] to-[#1d4ed8] px-8 text-base font-bold text-white shadow-[0_14px_32px_-12px_rgba(37,99,235,0.45)] transition hover:brightness-105 active:scale-[0.99] sm:w-auto sm:min-w-[280px]"
+          >
+            Zatraži majstora
+          </Link>
+          <p className="mt-4 text-sm text-slate-500 md:text-[15px]">
             Jedan zahtjev umjesto niza pojedinačnih poziva.
           </p>
           <Link
             href="/kako-radi-korisnici"
-            className="mt-3 inline-flex items-center rounded-full border border-slate-300/80 bg-white/95 px-4 py-2 text-sm font-semibold text-slate-800 shadow-[0_10px_24px_-18px_rgba(15,23,42,0.45)] transition hover:border-slate-400/70 hover:bg-white"
+            className="mt-4 inline-flex items-center rounded-full border border-slate-300/80 bg-white/95 px-4 py-2 text-sm font-semibold text-slate-800 shadow-[0_10px_24px_-18px_rgba(15,23,42,0.45)] transition hover:border-slate-400/70 hover:bg-white"
           >
             Detaljno za korisnike
           </Link>
