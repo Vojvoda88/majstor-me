@@ -7,13 +7,13 @@ import { viberHref, whatsappHref } from "@/lib/contact-links";
 export function getSupportEmail(): string {
   const e = process.env.NEXT_PUBLIC_SUPPORT_EMAIL?.trim();
   if (e) return e;
-  return "brzimajstor.memarketng@gmail.com";
+  return "brzimajstor.memarketing@gmail.com";
 }
 
-/** Ako je postavljen u .env, prikazuje se na stranici kredita. */
+/** Isti broj za poziv, Viber i WhatsApp (override: NEXT_PUBLIC_SUPPORT_PHONE). */
 export function getSupportPhone(): string | null {
   const p = process.env.NEXT_PUBLIC_SUPPORT_PHONE?.trim();
-  return p || "+38268039969";
+  return p || "+382 68 039 969";
 }
 
 const DEFAULT_SUBJECT = "Pitanje za BrziMajstor.ME";

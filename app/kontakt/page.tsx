@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import { Mail, Phone, ArrowLeft, MessageCircleMore } from "lucide-react";
-import { auth } from "@/lib/auth";
+import { PublicHeader } from "@/components/layout/PublicHeader";
+import { PublicFooter } from "@/components/layout/PublicFooter";
 import {
   getSupportEmail,
   getSupportMailtoHref,
@@ -15,18 +15,10 @@ import { Button } from "@/components/ui/button";
 export const metadata: Metadata = {
   title: "Kontakt i podrška",
   description: "Pitanja za tim BrziMajstor.ME — korisnici, majstori, tehnička podrška.",
-  robots: { index: false, follow: false },
+  robots: { index: true, follow: true },
 };
 
-export default async function KontaktPage() {
-  const session = await auth();
-  if (!session?.user?.id) {
-    redirect("/login?callbackUrl=/kontakt");
-  }
-  if (session.user.role !== "USER" && session.user.role !== "HANDYMAN") {
-    redirect("/");
-  }
-
+export default function KontaktPage() {
   const email = getSupportEmail();
   const phone = getSupportPhone();
   const mailto = getSupportMailtoHref();
@@ -34,8 +26,9 @@ export default async function KontaktPage() {
   const viber = getSupportViberHref();
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <div className="mx-auto max-w-lg px-4 py-10 sm:py-14">
+    <div className="min-h-screen bg-brand-page pb-16 pt-16 md:pb-10 md:pt-20">
+      <PublicHeader />
+      <div className="mx-auto max-w-lg px-4 py-8 sm:py-10">
         <Link
           href="/"
           className="mb-6 inline-flex items-center gap-2 text-sm font-medium text-slate-600 transition hover:text-[#1d4ed8]"
@@ -46,8 +39,8 @@ export default async function KontaktPage() {
 
         <h1 className="font-display text-2xl font-bold text-slate-900 sm:text-3xl">Kontakt i podrška</h1>
         <p className="mt-3 text-[15px] leading-relaxed text-slate-600">
-          Ako ste prijavljeni korisnik ili majstor i nešto vam nije jasno oko naloga, oglasa, kredita ili tehničkog
-          problema, javite se direktno putem emaila, poziva, Vibera ili WhatsApp-a.
+          Za pitanja oko naloga, oglasa, kredita ili tehničkog problema javite se putem emaila, poziva, Vibera ili
+          WhatsApp-a — isti broj važi za sve tri aplikacije.
         </p>
 
         <div className="mt-8 space-y-4 rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm">
@@ -72,7 +65,7 @@ export default async function KontaktPage() {
                 <Phone className="h-5 w-5" aria-hidden />
               </div>
               <div>
-                <p className="text-sm font-semibold text-slate-900">Telefon</p>
+                <p className="text-sm font-semibold text-slate-900">Telefon (poziv, Viber, WhatsApp)</p>
                 <a href={`tel:${phone.replace(/\s/g, "")}`} className="mt-0.5 block text-[15px] text-[#1d4ed8] hover:underline">
                   {phone}
                 </a>
@@ -113,6 +106,7 @@ export default async function KontaktPage() {
           provjere.
         </p>
       </div>
+      <PublicFooter />
     </div>
   );
 }
