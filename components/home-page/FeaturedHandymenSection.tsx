@@ -9,16 +9,10 @@ type Props = { items: PublicHandymanListItem[] };
 export function FeaturedHandymenSection({ items }: Props) {
   return (
     <section id="istaknuti-majstori" className="py-10 md:py-20">
-      <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4 md:mb-10">
-        <div className="max-w-2xl">
-          <h2 className="font-display text-[1.65rem] font-bold tracking-tight text-brand-navy sm:text-3xl md:text-4xl lg:text-[2.35rem]">
-            Istaknuti majstori
-          </h2>
-          <p className="mt-3 text-base font-medium leading-relaxed text-slate-700 md:text-lg">
-            Aktivni profili na platformi — prikazani su prvo oni sa fotografijama (avatar ili galerija rada),
-            zatim po ocjenama i dostupnosti. Ostale grupe usluga pronađite u kategorijama.
-          </p>
-        </div>
+      <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4 md:mb-10">
+        <h2 className="max-w-2xl font-display text-[1.65rem] font-bold tracking-tight text-brand-navy sm:text-3xl md:text-4xl lg:text-[2.35rem]">
+          Istaknuti majstori
+        </h2>
         <Link
           href="/categories"
           className="inline-flex shrink-0 items-center gap-2 self-start rounded-2xl border border-slate-200/90 bg-white px-4 py-2.5 text-sm font-bold text-brand-navy shadow-sm transition hover:border-blue-200 hover:bg-blue-50/80 md:px-5 md:py-3 md:text-[15px]"
