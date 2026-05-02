@@ -2,6 +2,8 @@
  * Slike kategorija — lokalne PNG (majstorske fotografije) + Unsplash za ostale dok ne stignu vlastite.
  */
 
+import { CATEGORY_CONFIG_FULL } from "@/lib/categories";
+
 /** Lokalne slike u /public/images/categories/{slug}.png — jedna po usluzi, bez duple upotrebe iste fotke. */
 export const LOCAL_CATEGORY_SLUGS = [
   "vodoinstalater",
@@ -40,4 +42,23 @@ export function getCategoryImageUrl(slug: string): string {
     return `/images/categories/${slug}.png`;
   }
   return SLUG_IMAGE_REMOTE[slug] ?? UNSPLASH.default;
+}
+
+const DEFAULT_HERO_SLUG = "sitni-kucni-poslovi";
+
+/**
+ * Hero slika za majstora bez avatara/galerije — prva kategorija iz profila (DB `Category.name` = internalCategory).
+ */
+export function getCategoryHeroImageForWorkerCategories(internalCategoryNames: string[]): string {
+  if (!internalCategoryNames?.length) {
+    return getCategoryImageUrl(DEFAULT_HERO_SLUG);
+  }
+  const raw = internalCategoryNames[0]?.trim();
+  if (!raw) {
+    return getCategoryImageUrl(DEFAULT_HERO_SLUG);
+  }
+  const byInternal = CATEGORY_CONFIG_FULL.find((c) => c.internalCategory === raw);
+  const byDisplay = byInternal ?? CATEGORY_CONFIG_FULL.find((c) => c.displayName === raw);
+  const slug = byDisplay?.slug ?? DEFAULT_HERO_SLUG;
+  return getCategoryImageUrl(slug);
 }

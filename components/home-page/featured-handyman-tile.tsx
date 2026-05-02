@@ -12,17 +12,19 @@ import {
   User,
 } from "lucide-react";
 import { displayLabelForRequestCategory } from "@/lib/categories";
+import { getCategoryHeroImageForWorkerCategories } from "@/lib/category-images";
 import { AVATAR_IMAGE_FALLBACK } from "@/lib/homepage-data";
 import type { PublicHandymanListItem } from "@/lib/handymen-listing";
 
 type Props = { item: PublicHandymanListItem };
 
-type ImgLayer = "gallery" | "avatar" | "fallback" | "placeholder";
+type ImgLayer = "gallery" | "avatar" | "category" | "generic" | "placeholder";
 
 export function FeaturedHandymanTile({ item }: Props) {
   const displayName = item.name?.trim() || "Majstor";
   const gallery = item.firstGalleryImageUrl?.trim();
   const avatar = item.avatarUrl?.trim();
+  const categoryHeroUrl = getCategoryHeroImageForWorkerCategories(item.categories);
 
   const isVerified = item.verifiedStatus === "VERIFIED";
   const isPremium = item.isPromoted === true;
@@ -32,7 +34,7 @@ export function FeaturedHandymanTile({ item }: Props) {
   const initialLayer = (): ImgLayer => {
     if (gallery) return "gallery";
     if (avatar) return "avatar";
-    return "fallback";
+    return "category";
   };
 
   const [layer, setLayer] = useState<ImgLayer>(initialLayer);
@@ -42,9 +44,11 @@ export function FeaturedHandymanTile({ item }: Props) {
       ? gallery
       : layer === "avatar" && avatar
         ? avatar
-        : layer === "fallback"
-          ? AVATAR_IMAGE_FALLBACK
-          : "";
+        : layer === "category"
+          ? categoryHeroUrl
+          : layer === "generic"
+            ? AVATAR_IMAGE_FALLBACK
+            : "";
 
   const catLabels = item.categories
     .slice(0, 2)
@@ -60,10 +64,14 @@ export function FeaturedHandymanTile({ item }: Props) {
       return;
     }
     if (layer === "gallery" || layer === "avatar") {
-      setLayer("fallback");
+      setLayer("category");
       return;
     }
-    if (layer === "fallback") {
+    if (layer === "category") {
+      setLayer("generic");
+      return;
+    }
+    if (layer === "generic") {
       setLayer("placeholder");
     }
   };

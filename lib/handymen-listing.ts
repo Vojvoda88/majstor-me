@@ -148,6 +148,47 @@ function mapItemFromUserCore(u: UserWithProfile, cityForCoords: string | null): 
   };
 }
 
+function compareHomepageFeatured(a: UserWithProfile, b: UserWithProfile): number {
+  const pa = a.handymanProfile;
+  const pb = b.handymanProfile;
+  const ga = pa.galleryImages?.length ?? 0;
+  const gb = pb.galleryImages?.length ?? 0;
+  const hasAv = (p: typeof pa) => (p.avatarUrl?.trim() ? 1 : 0);
+  const photoScore = (p: typeof pa, g: number) =>
+    hasAv(p) * 400 + Math.min(g, 20) * 25 + (g > 0 && !hasAv(p) ? 80 : 0);
+
+  const psA = photoScore(pa, ga);
+  const psB = photoScore(pb, gb);
+  if (psA !== psB) return psB - psA;
+
+  const promA = profileExt(pa).isPromoted ? 1 : 0;
+  const promB = profileExt(pb).isPromoted ? 1 : 0;
+  if (promA !== promB) return promB - promA;
+
+  const ra = (pa.ratingAvg ?? 0) - (pb.ratingAvg ?? 0);
+  if (Math.abs(ra) > 1e-6) return ra > 0 ? -1 : 1;
+
+  return (pb.reviewCount ?? 0) - (pa.reviewCount ?? 0);
+}
+
+function mapUserToPublicItemHome(u: UserWithProfile, cityForCoords: string | null): PublicHandymanListItem {
+  const prof = u.handymanProfile;
+  const gallery = (prof as { galleryImages?: string[] }).galleryImages ?? [];
+  const firstGal = gallery[0]?.trim() || null;
+  const avatar = (prof as { avatarUrl?: string | null }).avatarUrl?.trim() || null;
+  const bioRaw = (prof as { bio?: string | null }).bio?.trim() ?? "";
+  const bioSnippet =
+    bioRaw.length > 0 ? bioRaw.replace(/\s+/g, " ").slice(0, 96) + (bioRaw.length > 96 ? "…" : "") : null;
+
+  const base = mapItemFromUserCore(u, cityForCoords);
+  return {
+    ...base,
+    firstGalleryImageUrl: firstGal,
+    bioSnippet,
+    avatarUrl: avatar,
+  };
+}
+
 export async function getPublicHandymenList(params: {
   category?: string | null;
   city?: string | null;
@@ -168,6 +209,31 @@ export async function getPublicHandymenList(params: {
   const resolvedCategory = categoryParam ? (getInternalCategory(categoryParam) ?? categoryParam) : null;
   const categoryDbNames = resolvedCategory ? dbCategoryNamesForDistributionFilter(resolvedCategory) : null;
   const baseWhere = buildPublicHandymanListingWhere({ categoryDbNames, city });
+
+  /** Početna + „Prikaži više“: isti redoslijed kao istaknuti (fotke, promo, ocjene). */
+  if ((sortBy === "homepage" || sortBy === "featured") && !city) {
+    const handymen = await prisma.user.findMany({
+      where: baseWhere,
+      include: {
+        handymanProfile: {
+          include: { workerCategories: { include: { category: true } } },
+        },
+      },
+      take: MAX_HANDYMEN_LOAD,
+    });
+    const filtered = handymen.filter((u) => u.handymanProfile) as UserWithProfile[];
+    filtered.sort(compareHomepageFeatured);
+    const total = filtered.length;
+    const offset = (page - 1) * limit;
+    const slice = filtered.slice(offset, offset + limit);
+    const totalPages = Math.ceil(total / limit) || 1;
+    return {
+      items: slice.map((u) => mapUserToPublicItemHome(u, null)),
+      total,
+      page,
+      totalPages,
+    };
+  }
 
   const useDbPagination = !city && (sortBy === "rating" || sortBy === "reviews");
   let items: UserWithProfile[];
@@ -244,70 +310,17 @@ export async function getPublicHandymenList(params: {
   };
 }
 
-const HOME_FEATURED_FETCH_CAP = 160;
-
-function compareHomepageFeatured(a: UserWithProfile, b: UserWithProfile): number {
-  const pa = a.handymanProfile;
-  const pb = b.handymanProfile;
-  const ga = pa.galleryImages?.length ?? 0;
-  const gb = pb.galleryImages?.length ?? 0;
-  const hasAv = (p: typeof pa) => (p.avatarUrl?.trim() ? 1 : 0);
-  const photoScore = (p: typeof pa, g: number) =>
-    hasAv(p) * 400 + Math.min(g, 20) * 25 + (g > 0 && !hasAv(p) ? 80 : 0);
-
-  const psA = photoScore(pa, ga);
-  const psB = photoScore(pb, gb);
-  if (psA !== psB) return psB - psA;
-
-  const promA = profileExt(pa).isPromoted ? 1 : 0;
-  const promB = profileExt(pb).isPromoted ? 1 : 0;
-  if (promA !== promB) return promB - promA;
-
-  const ra = (pa.ratingAvg ?? 0) - (pb.ratingAvg ?? 0);
-  if (Math.abs(ra) > 1e-6) return ra > 0 ? -1 : 1;
-
-  return (pb.reviewCount ?? 0) - (pa.reviewCount ?? 0);
-}
-
-function mapUserToPublicItemHome(u: UserWithProfile, cityForCoords: string | null): PublicHandymanListItem {
-  const prof = u.handymanProfile;
-  const gallery = (prof as { galleryImages?: string[] }).galleryImages ?? [];
-  const firstGal = gallery[0]?.trim() || null;
-  const avatar = (prof as { avatarUrl?: string | null }).avatarUrl?.trim() || null;
-  const bioRaw = (prof as { bio?: string | null }).bio?.trim() ?? "";
-  const bioSnippet =
-    bioRaw.length > 0 ? bioRaw.replace(/\s+/g, " ").slice(0, 96) + (bioRaw.length > 96 ? "…" : "") : null;
-
-  const base = mapItemFromUserCore(u, cityForCoords);
-  return {
-    ...base,
-    firstGalleryImageUrl: firstGal,
-    bioSnippet,
-    avatarUrl: avatar,
-  };
-}
-
 /**
  * Početna strana: istaknuti aktivni majstori — prednost profilima sa avatarom i/ili galerijom, zatim ocjena i promocija.
+ * Isto kao `getPublicHandymenList({ sortBy: "homepage", page: 1, limit })`.
  */
 export async function getHomepageFeaturedHandymen(limit = 6): Promise<PublicHandymanListItem[]> {
-  const { prisma } = await import("@/lib/db");
-  const baseWhere = buildPublicHandymanListingWhere({ categoryDbNames: null, city: null });
-
-  const users = await prisma.user.findMany({
-    where: baseWhere,
-    include: {
-      handymanProfile: {
-        include: { workerCategories: { include: { category: true } } },
-      },
-    },
-    take: HOME_FEATURED_FETCH_CAP,
+  const r = await getPublicHandymenList({
+    sortBy: "homepage",
+    page: 1,
+    limit,
+    category: null,
+    city: null,
   });
-
-  const filtered = users.filter((u) => u.handymanProfile) as UserWithProfile[];
-
-  filtered.sort(compareHomepageFeatured);
-
-  const slice = filtered.slice(0, Math.max(0, limit));
-  return slice.map((u) => mapUserToPublicItemHome(u, null));
+  return r.items;
 }

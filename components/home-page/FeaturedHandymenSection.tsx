@@ -1,12 +1,64 @@
+"use client";
+
+import { useCallback, useState } from "react";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, ChevronDown } from "lucide-react";
 import { FeaturedHandymanTile } from "./featured-handyman-tile";
 import { ACTIVE_PUBLIC_CATEGORY_COUNT } from "@/lib/categories";
 import type { PublicHandymanListItem } from "@/lib/handymen-listing";
 
-type Props = { items: PublicHandymanListItem[] };
+type Props = {
+  initialItems: PublicHandymanListItem[];
+  total: number;
+  pageSize?: number;
+};
 
-export function FeaturedHandymenSection({ items }: Props) {
+export function FeaturedHandymenSection({ initialItems, total, pageSize = 6 }: Props) {
+  const [items, setItems] = useState(initialItems);
+  const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const hasMore = items.length < total;
+  const remaining = Math.max(0, total - items.length);
+
+  const loadMore = useCallback(async () => {
+    if (loading || !hasMore) return;
+    setLoading(true);
+    setError(null);
+    try {
+      const next = page + 1;
+      const params = new URLSearchParams({
+        sort: "homepage",
+        page: String(next),
+        limit: String(pageSize),
+      });
+      const res = await fetch(`/api/handymen?${params.toString()}`);
+      if (!res.ok) throw new Error("fetch failed");
+      const data = (await res.json()) as {
+        items?: PublicHandymanListItem[];
+        handymen?: PublicHandymanListItem[];
+      };
+      const batch = data.items ?? data.handymen ?? [];
+      setItems((prev) => {
+        const seen = new Set(prev.map((p) => p.id));
+        const merged = [...prev];
+        for (const h of batch) {
+          if (!seen.has(h.id)) {
+            seen.add(h.id);
+            merged.push(h);
+          }
+        }
+        return merged;
+      });
+      setPage(next);
+    } catch {
+      setError("Ne možemo učitati još majstora. Pokušajte ponovo.");
+    } finally {
+      setLoading(false);
+    }
+  }, [hasMore, loading, page, pageSize]);
+
   return (
     <section id="istaknuti-majstori" className="py-10 md:py-20">
       <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4 md:mb-10">
@@ -52,6 +104,30 @@ export function FeaturedHandymenSection({ items }: Props) {
               <FeaturedHandymanTile key={item.id} item={item} />
             ))}
           </div>
+
+          {hasMore ? (
+            <div className="mt-8 flex flex-col items-center gap-2">
+              {error ? <p className="text-sm font-medium text-red-600">{error}</p> : null}
+              <button
+                type="button"
+                onClick={loadMore}
+                disabled={loading}
+                className="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-2xl border border-slate-200/90 bg-white px-6 py-3 text-sm font-bold text-brand-navy shadow-sm transition hover:border-blue-200 hover:bg-blue-50/80 disabled:cursor-not-allowed disabled:opacity-60 md:text-[15px]"
+              >
+                {loading ? (
+                  "Učitavanje…"
+                ) : (
+                  <>
+                    Prikaži više
+                    {remaining > 0 ? (
+                      <span className="tabular-nums font-semibold text-slate-500">({remaining})</span>
+                    ) : null}
+                    <ChevronDown className="h-4 w-4 shrink-0 opacity-80" aria-hidden />
+                  </>
+                )}
+              </button>
+            </div>
+          ) : null}
 
           <div className="mt-10 rounded-2xl border border-slate-200/90 bg-gradient-to-br from-slate-50 to-blue-50/40 px-5 py-8 text-center shadow-sm md:px-10 md:py-10">
             <p className="font-display text-lg font-bold tracking-tight text-brand-navy md:text-xl">
