@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Gift, PhoneOff, Zap } from "lucide-react";
 import { HERO_IMAGE } from "@/lib/homepage-data";
+import { SEO_HERO_HEADLINE, SEO_HERO_SUBLINE } from "@/lib/seo-brand";
 
 const TRUST = [
   { icon: Gift, label: "100% besplatno" },
@@ -34,11 +35,11 @@ export function Hero() {
       />
       <div className="pointer-events-auto relative z-10 w-full max-w-4xl text-center">
         <h1 className="font-display mb-4 text-[1.72rem] font-extrabold leading-[1.12] tracking-tight text-white sm:text-[2rem] md:mb-5 md:text-5xl lg:text-[3.25rem] lg:leading-[1.08]">
-          Treba vam majstor danas?
+          {SEO_HERO_HEADLINE}
         </h1>
         <p className="mx-auto mb-6 max-w-2xl text-[15px] font-medium leading-relaxed text-slate-100 sm:text-base md:mb-8 md:text-lg md:leading-relaxed">
           <span className="bg-gradient-to-r from-white to-white/85 bg-clip-text font-semibold text-transparent">
-            Zatražite majstora za manje od 1 minuta, a zainteresovani i dostupni majstori će vam se javiti direktno.
+            {SEO_HERO_SUBLINE}
           </span>
         </p>
 

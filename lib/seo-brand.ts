@@ -7,6 +7,12 @@
 export const SEO_BRAND_SLOGAN =
   "Jedan zahtjev — majstori iz vašeg grada odgovaraju ponudama.";
 
+/** Hero na / i OG/Twitter preview — isti ton, jedan izvor. */
+export const SEO_HERO_HEADLINE = "Treba vam majstor danas?";
+
+export const SEO_HERO_SUBLINE =
+  "Zatražite majstora za manje od 1 minuta, a zainteresovani i dostupni majstori će vam se javiti direktno.";
+
 /** Opis organizacije za schema.org Organization */
 export const SEO_ORGANIZATION_DESCRIPTION =
   "BrziMajstor.ME je digitalni marketplace majstora u Crnoj Gori: besplatna objava zahtjeva za popravke, adaptacije i usluge kod kuće ili na poslu; majstori šalju ponude, vi poređujete ocjene i uslove.";
