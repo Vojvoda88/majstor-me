@@ -1,17 +1,26 @@
 /**
- * OG / Twitter preview — hero naslov/podnaslov iz `seo-brand`, logo iz diska (data URL).
+ * OG / Twitter — isti brend kao `PublicHeader`: worker ikona + BrziMajstor.ME (boje kao na početnoj).
+ * Naslov/podnaslov iz `seo-brand` (isto što hero).
  */
 import type { ReactElement } from "react";
 
+/** Tailwind `amber-300` — `.ME` na tamnoj traci kao u headeru (homeTheme). */
+const ME_COLOR = "#fcd34d";
+const NAME_COLOR = "#f1f5f9";
+
 type Props = {
-  /** data:image/png;base64,... */
-  logoDataUrl: string;
+  /** data:image/png;base64,... worker-cutout */
+  markDataUrl: string;
   headline: string;
   subline: string;
   footerTag: string;
 };
 
-export function OgShareCard({ logoDataUrl, headline, subline, footerTag }: Props): ReactElement {
+export function OgShareCard({ markDataUrl, headline, subline, footerTag }: Props): ReactElement {
+  /* PNG 299×384 — u headeru ~34px visine; ovdje malo veće za čitljivost */
+  const markH = 68;
+  const markW = Math.round((299 / 384) * markH);
+
   return (
     <div
       style={{
@@ -26,8 +35,28 @@ export function OgShareCard({ logoDataUrl, headline, subline, footerTag }: Props
         fontFamily: "Inter, system-ui, sans-serif",
       }}
     >
-      <div style={{ display: "flex", alignItems: "flex-start" }}>
-        <img src={logoDataUrl} width={280} height={75} alt="" />
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "center",
+          gap: 18,
+        }}
+      >
+        <img src={markDataUrl} width={markW} height={markH} alt="" />
+        <div style={{ display: "flex", flexDirection: "row", alignItems: "baseline" }}>
+          <span
+            style={{
+              fontSize: 38,
+              fontWeight: 800,
+              letterSpacing: -0.6,
+              color: NAME_COLOR,
+            }}
+          >
+            BrziMajstor
+          </span>
+          <span style={{ fontSize: 38, fontWeight: 800, letterSpacing: -0.6, color: ME_COLOR }}>.ME</span>
+        </div>
       </div>
 
       <div
@@ -37,7 +66,7 @@ export function OgShareCard({ logoDataUrl, headline, subline, footerTag }: Props
           gap: 18,
           flex: 1,
           justifyContent: "center",
-          paddingTop: 8,
+          paddingTop: 6,
           paddingBottom: 4,
         }}
       >

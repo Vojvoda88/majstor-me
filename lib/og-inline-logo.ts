@@ -4,12 +4,12 @@ import path from "node:path";
 let cached: string | null = null;
 
 /**
- * Učitava horizontalni brend logo iz `public/` kao data URL — bez mrežnog fetcha u Edge/OG,
- * da pregled linka uvijek dobije istu grafiku kao na disku.
+ * Isti vizuel kao javni header (`PublicHeader`): worker ikona iz `public/brand/worker-cutout-transparent.png`.
+ * Tekst „BrziMajstor.ME“ se renderuje u `OgShareCard` kao na sajtu (ne horizontalni PNG brend).
  */
-export function getOgHorizontalLogoDataUrl(): string {
+export function getOgSiteHeaderMarkDataUrl(): string {
   if (cached) return cached;
-  const file = path.join(process.cwd(), "public", "brand", "brzimajstor-logo-horizontal-user.png");
+  const file = path.join(process.cwd(), "public", "brand", "worker-cutout-transparent.png");
   const buf = fs.readFileSync(file);
   cached = `data:image/png;base64,${buf.toString("base64")}`;
   return cached;
