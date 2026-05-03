@@ -68,9 +68,9 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/opengraph-image",
-        width: 1200,
-        height: 630,
+        url: "/brand/brzimajstor-og-share.png",
+        width: 1024,
+        height: 682,
         alt: "Treba vam majstor danas? — BrziMajstor.ME",
       },
     ],
@@ -79,7 +79,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "BrziMajstor.ME — majstori širom Crne Gore",
     description: SEO_DEFAULT_DESCRIPTION,
-    images: ["/twitter-image"],
+    images: ["/brand/brzimajstor-og-share.png"],
   },
   robots: {
     index: true,
