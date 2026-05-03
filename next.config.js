@@ -49,7 +49,16 @@ const nextConfig = {
         ].join("; "),
       },
     ];
+    /* OG slike: bez godinu dana immutable keša (inače WhatsApp/Meta drže staru grafiku) */
+    const ogCache = [
+      {
+        key: "Cache-Control",
+        value: "public, max-age=120, s-maxage=600, stale-while-revalidate=86400, must-revalidate",
+      },
+    ];
     return [
+      { source: "/opengraph-image", headers: [...security, ...ogCache] },
+      { source: "/twitter-image", headers: [...security, ...ogCache] },
       { source: "/:path*", headers: security },
     ];
   },

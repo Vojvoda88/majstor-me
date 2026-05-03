@@ -5,6 +5,9 @@ import { SEO_BRAND_SLOGAN, SEO_HERO_HEADLINE, SEO_HERO_SUBLINE } from "@/lib/seo
 
 export const runtime = "nodejs";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export const size = {
   width: 1200,
   height: 630,
@@ -23,6 +26,12 @@ export default function TwitterImage() {
         footerTag={SEO_BRAND_SLOGAN}
       />
     ),
-    size
+    {
+      ...size,
+      headers: {
+        "Cache-Control":
+          "public, max-age=120, s-maxage=600, stale-while-revalidate=86400, must-revalidate",
+      },
+    }
   );
 }
