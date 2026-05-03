@@ -10,6 +10,8 @@ import {
   SEO_DEFAULT_DESCRIPTION,
   SEO_KEYWORDS,
   SEO_ORGANIZATION_DESCRIPTION,
+  SEO_OG_IMAGE,
+  SEO_OG_IMAGE_PATH,
 } from "@/lib/seo-brand";
 import { getSiteUrl } from "@/lib/site-url";
 import "./globals.css";
@@ -66,20 +68,13 @@ export const metadata: Metadata = {
     siteName: "BrziMajstor.ME",
     locale: "sr_ME",
     type: "website",
-    images: [
-      {
-        url: "/brand/brzimajstor-og-share.png",
-        width: 1024,
-        height: 682,
-        alt: "Treba vam majstor danas? — BrziMajstor.ME",
-      },
-    ],
+    images: [SEO_OG_IMAGE],
   },
   twitter: {
     card: "summary_large_image",
     title: "BrziMajstor.ME — majstori širom Crne Gore",
     description: SEO_DEFAULT_DESCRIPTION,
-    images: ["/brand/brzimajstor-og-share.png"],
+    images: [SEO_OG_IMAGE_PATH],
   },
   robots: {
     index: true,

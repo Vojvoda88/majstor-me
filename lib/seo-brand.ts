@@ -13,6 +13,16 @@ export const SEO_HERO_HEADLINE = "Treba vam majstor danas?";
 export const SEO_HERO_SUBLINE =
   "Zatražite majstora za manje od 1 minuta, a zainteresovani i dostupni majstori će vam se javiti direktno.";
 
+/** Staticki OG/Twitter preview (`public/brand/...`) — homepage meta mora eksplicitno ukljuciti da merge ne izgubi sliku. */
+export const SEO_OG_IMAGE_PATH = "/brand/brzimajstor-og-share.png";
+
+export const SEO_OG_IMAGE = {
+  url: SEO_OG_IMAGE_PATH,
+  width: 1024,
+  height: 682,
+  alt: `${SEO_HERO_HEADLINE} — BrziMajstor.ME`,
+} as const;
+
 /** Opis organizacije za schema.org Organization */
 export const SEO_ORGANIZATION_DESCRIPTION =
   "BrziMajstor.ME je digitalni marketplace majstora u Crnoj Gori: besplatna objava zahtjeva za popravke, adaptacije i usluge kod kuće ili na poslu; majstori šalju ponude, vi poređujete ocjene i uslove.";

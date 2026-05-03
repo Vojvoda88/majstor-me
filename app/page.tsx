@@ -11,7 +11,12 @@ import { HowItWorksForUsers, HowItWorksForHandymen } from "@/components/home-pag
 import { SeoLandingLinks } from "@/components/home-page/SeoLandingLinks";
 import { buildHomeJsonLdGraph } from "@/lib/json-ld";
 import { FAQ_ITEMS } from "@/lib/faq-data";
-import { SEO_HOME_DESCRIPTION, SEO_HOME_TITLE } from "@/lib/seo-brand";
+import {
+  SEO_HOME_DESCRIPTION,
+  SEO_HOME_TITLE,
+  SEO_OG_IMAGE,
+  SEO_OG_IMAGE_PATH,
+} from "@/lib/seo-brand";
 
 const siteUrl = getSiteUrl();
 
@@ -26,10 +31,12 @@ export const metadata: Metadata = {
     title: `${SEO_HOME_TITLE} | BrziMajstor.ME`,
     description: SEO_HOME_DESCRIPTION,
     url: siteUrl,
+    images: [SEO_OG_IMAGE],
   },
   twitter: {
     title: `${SEO_HOME_TITLE} | BrziMajstor.ME`,
     description: SEO_HOME_DESCRIPTION,
+    images: [SEO_OG_IMAGE_PATH],
   },
 };
 
