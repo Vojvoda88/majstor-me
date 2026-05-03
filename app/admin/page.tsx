@@ -1,193 +1,14 @@
-import { prismaWhereHandymanProfileActiveKpi } from "@/lib/admin/admin-handyman-filters";
-import { prismaWhereHandymanProfileActiveTruth } from "@/lib/handyman-truth";
-import { getAdminPendingReviewCounts } from "@/lib/admin-pending-counts";
 import { AdminPushEntryCard } from "@/components/admin/admin-push-entry-card";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { AdminDashboardData } from "@/lib/admin-dashboard-metrics";
+import { getCachedAdminDashboardData } from "@/lib/admin-dashboard-metrics";
 import Link from "next/link";
 
-export const dynamic = "force-dynamic";
-
-type DashboardData = {
-  requestsToday: number;
-  requestsWeek: number;
-  handymenToday: number;
-  handymenActive: number;
-  offersCount: number;
-  contactUnlocksCount: number;
-  reportsPending: number;
-  creditsToday: number;
-  creditsWeek: number;
-  creditsMonth: number;
-  requestsByDay: Array<{ label: string; count: number }>;
-};
-
-let dashboardCache: DashboardData | null = null;
-let dashboardCacheTimestamp = 0;
-const DASHBOARD_CACHE_TTL_MS = 60_000;
-
-async function withTiming<T>(label: string, fn: () => Promise<T>): Promise<{ result: T; label: string; ms: number }> {
-  const start = Date.now();
-  const result = await fn();
-  return { result, label, ms: Date.now() - start };
-}
-
-async function loadDashboardData() {
-  const { prisma } = await import("@/lib/db");
-
-  if (dashboardCache && Date.now() - dashboardCacheTimestamp < DASHBOARD_CACHE_TTL_MS) {
-    return dashboardCache;
-  }
-  const now = new Date();
-  const todayStart = new Date(now);
-  todayStart.setHours(0, 0, 0, 0);
-  const weekStart = new Date(now);
-  weekStart.setDate(weekStart.getDate() - 7);
-  const monthStart = new Date(now);
-  monthStart.setDate(monthStart.getDate() - 30);
-
-  const dayRanges = ([6, 5, 4, 3, 2, 1, 0] as const).map((d) => {
-    const start = new Date(now);
-    start.setDate(start.getDate() - d);
-    start.setHours(0, 0, 0, 0);
-    const end = new Date(start);
-    end.setDate(end.getDate() + 1);
-    return { start, end, label: start.toLocaleDateString("sr", { weekday: "short" }) };
-  });
-
-  const runTimed = process.env.NODE_ENV === "development" || process.env.ADMIN_DASHBOARD_TIMING === "1";
-
-  const all = await Promise.all([
-    runTimed
-      ? withTiming("handymenToday", () =>
-          prisma.handymanProfile.count({
-            where: {
-              createdAt: { gte: todayStart },
-              ...prismaWhereHandymanProfileActiveTruth(),
-            },
-          })
-        )
-      : prisma.handymanProfile
-          .count({
-            where: {
-              createdAt: { gte: todayStart },
-              ...prismaWhereHandymanProfileActiveTruth(),
-            },
-          })
-          .then((r) => ({ result: r, label: "", ms: 0 })),
-    runTimed
-      ? withTiming("handymenActive", () =>
-          prisma.handymanProfile.count({ where: prismaWhereHandymanProfileActiveKpi() })
-        )
-      : prisma.handymanProfile
-          .count({ where: prismaWhereHandymanProfileActiveKpi() })
-          .then((r) => ({ result: r, label: "", ms: 0 })),
-    runTimed
-      ? withTiming("offersCount", () => prisma.offer.count())
-      : prisma.offer.count().then((r) => ({ result: r, label: "", ms: 0 })),
-    runTimed
-      ? withTiming("contactUnlocksCount", () => prisma.requestContactUnlock.count())
-      : prisma.requestContactUnlock.count().then((r) => ({ result: r, label: "", ms: 0 })),
-    runTimed
-      ? withTiming("reportsPending", () => prisma.report.count({ where: { status: "PENDING" } }))
-      : prisma.report.count({ where: { status: "PENDING" } }).then((r) => ({ result: r, label: "", ms: 0 })),
-    runTimed
-      ? withTiming("creditsToday", () =>
-          prisma.creditTransaction.count({
-            where: { createdAt: { gte: todayStart }, amount: { lt: 0 }, type: "CONTACT_UNLOCK" },
-          })
-        )
-      : prisma.creditTransaction
-          .count({ where: { createdAt: { gte: todayStart }, amount: { lt: 0 }, type: "CONTACT_UNLOCK" } })
-          .then((r) => ({ result: r, label: "", ms: 0 })),
-    runTimed
-      ? withTiming("creditsWeek", () =>
-          prisma.creditTransaction.count({ where: { createdAt: { gte: weekStart }, amount: { lt: 0 } } })
-        )
-      : prisma.creditTransaction
-          .count({ where: { createdAt: { gte: weekStart }, amount: { lt: 0 } } })
-          .then((r) => ({ result: r, label: "", ms: 0 })),
-    runTimed
-      ? withTiming("creditsMonth", () =>
-          prisma.creditTransaction.count({ where: { createdAt: { gte: monthStart }, amount: { lt: 0 } } })
-        )
-      : prisma.creditTransaction
-          .count({ where: { createdAt: { gte: monthStart }, amount: { lt: 0 } } })
-          .then((r) => ({ result: r, label: "", ms: 0 })),
-    runTimed
-      ? withTiming("requestsByDay", () =>
-          prisma.$queryRaw<Array<{ day: Date; count: bigint | number }>>`
-            SELECT date_trunc('day', "created_at") AS day, COUNT(*) AS count
-            FROM "requests"
-            WHERE "created_at" >= ${dayRanges[0].start}
-            GROUP BY 1
-          `
-        )
-      : prisma.$queryRaw<Array<{ day: Date; count: bigint | number }>>`
-          SELECT date_trunc('day', "created_at") AS day, COUNT(*) AS count
-          FROM "requests"
-          WHERE "created_at" >= ${dayRanges[0].start}
-          GROUP BY 1
-        `.then((r) => ({ result: r, label: "", ms: 0 })),
-  ]);
-
-  const getResult = (i: number): unknown => ("result" in all[i] ? (all[i] as { result: unknown }).result : all[i]);
-  const handymenToday = getResult(0) as number;
-  const handymenActive = getResult(1) as number;
-  const offersCount = getResult(2) as number;
-  const contactUnlocksCount = getResult(3) as number;
-  const reportsPending = getResult(4) as number;
-  const creditsToday = getResult(5) as number;
-  const creditsWeek = getResult(6) as number;
-  const creditsMonth = getResult(7) as number;
-  const requestsByDayRows = getResult(8) as Array<{ day: Date; count: bigint | number }>;
-  const requestsByDayMap = new Map(
-    requestsByDayRows.map((r) => [new Date(r.day).toDateString(), Number(r.count)])
-  );
-  const requestsByDay = dayRanges.map(({ start, end, label }) => ({
-    label,
-    count: requestsByDayMap.get(start.toDateString()) ?? 0,
-  }));
-  const requestsToday = requestsByDay.at(-1)?.count ?? 0;
-  const requestsWeek = requestsByDay.reduce((sum, d) => sum + d.count, 0);
-
-  if (runTimed && "ms" in all[0]) {
-    const timings = all
-      .slice(0, 9)
-      .filter((x) => typeof (x as { ms?: number }).ms === "number") as { result: unknown; label: string; ms: number }[];
-    const slowest = timings.length ? timings.reduce((a, b) => (a.ms >= b.ms ? a : b)) : null;
-    console.info("[AdminDashboard] Query batch total (wall) ms:", Date.now() - (typeof (global as unknown as { __adminDashboardStart?: number }).__adminDashboardStart === "number" ? (global as unknown as { __adminDashboardStart: number }).__adminDashboardStart : 0));
-    if (slowest) console.info("[AdminDashboard] Slowest query:", slowest.label, slowest.ms, "ms");
-  }
-
-  const data: DashboardData = {
-    requestsToday,
-    requestsWeek,
-    handymenToday,
-    handymenActive,
-    offersCount,
-    contactUnlocksCount,
-    reportsPending,
-    creditsToday,
-    creditsWeek,
-    creditsMonth,
-    requestsByDay,
-  };
-
-  dashboardCache = data;
-  dashboardCacheTimestamp = Date.now();
-
-  return data;
-}
+/** KPI iz keša (60s); layout je force-dynamic zbog auth — ova stranica koristi Data Cache za metrike. */
+export const revalidate = 60;
 
 export default async function AdminDashboardPage() {
-  let pendingStrip = { pendingRequests: 0, pendingHandymen: 0, urgentPendingRequests: 0 };
-  try {
-    pendingStrip = await getAdminPendingReviewCounts();
-  } catch {
-    /* ignore */
-  }
-
-  const emptyData: Awaited<ReturnType<typeof loadDashboardData>> = {
+  const emptyData: AdminDashboardData = {
     requestsToday: 0,
     requestsWeek: 0,
     handymenToday: 0,
@@ -201,19 +22,12 @@ export default async function AdminDashboardPage() {
     requestsByDay: [],
   };
 
-  let data: Awaited<ReturnType<typeof loadDashboardData>> = emptyData;
+  let data: AdminDashboardData = emptyData;
   try {
-    data = await loadDashboardData();
+    data = await getCachedAdminDashboardData();
   } catch (dataErr) {
     console.error("[AdminDashboard] Data load error:", dataErr);
-    console.error("[AdminDashboard] Data stack:", dataErr instanceof Error ? dataErr.stack : "no stack");
-    console.error("[AdminDashboard] Data message:", dataErr instanceof Error ? dataErr.message : String(dataErr));
-    // U produkciji ne rušimo cijeli dashboard – prikažemo prazan state umjesto toga.
-    if (process.env.NODE_ENV !== "development") {
-      console.error("[AdminDashboard] Falling back to empty dashboard data in production.");
-    } else {
-      throw dataErr;
-    }
+    if (process.env.NODE_ENV === "development") throw dataErr;
   }
 
   const {
@@ -230,11 +44,7 @@ export default async function AdminDashboardPage() {
     requestsByDay,
   } = data;
 
-  function safeArray<T>(x: T[] | undefined | null): T[] {
-    return Array.isArray(x) ? x : [];
-  }
-  const requestsByDaySafe = safeArray(requestsByDay);
-
+  const requestsByDaySafe = Array.isArray(requestsByDay) ? requestsByDay : [];
   const maxBar = Math.max(1, ...requestsByDaySafe.map((d) => d.count));
 
   const statCards = [
@@ -263,37 +73,6 @@ export default async function AdminDashboardPage() {
       </div>
 
       <AdminPushEntryCard />
-
-      {(pendingStrip.pendingRequests > 0 || pendingStrip.pendingHandymen > 0) && (
-        <div className="grid gap-3 sm:grid-cols-2">
-          <Link href="/admin/requests?adminStatus=PENDING_REVIEW">
-            <Card className="h-full border-amber-200 bg-amber-50/90 transition-shadow hover:shadow-md">
-              <CardHeader className="pb-1">
-                <CardTitle className="text-sm font-semibold text-amber-950">Zahtjevi na pregled</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-2xl font-bold text-amber-950">{pendingStrip.pendingRequests}</p>
-                {pendingStrip.urgentPendingRequests > 0 && (
-                  <p className="mt-1 text-xs font-medium text-red-700">
-                    Hitno (danas): {pendingStrip.urgentPendingRequests}
-                  </p>
-                )}
-              </CardContent>
-            </Card>
-          </Link>
-          <Link href="/admin/handymen?status=PENDING_REVIEW">
-            <Card className="h-full border-sky-200 bg-sky-50/90 transition-shadow hover:shadow-md">
-              <CardHeader className="pb-1">
-                <CardTitle className="text-sm font-semibold text-sky-950">Majstori na pregled</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-2xl font-bold text-sky-950">{pendingStrip.pendingHandymen}</p>
-                <p className="mt-1 text-xs text-sky-800">Nova prijava ili profil na čekanju</p>
-              </CardContent>
-            </Card>
-          </Link>
-        </div>
-      )}
 
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {statCards.map((stat) => {
@@ -338,10 +117,6 @@ export default async function AdminDashboardPage() {
             </div>
           </CardContent>
         </Card>
-      </div>
-
-      <div className="grid gap-4 lg:grid-cols-1">
-        {/* Secondary analytics and recent activity blokovi su uklonjeni iz prvog SSR rendera da bi critical path ostao samo na KPI i osnovnom chartu. */}
       </div>
     </div>
   );

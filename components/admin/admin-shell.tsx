@@ -17,8 +17,22 @@ type Props = {
   children: React.ReactNode;
 };
 
-export function AdminShell({ adminRole, session, pendingReview, children }: Props) {
+export function AdminShell({ adminRole, session, pendingReview: pendingInitial, children }: Props) {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [pendingReview, setPendingReview] = useState(pendingInitial);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch("/api/admin/pending-review-counts")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data: AdminPendingReviewCounts | null) => {
+        if (!cancelled && data) setPendingReview(data);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   useEffect(() => {
     if (mobileOpen) {
