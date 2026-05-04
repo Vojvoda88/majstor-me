@@ -3,6 +3,7 @@ import { z } from "zod";
 
 export const dynamic = "force-dynamic";
 import { auth } from "@/lib/auth";
+import { guestPlainTokenMatchesHash } from "@/lib/guest-request-token";
 import { sendJobCompletedEmail } from "@/lib/email";
 import { logError } from "@/lib/logger";
 import { zodErrorToString } from "@/lib/api-response";
@@ -61,6 +62,8 @@ const PRIVATE_REQUEST_DETAIL_SELECT = {
 
 const patchRequestSchema = z.object({
   status: z.enum(["COMPLETED", "CANCELLED"]),
+  /** Za guest zahtjev (userId null) — isti token kao u linku za pristup. */
+  guestAccessToken: z.string().min(16).optional(),
 });
 
 export async function GET(
@@ -151,9 +154,19 @@ export async function PATCH(
         { status: 400 }
       );
     }
-    const { status } = parsed.data;
+    const { status, guestAccessToken } = parsed.data;
 
-    const req = await prisma.request.findUnique({ where: { id } });
+    const req = await prisma.request.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        userId: true,
+        guestAccessTokenHash: true,
+        status: true,
+        category: true,
+        city: true,
+      },
+    });
     if (!req) {
       return NextResponse.json(
         { success: false, error: "Zahtjev nije pronađen" },
@@ -161,11 +174,20 @@ export async function PATCH(
       );
     }
 
-    if (req.userId !== session.user.id) {
-      return NextResponse.json(
-        { success: false, error: "Nemate pristup ovom zahtjevu" },
-        { status: 403 }
-      );
+    if (req.userId != null) {
+      if (!session?.user?.id || req.userId !== session.user.id) {
+        return NextResponse.json(
+          { success: false, error: "Nemate pristup ovom zahtjevu" },
+          { status: 403 }
+        );
+      }
+    } else {
+      if (!guestPlainTokenMatchesHash(guestAccessToken, req.guestAccessTokenHash)) {
+        return NextResponse.json(
+          { success: false, error: "Nemate pristup ovom zahtjevu" },
+          { status: 403 }
+        );
+      }
     }
 
     if (req.status === "COMPLETED" || req.status === "CANCELLED") {

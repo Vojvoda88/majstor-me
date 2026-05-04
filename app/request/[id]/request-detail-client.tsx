@@ -26,11 +26,13 @@ export function RequestDetailClient({
   acceptedOffer,
   sessionUserId,
   showReviewForm = false,
+  guestAccessToken,
 }: {
   requestId: string;
   acceptedOffer: Offer;
-  sessionUserId: string;
+  sessionUserId?: string;
   showReviewForm?: boolean;
+  guestAccessToken?: string;
 }) {
   const router = useRouter();
 
@@ -45,19 +47,29 @@ export function RequestDetailClient({
       <p className="mb-4 text-sm text-muted-foreground">
         Majstor: {acceptedOffer.handyman.name}
       </p>
-      <CompleteJobButton requestId={requestId} />
+      <CompleteJobButton requestId={requestId} guestAccessToken={guestAccessToken} />
     </div>
   );
 }
 
-function CompleteJobButton({ requestId }: { requestId: string }) {
+function CompleteJobButton({
+  requestId,
+  guestAccessToken,
+}: {
+  requestId: string;
+  guestAccessToken?: string;
+}) {
   const router = useRouter();
   const mutation = useMutation({
     mutationFn: async () => {
       const res = await fetch(`/api/requests/${requestId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status: "COMPLETED" }),
+        body: JSON.stringify(
+          guestAccessToken
+            ? { status: "COMPLETED", guestAccessToken }
+            : { status: "COMPLETED" }
+        ),
       });
       const json = await res.json();
       const msg = typeof json?.error === "string" ? json.error : "Greška";

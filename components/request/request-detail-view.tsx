@@ -24,6 +24,8 @@ import { MapPin, Calendar, User, MessageCircle, MessageCircleMore } from "lucide
 import { trackFunnelEvent } from "@/lib/funnel-events";
 import type { RequestDetailPayload } from "@/lib/requests/request-detail-include";
 import { viberHref, whatsappHref } from "@/lib/contact-links";
+import { RequestOwnerFollowUp } from "@/components/user/request-owner-follow-up";
+import { shouldShowOwnerFollowUp } from "@/lib/request-follow-up";
 
 const STATUS_LABELS: Record<string, string> = {
   OPEN: "Otvoren",
@@ -108,6 +110,22 @@ export async function RequestDetailView({
           guestTracking={!!(!req.userId && (guestAccessTokenPlain || isGuestAccessRoute))}
         />
       )}
+
+      {isOwner &&
+        shouldShowOwnerFollowUp({
+          status: req.status,
+          adminStatus: req.adminStatus,
+          deletedAt: req.deletedAt,
+          createdAt: req.createdAt,
+        }) && (
+          <div className="mb-4 overflow-hidden rounded-xl border border-amber-200/80 shadow-sm">
+            <RequestOwnerFollowUp
+              requestId={req.id}
+              variant={req.status === "IN_PROGRESS" ? "in_progress" : "open_resolved_elsewhere"}
+              guestAccessToken={!req.userId ? guestAccessTokenPlain ?? undefined : undefined}
+            />
+          </div>
+        )}
 
       <Card className="rounded-xl bg-white shadow-sm transition hover:shadow-md">
         <CardHeader>
@@ -277,9 +295,14 @@ export async function RequestDetailView({
               </div>
             </div>
           )}
-          {isOwner && session && (req.status === "OPEN" || req.status === "IN_PROGRESS") && (
+          {isOwner &&
+            (session || guestAccessTokenPlain) &&
+            (req.status === "OPEN" || req.status === "IN_PROGRESS") && (
             <div className="border-t border-[#E2E8F0] pt-2">
-              <CancelRequestButton requestId={req.id} />
+              <CancelRequestButton
+                requestId={req.id}
+                guestAccessToken={!req.userId ? guestAccessTokenPlain ?? undefined : undefined}
+              />
             </div>
           )}
         </CardContent>
@@ -296,7 +319,7 @@ export async function RequestDetailView({
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            {session?.user?.id && (
+            {session?.user?.id ? (
               <>
                 <RequestDetailClient
                   requestId={req.id}
@@ -305,7 +328,13 @@ export async function RequestDetailView({
                 />
                 <RequestChatPanel requestId={req.id} />
               </>
-            )}
+            ) : guestAccessTokenPlain ? (
+              <RequestDetailClient
+                requestId={req.id}
+                acceptedOffer={acceptedOffer}
+                guestAccessToken={guestAccessTokenPlain}
+              />
+            ) : null}
           </CardContent>
         </Card>
       )}

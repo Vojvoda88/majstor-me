@@ -4,14 +4,24 @@ import { useRouter } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 
-export function CancelRequestButton({ requestId }: { requestId: string }) {
+export function CancelRequestButton({
+  requestId,
+  guestAccessToken,
+}: {
+  requestId: string;
+  guestAccessToken?: string;
+}) {
   const router = useRouter();
   const mutation = useMutation({
     mutationFn: async () => {
       const res = await fetch(`/api/requests/${requestId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status: "CANCELLED" }),
+        body: JSON.stringify(
+          guestAccessToken
+            ? { status: "CANCELLED", guestAccessToken }
+            : { status: "CANCELLED" }
+        ),
       });
       const json = await res.json();
       const msg = typeof json?.error === "string" ? json.error : "Greška pri otkazivanju";

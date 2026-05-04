@@ -8,9 +8,11 @@ import { CheckCircle2, XCircle } from "lucide-react";
 type Props = {
   requestId: string;
   variant: "in_progress" | "open_resolved_elsewhere";
+  /** Guest zahtjev — šalje se u PATCH tijelu zajedno sa statusom. */
+  guestAccessToken?: string;
 };
 
-export function RequestOwnerFollowUp({ requestId, variant }: Props) {
+export function RequestOwnerFollowUp({ requestId, variant, guestAccessToken }: Props) {
   const router = useRouter();
   const [loading, setLoading] = useState<"complete" | "cancel" | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -22,7 +24,9 @@ export function RequestOwnerFollowUp({ requestId, variant }: Props) {
       const res = await fetch(`/api/requests/${requestId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status: next }),
+        body: JSON.stringify(
+          guestAccessToken ? { status: next, guestAccessToken } : { status: next }
+        ),
       });
       const json = await res.json().catch(() => ({}));
       if (!json?.success) {
