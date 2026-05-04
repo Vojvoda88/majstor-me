@@ -168,17 +168,56 @@ export async function PATCH(
       );
     }
 
-    if (status === "COMPLETED" && req.status !== "IN_PROGRESS") {
+    if (req.status === "COMPLETED" || req.status === "CANCELLED") {
       return NextResponse.json(
-        { success: false, error: "Zahtjev mora biti u toku da bi se označio završenim" },
+        { success: false, error: "Zahtjev je već završen ili otkazan" },
         { status: 400 }
       );
     }
 
-    const updated = await prisma.request.update({
-      where: { id },
-      data: { status },
-    });
+    if (status === "COMPLETED" && req.status !== "IN_PROGRESS" && req.status !== "OPEN") {
+      return NextResponse.json(
+        { success: false, error: "Zahtjev mora biti otvoren ili u toku da bi se označio završenim" },
+        { status: 400 }
+      );
+    }
+
+    let updated: { id: string; category: string; city: string | null; status: string };
+
+    if (status === "COMPLETED" && req.status === "OPEN") {
+      const pendingHandymen = await prisma.offer.findMany({
+        where: { requestId: id, status: "PENDING" },
+        select: { handymanId: true },
+      });
+      updated = await prisma.$transaction(async (tx) => {
+        const u = await tx.request.update({
+          where: { id },
+          data: { status },
+        });
+        await tx.offer.updateMany({
+          where: { requestId: id, status: "PENDING" },
+          data: { status: "REJECTED" },
+        });
+        return u;
+      });
+      await Promise.allSettled(
+        pendingHandymen.map((o) =>
+          createNotification(
+            o.handymanId,
+            "NEW_JOB",
+            "Zahtjev zatvoren",
+            {
+              body: `Klijent je zatvorio zahtjev za ${updated.category} — posao je označen kao riješen.`,
+            }
+          )
+        )
+      );
+    } else {
+      updated = await prisma.request.update({
+        where: { id },
+        data: { status },
+      });
+    }
 
     if (status === "COMPLETED") {
       const acceptedOffer = await prisma.offer.findFirst({

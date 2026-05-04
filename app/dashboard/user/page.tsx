@@ -9,7 +9,9 @@ import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { MapPin, Calendar, MessageSquare } from "lucide-react";
 import { DeleteMyAccount } from "@/components/account/delete-my-account";
+import { RequestOwnerFollowUp } from "@/components/user/request-owner-follow-up";
 import { UserPushNotificationsCard } from "@/components/user/push-notifications-card";
+import { shouldShowOwnerFollowUp } from "@/lib/request-follow-up";
 import { LeaveReviewForm } from "@/components/user/leave-review-form";
 import { VerifyEmailBanner } from "@/components/account/verify-email-banner";
 import { Heart, Star } from "lucide-react";
@@ -176,6 +178,14 @@ export default async function UserDashboardPage() {
               req.status === "COMPLETED" &&
               acceptedOffer != null &&
               req.review == null;
+            const showFollowUp = shouldShowOwnerFollowUp({
+              status: req.status,
+              adminStatus: req.adminStatus,
+              deletedAt: req.deletedAt,
+              createdAt: req.createdAt,
+            });
+            const followUpVariant =
+              req.status === "IN_PROGRESS" ? ("in_progress" as const) : ("open_resolved_elsewhere" as const);
             return (
               <Card
                 key={req.id}
@@ -244,6 +254,9 @@ export default async function UserDashboardPage() {
                     )}
                   </CardHeader>
                 </Link>
+                {showFollowUp && (
+                  <RequestOwnerFollowUp requestId={req.id} variant={followUpVariant} />
+                )}
                 {canReview && (
                   <div className="border-t border-slate-100 px-6 pb-4">
                     <LeaveReviewForm
