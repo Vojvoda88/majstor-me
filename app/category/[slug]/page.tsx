@@ -9,6 +9,8 @@ import { buildPublicListingPageJsonLd } from "@/lib/json-ld";
 import { categoryMetaDescription, categoryMetaTitle } from "@/lib/seo-landing-copy";
 import { getSiteUrl } from "@/lib/site-url";
 import { CategoryPageContent } from "./category-page-content";
+import { faqPageJsonLd } from "@/lib/json-ld";
+import { getCategoryFaqItems } from "@/lib/listing-faq";
 
 export async function generateMetadata({
   params,
@@ -79,6 +81,7 @@ export default async function CategoryPage({
   const base = getSiteUrl().replace(/\/$/, "");
   const canonical = `${base}/category/${slug}`;
   const pageDescription = categoryMetaDescription(config.displayName);
+  const faqItems = getCategoryFaqItems(config.displayName);
   const categoryJsonLd = buildPublicListingPageJsonLd({
     canonicalUrl: canonical,
     pageTitle: categoryMetaTitle(config.displayName),
@@ -93,12 +96,14 @@ export default async function CategoryPage({
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(categoryJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqPageJsonLd(faqItems)) }} />
       <CategoryPageContent
         displayName={config.displayName}
         internalCategory={config.internalCategory}
         slug={slug}
         initialCity={initialCity}
         initialListing={initialListing}
+        faqItems={faqItems}
       />
     </>
   );

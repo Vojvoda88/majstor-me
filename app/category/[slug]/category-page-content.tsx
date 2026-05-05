@@ -15,6 +15,7 @@ import { CITIES, DEFAULT_PAGE_SIZE } from "@/lib/constants";
 import { HOMEPAGE_CITIES } from "@/lib/homepage-data";
 import { cityToSlug, phraseUGradu } from "@/lib/slugs";
 import type { PublicHandymenListResult } from "@/lib/handymen-listing";
+import type { FaqItem } from "@/lib/json-ld";
 
 type Handyman = {
   id: string;
@@ -38,6 +39,7 @@ export function CategoryPageContent({
   slug,
   initialCity,
   initialListing,
+  faqItems,
 }: {
   displayName: string;
   internalCategory: string;
@@ -46,6 +48,7 @@ export function CategoryPageContent({
   initialCity: string;
   /** Prva stranica sa servera — puni prvi render pre klijentskog fetch-a */
   initialListing: PublicHandymenListResult | null;
+  faqItems: FaqItem[];
 }) {
   const router = useRouter();
   const pathname = usePathname();
@@ -444,6 +447,18 @@ export function CategoryPageContent({
               </div>
             </aside>
           </div>
+
+          <section className="mt-10 rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm sm:p-8">
+            <h2 className="mb-4 text-lg font-bold text-slate-900">Često postavljana pitanja</h2>
+            <div className="space-y-4 text-sm leading-relaxed text-slate-600">
+              {faqItems.map((item) => (
+                <div key={item.q}>
+                  <h3 className="font-semibold text-slate-900">{item.q}</h3>
+                  <p>{item.a}</p>
+                </div>
+              ))}
+            </div>
+          </section>
         </div>
       </div>
 

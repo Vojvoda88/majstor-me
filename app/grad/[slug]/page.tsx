@@ -10,6 +10,8 @@ import { buildPublicListingPageJsonLd } from "@/lib/json-ld";
 import { gradMetaDescription, gradMetaTitle } from "@/lib/seo-landing-copy";
 import { getSiteUrl } from "@/lib/site-url";
 import { GradPageContent } from "./grad-page-content";
+import { faqPageJsonLd } from "@/lib/json-ld";
+import { getCityFaqItems } from "@/lib/listing-faq";
 
 export async function generateMetadata({
   params,
@@ -87,6 +89,7 @@ export default async function GradPage({
   const nameLocative = cityLocative(name);
   const canonical = `${base}/grad/${slug}`;
   const pageDescription = gradMetaDescription(nameLocative, name);
+  const faqItems = getCityFaqItems(name);
   const gradJsonLd = buildPublicListingPageJsonLd({
     canonicalUrl: canonical,
     pageTitle: gradMetaTitle(nameLocative),
@@ -100,12 +103,14 @@ export default async function GradPage({
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(gradJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqPageJsonLd(faqItems)) }} />
       <GradPageContent
         cityName={name}
         slug={slug}
         cityImage={cityImage}
         initialListing={initialListing}
         openRequestCount={openRequestCount}
+        faqItems={faqItems}
       />
     </>
   );

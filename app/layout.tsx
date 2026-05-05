@@ -2,7 +2,6 @@ import type { Metadata, Viewport } from "next";
 import { Inter, DM_Sans, Outfit } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { Providers } from "@/app/providers";
-import { auth } from "@/lib/auth";
 import { InstallCTA } from "@/components/pwa/install-cta";
 import { ServiceWorkerRegister } from "@/components/pwa/service-worker-register";
 import { GoogleTranslate } from "@/components/layout/google-translate";
@@ -106,11 +105,10 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const session = await auth();
   return (
     <html lang="sr-Latn-ME" className={`${inter.variable} ${dmSans.variable} ${outfit.variable}`}>
       <body className="min-h-[100dvh] overflow-x-hidden font-sans antialiased bg-[#FAFBFC] text-[#0F172A] [padding-bottom:env(safe-area-inset-bottom)]">
-        <Providers session={session}>
+        <Providers>
           {children}
           <Analytics />
           <ServiceWorkerRegister />
