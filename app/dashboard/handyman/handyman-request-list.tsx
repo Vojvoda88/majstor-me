@@ -39,7 +39,7 @@ export function HandymanRequestList({
     requesterName?: string | null;
     requesterDisplayName?: string;
     isRequesterVerified?: boolean;
-    offers: { id: string }[];
+    offersCount: number;
   }>;
   profileCategories: string[];
   profileCities: string[];
@@ -138,7 +138,7 @@ export function HandymanRequestList({
                       </span>
                       <span className="flex items-center gap-1 text-sm text-[#64748B]">
                         <MessageSquare className="h-4 w-4" />
-                        {req.offers.length} ponuda
+                        {req.offersCount} ponuda
                       </span>
                       <span className="flex items-center gap-1 text-sm text-[#94A3B8]">
                         <Calendar className="h-4 w-4" />

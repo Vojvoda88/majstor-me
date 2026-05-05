@@ -55,7 +55,6 @@ export const metadata: Metadata = {
   },
   description: SEO_DEFAULT_DESCRIPTION,
   keywords: SEO_KEYWORDS,
-  alternates: { canonical: "/" },
   manifest: "/manifest.webmanifest",
   /** Favicon: `app/icon.tsx` (oštra mala ikona). PWA launcher ikone ostaju u manifest.webmanifest. */
   icons: {

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getPublicHandymenList } from "@/lib/handymen-listing";
+import { withPerfLog } from "@/lib/perf";
 
-export const dynamic = "force-dynamic";
 export const revalidate = 60;
 
 export async function GET(req: NextRequest) {
@@ -15,13 +15,15 @@ export async function GET(req: NextRequest) {
     const limitParsed =
       limitRaw != null && limitRaw !== "" ? parseInt(limitRaw, 10) : undefined;
 
-    const result = await getPublicHandymenList({
-      category: categoryParam,
-      city: city || undefined,
-      sortBy,
-      page,
-      limit: limitParsed !== undefined && Number.isFinite(limitParsed) ? limitParsed : undefined,
-    });
+    const result = await withPerfLog("api.handymen.getPublicHandymenList", () =>
+      getPublicHandymenList({
+        category: categoryParam,
+        city: city || undefined,
+        sortBy,
+        page,
+        limit: limitParsed !== undefined && Number.isFinite(limitParsed) ? limitParsed : undefined,
+      })
+    );
 
     return NextResponse.json({
       items: result.items,

@@ -18,12 +18,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const name = CITY_SLUGS[slug];
-  if (!name) {
-    return {
-      title: "Grad",
-      description: "Pregled majstora po gradovima u Crnoj Gori.",
-    };
-  }
+  if (!name) notFound();
   const nameLocative = cityLocative(name);
   const base = getSiteUrl();
   const title = gradMetaTitle(nameLocative);

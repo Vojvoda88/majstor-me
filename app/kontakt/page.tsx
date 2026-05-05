@@ -11,11 +11,31 @@ import {
   getSupportWhatsappHref,
 } from "@/lib/support-contact";
 import { Button } from "@/components/ui/button";
+import { getSiteUrl } from "@/lib/site-url";
+import { SEO_OG_IMAGE_PATH } from "@/lib/seo-brand";
+
+const baseUrl = getSiteUrl().replace(/\/$/, "");
+const canonical = `${baseUrl}/kontakt`;
 
 export const metadata: Metadata = {
   title: "Kontakt i podrška",
   description: "Pitanja za tim BrziMajstor.ME — korisnici, majstori, tehnička podrška.",
   robots: { index: true, follow: true },
+  alternates: { canonical },
+  openGraph: {
+    title: "Kontakt i podrška | BrziMajstor.ME",
+    description: "Pitanja za tim BrziMajstor.ME — korisnici, majstori, tehnička podrška.",
+    url: canonical,
+    siteName: "BrziMajstor.ME",
+    type: "website",
+    images: [SEO_OG_IMAGE_PATH],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Kontakt i podrška | BrziMajstor.ME",
+    description: "Pitanja za tim BrziMajstor.ME — korisnici, majstori, tehnička podrška.",
+    images: [SEO_OG_IMAGE_PATH],
+  },
 };
 
 export default function KontaktPage() {

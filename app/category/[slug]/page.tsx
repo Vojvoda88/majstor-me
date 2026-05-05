@@ -17,12 +17,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const config = getCategoryBySlug(slug);
-  if (!config) {
-    return {
-      title: "Kategorija",
-      description: "Pregled kategorija majstora na BrziMajstor.ME platformi.",
-    };
-  }
+  if (!config) notFound();
   const base = getSiteUrl();
   const title = categoryMetaTitle(config.displayName);
   const description = categoryMetaDescription(config.displayName);

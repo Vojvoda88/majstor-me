@@ -17,6 +17,7 @@ import {
 } from "@/lib/seo-programmatic-config";
 import { getSiteUrl } from "@/lib/site-url";
 import { CITY_SLUGS } from "@/lib/slugs";
+import { SEO_OG_IMAGE_PATH } from "@/lib/seo-brand";
 import { SeoLandingContent } from "../../(seo)/[slug]/seo-landing-content";
 
 export const revalidate = 3600;
@@ -31,9 +32,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string; city: string }>;
 }): Promise<Metadata> {
   const { slug, city } = await params;
-  if (isValidProgrammaticServiceCity(slug, city).ok === false) {
-    return { title: { absolute: "BrziMajstor.ME" } };
-  }
+  if (isValidProgrammaticServiceCity(slug, city).ok === false) notFound();
   const cat = getCategoryBySlug(slug)!;
   const cityName = CITY_SLUGS[city]!;
   const base = getSiteUrl();
@@ -61,11 +60,13 @@ export async function generateMetadata({
       url: canonical,
       siteName: "BrziMajstor.ME",
       type: "website",
+      images: [SEO_OG_IMAGE_PATH],
     },
     twitter: {
       card: "summary_large_image",
       title: tw,
       description,
+      images: [SEO_OG_IMAGE_PATH],
     },
   };
 }

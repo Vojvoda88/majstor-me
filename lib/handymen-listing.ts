@@ -10,6 +10,7 @@ import { dbCategoryNamesForDistributionFilter, getInternalCategory } from "@/lib
 import { DEFAULT_PAGE_SIZE } from "@/lib/constants";
 import { getCityCoords } from "@/lib/cities";
 import { calcHandymanScore } from "@/lib/handyman-score";
+import { withPerfLog } from "@/lib/perf";
 import {
   prismaAndClausesForPublicHandymanManualExcludes,
   prismaWherePublicHandymanListingUserNotExcluded,
@@ -17,6 +18,10 @@ import {
 
 const MAX_HANDYMEN_LOAD = 200;
 const MAX_PAGE_SIZE = 50;
+
+function computeCandidateLoad(page: number, limit: number): number {
+  return Math.min(MAX_HANDYMEN_LOAD, Math.max(page * limit + 80, 120));
+}
 
 function buildPublicHandymanListingWhere(params: {
   categoryDbNames: string[] | null;
@@ -212,15 +217,33 @@ export async function getPublicHandymenList(params: {
 
   /** Početna + „Prikaži više“: isti redoslijed kao istaknuti (fotke, promo, ocjene). */
   if ((sortBy === "homepage" || sortBy === "featured") && !city) {
-    const handymen = await prisma.user.findMany({
-      where: baseWhere,
-      include: {
-        handymanProfile: {
-          include: { workerCategories: { include: { category: true } } },
+    const candidateLoad = computeCandidateLoad(page, limit);
+    const handymen = await withPerfLog("listing.homepage.findMany", () =>
+      prisma.user.findMany({
+        where: baseWhere,
+        select: {
+          id: true,
+          name: true,
+          city: true,
+          handymanProfile: {
+            select: {
+              ratingAvg: true,
+              reviewCount: true,
+              verifiedStatus: true,
+              avatarUrl: true,
+              galleryImages: true,
+              bio: true,
+              availabilityStatus: true,
+              averageResponseMinutes: true,
+              completedJobsCount: true,
+              isPromoted: true,
+              workerCategories: { select: { category: { select: { name: true } } } },
+            },
+          },
         },
-      },
-      take: MAX_HANDYMEN_LOAD,
-    });
+        take: candidateLoad,
+      })
+    );
     const filtered = handymen.filter((u) => u.handymanProfile) as UserWithProfile[];
     filtered.sort(compareHomepageFeatured);
     const total = filtered.length;
@@ -241,34 +264,69 @@ export async function getPublicHandymenList(params: {
 
   if (useDbPagination) {
     const orderByKey = sortBy === "reviews" ? "reviewCount" : "ratingAvg";
-    const [users, count] = await Promise.all([
-      prisma.user.findMany({
-        where: baseWhere,
-        include: {
-          handymanProfile: {
-            include: { workerCategories: { include: { category: true } } },
+    const [users, count] = await withPerfLog("listing.db_pagination.bundle", () =>
+      Promise.all([
+        prisma.user.findMany({
+          where: baseWhere,
+          select: {
+            id: true,
+            name: true,
+            city: true,
+            handymanProfile: {
+              select: {
+                ratingAvg: true,
+                reviewCount: true,
+                verifiedStatus: true,
+                avatarUrl: true,
+                galleryImages: true,
+                bio: true,
+                availabilityStatus: true,
+                averageResponseMinutes: true,
+                completedJobsCount: true,
+                isPromoted: true,
+                workerCategories: { select: { category: { select: { name: true } } } },
+              },
+            },
           },
-        },
-        orderBy: { handymanProfile: { [orderByKey]: "desc" } },
-        skip: (page - 1) * limit,
-        take: limit,
-      }),
-      prisma.user.count({
-        where: baseWhere,
-      }),
-    ]);
+          orderBy: { handymanProfile: { [orderByKey]: "desc" } },
+          skip: (page - 1) * limit,
+          take: limit,
+        }),
+        prisma.user.count({
+          where: baseWhere,
+        }),
+      ])
+    );
     items = users.filter((u) => !!u.handymanProfile) as UserWithProfile[];
     total = count;
   } else {
-    const handymen = await prisma.user.findMany({
-      where: baseWhere,
-      include: {
-        handymanProfile: {
-          include: { workerCategories: { include: { category: true } } },
+    const candidateLoad = computeCandidateLoad(page, limit);
+    const handymen = await withPerfLog("listing.score_mode.findMany", () =>
+      prisma.user.findMany({
+        where: baseWhere,
+        select: {
+          id: true,
+          name: true,
+          city: true,
+          handymanProfile: {
+            select: {
+              ratingAvg: true,
+              reviewCount: true,
+              verifiedStatus: true,
+              avatarUrl: true,
+              galleryImages: true,
+              bio: true,
+              availabilityStatus: true,
+              averageResponseMinutes: true,
+              completedJobsCount: true,
+              isPromoted: true,
+              workerCategories: { select: { category: { select: { name: true } } } },
+            },
+          },
         },
-      },
-      take: MAX_HANDYMEN_LOAD,
-    });
+        take: candidateLoad,
+      })
+    );
 
     const filtered = handymen.filter(
       (u): u is (typeof handymen)[number] & { handymanProfile: NonNullable<(typeof handymen)[number]["handymanProfile"]> } =>

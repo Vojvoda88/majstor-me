@@ -17,7 +17,7 @@ import { isPaymentConfigured } from "@/lib/payment";
 import { HandymanCreditsCtaBlock } from "@/components/credits/handyman-credits-cta-block";
 import { CheckCircle2, Clock, XCircle } from "lucide-react";
 import { VerifyEmailBanner } from "@/components/account/verify-email-banner";
-import { requireVerified } from "@/lib/auth/require-verified";
+import { withPerfLog } from "@/lib/perf";
 
 function isRequesterVerifiedUser(
   user: { emailVerified?: Date | null; phoneVerified?: Date | null } | null | undefined
@@ -46,7 +46,6 @@ export default async function HandymanDashboardPage({
   const session = await auth();
   if (!session) redirect("/login");
   if (session.user.role !== "HANDYMAN") redirect("/");
-  await requireVerified(session);
 
   const params = await searchParams;
   const category = params.category ?? "";
@@ -55,21 +54,24 @@ export default async function HandymanDashboardPage({
   const page = Math.max(1, parseInt(params.page ?? "1"));
   const limit = 20;
   const skip = (page - 1) * limit;
+  const candidateTake = Math.min(500, Math.max(skip + limit + 80, 120));
 
   const { prisma } = await import("@/lib/db");
-  const [profileRaw, currentUser] = await Promise.all([
-    prisma.handymanProfile.findUnique({
-      where: { userId: session.user.id },
-      include: {
-        user: { select: { city: true, phone: true } },
-        workerCategories: { include: { category: true } },
-      },
-    }),
-    prisma.user.findUnique({
-      where: { id: session.user.id },
-      select: { emailVerified: true, email: true },
-    }),
-  ]);
+  const [profileRaw, currentUser] = await withPerfLog("dashboard.handyman.profile_bundle", () =>
+    Promise.all([
+      prisma.handymanProfile.findUnique({
+        where: { userId: session.user.id },
+        include: {
+          user: { select: { city: true, phone: true } },
+          workerCategories: { include: { category: true } },
+        },
+      }),
+      prisma.user.findUnique({
+        where: { id: session.user.id },
+        select: { emailVerified: true, email: true },
+      }),
+    ])
+  );
   const profile = profileRaw
     ? {
         ...profileRaw,
@@ -130,23 +132,34 @@ export default async function HandymanDashboardPage({
   const handymanCity = profile.user?.city ?? null;
   const { getDistanceBetweenCities } = await import("@/lib/distance");
 
-  const [requestsRaw, total, myOffersCount, acceptedCount] = await Promise.all([
-    prisma.request.findMany({
-      where,
-      include: {
-        user: { select: { name: true, emailVerified: true, phoneVerified: true } },
-        offers: { select: { id: true } },
-      },
-      orderBy: { createdAt: "desc" },
-      skip: 0,
-      take: 500,
-    }),
-    prisma.request.count({ where }),
-    prisma.offer.count({ where: { handymanId: session.user.id } }),
-    prisma.offer.count({
-      where: { handymanId: session.user.id, status: "ACCEPTED" },
-    }),
-  ]);
+  const [requestsRaw, total, myOffersCount, acceptedCount] = await withPerfLog(
+    "dashboard.handyman.requests_bundle",
+    () =>
+      Promise.all([
+        prisma.request.findMany({
+          where,
+          select: {
+            id: true,
+            category: true,
+            description: true,
+            city: true,
+            urgency: true,
+            createdAt: true,
+            requesterName: true,
+            user: { select: { name: true, emailVerified: true, phoneVerified: true } },
+            _count: { select: { offers: true } },
+          },
+          orderBy: { createdAt: "desc" },
+          skip: 0,
+          take: candidateTake,
+        }),
+        prisma.request.count({ where }),
+        prisma.offer.count({ where: { handymanId: session.user.id } }),
+        prisma.offer.count({
+          where: { handymanId: session.user.id, status: "ACCEPTED" },
+        }),
+      ])
+  );
 
   function getFirstName(full: string | null | undefined): string {
     if (!full?.trim()) return "-";
@@ -170,12 +183,13 @@ export default async function HandymanDashboardPage({
     );
   const requests = sorted.slice(skip, skip + limit).map(({ _distance, _urgencyTier, ...r }) => ({
     ...r,
+    offersCount: r._count?.offers ?? 0,
     requesterDisplayName: getFirstName(r.requesterName ?? r.user?.name),
     isRequesterVerified: isRequesterVerifiedUser(
       r.user as { emailVerified?: Date | null; phoneVerified?: Date | null } | null
     ),
   }));
-  const totalDisplayed = sorted.length;
+  const totalDisplayed = Math.min(total, candidateTake);
 
   const onboarding = calcProfileCompletion(profile, profile?.user);
   const pendingSteps = onboarding.steps.filter((step) => !step.done);

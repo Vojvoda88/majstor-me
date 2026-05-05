@@ -1,6 +1,5 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import { requireVerified } from "@/lib/auth/require-verified";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { UrgencyBadge } from "@/components/request/urgency-badge";
@@ -29,7 +28,6 @@ export default async function UserDashboardPage() {
   const session = await auth();
   if (!session) redirect("/login");
   if (session.user.role !== "USER") redirect("/");
-  await requireVerified(session);
 
   const { prisma } = await import("@/lib/db");
   const [requests, savedHandymen, currentUser] = await Promise.all([

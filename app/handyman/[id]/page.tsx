@@ -24,8 +24,56 @@ import { AVATAR_IMAGE_FALLBACK } from "@/lib/homepage-data";
 import { prismaWhereUserActiveHandymanForPublicCatalog } from "@/lib/handyman-truth";
 import { SaveHandymanButton } from "@/components/handyman/save-handyman-button";
 import { GalleryLightbox } from "@/components/handyman/gallery-lightbox";
+import { cache } from "react";
+import { withPerfLog } from "@/lib/perf";
 
 export const dynamic = "force-dynamic";
+
+const getPublicHandymanProfileById = cache(async (id: string) => {
+  const { prisma } = await import("@/lib/db");
+  return withPerfLog("handyman.profile.base", () =>
+    prisma.user.findFirst({
+      where: { id, ...prismaWhereUserActiveHandymanForPublicCatalog() },
+      select: {
+        id: true,
+        name: true,
+        city: true,
+        handymanProfile: {
+          select: {
+            bio: true,
+            cities: true,
+            verifiedStatus: true,
+            ratingAvg: true,
+            reviewCount: true,
+            avatarUrl: true,
+            galleryImages: true,
+            viberPhone: true,
+            whatsappPhone: true,
+            yearsOfExperience: true,
+            startingPrice: true,
+            completedJobsCount: true,
+            averageResponseMinutes: true,
+            availabilityStatus: true,
+            isPromoted: true,
+            workerCategories: { select: { category: { select: { name: true } } } },
+          },
+        },
+      },
+    })
+  );
+});
+
+const getRecentReviewsForHandyman = cache(async (id: string) => {
+  const { prisma } = await import("@/lib/db");
+  return withPerfLog("handyman.profile.reviews", () =>
+    prisma.review.findMany({
+      where: { revieweeId: id },
+      include: { reviewer: { select: { name: true } } },
+      orderBy: { createdAt: "desc" },
+      take: 10,
+    })
+  );
+});
 
 export async function generateMetadata({
   params,
@@ -33,19 +81,8 @@ export async function generateMetadata({
   params: Promise<{ id: string }>;
 }): Promise<Metadata> {
   const { id } = await params;
-  const { prisma } = await import("@/lib/db");
-  const user = await prisma.user.findFirst({
-    where: { id, ...prismaWhereUserActiveHandymanForPublicCatalog() },
-    include: {
-      handymanProfile: { include: { workerCategories: { include: { category: true } } } },
-    },
-  });
-  if (!user?.handymanProfile) {
-    return {
-      title: "Majstor",
-      description: "Profil majstora na BrziMajstor.ME platformi.",
-    };
-  }
+  const user = await getPublicHandymanProfileById(id);
+  if (!user?.handymanProfile) notFound();
   const categories = user.handymanProfile.workerCategories.map((wc) => wc.category.name);
   const cat = categories[0] || "Majstor";
   const city = user.city || "";
@@ -84,17 +121,11 @@ export default async function HandymanProfilePage({
   const { id } = await params;
 
   const { prisma } = await import("@/lib/db");
-  const user = await prisma.user.findFirst({
-    where: { id, ...prismaWhereUserActiveHandymanForPublicCatalog() },
-    include: {
-      handymanProfile: { include: { workerCategories: { include: { category: true } } } },
-      reviewsReceived: {
-        include: { reviewer: true },
-        orderBy: { createdAt: "desc" },
-        take: 10,
-      },
-    },
-  });
+  const [user, reviewsReceived, session] = await Promise.all([
+    getPublicHandymanProfileById(id),
+    getRecentReviewsForHandyman(id),
+    auth(),
+  ]);
 
   if (!user?.handymanProfile) notFound();
 
@@ -123,7 +154,6 @@ export default async function HandymanProfilePage({
     BUSY: "Zauzet",
     EMERGENCY_ONLY: "Samo hitne intervencije",
   };
-  const session = await auth();
   const backHref =
     session?.user?.role === "USER"
       ? "/dashboard/user"
@@ -133,10 +163,12 @@ export default async function HandymanProfilePage({
 
   const isSaved =
     session?.user?.role === "USER"
-      ? !!(await (await import("@/lib/db")).prisma.savedHandyman.findUnique({
-          where: { userId_handymanId: { userId: session.user.id, handymanId: user.id } },
-          select: { id: true },
-        }))
+      ? !!(await withPerfLog("handyman.profile.saved_lookup", () =>
+          prisma.savedHandyman.findUnique({
+            where: { userId_handymanId: { userId: session.user.id, handymanId: user.id } },
+            select: { id: true },
+          })
+        ))
       : false;
 
   const createParams = new URLSearchParams();
@@ -374,14 +406,14 @@ export default async function HandymanProfilePage({
                 <MessageCircle className="h-5 w-5 text-[#2563EB]" />
                 Recenzije
               </h3>
-              {user.reviewsReceived.length === 0 ? (
+              {reviewsReceived.length === 0 ? (
                 <p className="text-sm text-[#64748B]">
                   Još nema javnih recenzija. Nakon završenog posla klijent može ostaviti ocjenu — tada će se ovdje
                   pojaviti.
                 </p>
               ) : (
                 <div className="space-y-4">
-                  {user.reviewsReceived.map((r) => {
+                  {reviewsReceived.map((r) => {
                     const parts = r.reviewer.name?.trim().split(/\s+/) ?? [];
                     const initials = parts.map((p) => p[0]).join("").toUpperCase().slice(0, 2) || "?";
                     return (

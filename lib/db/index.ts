@@ -6,14 +6,12 @@ function getPrismaUrl() {
   const url = process.env.DATABASE_URL;
   if (!url) return undefined;
   if (url.includes("connection_limit=")) return url;
-  // U developmentu NE dodavati connection_limit=1: jedna veza serializuje SVE upite
-  // (API + NextAuth session + HMR) i čini da se cijela aplikacija „zamrzne”.
-  // Za serverless produkciju često želiš nizak limit — dodaj ga eksplicitno u .env.
-  if (process.env.NODE_ENV === "development") {
-    return url;
-  }
+  // Ne forsiraj connection_limit po default-u.
+  // Ako je potreban eksplicitni limit (npr. serverless), postavi PRISMA_CONNECTION_LIMIT.
+  const configuredLimit = process.env.PRISMA_CONNECTION_LIMIT?.trim();
+  if (!configuredLimit) return url;
   const sep = url.includes("?") ? "&" : "?";
-  return `${url}${sep}connection_limit=1`;
+  return `${url}${sep}connection_limit=${configuredLimit}`;
 }
 
 const datasourceUrl = getPrismaUrl();
