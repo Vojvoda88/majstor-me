@@ -7,6 +7,7 @@ export type NotificationType =
   | "NEW_REVIEW"
   | "VERIFIED"
   | "NEW_JOB"
+  | "WELCOME_HANDYMAN"
   | "ADMIN_PENDING_REQUEST"
   | "ADMIN_PENDING_HANDYMAN";
 

@@ -452,3 +452,75 @@ export async function sendInviteEmail(
     // Silently fail - email is non-critical
   }
 }
+
+export async function sendHandymanWelcomeEmail(to: string, name: string) {
+  const resend = getResend();
+  if (!resend) return;
+
+  const firstName = name?.trim() ? name.trim().split(/\s+/)[0] : "";
+
+  try {
+    await resend.emails.send({
+      from,
+      to,
+      subject: "Dobrodošli — sada je pravi trenutak da završite profil",
+      html: `
+        <p>Zdravo${firstName ? ` ${firstName}` : ""},</p>
+        <p>Dobrodošli na <strong>BrziMajstor.ME</strong>! Vaša registracija kao majstor je uspješna.</p>
+        <p>Trenutno širimo bazu majstora i pojačavamo marketing ka korisnicima. Popunite profil odmah da budete spremni kada krenu pojačani upiti.</p>
+        <p>Sljedeći koraci:</p>
+        <ol>
+          <li>Potvrdite email adresu (ako još niste).</li>
+          <li>Popunite profil što detaljnije (opis, kategorije, gradovi, slike).</li>
+          <li>Nakon kratkog admin pregleda, profil ide u aktivan rad.</li>
+        </ol>
+        <p>
+          <a href="${appBaseUrl}/dashboard/handyman" style="display:inline-block;padding:12px 24px;background:#2563EB;color:#fff;border-radius:8px;text-decoration:none;font-weight:600;">
+            Otvori dashboard →
+          </a>
+        </p>
+        <p>Hvala što gradite svoj posao uz BrziMajstor.ME.</p>
+        <p>— BrziMajstor.ME tim</p>
+      `,
+    });
+  } catch {
+    // Silently fail - email is non-critical
+  }
+}
+
+export async function sendAdminDirectMessageEmail(opts: {
+  to: string;
+  handymanName?: string | null;
+  title: string;
+  body: string;
+}) {
+  const resend = getResend();
+  if (!resend) return;
+
+  const { to, handymanName, title, body } = opts;
+  const firstName = handymanName?.trim() ? handymanName.trim().split(/\s+/)[0] : "";
+  const safeTitle = escapeHtmlText(title);
+  const safeBody = escapeHtmlText(body).replace(/\n/g, "<br />");
+
+  try {
+    await resend.emails.send({
+      from,
+      to,
+      subject: title,
+      html: `
+        <p>Zdravo${firstName ? ` ${firstName}` : ""},</p>
+        <p>Imate novu poruku od administracije platforme <strong>BrziMajstor.ME</strong>.</p>
+        <p><strong>${safeTitle}</strong></p>
+        <p>${safeBody}</p>
+        <p>
+          <a href="${appBaseUrl}/dashboard/handyman" style="display:inline-block;padding:12px 24px;background:#2563EB;color:#fff;border-radius:8px;text-decoration:none;font-weight:600;">
+            Otvori dashboard →
+          </a>
+        </p>
+        <p>— BrziMajstor.ME tim</p>
+      `,
+    });
+  } catch {
+    // Silently fail - email is non-critical
+  }
+}

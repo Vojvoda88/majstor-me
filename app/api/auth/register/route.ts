@@ -9,7 +9,8 @@ import { getRegisterRateLimitKey, getRequestClientIp } from "@/lib/request-ip";
 import { CITIES, MAX_HANDYMAN_CATEGORIES } from "@/lib/constants";
 import { HANDYMAN_SELECTABLE_INTERNAL_NAMES } from "@/lib/categories";
 import { generateEmailVerificationSecret } from "@/lib/email-verification-token";
-import { sendEmailVerificationEmail } from "@/lib/email";
+import { sendEmailVerificationEmail, sendHandymanWelcomeEmail } from "@/lib/email";
+import { createNotification } from "@/lib/notifications";
 
 export const dynamic = "force-dynamic";
 
@@ -302,6 +303,13 @@ export async function POST(request: Request) {
         handymanUserId: user.id,
         displayName: user.name ?? "",
       });
+
+      void createNotification(user.id, "WELCOME_HANDYMAN", "Dobrodošli na BrziMajstor.ME", {
+        body: "Trenutno širimo bazu majstora. Popunite profil odmah kako biste bili spremni kada krenu pojačani upiti.",
+        link: "/dashboard/handyman/profile",
+      });
+
+      void sendHandymanWelcomeEmail(email, name);
     }
 
     if (inviteToken) {

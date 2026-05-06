@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 import { AdminHandymanActions } from "./admin-handyman-actions";
 import { DeleteUserButton } from "./delete-user-button";
+import { AdminSendHandymanMessage } from "./admin-send-handyman-message";
 import { AdminRouteLoadError } from "@/lib/admin/admin-ssr-fallback";
 import { prismaErrorCode } from "@/lib/admin/admin-ssr-params";
 import Image from "next/image";
@@ -256,6 +257,15 @@ export default async function AdminHandymanDetailPage({ params }: { params: Prom
               </p>
             </div>
           </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Pošalji poruku majstoru</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <AdminSendHandymanMessage handymanId={id} />
         </CardContent>
       </Card>
 
