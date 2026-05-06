@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { AdminVerifyEmailButton } from "@/components/admin/verify-email-button";
+import { AdminStaffManager } from "./admin-staff-manager";
 
 export const dynamic = "force-dynamic";
 
@@ -13,7 +14,7 @@ export default async function AdminUsersPage({
 }: {
   searchParams: Promise<{ page?: string }>;
 }) {
-  await requireAdminPermission("users");
+  const { adminRole, session } = await requireAdminPermission("users");
   const { prisma } = await import("@/lib/db");
   const params = await searchParams;
   const page = Math.max(1, parseInt(String(params.page ?? "1"), 10) || 1);
@@ -21,8 +22,15 @@ export default async function AdminUsersPage({
 
   let users;
   let total: number;
+  let adminUsers: {
+    id: string;
+    email: string;
+    name: string;
+    adminRole: "SUPER_ADMIN" | "OPERATIONS_ADMIN" | "MODERATION_ADMIN" | "FINANCE_ADMIN" | "SUPPORT_ADMIN" | "READ_ONLY";
+    createdAt: string;
+  }[] = [];
   try {
-    [users, total] = await Promise.all([
+    const [usersResult, totalResult, adminsResult] = await Promise.all([
       prisma.user.findMany({
         where: { role: "USER" },
         select: {
@@ -43,7 +51,35 @@ export default async function AdminUsersPage({
         take: PAGE_SIZE,
       }),
       prisma.user.count({ where: { role: "USER" } }),
+      adminRole === "SUPER_ADMIN"
+        ? prisma.user.findMany({
+            where: { role: "ADMIN" },
+            select: {
+              id: true,
+              email: true,
+              name: true,
+              createdAt: true,
+              adminProfile: { select: { adminRole: true } },
+            },
+            orderBy: { createdAt: "desc" },
+          })
+        : Promise.resolve([]),
     ]);
+    users = usersResult;
+    total = totalResult;
+    adminUsers = adminsResult.map((a) => ({
+      id: a.id,
+      email: a.email,
+      name: a.name,
+      adminRole: (a.adminProfile?.adminRole ?? "SUPER_ADMIN") as
+        | "SUPER_ADMIN"
+        | "OPERATIONS_ADMIN"
+        | "MODERATION_ADMIN"
+        | "FINANCE_ADMIN"
+        | "SUPPORT_ADMIN"
+        | "READ_ONLY",
+      createdAt: a.createdAt.toISOString(),
+    }));
   } catch (e) {
     console.error("[AdminUsers] error", e);
     throw e;
@@ -56,6 +92,17 @@ export default async function AdminUsersPage({
         <h1 className="text-2xl font-bold text-[#0F172A]">Korisnici</h1>
         <p className="mt-1 text-sm text-[#64748B]">Korisnici koji šalju zahtjeve</p>
       </div>
+
+      {adminRole === "SUPER_ADMIN" && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Admin nalozi i pod-admin pristup</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <AdminStaffManager admins={adminUsers} currentUserId={session.user.id} />
+          </CardContent>
+        </Card>
+      )}
 
       <Card>
         <CardHeader>

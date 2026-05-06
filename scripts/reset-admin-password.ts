@@ -5,16 +5,28 @@
  * SIGURNOSNO: pokreće se SAMO ako je ALLOW_ADMIN_PASSWORD_RESET=1 u env-u.
  * Kreiranje novog reda ako email ne postoji: dodatno ALLOW_ADMIN_USER_CREATE=1.
  *
+ * VAŽNO:
+ * - Ova skripta po defaultu dodjeljuje OPERATIONS_ADMIN.
+ * - SUPER_ADMIN je blokiran osim ako je ALLOW_SUPER_ADMIN_ASSIGN=1.
+ *
  * Produkcija (Vercel DB string u .env privremeno):
  *   ALLOW_ADMIN_PASSWORD_RESET=1 npx tsx scripts/reset-admin-password.ts jm@domen.me "NovaJakaLozinka123"
  *
  * Novi nalog (samo ako red ne postoji):
  *   ALLOW_ADMIN_PASSWORD_RESET=1 ALLOW_ADMIN_USER_CREATE=1 npx tsx scripts/reset-admin-password.ts jm@domen.me "..."
  */
-import { PrismaClient } from "@prisma/client";
+import { AdminRole, PrismaClient } from "@prisma/client";
 import { hash } from "bcryptjs";
 
 const prisma = new PrismaClient();
+const ADMIN_ROLES = Object.values(AdminRole);
+
+function parseAdminRole(raw: string): AdminRole {
+  if (!ADMIN_ROLES.includes(raw as AdminRole)) {
+    throw new Error(`Neispravna ADMIN_ASSIGN_ROLE vrijednost: ${raw}. Dozvoljeno: ${ADMIN_ROLES.join(", ")}`);
+  }
+  return raw as AdminRole;
+}
 
 async function main() {
   if (process.env.ALLOW_ADMIN_PASSWORD_RESET !== "1") {
@@ -34,6 +46,15 @@ async function main() {
   }
 
   const email = emailArg.trim().toLowerCase();
+  const adminRoleRaw = (process.env.ADMIN_ASSIGN_ROLE ?? "OPERATIONS_ADMIN")
+    .trim()
+    .toUpperCase();
+  const adminRoleArg = parseAdminRole(adminRoleRaw);
+
+  if (adminRoleArg === "SUPER_ADMIN" && process.env.ALLOW_SUPER_ADMIN_ASSIGN !== "1") {
+    console.error("SUPER_ADMIN nije dozvoljen kroz ovu skriptu. Dodaj ALLOW_SUPER_ADMIN_ASSIGN=1 samo ako baš mora.");
+    process.exit(1);
+  }
   const user = await prisma.user.findFirst({
     where: { email: { equals: email, mode: "insensitive" } },
     select: { id: true, email: true, role: true, name: true },
@@ -60,8 +81,8 @@ async function main() {
     });
     await prisma.adminProfile.upsert({
       where: { userId: created.id },
-      update: { adminRole: "SUPER_ADMIN" },
-      create: { userId: created.id, adminRole: "SUPER_ADMIN" },
+      update: { adminRole: adminRoleArg },
+      create: { userId: created.id, adminRole: adminRoleArg },
     });
     console.log(
       JSON.stringify(
@@ -79,8 +100,8 @@ async function main() {
   });
   await prisma.adminProfile.upsert({
     where: { userId: user.id },
-    update: { adminRole: "SUPER_ADMIN" },
-    create: { userId: user.id, adminRole: "SUPER_ADMIN" },
+    update: { adminRole: adminRoleArg },
+    create: { userId: user.id, adminRole: adminRoleArg },
   });
 
   console.log(
