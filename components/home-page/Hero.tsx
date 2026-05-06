@@ -60,7 +60,7 @@ export function Hero() {
             href="/register?type=majstor"
             className="inline-flex h-14 min-h-[52px] items-center justify-center rounded-2xl border border-amber-300/45 bg-white/12 px-6 text-base font-semibold text-amber-100 shadow-lg shadow-amber-500/10 backdrop-blur-md transition hover:bg-white/18 hover:text-white active:scale-[0.98] max-[380px]:text-sm md:px-8"
           >
-            Za majstore → poslovi u vašem području
+            Majstori: preuzmite poslove
           </Link>
         </div>
         <div className="mt-3 md:mt-4">
