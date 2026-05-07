@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { requireAdminApi } from "@/lib/admin/api-auth";
 import { createAuditLog } from "@/lib/admin/audit";
+import { createHandymanChurnEvent } from "@/lib/handyman-churn";
 
 export const dynamic = "force-dynamic";
 
@@ -32,7 +33,22 @@ export async function POST(
       return NextResponse.json({ success: false, error: "Korisnik nije pronađen" }, { status: 404 });
     }
 
-    await prisma.user.delete({ where: { id } });
+    if (user.role === "HANDYMAN") {
+      await prisma.$transaction(async (tx) => {
+        await createHandymanChurnEvent(tx, {
+          userId: user.id,
+          emailSnapshot: user.email,
+          nameSnapshot: user.name,
+          reason: "ADMIN_DELETE",
+          actorType: "ADMIN",
+          actorUserId: auth.session.user.id,
+          metadata: { source: "admin_delete_user_endpoint" },
+        });
+        await tx.user.delete({ where: { id } });
+      });
+    } else {
+      await prisma.user.delete({ where: { id } });
+    }
 
     await createAuditLog(prisma, {
       adminId: auth.session.user.id,

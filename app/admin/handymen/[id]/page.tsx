@@ -6,6 +6,7 @@ import Link from "next/link";
 import { AdminHandymanActions } from "./admin-handyman-actions";
 import { DeleteUserButton } from "./delete-user-button";
 import { AdminSendHandymanMessage } from "./admin-send-handyman-message";
+import { AdminBypassAttemptForm } from "./admin-bypass-attempt-form";
 import { AdminRouteLoadError } from "@/lib/admin/admin-ssr-fallback";
 import { prismaErrorCode } from "@/lib/admin/admin-ssr-params";
 import Image from "next/image";
@@ -264,8 +265,9 @@ export default async function AdminHandymanDetailPage({ params }: { params: Prom
         <CardHeader>
           <CardTitle>Pošalji poruku majstoru</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-4">
           <AdminSendHandymanMessage handymanId={id} />
+          <AdminBypassAttemptForm handymanId={id} />
         </CardContent>
       </Card>
 

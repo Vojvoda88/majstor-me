@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { Prisma } from "@prisma/client";
 import type { PrismaClient } from "@prisma/client";
 import { auth } from "@/lib/auth";
+import { createHandymanChurnEvent } from "@/lib/handyman-churn";
 
 export const dynamic = "force-dynamic";
 
@@ -46,6 +47,10 @@ export async function POST() {
   try {
     const { prisma } = await import("@/lib/db");
     const userId = session.user.id;
+    const userSnapshot = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { id: true, role: true, email: true, name: true },
+    });
 
     /**
      * `distribution_jobs` mora biti izvan `$transaction`: ako DELETE padne unutra,
@@ -60,6 +65,18 @@ export async function POST() {
      */
     await prisma.$transaction(
       async (tx) => {
+        if (userSnapshot?.role === "HANDYMAN") {
+          await createHandymanChurnEvent(tx, {
+            userId: userSnapshot.id,
+            emailSnapshot: userSnapshot.email,
+            nameSnapshot: userSnapshot.name,
+            reason: "SELF_DELETE",
+            actorType: "USER_SELF",
+            actorUserId: userSnapshot.id,
+            metadata: { source: "account_delete_endpoint" },
+          });
+        }
+
         // 1) funnel_events — user_id je opciono; ako postoji FK ka users, oslobodi redove
         await tx.funnelEvent.updateMany({
           where: { userId },

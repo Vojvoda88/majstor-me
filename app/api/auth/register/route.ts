@@ -305,7 +305,7 @@ export async function POST(request: Request) {
       });
 
       void createNotification(user.id, "WELCOME_HANDYMAN", "Dobrodošli na BrziMajstor.ME", {
-        body: "Trenutno širimo bazu majstora. Popunite profil odmah kako biste bili spremni kada krenu pojačani upiti.",
+        body: "Trenutno formiramo bazu majstora. Uskoro krećemo sa jačom promocijom prema korisnicima.",
         link: "/dashboard/handyman/profile",
       });
 

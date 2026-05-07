@@ -463,11 +463,12 @@ export async function sendHandymanWelcomeEmail(to: string, name: string) {
     await resend.emails.send({
       from,
       to,
-      subject: "Dobrodošli — sada je pravi trenutak da završite profil",
+      subject: "Dobrodošli na BrziMajstor.ME",
       html: `
         <p>Zdravo${firstName ? ` ${firstName}` : ""},</p>
         <p>Dobrodošli na <strong>BrziMajstor.ME</strong>! Vaša registracija kao majstor je uspješna.</p>
-        <p>Trenutno širimo bazu majstora i pojačavamo marketing ka korisnicima. Popunite profil odmah da budete spremni kada krenu pojačani upiti.</p>
+        <p><strong>Trenutno formiramo bazu majstora.</strong><br />Uskoro krećemo sa jačom promocijom prema korisnicima.</p>
+        <p>Zato je važno da profil bude kompletan i spreman za nove upite.</p>
         <p>Sljedeći koraci:</p>
         <ol>
           <li>Potvrdite email adresu (ako još niste).</li>

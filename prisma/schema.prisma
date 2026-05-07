@@ -28,6 +28,11 @@ enum AdminRole {
   READ_ONLY
 }
 
+enum HandymanChurnReason {
+  SELF_DELETE
+  ADMIN_DELETE
+}
+
 enum RequestStatus {
   OPEN
   IN_PROGRESS
@@ -207,6 +212,23 @@ model AuditLog {
   @@index([actionType])
   @@index([createdAt])
   @@map("audit_logs")
+}
+
+model HandymanChurnEvent {
+  id            String             @id @default(cuid())
+  userId        String             @map("user_id")
+  emailSnapshot String?            @map("email_snapshot")
+  nameSnapshot  String?            @map("name_snapshot")
+  reason        HandymanChurnReason
+  actorType     String             @map("actor_type") // USER_SELF | ADMIN
+  actorUserId   String?            @map("actor_user_id")
+  metadata      Json?              @map("metadata")
+  createdAt     DateTime           @default(now()) @map("created_at")
+
+  @@index([createdAt])
+  @@index([reason])
+  @@index([userId])
+  @@map("handyman_churn_events")
 }
 
 model BlacklistedPhone {
