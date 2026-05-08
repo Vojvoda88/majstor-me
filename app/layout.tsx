@@ -5,7 +5,7 @@ import { headers } from "next/headers";
 import { Providers } from "@/app/providers";
 import { InstallCTA } from "@/components/pwa/install-cta";
 import { ServiceWorkerRegister } from "@/components/pwa/service-worker-register";
-import { GoogleTranslate } from "@/components/layout/google-translate";
+import { LanguageSwitcher } from "@/components/layout/google-translate";
 import {
   SEO_DEFAULT_DESCRIPTION,
   SEO_KEYWORDS,
@@ -118,7 +118,7 @@ export default async function RootLayout({
           <Analytics />
           <ServiceWorkerRegister />
           <InstallCTA />
-          <GoogleTranslate />
+          <LanguageSwitcher />
         </Providers>
       </body>
     </html>

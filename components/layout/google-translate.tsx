@@ -5,7 +5,7 @@ import { usePathname, useSearchParams } from "next/navigation";
 import { DEFAULT_LOCALE, LOCALE_COOKIE, type AppLocale, getLocaleFromPathname, normalizeLocale, withLocalePrefix } from "@/lib/i18n/config";
 import { t } from "@/lib/i18n/messages";
 
-export function GoogleTranslate() {
+export function LanguageSwitcher() {
   const [open, setOpen] = useState(false);
   const [activeLang, setActiveLang] = useState<AppLocale>(DEFAULT_LOCALE);
   const pathname = usePathname();
