@@ -1,0 +1,940 @@
+{
+  "meta": {
+    "purpose": "Offline draft only. This file is not imported by the app.",
+    "phase": "public-auth-request",
+    "locales": ["sr", "en", "ru", "tr"],
+    "defaultLocale": "sr"
+  },
+  "sr": {
+    "common": {
+      "brand": "BrziMajstor.ME",
+      "language": "Jezik",
+      "languages": {
+        "sr": "Crnogorski",
+        "en": "English",
+        "ru": "Русский",
+        "tr": "Türkçe"
+      },
+      "buttons": {
+        "requestHandyman": "Zatraži majstora",
+        "viewCategories": "Pogledaj kategorije",
+        "login": "Prijavi se",
+        "register": "Registruj se",
+        "backHome": "Nazad na početnu",
+        "backLogin": "Nazad na prijavu",
+        "continueGoogle": "Nastavi sa Google"
+      }
+    },
+    "navigation": {
+      "home": "Početna",
+      "categories": "Kategorije",
+      "howItWorks": "Kako radi",
+      "installApp": "Instaliraj aplikaciju",
+      "contact": "Kontakt",
+      "support": "Kontakt / podrška",
+      "requestHandyman": "Zatraži majstora",
+      "forHandymen": "Za majstore",
+      "faq": "Česta pitanja",
+      "privacy": "Politika privatnosti",
+      "terms": "Uslovi korišćenja"
+    },
+    "footer": {
+      "description": "Platforma za lakše povezivanje korisnika i majstora u Crnoj Gori — zatražite majstora, besplatno za korisnike.",
+      "platform": "Platforma",
+      "legal": "Pravno",
+      "copyright": "Sva prava zadržana."
+    },
+    "home": {
+      "hero": {
+        "imageAlt": "Majstor na poslu",
+        "headline": "Majstori u Crnoj Gori — brzo, jednostavno i bez zvanja na više mjesta",
+        "subline": "Opišite posao jednom. Majstori kojima odgovara grad i vrsta posla javljaju se preko platforme.",
+        "primaryCta": "Zatraži majstora",
+        "secondaryCta": "Pogledaj kategorije",
+        "handymanCta": "Majstori: preuzmite poslove",
+        "loginCta": "Već imate nalog? Prijavi se",
+        "trustFree": "100% besplatno",
+        "trustNoCalling": "Bez zvanja na više mjesta",
+        "trustFast": "Brzo i jednostavno"
+      },
+      "howUsers": {
+        "eyebrow": "Za korisnike",
+        "title": "Kako radi za korisnike",
+        "subtitle": "Jedan kratki zahtjev — majstori iz vašeg grada odgovaraju preko platforme, bez zvanja od vrata do vrata.",
+        "stepLabel": "Korak",
+        "steps": [
+          {
+            "title": "Zatražite majstora besplatno",
+            "description": "Kratak opis, grad i po želji slike. Objavljivanje je besplatno."
+          },
+          {
+            "title": "Majstori vide oglas",
+            "description": "Nakon provjere, zahtjev je vidljiv majstorima kojima odgovara grad i vrsta posla."
+          },
+          {
+            "title": "Dogovor",
+            "description": "Nastavljate razgovor s majstorom kako vama odgovara."
+          }
+        ],
+        "primaryCta": "Zatraži majstora",
+        "note": "Jedan zahtjev umjesto niza pojedinačnih poziva.",
+        "detailsCta": "Detaljno za korisnike"
+      },
+      "howHandymen": {
+        "eyebrow": "Majstori",
+        "title": "Za majstore",
+        "subtitle": "Bez pretplate. Dobijate start kredite i plaćate samo kada otključate kontakt klijenta.",
+        "badgeNoSubscription": "Nema pretplate • Obavještenja odmah",
+        "badgeStandardContact": "Standardan kontakt oko 1,99 €",
+        "featuredBenefit": "Glavni benefit",
+        "stepLabel": "Korak",
+        "steps": [
+          {
+            "title": "Poslovi dolaze do vas",
+            "description": "Dobijate obavještenje kada oglas odgovara vašoj branši i gradu."
+          },
+          {
+            "title": "Registracija besplatna + start krediti",
+            "description": "Registracija je besplatna. Dobijate start kredite i krećete bez pretplate."
+          },
+          {
+            "title": "Plaćate samo kada želite kontakt",
+            "description": "Krediti se troše samo kada želite da otključate kontakt klijenta."
+          }
+        ],
+        "creditNote": "Krediti nijesu pretplata. Troše se samo kada otključate kontakt za posao koji želite.",
+        "registerCta": "Registruj se kao majstor",
+        "creditsCta": "Kako rade krediti?"
+      }
+    },
+    "auth": {
+      "login": {
+        "metadataTitle": "Prijava",
+        "metadataDescription": "Prijava na nalog — korisnik ili majstor na BrziMajstor.ME.",
+        "heading": "Dobrodošli nazad",
+        "subheading": "Prijavite se na svoj nalog da nastavite",
+        "verifiedBanner": "Email adresa je uspješno verifikovana! Sada se možete prijaviti.",
+        "email": "Email",
+        "password": "Lozinka",
+        "submit": "Prijavi se",
+        "submitting": "Prijava...",
+        "or": "ili",
+        "continueGoogle": "Nastavi sa Google",
+        "noAccount": "Nemate nalog?",
+        "openRegistration": "Otvorite registraciju",
+        "secureNote": "Sigurna prijava • Vaši podaci su zaštićeni",
+        "errors": {
+          "emailInvalid": "Unesite validan email",
+          "passwordRequired": "Unesite lozinku",
+          "wrongCredentials": "Pogrešan email ili lozinka",
+          "accessDenied": "Pristup je odbijen.",
+          "sessionExpired": "Sesija je istekla. Prijavite se ponovo."
+        }
+      },
+      "register": {
+        "metadataTitle": "Registracija",
+        "metadataDescription": "Novi nalog: korisnik ili majstor na BrziMajstor.ME.",
+        "heading": "Kreirajte nalog",
+        "subheading": "Korisnik ili majstor — izaberite kako želite da koristite platformu",
+        "inviteSubheading": "Pozvani ste da se registrujete kao majstor.",
+        "accountType": "Tip naloga",
+        "user": "Korisnik",
+        "handyman": "Majstor",
+        "userSubtitle": "Tražim majstora",
+        "handymanSubtitle": "Nudim usluge",
+        "handymanNotice": "Registracija je besplatna. Dobijate start kredite. Nema pretplate — krediti idu na otključavanje kontakta kad vam posao odgovara.",
+        "nameUser": "Ime i prezime",
+        "nameHandyman": "Naziv profila (firma, servis, tim ili ime)",
+        "password": "Lozinka",
+        "phoneOptional": "Telefon (opciono)",
+        "cityOptional": "Grad (opciono)",
+        "categories": "Kategorije koje pokrivate",
+        "workCities": "Gradovi u kojima radite",
+        "gallery": "Fotografije radova",
+        "bio": "Opis profila",
+        "submit": "Registruj se",
+        "submitting": "Registracija...",
+        "hasAccount": "Već imate nalog?",
+        "login": "Prijavite se",
+        "freeNote": "Besplatna registracija • Bez skrivenih troškova"
+      },
+      "forgotPassword": {
+        "metadataTitle": "Zaboravljena lozinka",
+        "metadataDescription": "Reset lozinke — BrziMajstor.ME",
+        "heading": "Zaboravljena lozinka",
+        "subheading": "Unesite email — šaljemo link za novu lozinku ako nalog postoji.",
+        "email": "Email",
+        "submit": "Pošalji link",
+        "submitting": "Slanje...",
+        "sentInfo": "Ako nalog sa tim emailom postoji i ima lozinku, poslali smo link za novu lozinku. Provjerite poštu i spam.",
+        "backToLogin": "Nazad na prijavu"
+      },
+      "resetPassword": {
+        "metadataTitle": "Nova lozinka",
+        "metadataDescription": "Postavite novu lozinku — BrziMajstor.ME",
+        "heading": "Nova lozinka",
+        "subheading": "Unesite novu lozinku za svoj nalog.",
+        "newPassword": "Nova lozinka",
+        "confirmPassword": "Potvrdi lozinku",
+        "submit": "Sačuvaj novu lozinku",
+        "submitting": "Snimam...",
+        "invalidLink": "Nedostaje ili je neispravan link. Zatražite novi reset sa stranice za zaboravljenu lozinku."
+      }
+    },
+    "request": {
+      "create": {
+        "metadataTitle": "Zatraži majstora",
+        "metadataDescription": "Pošaljite zahtjev i pronađite majstora u Crnoj Gori.",
+        "heading": "Zatraži majstora",
+        "subheading": "Besplatno za vas. Opišite posao što jasnije — jedan zahtjev umjesto više poziva. Administrator prvo pregleda zahtjev, zatim se javljaju majstori kojima posao odgovara.",
+        "recommended": "Preporučeno",
+        "openAccountTitle": "Otvorite nalog prije slanja (opciono)",
+        "openAccountDescription": "Nije obavezno, ali je lakše da kasnije pratite zahtjev, ponude i status na jednom mjestu.",
+        "register": "Registruj se",
+        "alreadyHaveAccount": "Već imam nalog",
+        "form": {
+          "name": "Ime",
+          "category": "Kategorija",
+          "title": "Naslov",
+          "description": "Opis posla",
+          "city": "Grad",
+          "phone": "Telefon",
+          "viber": "Viber broj",
+          "whatsapp": "WhatsApp broj",
+          "address": "Adresa",
+          "email": "Email",
+          "urgency": "Hitnost",
+          "photos": "Fotografije",
+          "submit": "Pošalji zahtjev",
+          "submitting": "Slanje zahtjeva..."
+        },
+        "validation": {
+          "enterName": "Unesite ime",
+          "selectCategory": "Izaberite kategoriju",
+          "titleMin": "Naslov mora imati najmanje 3 karaktera",
+          "descMin": "Opis mora imati najmanje 10 karaktera",
+          "enterCity": "Unesite grad",
+          "enterPhone": "Unesite broj telefona",
+          "emailInvalid": "Neispravan email",
+          "maxPhotos": "Maksimalno 5 slika",
+          "noContactInTitle": "Ne ostavljajte kontakt podatke u naslovu. Koristite posebna polja.",
+          "noContactInDescription": "Ne ostavljajte telefon, email, Instagram, Viber, WhatsApp ili adresu u opisu. Koristite posebna polja."
+        },
+        "serverErrors": {
+          "onlyUsers": "Samo korisnici mogu kreirati zahtjeve",
+          "verifyEmail": "Morate verifikovati email adresu prije objave zahtjeva.",
+          "dailyLimit": "Dostigli ste dnevni limit zahtjeva (5)",
+          "duplicate": "Već ste objavili isti zahtjev danas",
+          "saveError": "Greška pri snimanju zahtjeva. Pokušajte ponovo za nekoliko trenutaka."
+        }
+      }
+    },
+    "seo": {
+      "homeTitle": "Majstori u Crnoj Gori",
+      "homeDescription": "BrziMajstor.ME povezuje korisnike i majstore u Crnoj Gori. Pošaljite zahtjev besplatno i pronađite majstora za posao.",
+      "requestCreateTitle": "Zatraži majstora",
+      "requestCreateDescription": "Besplatno pošaljite zahtjev i pronađite majstora u Crnoj Gori.",
+      "categoriesTitle": "Kategorije majstora",
+      "categoriesDescription": "Pregledajte kategorije usluga i pronađite majstore u Crnoj Gori."
+    }
+  },
+  "en": {
+    "common": {
+      "brand": "BrziMajstor.ME",
+      "language": "Language",
+      "languages": {
+        "sr": "Montenegrin",
+        "en": "English",
+        "ru": "Russian",
+        "tr": "Turkish"
+      },
+      "buttons": {
+        "requestHandyman": "Request a handyman",
+        "viewCategories": "View categories",
+        "login": "Log in",
+        "register": "Register",
+        "backHome": "Back to home",
+        "backLogin": "Back to login",
+        "continueGoogle": "Continue with Google"
+      }
+    },
+    "navigation": {
+      "home": "Home",
+      "categories": "Categories",
+      "howItWorks": "How it works",
+      "installApp": "Install app",
+      "contact": "Contact",
+      "support": "Contact / support",
+      "requestHandyman": "Request a handyman",
+      "forHandymen": "For handymen",
+      "faq": "FAQ",
+      "privacy": "Privacy policy",
+      "terms": "Terms of use"
+    },
+    "footer": {
+      "description": "A platform that helps users and handymen connect in Montenegro — request a handyman free of charge.",
+      "platform": "Platform",
+      "legal": "Legal",
+      "copyright": "All rights reserved."
+    },
+    "home": {
+      "hero": {
+        "imageAlt": "Handyman at work",
+        "headline": "Handymen in Montenegro — fast, simple, and without calling around",
+        "subline": "Describe the job once. Handymen who match your city and service type respond through the platform.",
+        "primaryCta": "Request a handyman",
+        "secondaryCta": "View categories",
+        "handymanCta": "Handymen: take jobs",
+        "loginCta": "Already have an account? Log in",
+        "trustFree": "100% free",
+        "trustNoCalling": "No calling multiple places",
+        "trustFast": "Fast and simple"
+      },
+      "howUsers": {
+        "eyebrow": "For users",
+        "title": "How it works for users",
+        "subtitle": "One short request — handymen from your city respond through the platform, without calling door to door.",
+        "stepLabel": "Step",
+        "steps": [
+          {
+            "title": "Request a handyman for free",
+            "description": "Add a short description, city, and photos if needed. Posting is free."
+          },
+          {
+            "title": "Handymen see the request",
+            "description": "After review, the request is visible to handymen who match the city and job type."
+          },
+          {
+            "title": "Make an agreement",
+            "description": "Continue the conversation with the handyman in the way that suits you."
+          }
+        ],
+        "primaryCta": "Request a handyman",
+        "note": "One request instead of many separate calls.",
+        "detailsCta": "Details for users"
+      },
+      "howHandymen": {
+        "eyebrow": "Handymen",
+        "title": "For handymen",
+        "subtitle": "No subscription. You receive starter credits and pay only when you unlock a client contact.",
+        "badgeNoSubscription": "No subscription • Instant notifications",
+        "badgeStandardContact": "Standard contact around €1.99",
+        "featuredBenefit": "Main benefit",
+        "stepLabel": "Step",
+        "steps": [
+          {
+            "title": "Jobs come to you",
+            "description": "You get notified when a request matches your trade and city."
+          },
+          {
+            "title": "Free registration + starter credits",
+            "description": "Registration is free. You get starter credits and begin without a subscription."
+          },
+          {
+            "title": "Pay only when you want the contact",
+            "description": "Credits are used only when you decide to unlock the client contact."
+          }
+        ],
+        "creditNote": "Credits are not a subscription. They are spent only when you unlock a contact for a job you want.",
+        "registerCta": "Register as a handyman",
+        "creditsCta": "How do credits work?"
+      }
+    },
+    "auth": {
+      "login": {
+        "metadataTitle": "Login",
+        "metadataDescription": "Log in as a user or handyman on BrziMajstor.ME.",
+        "heading": "Welcome back",
+        "subheading": "Log in to your account to continue",
+        "verifiedBanner": "Email address successfully verified. You can now log in.",
+        "email": "Email",
+        "password": "Password",
+        "submit": "Log in",
+        "submitting": "Logging in...",
+        "or": "or",
+        "continueGoogle": "Continue with Google",
+        "noAccount": "No account yet?",
+        "openRegistration": "Create an account",
+        "secureNote": "Secure login • Your data is protected",
+        "errors": {
+          "emailInvalid": "Enter a valid email address",
+          "passwordRequired": "Enter your password",
+          "wrongCredentials": "Incorrect email or password",
+          "accessDenied": "Access denied.",
+          "sessionExpired": "Session expired. Please log in again."
+        }
+      },
+      "register": {
+        "metadataTitle": "Register",
+        "metadataDescription": "Create a user or handyman account on BrziMajstor.ME.",
+        "heading": "Create an account",
+        "subheading": "User or handyman — choose how you want to use the platform",
+        "inviteSubheading": "You have been invited to register as a handyman.",
+        "accountType": "Account type",
+        "user": "User",
+        "handyman": "Handyman",
+        "userSubtitle": "I need a handyman",
+        "handymanSubtitle": "I offer services",
+        "handymanNotice": "Registration is free. You receive starter credits. There is no subscription — credits are used to unlock contacts for jobs that suit you.",
+        "nameUser": "Full name",
+        "nameHandyman": "Profile name (company, service, team, or name)",
+        "password": "Password",
+        "phoneOptional": "Phone (optional)",
+        "cityOptional": "City (optional)",
+        "categories": "Categories you cover",
+        "workCities": "Cities where you work",
+        "gallery": "Work photos",
+        "bio": "Profile description",
+        "submit": "Register",
+        "submitting": "Creating account...",
+        "hasAccount": "Already have an account?",
+        "login": "Log in",
+        "freeNote": "Free registration • No hidden costs"
+      },
+      "forgotPassword": {
+        "metadataTitle": "Forgot password",
+        "metadataDescription": "Reset password — BrziMajstor.ME",
+        "heading": "Forgot password",
+        "subheading": "Enter your email — if the account exists, we will send a reset link.",
+        "email": "Email",
+        "submit": "Send link",
+        "submitting": "Sending...",
+        "sentInfo": "If an account with this email exists and has a password, we sent a reset link. Check your inbox and spam.",
+        "backToLogin": "Back to login"
+      },
+      "resetPassword": {
+        "metadataTitle": "New password",
+        "metadataDescription": "Set a new password — BrziMajstor.ME",
+        "heading": "New password",
+        "subheading": "Enter a new password for your account.",
+        "newPassword": "New password",
+        "confirmPassword": "Confirm password",
+        "submit": "Save new password",
+        "submitting": "Saving...",
+        "invalidLink": "The link is missing or invalid. Request a new reset from the forgot-password page."
+      }
+    },
+    "request": {
+      "create": {
+        "metadataTitle": "Request a handyman",
+        "metadataDescription": "Send a request and find a handyman in Montenegro.",
+        "heading": "Request a handyman",
+        "subheading": "Free for you. Describe the job clearly — one request instead of multiple calls. An administrator reviews the request first, then matching handymen respond.",
+        "recommended": "Recommended",
+        "openAccountTitle": "Create an account before sending (optional)",
+        "openAccountDescription": "It is not required, but it makes it easier to track your request, offers, and status in one place.",
+        "register": "Register",
+        "alreadyHaveAccount": "I already have an account",
+        "form": {
+          "name": "Name",
+          "category": "Category",
+          "title": "Title",
+          "description": "Job description",
+          "city": "City",
+          "phone": "Phone",
+          "viber": "Viber number",
+          "whatsapp": "WhatsApp number",
+          "address": "Address",
+          "email": "Email",
+          "urgency": "Urgency",
+          "photos": "Photos",
+          "submit": "Send request",
+          "submitting": "Sending request..."
+        },
+        "validation": {
+          "enterName": "Enter your name",
+          "selectCategory": "Select a category",
+          "titleMin": "Title must have at least 3 characters",
+          "descMin": "Description must have at least 10 characters",
+          "enterCity": "Enter city",
+          "enterPhone": "Enter phone number",
+          "emailInvalid": "Invalid email",
+          "maxPhotos": "Maximum 5 photos",
+          "noContactInTitle": "Do not leave contact details in the title. Use the dedicated fields.",
+          "noContactInDescription": "Do not leave phone, email, Instagram, Viber, WhatsApp, or address in the description. Use the dedicated fields."
+        },
+        "serverErrors": {
+          "onlyUsers": "Only users can create requests",
+          "verifyEmail": "You must verify your email before posting a request.",
+          "dailyLimit": "You have reached your daily request limit (5)",
+          "duplicate": "You already posted the same request today",
+          "saveError": "Error while saving the request. Please try again shortly."
+        }
+      }
+    },
+    "seo": {
+      "homeTitle": "Handymen in Montenegro",
+      "homeDescription": "BrziMajstor.ME connects users and handymen in Montenegro. Send a request for free and find a handyman for the job.",
+      "requestCreateTitle": "Request a handyman",
+      "requestCreateDescription": "Send a request for free and find a handyman in Montenegro.",
+      "categoriesTitle": "Handyman categories",
+      "categoriesDescription": "Browse service categories and find handymen in Montenegro."
+    }
+  },
+  "ru": {
+    "common": {
+      "brand": "BrziMajstor.ME",
+      "language": "Язык",
+      "languages": {
+        "sr": "Черногорский",
+        "en": "Английский",
+        "ru": "Русский",
+        "tr": "Турецкий"
+      },
+      "buttons": {
+        "requestHandyman": "Запросить мастера",
+        "viewCategories": "Смотреть категории",
+        "login": "Войти",
+        "register": "Зарегистрироваться",
+        "backHome": "На главную",
+        "backLogin": "Назад ко входу",
+        "continueGoogle": "Продолжить через Google"
+      }
+    },
+    "navigation": {
+      "home": "Главная",
+      "categories": "Категории",
+      "howItWorks": "Как это работает",
+      "installApp": "Установить приложение",
+      "contact": "Контакт",
+      "support": "Контакт / поддержка",
+      "requestHandyman": "Запросить мастера",
+      "forHandymen": "Для мастеров",
+      "faq": "Частые вопросы",
+      "privacy": "Политика конфиденциальности",
+      "terms": "Условия использования"
+    },
+    "footer": {
+      "description": "Платформа для удобной связи клиентов и мастеров в Черногории — запрос мастера бесплатен для пользователей.",
+      "platform": "Платформа",
+      "legal": "Правовая информация",
+      "copyright": "Все права защищены."
+    },
+    "home": {
+      "hero": {
+        "imageAlt": "Мастер за работой",
+        "headline": "Мастера в Черногории — быстро, просто и без множества звонков",
+        "subline": "Опишите работу один раз. Мастера, которым подходит город и тип услуги, отвечают через платформу.",
+        "primaryCta": "Запросить мастера",
+        "secondaryCta": "Смотреть категории",
+        "handymanCta": "Мастера: берите заказы",
+        "loginCta": "Уже есть аккаунт? Войти",
+        "trustFree": "100% бесплатно",
+        "trustNoCalling": "Без звонков в разные места",
+        "trustFast": "Быстро и просто"
+      },
+      "howUsers": {
+        "eyebrow": "Для пользователей",
+        "title": "Как это работает для пользователей",
+        "subtitle": "Один короткий запрос — мастера из вашего города отвечают через платформу, без бесконечных звонков.",
+        "stepLabel": "Шаг",
+        "steps": [
+          {
+            "title": "Запросите мастера бесплатно",
+            "description": "Краткое описание, город и при необходимости фотографии. Публикация бесплатна."
+          },
+          {
+            "title": "Мастера видят заявку",
+            "description": "После проверки заявка видна мастерам, которым подходит город и вид работы."
+          },
+          {
+            "title": "Договоренность",
+            "description": "Продолжайте разговор с мастером удобным для вас способом."
+          }
+        ],
+        "primaryCta": "Запросить мастера",
+        "note": "Один запрос вместо множества отдельных звонков.",
+        "detailsCta": "Подробнее для пользователей"
+      },
+      "howHandymen": {
+        "eyebrow": "Мастера",
+        "title": "Для мастеров",
+        "subtitle": "Без подписки. Вы получаете стартовые кредиты и платите только когда открываете контакт клиента.",
+        "badgeNoSubscription": "Без подписки • Мгновенные уведомления",
+        "badgeStandardContact": "Стандартный контакт около 1,99 €",
+        "featuredBenefit": "Главное преимущество",
+        "stepLabel": "Шаг",
+        "steps": [
+          {
+            "title": "Заказы приходят к вам",
+            "description": "Вы получаете уведомление, когда заявка соответствует вашей специальности и городу."
+          },
+          {
+            "title": "Бесплатная регистрация + стартовые кредиты",
+            "description": "Регистрация бесплатна. Вы получаете стартовые кредиты и начинаете без подписки."
+          },
+          {
+            "title": "Платите только когда нужен контакт",
+            "description": "Кредиты тратятся только когда вы решаете открыть контакт клиента."
+          }
+        ],
+        "creditNote": "Кредиты не являются подпиской. Они тратятся только при открытии контакта для подходящего вам заказа.",
+        "registerCta": "Зарегистрироваться как мастер",
+        "creditsCta": "Как работают кредиты?"
+      }
+    },
+    "auth": {
+      "login": {
+        "metadataTitle": "Вход",
+        "metadataDescription": "Вход в аккаунт пользователя или мастера на BrziMajstor.ME.",
+        "heading": "Добро пожаловать обратно",
+        "subheading": "Войдите в аккаунт, чтобы продолжить",
+        "verifiedBanner": "Email успешно подтвержден. Теперь вы можете войти.",
+        "email": "Email",
+        "password": "Пароль",
+        "submit": "Войти",
+        "submitting": "Вход...",
+        "or": "или",
+        "continueGoogle": "Продолжить через Google",
+        "noAccount": "Еще нет аккаунта?",
+        "openRegistration": "Создать аккаунт",
+        "secureNote": "Безопасный вход • Ваши данные защищены",
+        "errors": {
+          "emailInvalid": "Введите корректный email",
+          "passwordRequired": "Введите пароль",
+          "wrongCredentials": "Неверный email или пароль",
+          "accessDenied": "Доступ запрещен.",
+          "sessionExpired": "Сессия истекла. Войдите снова."
+        }
+      },
+      "register": {
+        "metadataTitle": "Регистрация",
+        "metadataDescription": "Создайте аккаунт пользователя или мастера на BrziMajstor.ME.",
+        "heading": "Создайте аккаунт",
+        "subheading": "Пользователь или мастер — выберите, как хотите пользоваться платформой",
+        "inviteSubheading": "Вас пригласили зарегистрироваться как мастер.",
+        "accountType": "Тип аккаунта",
+        "user": "Пользователь",
+        "handyman": "Мастер",
+        "userSubtitle": "Ищу мастера",
+        "handymanSubtitle": "Предлагаю услуги",
+        "handymanNotice": "Регистрация бесплатна. Вы получаете стартовые кредиты. Подписки нет — кредиты используются для открытия контактов по подходящим заказам.",
+        "nameUser": "Имя и фамилия",
+        "nameHandyman": "Название профиля (компания, сервис, команда или имя)",
+        "password": "Пароль",
+        "phoneOptional": "Телефон (необязательно)",
+        "cityOptional": "Город (необязательно)",
+        "categories": "Категории, которые вы покрываете",
+        "workCities": "Города, где вы работаете",
+        "gallery": "Фотографии работ",
+        "bio": "Описание профиля",
+        "submit": "Зарегистрироваться",
+        "submitting": "Регистрация...",
+        "hasAccount": "Уже есть аккаунт?",
+        "login": "Войти",
+        "freeNote": "Бесплатная регистрация • Без скрытых расходов"
+      },
+      "forgotPassword": {
+        "metadataTitle": "Забыли пароль",
+        "metadataDescription": "Сброс пароля — BrziMajstor.ME",
+        "heading": "Забыли пароль",
+        "subheading": "Введите email — если аккаунт существует, мы отправим ссылку для восстановления.",
+        "email": "Email",
+        "submit": "Отправить ссылку",
+        "submitting": "Отправка...",
+        "sentInfo": "Если аккаунт с этим email существует и имеет пароль, мы отправили ссылку для сброса. Проверьте почту и спам.",
+        "backToLogin": "Назад ко входу"
+      },
+      "resetPassword": {
+        "metadataTitle": "Новый пароль",
+        "metadataDescription": "Установите новый пароль — BrziMajstor.ME",
+        "heading": "Новый пароль",
+        "subheading": "Введите новый пароль для вашего аккаунта.",
+        "newPassword": "Новый пароль",
+        "confirmPassword": "Подтвердите пароль",
+        "submit": "Сохранить новый пароль",
+        "submitting": "Сохранение...",
+        "invalidLink": "Ссылка отсутствует или недействительна. Запросите новый сброс на странице восстановления пароля."
+      }
+    },
+    "request": {
+      "create": {
+        "metadataTitle": "Запросить мастера",
+        "metadataDescription": "Отправьте заявку и найдите мастера в Черногории.",
+        "heading": "Запросить мастера",
+        "subheading": "Бесплатно для вас. Опишите работу как можно яснее — один запрос вместо множества звонков. Администратор сначала проверяет заявку, затем подходящие мастера отвечают.",
+        "recommended": "Рекомендуется",
+        "openAccountTitle": "Создайте аккаунт перед отправкой (необязательно)",
+        "openAccountDescription": "Это не обязательно, но так проще отслеживать заявку, предложения и статус в одном месте.",
+        "register": "Зарегистрироваться",
+        "alreadyHaveAccount": "У меня уже есть аккаунт",
+        "form": {
+          "name": "Имя",
+          "category": "Категория",
+          "title": "Заголовок",
+          "description": "Описание работы",
+          "city": "Город",
+          "phone": "Телефон",
+          "viber": "Номер Viber",
+          "whatsapp": "Номер WhatsApp",
+          "address": "Адрес",
+          "email": "Email",
+          "urgency": "Срочность",
+          "photos": "Фотографии",
+          "submit": "Отправить заявку",
+          "submitting": "Отправка заявки..."
+        },
+        "validation": {
+          "enterName": "Введите имя",
+          "selectCategory": "Выберите категорию",
+          "titleMin": "Заголовок должен содержать минимум 3 символа",
+          "descMin": "Описание должно содержать минимум 10 символов",
+          "enterCity": "Укажите город",
+          "enterPhone": "Укажите номер телефона",
+          "emailInvalid": "Некорректный email",
+          "maxPhotos": "Максимум 5 фото",
+          "noContactInTitle": "Не оставляйте контактные данные в заголовке. Используйте специальные поля.",
+          "noContactInDescription": "Не оставляйте телефон, email, Instagram, Viber, WhatsApp или адрес в описании. Используйте специальные поля."
+        },
+        "serverErrors": {
+          "onlyUsers": "Только пользователи могут создавать заявки",
+          "verifyEmail": "Подтвердите email перед публикацией заявки.",
+          "dailyLimit": "Вы достигли дневного лимита заявок (5)",
+          "duplicate": "Вы уже публиковали такую заявку сегодня",
+          "saveError": "Ошибка при сохранении заявки. Попробуйте снова позже."
+        }
+      }
+    },
+    "seo": {
+      "homeTitle": "Мастера в Черногории",
+      "homeDescription": "BrziMajstor.ME соединяет пользователей и мастеров в Черногории. Отправьте заявку бесплатно и найдите мастера для работы.",
+      "requestCreateTitle": "Запросить мастера",
+      "requestCreateDescription": "Бесплатно отправьте заявку и найдите мастера в Черногории.",
+      "categoriesTitle": "Категории мастеров",
+      "categoriesDescription": "Просмотрите категории услуг и найдите мастеров в Черногории."
+    }
+  },
+  "tr": {
+    "common": {
+      "brand": "BrziMajstor.ME",
+      "language": "Dil",
+      "languages": {
+        "sr": "Karadagca",
+        "en": "Ingilizce",
+        "ru": "Rusca",
+        "tr": "Turkce"
+      },
+      "buttons": {
+        "requestHandyman": "Usta talep et",
+        "viewCategories": "Kategorileri gor",
+        "login": "Giris yap",
+        "register": "Kayit ol",
+        "backHome": "Ana sayfaya don",
+        "backLogin": "Girise don",
+        "continueGoogle": "Google ile devam et"
+      }
+    },
+    "navigation": {
+      "home": "Ana sayfa",
+      "categories": "Kategoriler",
+      "howItWorks": "Nasil calisir",
+      "installApp": "Uygulamayi yukle",
+      "contact": "Iletisim",
+      "support": "Iletisim / destek",
+      "requestHandyman": "Usta talep et",
+      "forHandymen": "Ustalar icin",
+      "faq": "Sik sorulan sorular",
+      "privacy": "Gizlilik politikasi",
+      "terms": "Kullanim sartlari"
+    },
+    "footer": {
+      "description": "Karadag'da kullanicilarla ustalari daha kolay bulusturan platform — kullanicilar icin usta talebi ucretsizdir.",
+      "platform": "Platform",
+      "legal": "Yasal",
+      "copyright": "Tum haklari saklidir."
+    },
+    "home": {
+      "hero": {
+        "imageAlt": "Calisan usta",
+        "headline": "Karadag'da ustalar — hizli, kolay ve bircok yeri aramadan",
+        "subline": "Isi bir kez tarif edin. Sehir ve hizmet turune uygun ustalar platform uzerinden cevap verir.",
+        "primaryCta": "Usta talep et",
+        "secondaryCta": "Kategorileri gor",
+        "handymanCta": "Ustalar: isleri alin",
+        "loginCta": "Zaten hesabin var mi? Giris yap",
+        "trustFree": "100% ucretsiz",
+        "trustNoCalling": "Birden fazla yeri aramaya gerek yok",
+        "trustFast": "Hizli ve kolay"
+      },
+      "howUsers": {
+        "eyebrow": "Kullanicilar icin",
+        "title": "Kullanicilar icin nasil calisir",
+        "subtitle": "Tek kisa talep — sehrinizdeki ustalar platform uzerinden cevap verir, kapı kapı arama yok.",
+        "stepLabel": "Adim",
+        "steps": [
+          {
+            "title": "Ucretsiz usta talep edin",
+            "description": "Kisa aciklama, sehir ve gerekirse fotograf ekleyin. Talep yayinlamak ucretsizdir."
+          },
+          {
+            "title": "Ustalar talebi gorur",
+            "description": "Kontrolden sonra talep, sehir ve is turune uygun ustalara gorunur."
+          },
+          {
+            "title": "Anlasma",
+            "description": "Usta ile size uygun sekilde konusmaya devam edersiniz."
+          }
+        ],
+        "primaryCta": "Usta talep et",
+        "note": "Birden fazla arama yerine tek talep.",
+        "detailsCta": "Kullanicilar icin detaylar"
+      },
+      "howHandymen": {
+        "eyebrow": "Ustalar",
+        "title": "Ustalar icin",
+        "subtitle": "Abonelik yok. Baslangic kredileri alirsiniz ve sadece musteri iletisimini actiginizda odersiniz.",
+        "badgeNoSubscription": "Abonelik yok • Aninda bildirimler",
+        "badgeStandardContact": "Standart iletisim yaklasik 1,99 €",
+        "featuredBenefit": "Ana avantaj",
+        "stepLabel": "Adim",
+        "steps": [
+          {
+            "title": "Isler size gelir",
+            "description": "Talep, uzmanlik alaniniza ve sehrinize uygunsa bildirim alirsiniz."
+          },
+          {
+            "title": "Ucretsiz kayit + baslangic kredileri",
+            "description": "Kayit ucretsizdir. Baslangic kredileri alir ve aboneliksiz baslarsiniz."
+          },
+          {
+            "title": "Sadece iletisim istediginizde odersiniz",
+            "description": "Krediler sadece musteri iletisimini acmaya karar verdiginizde kullanilir."
+          }
+        ],
+        "creditNote": "Krediler abonelik degildir. Sadece istediginiz is icin iletisim actiginizda kullanilir.",
+        "registerCta": "Usta olarak kayit ol",
+        "creditsCta": "Krediler nasil calisir?"
+      }
+    },
+    "auth": {
+      "login": {
+        "metadataTitle": "Giris",
+        "metadataDescription": "BrziMajstor.ME'de kullanici veya usta olarak giris yapin.",
+        "heading": "Tekrar hos geldiniz",
+        "subheading": "Devam etmek icin hesabiniza giris yapin",
+        "verifiedBanner": "E-posta basariyla dogrulandi. Simdi giris yapabilirsiniz.",
+        "email": "E-posta",
+        "password": "Sifre",
+        "submit": "Giris yap",
+        "submitting": "Giris yapiliyor...",
+        "or": "veya",
+        "continueGoogle": "Google ile devam et",
+        "noAccount": "Hesabiniz yok mu?",
+        "openRegistration": "Hesap olustur",
+        "secureNote": "Guvenli giris • Verileriniz korunur",
+        "errors": {
+          "emailInvalid": "Gecerli bir e-posta girin",
+          "passwordRequired": "Sifrenizi girin",
+          "wrongCredentials": "E-posta veya sifre hatali",
+          "accessDenied": "Erisim reddedildi.",
+          "sessionExpired": "Oturum suresi doldu. Lutfen tekrar giris yapin."
+        }
+      },
+      "register": {
+        "metadataTitle": "Kayit",
+        "metadataDescription": "BrziMajstor.ME'de kullanici veya usta hesabi olusturun.",
+        "heading": "Hesap olusturun",
+        "subheading": "Kullanici veya usta — platformu nasil kullanmak istediginizi secin",
+        "inviteSubheading": "Usta olarak kaydolmaya davet edildiniz.",
+        "accountType": "Hesap tipi",
+        "user": "Kullanici",
+        "handyman": "Usta",
+        "userSubtitle": "Usta ariyorum",
+        "handymanSubtitle": "Hizmet veriyorum",
+        "handymanNotice": "Kayit ucretsizdir. Baslangic kredileri alirsiniz. Abonelik yok — krediler size uygun islerde iletisim acmak icin kullanilir.",
+        "nameUser": "Ad ve soyad",
+        "nameHandyman": "Profil adi (firma, servis, ekip veya isim)",
+        "password": "Sifre",
+        "phoneOptional": "Telefon (opsiyonel)",
+        "cityOptional": "Sehir (opsiyonel)",
+        "categories": "Hizmet verdiginiz kategoriler",
+        "workCities": "Calistiginiz sehirler",
+        "gallery": "Is fotograflari",
+        "bio": "Profil aciklamasi",
+        "submit": "Kayit ol",
+        "submitting": "Kayit yapiliyor...",
+        "hasAccount": "Zaten hesabin var mi?",
+        "login": "Giris yap",
+        "freeNote": "Ucretsiz kayit • Gizli ucret yok"
+      },
+      "forgotPassword": {
+        "metadataTitle": "Sifremi unuttum",
+        "metadataDescription": "Sifre sifirlama — BrziMajstor.ME",
+        "heading": "Sifremi unuttum",
+        "subheading": "E-postanizi girin — hesap varsa sifre yenileme baglantisi gondeririz.",
+        "email": "E-posta",
+        "submit": "Baglanti gonder",
+        "submitting": "Gonderiliyor...",
+        "sentInfo": "Bu e-postaya ait ve sifresi olan bir hesap varsa, sifre yenileme baglantisi gonderildi. Gelen kutusunu ve spam klasorunu kontrol edin.",
+        "backToLogin": "Girise don"
+      },
+      "resetPassword": {
+        "metadataTitle": "Yeni sifre",
+        "metadataDescription": "Yeni sifre belirleyin — BrziMajstor.ME",
+        "heading": "Yeni sifre",
+        "subheading": "Hesabiniz icin yeni sifre girin.",
+        "newPassword": "Yeni sifre",
+        "confirmPassword": "Sifreyi onayla",
+        "submit": "Yeni sifreyi kaydet",
+        "submitting": "Kaydediliyor...",
+        "invalidLink": "Baglanti eksik veya gecersiz. Sifremi unuttum sayfasindan yeni bir sifirlama isteyin."
+      }
+    },
+    "request": {
+      "create": {
+        "metadataTitle": "Usta talep et",
+        "metadataDescription": "Talep gonderin ve Karadag'da usta bulun.",
+        "heading": "Usta talep et",
+        "subheading": "Sizin icin ucretsiz. Isi net tarif edin — birden fazla arama yerine tek talep. Once yonetici talebi inceler, sonra uygun ustalar cevap verir.",
+        "recommended": "Onerilir",
+        "openAccountTitle": "Gondermeden once hesap acin (opsiyonel)",
+        "openAccountDescription": "Zorunlu degil, ancak talebinizi, teklifleri ve durumu tek yerden takip etmeyi kolaylastirir.",
+        "register": "Kayit ol",
+        "alreadyHaveAccount": "Zaten hesabim var",
+        "form": {
+          "name": "Ad",
+          "category": "Kategori",
+          "title": "Baslik",
+          "description": "Is aciklamasi",
+          "city": "Sehir",
+          "phone": "Telefon",
+          "viber": "Viber numarasi",
+          "whatsapp": "WhatsApp numarasi",
+          "address": "Adres",
+          "email": "E-posta",
+          "urgency": "Aciliyet",
+          "photos": "Fotograflar",
+          "submit": "Talep gonder",
+          "submitting": "Talep gonderiliyor..."
+        },
+        "validation": {
+          "enterName": "Adinizi girin",
+          "selectCategory": "Kategori secin",
+          "titleMin": "Baslik en az 3 karakter olmali",
+          "descMin": "Aciklama en az 10 karakter olmali",
+          "enterCity": "Sehir girin",
+          "enterPhone": "Telefon numarasi girin",
+          "emailInvalid": "Gecersiz e-posta",
+          "maxPhotos": "En fazla 5 fotograf",
+          "noContactInTitle": "Baslikta iletisim bilgisi birakmayin. Ozel alanlari kullanin.",
+          "noContactInDescription": "Aciklamada telefon, e-posta, Instagram, Viber, WhatsApp veya adres birakmayin. Ozel alanlari kullanin."
+        },
+        "serverErrors": {
+          "onlyUsers": "Sadece kullanicilar talep olusturabilir",
+          "verifyEmail": "Talep yayinlamadan once e-postanizi dogrulamaniz gerekir.",
+          "dailyLimit": "Gunluk talep limitine ulastiniz (5)",
+          "duplicate": "Ayni talebi bugun zaten yayinladiniz",
+          "saveError": "Talep kaydedilirken hata olustu. Lutfen biraz sonra tekrar deneyin."
+        }
+      }
+    },
+    "seo": {
+      "homeTitle": "Karadag'da ustalar",
+      "homeDescription": "BrziMajstor.ME, Karadag'da kullanicilarla ustalari bulusturur. Ucretsiz talep gonderin ve isiniz icin usta bulun.",
+      "requestCreateTitle": "Usta talep et",
+      "requestCreateDescription": "Ucretsiz talep gonderin ve Karadag'da usta bulun.",
+      "categoriesTitle": "Usta kategorileri",
+      "categoriesDescription": "Hizmet kategorilerini inceleyin ve Karadag'da ustalar bulun."
+    }
+  }
+}
