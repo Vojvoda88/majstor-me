@@ -13,13 +13,16 @@ const nextConfig = {
       "https://vercel.live",
       // Google Translate widget (components/layout/google-translate.tsx)
       "https://translate.google.com",
+      "https://translate.googleapis.com",
+      "https://www.google.com",
       "https://www.gstatic.com",
     ].join(" ");
     const frameSrc = [
       "'self'",
       "https://translate.google.com",
-      "https://www.google.com",
       "https://translate.googleapis.com",
+      "https://www.google.com",
+      "https://translate.goog",
     ].join(" ");
     const security = [
       { key: "X-DNS-Prefetch-Control", value: "on" },
