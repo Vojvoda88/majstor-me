@@ -93,6 +93,18 @@ export function GoogleTranslate() {
     return true;
   };
 
+  const redirectViaGoogleTranslate = (langCode: string) => {
+    if (langCode === "sr") {
+      window.location.href = `${window.location.origin}${window.location.pathname}${window.location.search}${window.location.hash}`;
+      return;
+    }
+    const url = window.location.href;
+    const translatedUrl = `https://translate.google.com/translate?sl=auto&tl=${encodeURIComponent(
+      langCode
+    )}&u=${encodeURIComponent(url)}`;
+    window.location.href = translatedUrl;
+  };
+
   const applyLanguage = (langCode: string) => {
     setActiveLang(langCode);
     setOpen(false);
@@ -119,7 +131,7 @@ export function GoogleTranslate() {
       }
       if (attempts >= maxAttempts) {
         window.clearInterval(timer);
-        window.location.reload();
+        redirectViaGoogleTranslate(langCode);
       }
     }, 120);
   };
@@ -155,7 +167,7 @@ export function GoogleTranslate() {
   return (
     <>
       {/* Jedan jedini widget div — fiksiran u donjem desnom uglu, radi na svim stranicama */}
-      <div id="google_translate_element" className="sr-only" />
+      <div id="google_translate_element" />
       <div className="fixed bottom-20 right-3 z-50">
         <div className="relative">
           <button
