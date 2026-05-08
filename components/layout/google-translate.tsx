@@ -5,7 +5,8 @@ import Script from "next/script";
 
 declare global {
   interface Window {
-    googleTranslateElementInit?: () => void;
+    __bmGoogleTranslateReady?: boolean;
+    __bmGoogleTranslateInitialized?: boolean;
     google?: {
       translate: {
         TranslateElement: new (
@@ -38,6 +39,21 @@ export function GoogleTranslate() {
 
   const hasDomain = typeof window !== "undefined" && window.location.hostname.includes(".");
 
+  const readCookieValue = (name: string): string | null => {
+    const raw = document.cookie
+      .split("; ")
+      .find((entry) => entry.startsWith(`${name}=`))
+      ?.split("=")[1];
+    return raw ? decodeURIComponent(raw) : null;
+  };
+
+  const readCookieLanguage = (): string | null => {
+    const value = readCookieValue("googtrans");
+    if (!value) return null;
+    const candidate = value.split("/").at(-1);
+    return candidate || null;
+  };
+
   const setTranslateCookie = (value: string) => {
     document.cookie = `googtrans=${value};path=/;max-age=31536000`;
     if (hasDomain) {
@@ -50,6 +66,20 @@ export function GoogleTranslate() {
     if (hasDomain) {
       document.cookie = `googtrans=;path=/;domain=.${window.location.hostname};expires=Thu, 01 Jan 1970 00:00:00 GMT`;
     }
+  };
+
+  const ensureTranslateInitialized = () => {
+    if (window.__bmGoogleTranslateInitialized) return;
+    if (!window.google?.translate?.TranslateElement) return;
+    new window.google.translate.TranslateElement(
+      {
+        pageLanguage: "sr",
+        includedLanguages: "en,ru,tr,sr",
+        autoDisplay: false,
+      },
+      "google_translate_element"
+    );
+    window.__bmGoogleTranslateInitialized = true;
   };
 
   const applyViaGoogleSelect = (langCode: string): boolean => {
@@ -74,13 +104,14 @@ export function GoogleTranslate() {
       return;
     }
 
-    const target = `/sr/${langCode}`;
+    const target = `/auto/${langCode}`;
     setTranslateCookie(target);
 
     let attempts = 0;
-    const maxAttempts = 25;
+    const maxAttempts = 20;
     const timer = window.setInterval(() => {
       attempts += 1;
+      ensureTranslateInitialized();
       const applied = applyViaGoogleSelect(langCode);
       if (applied) {
         window.clearInterval(timer);
@@ -94,38 +125,28 @@ export function GoogleTranslate() {
   };
 
   useEffect(() => {
-    window.googleTranslateElementInit = () => {
-      if (!window.google?.translate?.TranslateElement) return;
-      new window.google.translate.TranslateElement(
-        {
-          pageLanguage: "sr",
-          includedLanguages: "en,ru,tr,sr",
-          autoDisplay: false,
-        },
-        "google_translate_element"
-      );
+    const candidate = readCookieLanguage();
+    if (candidate) setActiveLang(candidate);
 
-      window.setTimeout(() => {
-        const googtrans = document.cookie
-          .split("; ")
-          .find((entry) => entry.startsWith("googtrans="))
-          ?.split("=")[1];
-        if (!googtrans) return;
-        const parts = decodeURIComponent(googtrans).split("/");
-        const candidate = parts[parts.length - 1];
-        if (!candidate || candidate === "sr") return;
-        applyViaGoogleSelect(candidate);
-      }, 250);
+    const applySaved = () => {
+      const saved = readCookieLanguage();
+      if (!saved || saved === "sr") return;
+      applyViaGoogleSelect(saved);
     };
 
-    const googtrans = document.cookie
-      .split("; ")
-      .find((entry) => entry.startsWith("googtrans="))
-      ?.split("=")[1];
-    if (!googtrans) return;
-    const parts = googtrans.split("/");
-    const candidate = parts[parts.length - 1];
-    if (candidate) setActiveLang(candidate);
+    const t1 = window.setTimeout(() => {
+      ensureTranslateInitialized();
+      applySaved();
+    }, 300);
+    const t2 = window.setTimeout(() => {
+      ensureTranslateInitialized();
+      applySaved();
+    }, 900);
+
+    return () => {
+      window.clearTimeout(t1);
+      window.clearTimeout(t2);
+    };
   }, []);
 
   const activeOption =
@@ -174,21 +195,25 @@ export function GoogleTranslate() {
         </div>
       </div>
       <Script
-        src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"
+        src="https://translate.google.com/translate_a/element.js"
         strategy="lazyOnload"
+        onLoad={() => {
+          window.__bmGoogleTranslateReady = true;
+          ensureTranslateInitialized();
+          const saved = readCookieLanguage();
+          if (saved && saved !== "sr") applyViaGoogleSelect(saved);
+        }}
       />
       <style>{`
         .goog-te-banner-frame { display: none !important; }
         body { top: 0 !important; }
         #google_translate_element {
           position: absolute !important;
-          width: 1px !important;
-          height: 1px !important;
+          left: -9999px !important;
+          top: -9999px !important;
+          width: 100px !important;
+          height: 30px !important;
           overflow: hidden !important;
-          clip: rect(0 0 0 0) !important;
-          clip-path: inset(50%) !important;
-          white-space: nowrap !important;
-          border: 0 !important;
         }
         .goog-te-menu-frame {
           border-radius: 12px !important;
