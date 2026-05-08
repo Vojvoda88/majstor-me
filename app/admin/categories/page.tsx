@@ -1,6 +1,7 @@
 import { requireAdminPermission } from "@/lib/admin/auth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
+import { getOfficialCategoryCoverage } from "@/lib/admin/category-coverage";
 
 export const dynamic = "force-dynamic";
 
@@ -8,12 +9,15 @@ export default async function AdminCategoriesPage() {
   await requireAdminPermission("categories");
   const { prisma } = await import("@/lib/db");
 
-  const categories = await prisma.category.findMany({
-    orderBy: { sortOrder: "asc" },
-    include: {
-      _count: { select: { workerCategories: true } },
-    },
-  });
+  const [categories, officialCoverage] = await Promise.all([
+    prisma.category.findMany({
+      orderBy: { sortOrder: "asc" },
+      include: {
+        _count: { select: { workerCategories: true } },
+      },
+    }),
+    getOfficialCategoryCoverage(prisma),
+  ]);
 
   return (
     <div className="space-y-6">
@@ -24,9 +28,45 @@ export default async function AdminCategoriesPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Lista kategorija ({categories.length})</CardTitle>
+          <CardTitle>Službene kategorije (realno stanje)</CardTitle>
         </CardHeader>
         <CardContent>
+          <p className="mb-4 text-sm text-[#64748B]">
+            Ovaj pregled sabira i legacy nazive u službene kategorije. Kolona <strong>Javno</strong> koristi ista pravila kao listing na sajtu.
+          </p>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b text-left">
+                  <th className="pb-3 pr-4">Kategorija</th>
+                  <th className="pb-3 pr-4">Registrovani</th>
+                  <th className="pb-3 pr-4">Aktivni</th>
+                  <th className="pb-3 pr-4">Javno</th>
+                </tr>
+              </thead>
+              <tbody>
+                {officialCoverage.map((row) => (
+                  <tr key={row.category} className="border-b last:border-0">
+                    <td className="py-3 pr-4 font-medium">{row.category}</td>
+                    <td className="py-3 pr-4">{row.registered}</td>
+                    <td className="py-3 pr-4">{row.active}</td>
+                    <td className="py-3 pr-4">{row.publicVisible}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Raw tabela kategorija u bazi ({categories.length})</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="mb-4 text-sm text-[#64748B]">
+            Ovdje su svi istorijski redovi iz baze (uključujući legacy varijante naziva).
+          </p>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
