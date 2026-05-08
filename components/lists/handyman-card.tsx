@@ -63,16 +63,12 @@ function HandymanCardComponent({
           <CheckCircle2 className="h-3.5 w-3.5" /> Verifikovan
         </span>
       )}
-      <span className="inline-flex items-center gap-1 rounded-lg bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-700">
-        <Star className="h-3.5 w-3.5 fill-amber-500" />
-        {hasReviews ? (
-          <>
-            {ratingAvg.toFixed(1)} ({reviewCount})
-          </>
-        ) : (
-          <>Još nema recenzija</>
-        )}
-      </span>
+      {hasReviews && (
+        <span className="inline-flex items-center gap-1 rounded-lg bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-700">
+          <Star className="h-3.5 w-3.5 fill-amber-500" />
+          {ratingAvg.toFixed(1)} ({reviewCount})
+        </span>
+      )}
       {averageResponseMinutes != null && averageResponseMinutes > 0 && (
         <span className="inline-flex items-center gap-1 rounded-lg bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-700">
           <Clock className="h-3.5 w-3.5" /> Odgovara za ~{averageResponseMinutes} min
@@ -108,9 +104,11 @@ function HandymanCardComponent({
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
             <h3 className="text-base font-semibold text-gray-900 sm:text-lg">{name || "Majstor"}</h3>
-            <span className="flex items-center gap-1 text-amber-600">
-              <Star className="h-4 w-4 fill-amber-500" /> {hasReviews ? ratingAvg.toFixed(1) : "—"}
-            </span>
+            {hasReviews && (
+              <span className="flex items-center gap-1 text-amber-600">
+                <Star className="h-4 w-4 fill-amber-500" /> {ratingAvg.toFixed(1)}
+              </span>
+            )}
           </div>
           <p className="mt-0.5 text-sm text-gray-600">
             {categories[0] || "Majstor"} • {city || "Crna Gora"}
@@ -137,9 +135,11 @@ function HandymanCardComponent({
         <div className="p-4">
           <div className="flex items-start justify-between gap-2">
             <h3 className="text-xl font-semibold text-[#0F172A]">{name || "Majstor"}</h3>
-            <span className="shrink-0 rounded-full bg-amber-100 px-2.5 py-1 text-sm font-semibold text-amber-800">
-              ⭐ {hasReviews ? ratingAvg.toFixed(1) : "—"}
-            </span>
+            {hasReviews && (
+              <span className="shrink-0 rounded-full bg-amber-100 px-2.5 py-1 text-sm font-semibold text-amber-800">
+                ⭐ {ratingAvg.toFixed(1)}
+              </span>
+            )}
           </div>
           <p className="mt-0.5 text-sm text-[#475569]">
             {categories[0] || "Majstor"} • {city || "Crna Gora"}

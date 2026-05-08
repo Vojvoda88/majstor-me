@@ -7,7 +7,6 @@ import {
   ArrowRight,
   Award,
   CheckCircle2,
-  Sparkles,
   Star,
   User,
 } from "lucide-react";
@@ -136,12 +135,7 @@ export function FeaturedHandymanTile({ item }: Props) {
               {item.ratingAvg.toFixed(1)}
               <span className="font-semibold text-white/75">({item.reviewCount})</span>
             </span>
-          ) : (
-            <span className="inline-flex items-center gap-1 rounded-full border border-sky-300/40 bg-sky-950/55 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-sky-100 shadow-[0_0_16px_rgba(56,189,248,0.25)] backdrop-blur-md sm:px-2.5 sm:text-[11px]">
-              <Sparkles className="h-3 w-3 shrink-0 text-sky-200" aria-hidden />
-              Još nema ocjena
-            </span>
-          )}
+          ) : null}
           {jobs > 0 ? (
             <span className="inline-flex rounded-full border border-white/20 bg-white/10 px-2 py-0.5 text-[10px] font-semibold text-white/95 backdrop-blur-md">
               {jobs}+ poslova

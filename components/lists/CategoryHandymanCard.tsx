@@ -38,7 +38,6 @@ export function CategoryHandymanCard({
   const badges = [
     isVerified && { label: "Verifikovan", style: "bg-[#ECFDF5] text-[#047857] border-[#A7F3D0]" },
     hasReviews && { label: `${reviewCount} recenzija`, style: "bg-[#F8FAFC] text-[#334155] border-[#E2E8F0]" },
-    !hasReviews && { label: "Još nema recenzija", style: "bg-[#F8FAFC] text-[#64748B] border-[#E2E8F0]" },
     averageResponseMinutes != null &&
       averageResponseMinutes > 0 && { label: `~${averageResponseMinutes} min`, style: "bg-[#EFF6FF] text-[#1D4ED8] border-[#BFDBFE]" },
     completedJobsCount != null && completedJobsCount > 0 && { label: `${completedJobsCount} poslova`, style: "bg-[#FFF7ED] text-[#C2410C] border-[#FED7AA]" },
@@ -97,15 +96,15 @@ export function CategoryHandymanCard({
         {/* Right: Rating + Price + CTA */}
         <div className="flex flex-col justify-between p-8">
           <div>
-            <div className="inline-flex items-center gap-2 rounded-full bg-[#FEF3C7] px-4 py-2 text-[#92400E]">
-              <Star className="h-5 w-5 fill-current" />
-              <span className="text-[28px] font-bold">
-                {hasReviews ? ratingAvg.toFixed(1) : "—"}
-              </span>
-            </div>
-            <p className="mt-2 text-sm text-[#64748B]">
-              {hasReviews ? `${reviewCount} recenzija` : "Još nema recenzija"}
-            </p>
+            {hasReviews && (
+              <>
+                <div className="inline-flex items-center gap-2 rounded-full bg-[#FEF3C7] px-4 py-2 text-[#92400E]">
+                  <Star className="h-5 w-5 fill-current" />
+                  <span className="text-[28px] font-bold">{ratingAvg.toFixed(1)}</span>
+                </div>
+                <p className="mt-2 text-sm text-[#64748B]">{reviewCount} recenzija</p>
+              </>
+            )}
           </div>
           <span className="mt-6 flex h-14 w-full items-center justify-center rounded-2xl bg-[#2563EB] text-[18px] font-semibold text-white shadow-sm transition hover:opacity-95 active:scale-[0.98]">
             Pogledaj profil
@@ -149,10 +148,12 @@ export function CategoryHandymanCard({
             ))}
           </div>
           <div className="mt-4 flex items-center justify-between gap-4">
-            <div className="inline-flex items-center gap-1.5 rounded-full bg-[#FEF3C7] px-3 py-1.5 text-sm font-semibold text-[#92400E]">
-              <Star className="h-4 w-4 fill-current" />
-              {hasReviews ? ratingAvg.toFixed(1) : "—"}
-            </div>
+            {hasReviews && (
+              <div className="inline-flex items-center gap-1.5 rounded-full bg-[#FEF3C7] px-3 py-1.5 text-sm font-semibold text-[#92400E]">
+                <Star className="h-4 w-4 fill-current" />
+                {ratingAvg.toFixed(1)}
+              </div>
+            )}
             <span className="flex h-12 flex-1 items-center justify-center rounded-2xl bg-[#2563EB] text-base font-semibold text-white shadow-sm">
               Pogledaj profil
             </span>

@@ -45,9 +45,11 @@ export function PremiumHandymanCard({
       <div className="p-4">
         <div className="flex items-start justify-between gap-2">
           <h3 className="text-xl font-semibold text-[#0F172A]">{name || "Majstor"}</h3>
-          <span className="shrink-0 rounded-full bg-amber-100 px-2.5 py-1 text-sm font-semibold text-amber-800">
-            ⭐ {ratingAvg.toFixed(1)}
-          </span>
+          {reviewCount > 0 && (
+            <span className="shrink-0 rounded-full bg-amber-100 px-2.5 py-1 text-sm font-semibold text-amber-800">
+              ⭐ {ratingAvg.toFixed(1)}
+            </span>
+          )}
         </div>
         <p className="mt-0.5 text-sm text-[#475569]">
           {categories[0] || "Majstor"} • {city || "Crna Gora"}

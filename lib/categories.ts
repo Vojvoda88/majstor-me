@@ -22,7 +22,6 @@ export const ACTIVE_INTERNAL_CATEGORY_NAMES = [
   "Keramičar",
   "Stolar",
   "PVC stolarija",
-  "Bravar",
   "Moler",
   "Gipsar",
   "Fasade / izolacija",
@@ -151,8 +150,8 @@ export const CATEGORY_CONFIG_FULL: CategoryConfig[] = [
     displayName: "Bravar",
     internalCategory: "Bravar",
     icon: "Key",
-    publicListing: true,
-    selectableForHandyman: true,
+    publicListing: false,
+    selectableForHandyman: false,
   },
   {
     slug: "moler",
