@@ -7,17 +7,13 @@ import { PublicFooter } from "@/components/layout/PublicFooter";
 import { getCategoryBySlug } from "@/lib/categories";
 import { buildProblemPageJsonLd } from "@/lib/json-ld";
 import {
-  getProblemCityStaticParams,
   parseProblemCitySlug,
 } from "@/lib/seo-problems-data";
 import { getSiteUrl } from "@/lib/site-url";
 import { cityLocative, phraseUGradu } from "@/lib/slugs";
 
 export const revalidate = 3600;
-
-export function generateStaticParams() {
-  return getProblemCityStaticParams();
-}
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({
   params,

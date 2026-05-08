@@ -11,7 +11,6 @@ import {
   buildSeoServiceCityCanonical,
 } from "@/lib/seo-landing-metadata";
 import {
-  getProgrammaticServiceCityParams,
   isValidProgrammaticServiceCity,
   toLegacyServiceCitySlug,
 } from "@/lib/seo-programmatic-config";
@@ -21,10 +20,7 @@ import { SEO_OG_IMAGE_PATH } from "@/lib/seo-brand";
 import { SeoLandingContent } from "../../(seo)/[slug]/seo-landing-content";
 
 export const revalidate = 3600;
-
-export function generateStaticParams() {
-  return getProgrammaticServiceCityParams();
-}
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({
   params,

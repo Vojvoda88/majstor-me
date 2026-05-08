@@ -9,14 +9,82 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
+import { useUiLanguage } from "@/lib/i18n/ui-language";
 
-const schema = z.object({
-  email: z.string().email("Unesite validan email"),
-});
+type ForgotPasswordCopy = {
+  emailInvalid: string;
+  tooManyRequests: string;
+  genericError: string;
+  sentInfo: string;
+  backToLogin: string;
+  emailLabel: string;
+  emailPlaceholder: string;
+  submit: string;
+  submitting: string;
+};
 
-type FormData = z.infer<typeof schema>;
+const COPY: Record<"sr" | "en" | "ru" | "tr", ForgotPasswordCopy> = {
+  sr: {
+    emailInvalid: "Unesite validan email",
+    tooManyRequests: "Previše zahtjeva. Pokušajte kasnije.",
+    genericError: "Greška. Pokušajte ponovo.",
+    sentInfo:
+      "Ako nalog sa tim emailom postoji i ima lozinku, poslali smo link za novu lozinku. Proverite poštu (i spam).",
+    backToLogin: "Nazad na prijavu",
+    emailLabel: "Email",
+    emailPlaceholder: "ime@primjer.me",
+    submit: "Pošalji link",
+    submitting: "Slanje...",
+  },
+  en: {
+    emailInvalid: "Enter a valid email address",
+    tooManyRequests: "Too many requests. Please try again later.",
+    genericError: "Error. Please try again.",
+    sentInfo:
+      "If an account with this email exists and has a password, we sent a reset link. Check your inbox (and spam).",
+    backToLogin: "Back to login",
+    emailLabel: "Email",
+    emailPlaceholder: "name@example.com",
+    submit: "Send link",
+    submitting: "Sending...",
+  },
+  ru: {
+    emailInvalid: "Введите корректный email",
+    tooManyRequests: "Слишком много запросов. Попробуйте позже.",
+    genericError: "Ошибка. Попробуйте снова.",
+    sentInfo:
+      "Если аккаунт с этим email существует и имеет пароль, мы отправили ссылку для сброса. Проверьте почту (и спам).",
+    backToLogin: "Назад ко входу",
+    emailLabel: "Email",
+    emailPlaceholder: "name@example.com",
+    submit: "Отправить ссылку",
+    submitting: "Отправка...",
+  },
+  tr: {
+    emailInvalid: "Gecerli bir e-posta girin",
+    tooManyRequests: "Cok fazla istek. Lutfen daha sonra tekrar deneyin.",
+    genericError: "Hata. Lutfen tekrar deneyin.",
+    sentInfo:
+      "Bu e-postaya ait bir hesap varsa ve sifresi varsa, sifre yenileme baglantisi gonderildi. Lutfen gelen kutusunu (ve spam klasorunu) kontrol edin.",
+    backToLogin: "Girise don",
+    emailLabel: "E-posta",
+    emailPlaceholder: "name@example.com",
+    submit: "Baglanti gonder",
+    submitting: "Gonderiliyor...",
+  },
+};
+
+function createSchema(copy: ForgotPasswordCopy) {
+  return z.object({
+    email: z.string().email(copy.emailInvalid),
+  });
+}
+
+type FormData = z.infer<ReturnType<typeof createSchema>>;
 
 export function ForgotPasswordForm() {
+  const language = useUiLanguage();
+  const copy = COPY[language];
   const [done, setDone] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -25,7 +93,7 @@ export function ForgotPasswordForm() {
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<FormData>({
-    resolver: zodResolver(schema),
+    resolver: zodResolver(createSchema(copy)),
     defaultValues: { email: "" },
   });
 
@@ -38,11 +106,11 @@ export function ForgotPasswordForm() {
     });
     const json = await res.json().catch(() => ({}));
     if (res.status === 429) {
-      setError(typeof json?.error === "string" ? json.error : "Previše zahtjeva. Pokušajte kasnije.");
+      setError(typeof json?.error === "string" ? json.error : copy.tooManyRequests);
       return;
     }
     if (!res.ok && json?.success === false && json?.error) {
-      setError(typeof json.error === "string" ? json.error : "Greška. Pokušajte ponovo.");
+      setError(typeof json.error === "string" ? json.error : copy.genericError);
       return;
     }
     setDone(true);
@@ -53,11 +121,11 @@ export function ForgotPasswordForm() {
       <Card className="w-full rounded-2xl border-[#E2E8F0] shadow-card">
         <CardContent className="pt-8">
           <p className="text-center text-sm leading-relaxed text-slate-700">
-            Ako nalog sa tim emailom postoji i ima lozinku, poslali smo link za novu lozinku. Proverite poštu (i spam).
+            {copy.sentInfo}
           </p>
           <p className="mt-6 text-center">
             <Link href="/login" className="text-sm font-semibold text-[#2563EB] underline-offset-4 hover:underline">
-              Nazad na prijavu
+              {copy.backToLogin}
             </Link>
           </p>
         </CardContent>
@@ -75,12 +143,12 @@ export function ForgotPasswordForm() {
             </div>
           )}
           <div className="space-y-3">
-            <Label htmlFor="email">Email</Label>
-            <Input id="email" type="email" placeholder="ime@primjer.me" autoComplete="email" {...register("email")} />
+            <Label htmlFor="email">{copy.emailLabel}</Label>
+            <Input id="email" type="email" placeholder={copy.emailPlaceholder} autoComplete="email" {...register("email")} />
             {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
           </div>
           <Button type="submit" className="w-full" size="lg" disabled={isSubmitting}>
-            {isSubmitting ? "Slanje…" : "Pošalji link"}
+            {isSubmitting ? copy.submitting : copy.submit}
           </Button>
         </form>
       </CardContent>

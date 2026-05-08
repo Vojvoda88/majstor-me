@@ -36,13 +36,61 @@ export function GoogleTranslate() {
     []
   );
 
+  const hasDomain = typeof window !== "undefined" && window.location.hostname.includes(".");
+
+  const setTranslateCookie = (value: string) => {
+    document.cookie = `googtrans=${value};path=/;max-age=31536000`;
+    if (hasDomain) {
+      document.cookie = `googtrans=${value};path=/;domain=.${window.location.hostname};max-age=31536000`;
+    }
+  };
+
+  const clearTranslateCookie = () => {
+    document.cookie = "googtrans=;path=/;expires=Thu, 01 Jan 1970 00:00:00 GMT";
+    if (hasDomain) {
+      document.cookie = `googtrans=;path=/;domain=.${window.location.hostname};expires=Thu, 01 Jan 1970 00:00:00 GMT`;
+    }
+  };
+
+  const applyViaGoogleSelect = (langCode: string): boolean => {
+    const select = document.querySelector<HTMLSelectElement>(".goog-te-combo");
+    if (!select) return false;
+    const target = langCode === "sr" ? "" : langCode;
+    if (select.value !== target) {
+      select.value = target;
+      select.dispatchEvent(new Event("change", { bubbles: true }));
+    }
+    return true;
+  };
+
   const applyLanguage = (langCode: string) => {
-    const target = `/${"sr"}/${langCode}`;
-    document.cookie = `googtrans=${target};path=/;max-age=31536000`;
-    document.cookie = `googtrans=${target};path=/;domain=.${window.location.hostname};max-age=31536000`;
     setActiveLang(langCode);
     setOpen(false);
-    window.location.reload();
+
+    if (langCode === "sr") {
+      clearTranslateCookie();
+      const applied = applyViaGoogleSelect("sr");
+      if (!applied) window.location.reload();
+      return;
+    }
+
+    const target = `/sr/${langCode}`;
+    setTranslateCookie(target);
+
+    let attempts = 0;
+    const maxAttempts = 25;
+    const timer = window.setInterval(() => {
+      attempts += 1;
+      const applied = applyViaGoogleSelect(langCode);
+      if (applied) {
+        window.clearInterval(timer);
+        return;
+      }
+      if (attempts >= maxAttempts) {
+        window.clearInterval(timer);
+        window.location.reload();
+      }
+    }, 120);
   };
 
   useEffect(() => {
@@ -56,6 +104,18 @@ export function GoogleTranslate() {
         },
         "google_translate_element"
       );
+
+      window.setTimeout(() => {
+        const googtrans = document.cookie
+          .split("; ")
+          .find((entry) => entry.startsWith("googtrans="))
+          ?.split("=")[1];
+        if (!googtrans) return;
+        const parts = decodeURIComponent(googtrans).split("/");
+        const candidate = parts[parts.length - 1];
+        if (!candidate || candidate === "sr") return;
+        applyViaGoogleSelect(candidate);
+      }, 250);
     };
 
     const googtrans = document.cookie
@@ -114,7 +174,7 @@ export function GoogleTranslate() {
         </div>
       </div>
       <Script
-        src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"
+        src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"
         strategy="lazyOnload"
       />
       <style>{`
