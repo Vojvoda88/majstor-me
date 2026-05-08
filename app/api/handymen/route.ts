@@ -2,11 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 import { getPublicHandymenList } from "@/lib/handymen-listing";
 import { withPerfLog } from "@/lib/perf";
 
+export const dynamic = "force-dynamic";
 export const revalidate = 60;
 
 export async function GET(req: NextRequest) {
   try {
-    const searchParams = req.nextUrl?.searchParams ?? new URLSearchParams();
+    const url = new URL(req.url);
+    const searchParams = url.searchParams;
     const categoryParam = searchParams.get("category");
     const city = searchParams.get("city");
     const sortBy = searchParams.get("sort") || searchParams.get("sortBy") || "rating";
