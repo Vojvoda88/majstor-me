@@ -58,6 +58,19 @@ export function GoogleTranslate() {
       return withProtocol;
     }
 
+    // Case 3: current page is already under *.translate.goog proxy host
+    if (current.hostname.endsWith(".translate.goog")) {
+      const sourceHostPart = current.hostname.replace(/\.translate\.goog$/i, "");
+      const sourceHost = sourceHostPart.replace(/-/g, ".");
+      const sourceUrl = new URL(`https://${sourceHost}${current.pathname}`);
+      current.searchParams.forEach((value, key) => {
+        if (key.startsWith("_x_tr_")) return;
+        sourceUrl.searchParams.set(key, value);
+      });
+      sourceUrl.hash = current.hash;
+      return sourceUrl.toString();
+    }
+
     return current.href;
   };
 
@@ -82,6 +95,12 @@ export function GoogleTranslate() {
 
   useEffect(() => {
     setActiveLang(readPreferredLanguage());
+
+    // On Google proxy hosts, remove manifest link to avoid noisy CORS errors.
+    if (window.location.hostname.endsWith(".translate.goog")) {
+      const manifestLink = document.querySelector<HTMLLinkElement>('link[rel="manifest"]');
+      manifestLink?.remove();
+    }
   }, []);
 
   const activeOption =
