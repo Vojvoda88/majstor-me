@@ -18,6 +18,54 @@ import { HANDYMAN_START_BONUS_CREDITS, STANDARD_LEAD_CREDITS } from "@/lib/credi
 import { CITIES, MAX_HANDYMAN_CATEGORIES } from "@/lib/constants";
 import { displayLabelForRequestCategory, HANDYMAN_SELECTABLE_INTERNAL_NAMES } from "@/lib/categories";
 import { GalleryEditor } from "@/components/profile/gallery-editor";
+import { useUiLanguage } from "@/lib/i18n/ui-language";
+
+const REGISTER_COPY = {
+  sr: {
+    submit: "Registruj se",
+    submitting: "Registracija...",
+    hasAccount: "Već imate nalog?",
+    login: "Prijavite se",
+    roleType: "Tip naloga",
+    user: "Korisnik",
+    handyman: "Majstor",
+    lookingFor: "Tražim majstora",
+    offering: "Nudim usluge",
+  },
+  en: {
+    submit: "Create account",
+    submitting: "Creating account...",
+    hasAccount: "Already have an account?",
+    login: "Log in",
+    roleType: "Account type",
+    user: "User",
+    handyman: "Handyman",
+    lookingFor: "I need a handyman",
+    offering: "I offer services",
+  },
+  ru: {
+    submit: "Зарегистрироваться",
+    submitting: "Регистрация...",
+    hasAccount: "Уже есть аккаунт?",
+    login: "Войти",
+    roleType: "Тип аккаунта",
+    user: "Пользователь",
+    handyman: "Мастер",
+    lookingFor: "Ищу мастера",
+    offering: "Предлагаю услуги",
+  },
+  tr: {
+    submit: "Kayit ol",
+    submitting: "Kayit yapiliyor...",
+    hasAccount: "Zaten hesabin var mi?",
+    login: "Giris yap",
+    roleType: "Hesap tipi",
+    user: "Kullanici",
+    handyman: "Usta",
+    lookingFor: "Usta ariyorum",
+    offering: "Hizmet veriyorum",
+  },
+} as const;
 
 const registerSchema = z
   .object({
@@ -68,6 +116,8 @@ export function RegisterForm({
   defaultRole?: "USER" | "HANDYMAN";
   inviteToken?: string;
 }) {
+  const language = useUiLanguage();
+  const copy = REGISTER_COPY[language];
   const router = useRouter();
   const [error, setError] = useState<string>("");
   const [workCitiesOpen, setWorkCitiesOpen] = useState(false);
@@ -207,7 +257,7 @@ export function RegisterForm({
             </div>
           ) : null}
           <div className="space-y-3">
-            <Label>Tip naloga</Label>
+            <Label>{copy.roleType}</Label>
             <div className="grid grid-cols-2 gap-3">
               <label
                 className={cn(
@@ -219,8 +269,8 @@ export function RegisterForm({
               >
                 <input type="radio" value="USER" className="sr-only" {...register("role")} />
                 <User className={cn("h-8 w-8", role === "USER" ? "text-[#2563EB]" : "text-[#94A3B8]")} />
-                <span className="font-medium text-[#0F172A]">Korisnik</span>
-                <span className="text-xs text-[#64748B]">Tražim majstora</span>
+                <span className="font-medium text-[#0F172A]">{copy.user}</span>
+                <span className="text-xs text-[#64748B]">{copy.lookingFor}</span>
               </label>
               <label
                 className={cn(
@@ -232,8 +282,8 @@ export function RegisterForm({
               >
                 <input type="radio" value="HANDYMAN" className="sr-only" {...register("role")} />
                 <Wrench className={cn("h-8 w-8", role === "HANDYMAN" ? "text-[#2563EB]" : "text-[#94A3B8]")} />
-                <span className="font-medium text-[#0F172A]">Majstor</span>
-                <span className="text-xs text-[#64748B]">Nudim usluge</span>
+                <span className="font-medium text-[#0F172A]">{copy.handyman}</span>
+                <span className="text-xs text-[#64748B]">{copy.offering}</span>
               </label>
             </div>
             {role === "HANDYMAN" && (
@@ -416,12 +466,12 @@ export function RegisterForm({
             </>
           )}
           <Button type="submit" className="mt-2 w-full" size="lg" disabled={isSubmitting}>
-            {isSubmitting ? "Registracija..." : "Registruj se"}
+            {isSubmitting ? copy.submitting : copy.submit}
           </Button>
           <p className="mt-4 text-center text-sm text-[#64748B]">
-            Već imate nalog?{" "}
+            {copy.hasAccount}{" "}
             <Link href="/login" className="font-medium text-[#2563EB] underline-offset-4 hover:underline">
-              Prijavite se
+              {copy.login}
             </Link>
           </p>
         </form>

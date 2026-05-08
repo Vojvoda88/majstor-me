@@ -1,20 +1,22 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-
-const LANG_COOKIE = "bm_lang";
-type LangCode = "sr" | "en" | "ru" | "tr";
+import { usePathname, useSearchParams } from "next/navigation";
+import { DEFAULT_LOCALE, LOCALE_COOKIE, type AppLocale, getLocaleFromPathname, normalizeLocale, withLocalePrefix } from "@/lib/i18n/config";
+import { t } from "@/lib/i18n/messages";
 
 export function GoogleTranslate() {
   const [open, setOpen] = useState(false);
-  const [activeLang, setActiveLang] = useState<LangCode>("sr");
+  const [activeLang, setActiveLang] = useState<AppLocale>(DEFAULT_LOCALE);
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
 
   const languageOptions = useMemo(
     () => [
-      { code: "sr", label: "Crnogorski", flag: "🇲🇪" },
-      { code: "en", label: "English", flag: "🇬🇧" },
-      { code: "ru", label: "Русский", flag: "🇷🇺" },
-      { code: "tr", label: "Türkçe", flag: "🇹🇷" },
+      { code: "sr" as const, flag: "🇲🇪" },
+      { code: "en" as const, flag: "🇬🇧" },
+      { code: "ru" as const, flag: "🇷🇺" },
+      { code: "tr" as const, flag: "🇹🇷" },
     ],
     []
   );
@@ -27,81 +29,38 @@ export function GoogleTranslate() {
     return value ? decodeURIComponent(value) : null;
   };
 
-  const setPreferredLanguage = (lang: LangCode) => {
-    document.cookie = `${LANG_COOKIE}=${lang};path=/;max-age=31536000`;
+  const setPreferredLanguage = (lang: AppLocale) => {
+    document.cookie = `${LOCALE_COOKIE}=${lang};path=/;max-age=31536000`;
   };
 
-  const readPreferredLanguage = (): LangCode => {
-    const candidate = readCookieValue(LANG_COOKIE);
-    return candidate === "en" || candidate === "ru" || candidate === "tr" || candidate === "sr"
-      ? candidate
-      : "sr";
+  const readPreferredLanguage = (): AppLocale => {
+    const candidate = readCookieValue(LOCALE_COOKIE);
+    return normalizeLocale(candidate);
   };
 
-  const resolveOriginalUrl = (): string => {
-    const current = new URL(window.location.href);
-
-    // Case 1: translate.google.com wrapper URL with ?u=
-    const wrapped = current.searchParams.get("u");
-    if (wrapped) {
-      try {
-        return decodeURIComponent(wrapped);
-      } catch {
-        return wrapped;
-      }
-    }
-
-    // Case 2: *.translate.goog domain with _x_tr_url
-    const translatedHost = current.searchParams.get("_x_tr_url");
-    if (translatedHost) {
-      const withProtocol = /^https?:\/\//i.test(translatedHost) ? translatedHost : `https://${translatedHost}`;
-      return withProtocol;
-    }
-
-    // Case 3: current page is already under *.translate.goog proxy host
-    if (current.hostname.endsWith(".translate.goog")) {
-      const sourceHostPart = current.hostname.replace(/\.translate\.goog$/i, "");
-      const sourceHost = sourceHostPart.replace(/-/g, ".");
-      const sourceUrl = new URL(`https://${sourceHost}${current.pathname}`);
-      current.searchParams.forEach((value, key) => {
-        if (key.startsWith("_x_tr_")) return;
-        sourceUrl.searchParams.set(key, value);
-      });
-      sourceUrl.hash = current.hash;
-      return sourceUrl.toString();
-    }
-
-    return current.href;
+  const toLocalizedPath = (langCode: AppLocale) => {
+    const barePath = getLocaleFromPathname(pathname) ? pathname.replace(/^\/[a-z]{2}(?=\/|$)/, "") || "/" : pathname;
+    const prefixed = withLocalePrefix(barePath, langCode);
+    const query = searchParams.toString();
+    return query ? `${prefixed}?${query}` : prefixed;
   };
 
-  const redirectForLanguage = (langCode: LangCode) => {
-    const originalUrl = resolveOriginalUrl();
-    if (langCode === "sr") {
-      window.location.assign(originalUrl);
-      return;
-    }
-    const target = `https://translate.google.com/translate?sl=auto&tl=${encodeURIComponent(
-      langCode
-    )}&u=${encodeURIComponent(originalUrl)}`;
-    window.location.assign(target);
-  };
-
-  const applyLanguage = (langCode: LangCode) => {
+  const applyLanguage = (langCode: AppLocale) => {
     setPreferredLanguage(langCode);
     setActiveLang(langCode);
     setOpen(false);
-    redirectForLanguage(langCode);
+    window.location.assign(toLocalizedPath(langCode));
   };
 
   useEffect(() => {
-    setActiveLang(readPreferredLanguage());
-
-    // On Google proxy hosts, remove manifest link to avoid noisy CORS errors.
-    if (window.location.hostname.endsWith(".translate.goog")) {
-      const manifestLink = document.querySelector<HTMLLinkElement>('link[rel="manifest"]');
-      manifestLink?.remove();
+    const localeFromPath = getLocaleFromPathname(pathname);
+    if (localeFromPath) {
+      setActiveLang(localeFromPath);
+      setPreferredLanguage(localeFromPath);
+      return;
     }
-  }, []);
+    setActiveLang(readPreferredLanguage());
+  }, [pathname]);
 
   const activeOption =
     languageOptions.find((option) => option.code === activeLang) ?? languageOptions[0];
@@ -115,10 +74,10 @@ export function GoogleTranslate() {
           className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-800 shadow-sm"
           aria-haspopup="menu"
           aria-expanded={open}
-          aria-label="Promijeni jezik"
+          aria-label={t(activeLang, "common.language", "Language")}
         >
           <span>{activeOption.flag}</span>
-          <span>{activeOption.label}</span>
+          <span>{t(activeLang, `common.languages.${activeOption.code}`, activeOption.code.toUpperCase())}</span>
           <span className="text-slate-500">{open ? "▲" : "▼"}</span>
         </button>
 
@@ -132,13 +91,13 @@ export function GoogleTranslate() {
                 key={option.code}
                 type="button"
                 role="menuitem"
-                onClick={() => applyLanguage(option.code as LangCode)}
+                onClick={() => applyLanguage(option.code)}
                 className={`flex w-full items-center gap-2 px-3 py-2 text-left text-sm hover:bg-slate-50 ${
                   option.code === activeLang ? "bg-slate-50 font-semibold text-slate-900" : "text-slate-700"
                 }`}
               >
                 <span>{option.flag}</span>
-                <span>{option.label}</span>
+                <span>{t(activeLang, `common.languages.${option.code}`, option.code.toUpperCase())}</span>
               </button>
             ))}
           </div>

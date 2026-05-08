@@ -1,0 +1,21 @@
+{
+  "common": {
+    "language": "Jezik",
+    "languages": {
+      "sr": "Crnogorski",
+      "en": "English",
+      "ru": "Русский",
+      "tr": "Türkçe"
+    }
+  },
+  "request": {
+    "create": {
+      "title": "Zatraži majstora",
+      "intro": "Besplatno za vas. Opišite posao što jasnije — jedan zahtjev umjesto više poziva."
+    }
+  },
+  "auth": {
+    "login": "Prijava",
+    "register": "Registracija"
+  }
+}

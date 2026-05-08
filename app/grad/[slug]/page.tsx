@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import { CITY_SLUGS, cityLocative } from "@/lib/slugs";
 import { getPublicHandymenList } from "@/lib/handymen-listing";
 import { DEFAULT_PAGE_SIZE } from "@/lib/constants";
@@ -12,12 +13,14 @@ import { getSiteUrl } from "@/lib/site-url";
 import { GradPageContent } from "./grad-page-content";
 import { faqPageJsonLd } from "@/lib/json-ld";
 import { getCityFaqItems } from "@/lib/listing-faq";
+import { buildAlternates, getLocaleFromHeaderValue, LOCALE_HEADER, localizedPath } from "@/lib/i18n/seo";
 
 export async function generateMetadata({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
+  const locale = getLocaleFromHeaderValue(headers().get(LOCALE_HEADER));
   const { slug } = await params;
   const name = CITY_SLUGS[slug];
   if (!name) notFound();
@@ -30,11 +33,11 @@ export async function generateMetadata({
   return {
     title,
     description,
-    alternates: { canonical: `${base}/grad/${slug}` },
+    alternates: buildAlternates(base, `/grad/${slug}`, locale),
     openGraph: {
       title: twTitle,
       description,
-      url: `${base}/grad/${slug}`,
+      url: `${base.replace(/\/$/, "")}${localizedPath(`/grad/${slug}`, locale)}`,
       siteName: "BrziMajstor.ME",
       type: "website",
     },

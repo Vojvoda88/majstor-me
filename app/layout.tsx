@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, DM_Sans, Outfit } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
+import { headers } from "next/headers";
 import { Providers } from "@/app/providers";
 import { InstallCTA } from "@/components/pwa/install-cta";
 import { ServiceWorkerRegister } from "@/components/pwa/service-worker-register";
@@ -13,6 +14,7 @@ import {
   SEO_OG_IMAGE_PATH,
 } from "@/lib/seo-brand";
 import { getSiteUrl } from "@/lib/site-url";
+import { LOCALE_HEADER, normalizeLocale } from "@/lib/i18n/config";
 import "./globals.css";
 
 const inter = Inter({
@@ -105,8 +107,11 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const locale = normalizeLocale(headers().get(LOCALE_HEADER));
+  const htmlLang = locale === "sr" ? "sr-Latn-ME" : locale;
+
   return (
-    <html lang="sr-Latn-ME" className={`${inter.variable} ${dmSans.variable} ${outfit.variable}`}>
+    <html lang={htmlLang} className={`${inter.variable} ${dmSans.variable} ${outfit.variable}`}>
       <body className="min-h-[100dvh] overflow-x-hidden font-sans antialiased bg-[#FAFBFC] text-[#0F172A] [padding-bottom:env(safe-area-inset-bottom)]">
         <Providers>
           {children}

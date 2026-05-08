@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import nextDynamic from "next/dynamic";
+import { headers } from "next/headers";
 import { getSiteUrl } from "@/lib/site-url";
 import { PublicHeader } from "@/components/layout/PublicHeader";
 import { PublicFooter } from "@/components/layout/PublicFooter";
@@ -17,28 +18,30 @@ import {
   SEO_OG_IMAGE,
   SEO_OG_IMAGE_PATH,
 } from "@/lib/seo-brand";
+import { buildAlternates, getLocaleFromHeaderValue, LOCALE_HEADER, localizedPath } from "@/lib/i18n/seo";
 
 const siteUrl = getSiteUrl();
 
 /** Naslov koristi template iz root layout-a: „… | BrziMajstor.ME“ (ovdje samo segment prije |) */
-export const metadata: Metadata = {
-  title: SEO_HOME_TITLE,
-  description: SEO_HOME_DESCRIPTION,
-  alternates: {
-    canonical: siteUrl,
-  },
-  openGraph: {
-    title: `${SEO_HOME_TITLE} | BrziMajstor.ME`,
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = getLocaleFromHeaderValue(headers().get(LOCALE_HEADER));
+  return {
+    title: SEO_HOME_TITLE,
     description: SEO_HOME_DESCRIPTION,
-    url: siteUrl,
-    images: [SEO_OG_IMAGE],
-  },
-  twitter: {
-    title: `${SEO_HOME_TITLE} | BrziMajstor.ME`,
-    description: SEO_HOME_DESCRIPTION,
-    images: [SEO_OG_IMAGE_PATH],
-  },
-};
+    alternates: buildAlternates(siteUrl, "/", locale),
+    openGraph: {
+      title: `${SEO_HOME_TITLE} | BrziMajstor.ME`,
+      description: SEO_HOME_DESCRIPTION,
+      url: `${siteUrl.replace(/\/$/, "")}${localizedPath("/", locale)}`,
+      images: [SEO_OG_IMAGE],
+    },
+    twitter: {
+      title: `${SEO_HOME_TITLE} | BrziMajstor.ME`,
+      description: SEO_HOME_DESCRIPTION,
+      images: [SEO_OG_IMAGE_PATH],
+    },
+  };
+}
 
 export const revalidate = 60;
 

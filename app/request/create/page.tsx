@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
+import { headers } from "next/headers";
 import Link from "next/link";
 import { CreateRequestForm } from "@/components/forms/create-request-form";
 import { PremiumMobileHeader } from "@/components/layout/PremiumMobileHeader";
@@ -9,28 +10,32 @@ import { parseRequestCreateSearchParams } from "@/lib/request-create-query";
 import { SEO_REQUEST_CREATE_DESCRIPTION } from "@/lib/seo-brand";
 import { getSiteUrl } from "@/lib/site-url";
 import { auth } from "@/lib/auth";
+import { LOCALE_HEADER, normalizeLocale } from "@/lib/i18n/config";
+import { t } from "@/lib/i18n/messages";
+import { buildAlternates, getLocaleFromHeaderValue, localizedPath } from "@/lib/i18n/seo";
 
 const baseUrl = getSiteUrl();
 
-export const metadata: Metadata = {
-  title: "Zatraži majstora",
-  description: SEO_REQUEST_CREATE_DESCRIPTION,
-  alternates: {
-    canonical: `${baseUrl}/request/create`,
-  },
-  openGraph: {
-    title: "Zatraži majstora | BrziMajstor.ME",
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = getLocaleFromHeaderValue(headers().get(LOCALE_HEADER));
+  return {
+    title: "Zatraži majstora",
     description: SEO_REQUEST_CREATE_DESCRIPTION,
-    url: `${baseUrl}/request/create`,
-    siteName: "BrziMajstor.ME",
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Zatraži majstora | BrziMajstor.ME",
-    description: SEO_REQUEST_CREATE_DESCRIPTION,
-  },
-};
+    alternates: buildAlternates(baseUrl, "/request/create", locale),
+    openGraph: {
+      title: "Zatraži majstora | BrziMajstor.ME",
+      description: SEO_REQUEST_CREATE_DESCRIPTION,
+      url: `${baseUrl.replace(/\/$/, "")}${localizedPath("/request/create", locale)}`,
+      siteName: "BrziMajstor.ME",
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: "Zatraži majstora | BrziMajstor.ME",
+      description: SEO_REQUEST_CREATE_DESCRIPTION,
+    },
+  };
+}
 
 export const dynamic = "force-dynamic";
 
@@ -41,6 +46,7 @@ export const dynamic = "force-dynamic";
 export default async function CreateRequestPage(props: {
   searchParams?: Promise<Record<string, string | string[] | undefined>> | Record<string, string | string[] | undefined>;
 }) {
+  const locale = normalizeLocale(headers().get(LOCALE_HEADER));
   const session = await auth();
   let initialCategory: string | undefined;
   let initialCity: string | undefined;
@@ -72,11 +78,14 @@ export default async function CreateRequestPage(props: {
 
         <header className="mb-6 md:mb-8">
           <h1 className="font-display text-2xl font-bold tracking-tight text-brand-navy md:text-3xl">
-            Zatraži majstora
+            {t(locale, "request.create.title", "Zatraži majstora")}
           </h1>
           <p className="mt-3 text-[15px] leading-relaxed text-slate-600 md:text-base">
-            Besplatno za vas. Opišite posao što jasnije — jedan zahtjev umjesto više poziva. Administrator prvo
-            pregleda zahtjev, zatim se javljaju majstori kojima posao odgovara.
+            {t(
+              locale,
+              "request.create.intro",
+              "Besplatno za vas. Opišite posao što jasnije — jedan zahtjev umjesto više poziva."
+            )}
           </p>
         </header>
         {!session?.user?.id && (

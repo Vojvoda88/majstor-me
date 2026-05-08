@@ -23,6 +23,7 @@ import { RequestPhotosEditor } from "./request-photos-editor";
 import { containsContactBypass } from "@/lib/contact-sanitization";
 import { createRequestAction } from "@/app/actions/create-request";
 import { cn } from "@/lib/utils";
+import { useUiLanguage } from "@/lib/i18n/ui-language";
 
 const DRAFT_STORAGE_KEY = "brzimajstor-request-draft-v1";
 
@@ -87,6 +88,7 @@ const URGENCY_SHORT_LABEL: Record<(typeof URGENCY_OPTIONS)[number]["value"], str
 };
 
 export function CreateRequestForm({ initialCategory, initialCity }: CreateRequestFormProps) {
+  const language = useUiLanguage();
   const router = useRouter();
   const searchParams = useSearchParams();
   const urlCategory = coerceQueryString(searchParams.get("category") ?? initialCategory ?? "");
@@ -207,7 +209,7 @@ export function CreateRequestForm({ initialCategory, initialCity }: CreateReques
 
   const mutation = useMutation({
     mutationFn: async (data: CreateRequestFormData) => {
-      const result = await createRequestAction(data);
+      const result = await createRequestAction({ ...data, locale: language });
       if (!result.ok) {
         throw new Error(result.error ?? "Došlo je do greške prilikom slanja zahtjeva. Pokušajte ponovo.");
       }

@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { PublicHeader } from "@/components/layout/PublicHeader";
@@ -11,6 +12,7 @@ import {
 } from "@/lib/seo-problems-data";
 import { getSiteUrl } from "@/lib/site-url";
 import { cityLocative, phraseUGradu } from "@/lib/slugs";
+import { buildAlternates, getLocaleFromHeaderValue, LOCALE_HEADER, localizedPath } from "@/lib/i18n/seo";
 
 export const revalidate = 3600;
 export const dynamic = "force-dynamic";
@@ -20,6 +22,7 @@ export async function generateMetadata({
 }: {
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
+  const locale = getLocaleFromHeaderValue(headers().get(LOCALE_HEADER));
   const { slug } = await params;
   const parsed = parseProblemCitySlug(slug);
   if (!parsed) return { title: { absolute: "BrziMajstor.ME" } };
@@ -29,12 +32,13 @@ export async function generateMetadata({
   const title = `${titleCore} | BrziMajstor.ME`;
   const description = problem.metaDescription(cityLoc, cityName);
   const base = getSiteUrl();
-  const canonical = `${base.replace(/\/$/, "")}/problemi/${slug}`;
+  const canonicalPath = `/problemi/${slug}`;
+  const canonical = `${base.replace(/\/$/, "")}${localizedPath(canonicalPath, locale)}`;
   const tw = title;
   return {
     title,
     description,
-    alternates: { canonical },
+    alternates: buildAlternates(base, canonicalPath, locale),
     openGraph: { title: tw, description, url: canonical, siteName: "BrziMajstor.ME", type: "article" },
     twitter: { card: "summary_large_image", title: tw, description },
   };

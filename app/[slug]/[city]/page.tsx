@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import { getCategoryBySlug } from "@/lib/categories";
 import type { SeoCombinedParsed } from "@/lib/seo-landing-copy";
 import { getPublicHandymenList } from "@/lib/handymen-listing";
@@ -18,6 +19,7 @@ import { getSiteUrl } from "@/lib/site-url";
 import { CITY_SLUGS } from "@/lib/slugs";
 import { SEO_OG_IMAGE_PATH } from "@/lib/seo-brand";
 import { SeoLandingContent } from "../../(seo)/[slug]/seo-landing-content";
+import { buildAlternates, getLocaleFromHeaderValue, LOCALE_HEADER, localizedPath } from "@/lib/i18n/seo";
 
 export const revalidate = 3600;
 export const dynamic = "force-dynamic";
@@ -27,6 +29,7 @@ export async function generateMetadata({
 }: {
   params: Promise<{ slug: string; city: string }>;
 }): Promise<Metadata> {
+  const locale = getLocaleFromHeaderValue(headers().get(LOCALE_HEADER));
   const { slug, city } = await params;
   if (isValidProgrammaticServiceCity(slug, city).ok === false) notFound();
   const cat = getCategoryBySlug(slug)!;
@@ -40,7 +43,8 @@ export async function generateMetadata({
     cityDisplayName: cityName,
     internalCategory: cat.internalCategory,
   };
-  const canonical = buildSeoServiceCityCanonical(base, slug, city);
+  const canonicalPath = `/${slug}/${city}`;
+  const canonical = `${base.replace(/\/$/, "")}${localizedPath(canonicalPath, locale)}`;
   const priority = getPrioritySeoLandingContent(legacySlug);
   const title = priority?.metaTitle ?? buildSeoLandingTitle(parsed);
   const description = priority?.metaDescription ?? buildSeoLandingDescription(parsed);
@@ -49,7 +53,7 @@ export async function generateMetadata({
   return {
     title,
     description,
-    alternates: { canonical },
+    alternates: buildAlternates(base, canonicalPath, locale),
     openGraph: {
       title: tw,
       description,

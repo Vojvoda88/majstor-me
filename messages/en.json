@@ -1,0 +1,21 @@
+{
+  "common": {
+    "language": "Language",
+    "languages": {
+      "sr": "Montenegrin",
+      "en": "English",
+      "ru": "Russian",
+      "tr": "Turkish"
+    }
+  },
+  "request": {
+    "create": {
+      "title": "Request a handyman",
+      "intro": "Free for you. Describe the job clearly — one request instead of multiple calls."
+    }
+  },
+  "auth": {
+    "login": "Login",
+    "register": "Register"
+  }
+}

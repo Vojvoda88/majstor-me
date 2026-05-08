@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 import { getCategoryBySlug } from "@/lib/categories";
 import { getPublicHandymenList } from "@/lib/handymen-listing";
@@ -11,12 +12,14 @@ import { getSiteUrl } from "@/lib/site-url";
 import { CategoryPageContent } from "./category-page-content";
 import { faqPageJsonLd } from "@/lib/json-ld";
 import { getCategoryFaqItems } from "@/lib/listing-faq";
+import { buildAlternates, getLocaleFromHeaderValue, LOCALE_HEADER, localizedPath } from "@/lib/i18n/seo";
 
 export async function generateMetadata({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
+  const locale = getLocaleFromHeaderValue(headers().get(LOCALE_HEADER));
   const { slug } = await params;
   const config = getCategoryBySlug(slug);
   if (!config) notFound();
@@ -28,11 +31,11 @@ export async function generateMetadata({
   return {
     title,
     description,
-    alternates: { canonical: `${base}/category/${slug}` },
+    alternates: buildAlternates(base, `/category/${slug}`, locale),
     openGraph: {
       title: ogTitle,
       description,
-      url: `${base}/category/${slug}`,
+      url: `${base.replace(/\/$/, "")}${localizedPath(`/category/${slug}`, locale)}`,
       siteName: "BrziMajstor.ME",
       type: "website",
     },

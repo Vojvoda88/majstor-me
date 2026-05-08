@@ -8,6 +8,7 @@ import { validateRequestTextFields } from "@/lib/contact-sanitization";
 import { zodErrorToString } from "@/lib/api-response";
 import { trackFunnelEvent } from "@/lib/funnel-events";
 import { generateGuestAccessSecret } from "@/lib/guest-request-token";
+import { normalizeLocale, type AppLocale } from "@/lib/i18n/config";
 
 /** Jedan red u Vercel logu — tačan uzrok bez nagađanja. */
 export function logRequestCreateSubmitFatal(step: string, err: unknown): void {
@@ -37,21 +38,100 @@ export function logRequestCreateSubmitFatal(step: string, err: unknown): void {
   });
 }
 
-export const createRequestSchema = z.object({
-  requesterName: z.string().min(2, "Unesite ime"),
-  title: z.string().min(3, "Naslov mora imati najmanje 3 karaktera"),
-  category: z.enum(REQUEST_CATEGORIES as unknown as [string, ...string[]]),
-  subcategory: z.string().optional(),
-  description: z.string().min(10, "Opis mora imati najmanje 10 karaktera").max(2000, "Opis predug"),
-  city: z.string().min(1, "Unesite grad"),
-  requesterPhone: z.string().min(6, "Unesite broj telefona"),
-  requesterViberPhone: z.string().optional(),
-  requesterWhatsappPhone: z.string().optional(),
-  requesterEmail: z.string().email().optional().or(z.literal("")),
-  address: z.string().optional(),
-  urgency: z.enum(["HITNO_DANAS", "U_NAREDNA_2_DANA", "NIJE_HITNO"]),
-  photos: z.array(z.string().url()).max(5, "Maksimalno 5 slika").optional().default([]),
-});
+const REQUEST_COPY: Record<
+  AppLocale,
+  {
+    enterName: string;
+    titleMin: string;
+    descMin: string;
+    descLong: string;
+    enterCity: string;
+    enterPhone: string;
+    maxPhotos: string;
+    onlyUsers: string;
+    verifyEmail: string;
+    dailyLimit: string;
+    duplicate: string;
+    saveError: string;
+  }
+> = {
+  sr: {
+    enterName: "Unesite ime",
+    titleMin: "Naslov mora imati najmanje 3 karaktera",
+    descMin: "Opis mora imati najmanje 10 karaktera",
+    descLong: "Opis predug",
+    enterCity: "Unesite grad",
+    enterPhone: "Unesite broj telefona",
+    maxPhotos: "Maksimalno 5 slika",
+    onlyUsers: "Samo korisnici mogu kreirati zahtjeve",
+    verifyEmail: "Morate verifikovati email adresu prije objave zahtjeva.",
+    dailyLimit: "Dostigli ste dnevni limit zahtjeva (5)",
+    duplicate: "Već ste objavili isti zahtjev danas",
+    saveError: "Greška pri snimanju zahtjeva. Pokušajte ponovo za nekoliko trenutaka.",
+  },
+  en: {
+    enterName: "Enter your name",
+    titleMin: "Title must have at least 3 characters",
+    descMin: "Description must have at least 10 characters",
+    descLong: "Description is too long",
+    enterCity: "Enter city",
+    enterPhone: "Enter phone number",
+    maxPhotos: "Maximum 5 photos",
+    onlyUsers: "Only users can create requests",
+    verifyEmail: "You must verify your email before posting a request.",
+    dailyLimit: "You have reached your daily request limit (5)",
+    duplicate: "You already posted the same request today",
+    saveError: "Error while saving request. Please try again shortly.",
+  },
+  ru: {
+    enterName: "Введите имя",
+    titleMin: "Заголовок должен содержать минимум 3 символа",
+    descMin: "Описание должно содержать минимум 10 символов",
+    descLong: "Описание слишком длинное",
+    enterCity: "Укажите город",
+    enterPhone: "Укажите номер телефона",
+    maxPhotos: "Максимум 5 фото",
+    onlyUsers: "Только пользователи могут создавать заявки",
+    verifyEmail: "Подтвердите email перед публикацией заявки.",
+    dailyLimit: "Вы достигли дневного лимита заявок (5)",
+    duplicate: "Вы уже публиковали такую заявку сегодня",
+    saveError: "Ошибка при сохранении заявки. Попробуйте снова позже.",
+  },
+  tr: {
+    enterName: "Adinizi girin",
+    titleMin: "Baslik en az 3 karakter olmali",
+    descMin: "Aciklama en az 10 karakter olmali",
+    descLong: "Aciklama cok uzun",
+    enterCity: "Sehir girin",
+    enterPhone: "Telefon numarasi girin",
+    maxPhotos: "En fazla 5 fotograf",
+    onlyUsers: "Sadece kullanicilar talep olusturabilir",
+    verifyEmail: "Talep yayinlamadan once e-postanizi dogrulamaniz gerekir.",
+    dailyLimit: "Gunluk talep limitine ulastiniz (5)",
+    duplicate: "Ayni talebi bugun zaten yayinladiniz",
+    saveError: "Talep kaydedilirken hata olustu. Lutfen biraz sonra tekrar deneyin.",
+  },
+};
+
+function createRequestSchema(locale: AppLocale) {
+  const copy = REQUEST_COPY[locale];
+  return z.object({
+    requesterName: z.string().min(2, copy.enterName),
+    title: z.string().min(3, copy.titleMin),
+    category: z.enum(REQUEST_CATEGORIES as unknown as [string, ...string[]]),
+    subcategory: z.string().optional(),
+    description: z.string().min(10, copy.descMin).max(2000, copy.descLong),
+    city: z.string().min(1, copy.enterCity),
+    requesterPhone: z.string().min(6, copy.enterPhone),
+    requesterViberPhone: z.string().optional(),
+    requesterWhatsappPhone: z.string().optional(),
+    requesterEmail: z.string().email().optional().or(z.literal("")),
+    address: z.string().optional(),
+    urgency: z.enum(["HITNO_DANAS", "U_NAREDNA_2_DANA", "NIJE_HITNO"]),
+    photos: z.array(z.string().url()).max(5, copy.maxPhotos).optional().default([]),
+    locale: z.string().optional(),
+  });
+}
 
 export type CreateRequestSharedResult =
   | {
@@ -143,9 +223,12 @@ export async function createRequestShared(
     console.info("[RequestCreateSubmit] step_enter", { step: "step_db_import" });
     const { prisma } = await import("@/lib/db");
     const isGuest = !session?.user?.id;
+    const raw = typeof body === "object" && body !== null ? (body as Record<string, unknown>) : {};
+    const locale = normalizeLocale(typeof raw.locale === "string" ? raw.locale : null);
+    const copy = REQUEST_COPY[locale];
 
     if (!isGuest && session!.user!.role !== "USER") {
-      return { ok: false, error: "Samo korisnici mogu kreirati zahtjeve", status: 403 };
+      return { ok: false, error: copy.onlyUsers, status: 403 };
     }
 
     // Blokiraj logirane korisnike bez verifikovanog emaila
@@ -153,7 +236,7 @@ export async function createRequestShared(
       const { isVerified } = await import("@/lib/auth/require-verified");
       const verified = await isVerified(session!.user!.id, session!.user!.role);
       if (!verified) {
-        return { ok: false, error: "Morate verifikovati email adresu prije objave zahtjeva.", status: 403 };
+        return { ok: false, error: copy.verifyEmail, status: 403 };
       }
     }
 
@@ -168,16 +251,15 @@ export async function createRequestShared(
         },
       });
       if (requestCount >= MAX_REQUESTS_PER_DAY) {
-        return { ok: false, error: "Dostigli ste dnevni limit zahtjeva (5)", status: 429 };
+        return { ok: false, error: copy.dailyLimit, status: 429 };
       }
     }
 
-    const raw = typeof body === "object" && body !== null ? (body as Record<string, unknown>) : {};
     normalizeCategoryInRaw(raw);
     normalizeCityInRaw(raw);
 
     console.info("[RequestCreateSubmit] parse_start");
-    const parsed = createRequestSchema.safeParse({
+    const parsed = createRequestSchema(locale).safeParse({
       ...raw,
       requesterEmail: typeof raw.requesterEmail === "string" ? raw.requesterEmail.trim() || undefined : undefined,
     });
@@ -207,10 +289,19 @@ export async function createRequestShared(
           },
         });
     if (duplicate) {
-      return { ok: false, error: "Već ste objavili isti zahtjev danas", status: 400 };
+      return { ok: false, error: copy.duplicate, status: 400 };
     }
 
-    const { requesterName, title, requesterPhone, requesterViberPhone, requesterWhatsappPhone, requesterEmail, ...rest } = parsed.data;
+    const {
+      requesterName,
+      title,
+      requesterPhone,
+      requesterViberPhone,
+      requesterWhatsappPhone,
+      requesterEmail,
+      locale: _locale,
+      ...rest
+    } = parsed.data;
     const emailTrimmed = requesterEmail?.trim() || undefined;
     const viberTrimmed = requesterViberPhone?.trim() || undefined;
     const whatsappTrimmed = requesterWhatsappPhone?.trim() || undefined;
@@ -328,7 +419,7 @@ export async function createRequestShared(
     logRequestCreateSubmitFatal("step_outer_catch", e);
     return {
       ok: false,
-      error: "Greška pri snimanju zahtjeva. Pokušajte ponovo za nekoliko trenutaka.",
+      error: REQUEST_COPY.sr.saveError,
       status: 500,
     };
   }

@@ -1,51 +1,44 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
+import { LOCALE_COOKIE, getLocaleFromPathname, normalizeLocale, type AppLocale } from "@/lib/i18n/config";
 
-export type UiLanguage = "sr" | "en" | "ru" | "tr";
+export type UiLanguage = AppLocale;
 
-const SUPPORTED: UiLanguage[] = ["sr", "en", "ru", "tr"];
-
-function normalizeLanguage(value: string | undefined | null): UiLanguage {
-  if (!value) return "sr";
-  const lower = value.toLowerCase();
-  if (SUPPORTED.includes(lower as UiLanguage)) return lower as UiLanguage;
-  if (lower.startsWith("en")) return "en";
-  if (lower.startsWith("ru")) return "ru";
-  if (lower.startsWith("tr")) return "tr";
-  return "sr";
-}
-
-function readGoogleTranslateCookie(): UiLanguage | null {
+function readLanguageCookie(): UiLanguage | null {
   if (typeof document === "undefined") return null;
   const cookie = document.cookie
     .split("; ")
-    .find((entry) => entry.startsWith("googtrans="))
+    .find((entry) => entry.startsWith(`${LOCALE_COOKIE}=`))
     ?.split("=")[1];
   if (!cookie) return null;
-  const decoded = decodeURIComponent(cookie);
-  const target = decoded.split("/").at(-1);
-  return normalizeLanguage(target);
+  return normalizeLocale(decodeURIComponent(cookie));
 }
 
 function readHtmlLanguage(): UiLanguage {
-  if (typeof document === "undefined") return "sr";
-  return normalizeLanguage(document.documentElement.lang);
+  if (typeof document === "undefined") return "sr" as UiLanguage;
+  return normalizeLocale(document.documentElement.lang);
 }
 
-export function detectUiLanguage(): UiLanguage {
-  return readGoogleTranslateCookie() ?? readHtmlLanguage();
+export function detectUiLanguage(pathname?: string): UiLanguage {
+  if (pathname) {
+    const fromPath = getLocaleFromPathname(pathname);
+    if (fromPath) return fromPath;
+  }
+  return readLanguageCookie() ?? readHtmlLanguage();
 }
 
 export function useUiLanguage(): UiLanguage {
+  const pathname = usePathname();
   const [language, setLanguage] = useState<UiLanguage>("sr");
 
   useEffect(() => {
-    const update = () => setLanguage(detectUiLanguage());
+    const update = () => setLanguage(detectUiLanguage(pathname));
     update();
     window.addEventListener("focus", update);
     return () => window.removeEventListener("focus", update);
-  }, []);
+  }, [pathname]);
 
   return language;
 }

@@ -1,16 +1,27 @@
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { LoginForm } from "@/components/forms/login-form";
 import { Button } from "@/components/ui/button";
 import { SiteHeaderSimple } from "@/components/layout/site-header-simple";
+import { getSiteUrl } from "@/lib/site-url";
+import { buildAlternates, getLocaleFromHeaderValue, LOCALE_HEADER, localizedPath } from "@/lib/i18n/seo";
 
-export const metadata: Metadata = {
-  title: "Prijava",
-  description: "Prijava na nalog — korisnik ili majstor na BrziMajstor.ME.",
-  robots: { index: false, follow: false },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = getLocaleFromHeaderValue(headers().get(LOCALE_HEADER));
+  const base = getSiteUrl();
+  return {
+    title: "Prijava",
+    description: "Prijava na nalog — korisnik ili majstor na BrziMajstor.ME.",
+    robots: { index: false, follow: false },
+    alternates: buildAlternates(base, "/login", locale),
+    openGraph: {
+      url: `${base.replace(/\/$/, "")}${localizedPath("/login", locale)}`,
+    },
+  };
+}
 
 export const dynamic = "force-dynamic";
 

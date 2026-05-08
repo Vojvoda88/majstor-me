@@ -1,0 +1,21 @@
+{
+  "common": {
+    "language": "Dil",
+    "languages": {
+      "sr": "Karadagca",
+      "en": "Ingilizce",
+      "ru": "Rusca",
+      "tr": "Turkce"
+    }
+  },
+  "request": {
+    "create": {
+      "title": "Usta talep et",
+      "intro": "Sizin icin ucretsiz. Isi net tarif edin — birden fazla arama yerine tek bir talep."
+    }
+  },
+  "auth": {
+    "login": "Giris",
+    "register": "Kayit ol"
+  }
+}
