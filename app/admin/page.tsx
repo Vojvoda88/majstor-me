@@ -62,11 +62,11 @@ export default async function AdminDashboardPage() {
       sub: "ACTIVE + javno vidljivi (nije demo)",
     },
     { label: "Poslane ponude", value: offersCount, href: "/admin/offers" },
-    { label: "Otključanja kontakta", value: contactUnlocksCount },
+    { label: "Otključanja kontakta", value: contactUnlocksCount, href: "/admin/credits" },
     { label: "Prijave na čekanju", value: reportsPending, href: "/admin/moderation" },
-    { label: "Prihod od kredita danas", value: creditsToday, sub: "otključanja" },
-    { label: "Prihod ove sedmice", value: creditsWeek, sub: "transakcije" },
-    { label: "Prihod ovog meseca", value: creditsMonth, sub: "transakcije" },
+    { label: "Prihod od kredita danas", value: creditsToday, sub: "otključanja", href: "/admin/credits" },
+    { label: "Prihod ove sedmice", value: creditsWeek, sub: "transakcije", href: "/admin/credits" },
+    { label: "Prihod ovog meseca", value: creditsMonth, sub: "transakcije", href: "/admin/credits" },
   ];
 
   return (
