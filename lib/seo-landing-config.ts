@@ -7,6 +7,7 @@
 export const SEO_LANDING_HOMEPAGE_LINKS: { slug: string; city: string; label: string }[] = [
   { slug: "vodoinstalater", city: "podgorica", label: "Vodoinstalater Podgorica" },
   { slug: "elektricar", city: "niksic", label: "Električar Nikšić" },
+  { slug: "bravar", city: "podgorica", label: "Bravar Podgorica" },
   { slug: "sitni-kucni-poslovi", city: "budva", label: "Sitni kućni poslovi Budva" },
   { slug: "keramicar", city: "kotor", label: "Keramičar Kotor" },
   { slug: "stolar", city: "bar", label: "Stolar Bar" },

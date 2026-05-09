@@ -12,7 +12,7 @@ export const REQUEST_CATEGORY_FALLBACK = "Ne vidim svoju uslugu" as const;
 export const REQUEST_CATEGORY_FALLBACK_DISPLAY = "Ostalo / Ne vidim svoju uslugu" as const;
 
 /**
- * 15 glavnih usluga (javni listing /category/[slug], /categories, hero select).
+ * 16 glavnih usluga (javni listing /category/[slug], /categories, hero select).
  * + 1 kontrolisani fallback u formi (REQUEST_CATEGORY_FALLBACK) — nije javna kartica.
  */
 export const ACTIVE_INTERNAL_CATEGORY_NAMES = [
@@ -22,6 +22,7 @@ export const ACTIVE_INTERNAL_CATEGORY_NAMES = [
   "Keramičar",
   "Stolar",
   "PVC stolarija",
+  "Bravar",
   "Moler",
   "Gipsar",
   "Fasade / izolacija",
@@ -77,7 +78,7 @@ export const REQUEST_CREATE_CATEGORY_CHOICES = [
 /** Broj usluga sa javnim karticama (bez „Ostalo / Ne vidim svoju uslugu“). Izvor za isti broj u cijelom javnom UI-u. */
 export const ACTIVE_PUBLIC_CATEGORY_COUNT = ACTIVE_INTERNAL_CATEGORY_NAMES.length;
 
-/** Ukupno opcija u formi za kategoriju (15 usluga + fallback). */
+/** Ukupno opcija u formi za kategoriju (16 usluga + fallback). */
 export const REQUEST_FORM_CATEGORY_OPTION_COUNT = REQUEST_CREATE_CATEGORY_CHOICES.length;
 
 export type CategoryConfig = {
@@ -150,8 +151,8 @@ export const CATEGORY_CONFIG_FULL: CategoryConfig[] = [
     displayName: "Bravar",
     internalCategory: "Bravar",
     icon: "Key",
-    publicListing: false,
-    selectableForHandyman: false,
+    publicListing: true,
+    selectableForHandyman: true,
   },
   {
     slug: "moler",
