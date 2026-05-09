@@ -23,7 +23,7 @@ export async function PendingWorkersList({
     });
 
     return (
-      <Card>
+      <Card className="rounded-2xl border-slate-200/90 shadow-sm">
         <CardHeader>
           <CardTitle>Majstori na čekanju ({handymen.length})</CardTitle>
           <p className="text-sm text-[#64748B]">
@@ -47,9 +47,9 @@ export async function PendingWorkersList({
               </div>
             ))}
           </div>
-          <div className="hidden overflow-x-auto md:block">
+          <div className="hidden overflow-x-auto rounded-xl border border-slate-200 md:block">
             <table className="w-full text-sm">
-              <thead>
+              <thead className="bg-slate-50/80">
                 <tr className="border-b text-left">
                   <th className="pb-3 pr-4">Ime</th>
                   <th className="pb-3 pr-4">Telefon</th>
@@ -62,7 +62,7 @@ export async function PendingWorkersList({
               </thead>
               <tbody>
                 {handymen.map((u) => (
-                  <tr key={u.id} className="border-b last:border-0">
+                  <tr key={u.id} className="border-b last:border-0 hover:bg-slate-50/70">
                     <td className="py-3 pr-4">{u.name}</td>
                     <td className="py-3 pr-4 font-mono text-xs">{u.phone ?? "-"}</td>
                     <td className="py-3 pr-4">{u.email}</td>

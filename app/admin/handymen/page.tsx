@@ -139,7 +139,7 @@ export default async function AdminHandymenPage({
           ))}
         </div>
 
-        <Card className="overflow-hidden rounded-2xl border-slate-200/90">
+        <Card className="overflow-hidden rounded-2xl border-slate-200/90 shadow-sm">
           <CardHeader>
             <CardTitle>Lista majstora ({total})</CardTitle>
           </CardHeader>
@@ -187,9 +187,9 @@ export default async function AdminHandymenPage({
                 );
               })}
             </div>
-            <div className="hidden overflow-x-auto md:block">
+            <div className="hidden overflow-x-auto rounded-xl border border-slate-200 md:block">
               <table className="w-full text-sm">
-                <thead>
+                <thead className="bg-slate-50/80">
                   <tr className="border-b text-left">
                     <th className="pb-3 pr-4">Ime</th>
                     <th className="pb-3 pr-4">Telefon</th>
@@ -209,7 +209,7 @@ export default async function AdminHandymenPage({
                     const isSuspended = !!h.suspendedAt;
                     const isBanned = !!h.bannedAt;
                     return (
-                      <tr key={h.id} className="border-b last:border-0">
+                      <tr key={h.id} className="border-b last:border-0 hover:bg-slate-50/70">
                         <td className="py-3 pr-4 font-medium">{h.name}</td>
                         <td className="py-3 pr-4">{h.phone ?? "-"}</td>
                         <td className="py-3 pr-4">{h.email}</td>

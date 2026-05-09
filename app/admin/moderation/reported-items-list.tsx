@@ -25,7 +25,7 @@ export async function ReportedItemsList() {
     });
 
     return (
-      <Card>
+      <Card className="rounded-2xl border-slate-200/90 shadow-sm">
         <CardHeader>
           <CardTitle>Prijave ({reports.length})</CardTitle>
           <p className="text-sm text-[#64748B]">
@@ -33,9 +33,9 @@ export async function ReportedItemsList() {
           </p>
         </CardHeader>
         <CardContent>
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto rounded-xl border border-slate-200">
             <table className="w-full text-sm">
-              <thead>
+              <thead className="bg-slate-50/80">
                 <tr className="border-b text-left">
                   <th className="pb-3 pr-4">Tip</th>
                   <th className="pb-3 pr-4">Prijavio</th>
@@ -48,7 +48,7 @@ export async function ReportedItemsList() {
               </thead>
               <tbody>
                 {reports.map((r) => (
-                  <tr key={r.id} className="border-b last:border-0">
+                  <tr key={r.id} className="border-b last:border-0 hover:bg-slate-50/70">
                     <td className="py-3 pr-4">{r.type}</td>
                     <td className="py-3 pr-4">
                       {r.reporter ? (

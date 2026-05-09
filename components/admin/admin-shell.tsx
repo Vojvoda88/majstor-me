@@ -67,7 +67,7 @@ export function AdminShell({ adminRole, session, pendingReview: pendingInitial, 
   const pendingTotal = pendingReview.pendingRequests + pendingReview.pendingHandymen;
 
   return (
-    <div className="min-h-screen bg-[#F1F5F9]">
+    <div className="min-h-screen bg-gradient-to-b from-slate-100 to-slate-50">
       {/* Overlay — ispod sidebara, iznad sadržaja; samo mobile */}
       {mobileOpen && (
         <button
@@ -86,7 +86,7 @@ export function AdminShell({ adminRole, session, pendingReview: pendingInitial, 
       />
 
       <div className="flex min-h-screen w-full min-w-0 flex-col lg:pl-64">
-        <header className="sticky top-0 z-30 shrink-0 border-b border-[#E2E8F0] bg-white/95 pt-[env(safe-area-inset-top)] backdrop-blur supports-[backdrop-filter]:bg-white/90">
+        <header className="sticky top-0 z-30 shrink-0 border-b border-[#E2E8F0] bg-white/95 pt-[env(safe-area-inset-top)] shadow-sm backdrop-blur supports-[backdrop-filter]:bg-white/90">
           <div className="flex items-center gap-2 px-3 py-2.5 sm:px-6">
             <button
               type="button"
@@ -99,7 +99,7 @@ export function AdminShell({ adminRole, session, pendingReview: pendingInitial, 
               {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </button>
             <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-semibold tracking-tight text-[#0F172A]">Administracija</p>
+              <p className="truncate text-sm font-bold tracking-tight text-[#0F172A]">Administracija</p>
               <p className="hidden truncate text-xs text-[#64748B] sm:block">
                 {session.user?.name} · {roleLabel}
               </p>
@@ -122,7 +122,7 @@ export function AdminShell({ adminRole, session, pendingReview: pendingInitial, 
           </div>
         </header>
 
-        <main className="min-w-0 overflow-x-hidden p-4 pb-[calc(5.25rem+env(safe-area-inset-bottom,0px))] sm:p-6 lg:pb-6">
+        <main className="min-w-0 overflow-x-hidden p-4 pb-[calc(5.25rem+env(safe-area-inset-bottom,0px))] sm:p-6 lg:p-7 lg:pb-6">
           {children}
         </main>
         <AdminMobileBottomNav adminRole={adminRole} hidden={mobileOpen} pendingTotal={pendingReview.pendingRequests + pendingReview.pendingHandymen} />

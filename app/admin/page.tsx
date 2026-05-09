@@ -81,7 +81,7 @@ export default async function AdminDashboardPage() {
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {statCards.map((stat) => {
           const card = (
-            <Card className="h-full transition-shadow hover:shadow-md">
+            <Card className="h-full rounded-2xl border-slate-200/90 shadow-sm transition-shadow hover:shadow-md">
               <CardHeader className="pb-1 sm:pb-2">
                 <CardTitle className="text-xs font-medium text-[#64748B] sm:text-sm">{stat.label}</CardTitle>
               </CardHeader>
@@ -102,7 +102,7 @@ export default async function AdminDashboardPage() {
       </div>
 
       <div className="grid gap-4 lg:grid-cols-1">
-        <Card>
+        <Card className="rounded-2xl border-slate-200/90 shadow-sm">
           <CardHeader>
             <CardTitle>Zahtjevi po danu (7 dana)</CardTitle>
           </CardHeader>

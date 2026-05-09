@@ -52,14 +52,15 @@ export function RequestFilters() {
   }, [router]);
 
   return (
-    <div className="flex flex-wrap items-end gap-2 rounded-lg border border-[#E2E8F0] bg-white p-3">
+    <div className="rounded-2xl border border-[#E2E8F0] bg-white p-4 shadow-sm">
+      <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4">
       <div>
         <label className="mb-1 block text-xs text-[#64748B]">Pretraga (ime, telefon, email)</label>
         <Input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="..."
-          className="w-48"
+          className="w-full"
           onKeyDown={(e) => e.key === "Enter" && apply()}
         />
       </div>
@@ -131,8 +132,11 @@ export function RequestFilters() {
           <option value="createdAt_asc">Najstariji prvo</option>
         </select>
       </div>
+      </div>
+      <div className="mt-3 flex flex-wrap items-center gap-2">
       <Button size="sm" onClick={apply}>Filtriraj</Button>
       <Button size="sm" variant="outline" onClick={clear}>Reset</Button>
+      </div>
     </div>
   );
 }

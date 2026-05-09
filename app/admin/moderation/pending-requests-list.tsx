@@ -33,7 +33,7 @@ export async function PendingRequestsList({
     });
 
     return (
-      <Card>
+      <Card className="rounded-2xl border-slate-200/90 shadow-sm">
         <CardHeader>
           <CardTitle>Zahtjevi na čekanju ({requests.length})</CardTitle>
           <p className="text-sm text-[#64748B]">
@@ -63,9 +63,9 @@ export async function PendingRequestsList({
               </div>
             ))}
           </div>
-          <div className="hidden overflow-x-auto md:block">
+          <div className="hidden overflow-x-auto rounded-xl border border-slate-200 md:block">
             <table className="w-full text-sm">
-              <thead>
+              <thead className="bg-slate-50/80">
                 <tr className="border-b text-left">
                   <th className="pb-3 pr-4">Ime</th>
                   <th className="pb-3 pr-4">Telefon</th>
@@ -78,7 +78,7 @@ export async function PendingRequestsList({
               </thead>
               <tbody>
                 {requests.map((r) => (
-                  <tr key={r.id} className="border-b last:border-0">
+                  <tr key={r.id} className="border-b last:border-0 hover:bg-slate-50/70">
                     <td className="py-3 pr-4">
                       {r.requesterName ?? r.user?.name ?? "Guest"}
                     </td>

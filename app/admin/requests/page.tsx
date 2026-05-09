@@ -261,7 +261,7 @@ export default async function AdminRequestsPage({
           ))}
         </div>
 
-        <Card className="overflow-hidden rounded-2xl border-slate-200/90">
+        <Card className="overflow-hidden rounded-2xl border-slate-200/90 shadow-sm">
           <CardHeader>
             <CardTitle>
               Lista zahtjeva ({total}) · Strana {page}/{totalPages}
@@ -305,9 +305,9 @@ export default async function AdminRequestsPage({
                 </div>
               ))}
             </div>
-            <div className="hidden overflow-x-auto md:block">
+            <div className="hidden overflow-x-auto rounded-xl border border-slate-200 md:block">
               <table className="w-full text-sm">
-                <thead>
+                <thead className="bg-slate-50/80">
                   <tr className="border-b text-left">
                     <th className="pb-3 pr-4">ID</th>
                     <th className="pb-3 pr-4">Admin</th>
@@ -324,7 +324,7 @@ export default async function AdminRequestsPage({
                 </thead>
                 <tbody>
                   {requests.map((r) => (
-                    <tr key={r.id} className="border-b last:border-0">
+                    <tr key={r.id} className="border-b last:border-0 hover:bg-slate-50/70">
                       <td className="py-3 pr-4 font-mono text-xs">{r.id.slice(0, 8)}</td>
                       <td className="py-3 pr-4">
                         <Badge variant="outline" className="text-xs">

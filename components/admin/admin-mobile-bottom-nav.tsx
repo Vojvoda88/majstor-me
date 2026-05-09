@@ -45,7 +45,7 @@ export function AdminMobileBottomNav({ adminRole, hidden = false, pendingTotal =
               href={href}
               className={cn(
                 "relative flex min-h-[50px] min-w-0 flex-1 flex-col items-center justify-center gap-0.5 rounded-xl px-0.5 py-1 text-[10px] font-semibold leading-tight transition-colors sm:min-h-[52px] sm:text-[11px]",
-                isActive ? "text-brand-navy" : "text-slate-500 hover:text-slate-800"
+                isActive ? "bg-slate-100 text-brand-navy" : "text-slate-500 hover:text-slate-800"
               )}
             >
               <span className="relative">

@@ -61,10 +61,10 @@ export function AdminSidebar({ adminRole, pendingReview, mobileOpen = false, onC
           data-testid={testId}
           onClick={() => onClose?.()}
           className={cn(
-            "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all",
+            "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-150",
             isActive
               ? "bg-[#0F172A] text-white shadow-sm ring-1 ring-black/5"
-              : "text-[#475569] hover:bg-[#F1F5F9] hover:text-[#0F172A]"
+              : "text-[#475569] hover:bg-[#EEF2FF] hover:text-[#0F172A]"
           )}
         >
           <Icon className={cn("h-4 w-4 shrink-0", isActive ? "text-white" : "text-[#64748B]")} />
@@ -89,7 +89,7 @@ export function AdminSidebar({ adminRole, pendingReview, mobileOpen = false, onC
       id="admin-sidebar-nav"
       data-testid="admin-sidebar"
       className={cn(
-        "fixed left-0 top-0 z-50 flex h-screen w-[min(100vw,17.5rem)] max-w-[88vw] flex-col border-r border-[#E2E8F0] bg-white shadow-xl transition-transform duration-200 ease-out lg:z-40 lg:max-w-none lg:shadow-none",
+            "fixed left-0 top-0 z-50 flex h-screen w-[min(100vw,17.5rem)] max-w-[88vw] flex-col border-r border-[#E2E8F0] bg-white shadow-xl transition-transform duration-200 ease-out lg:z-40 lg:max-w-none lg:shadow-none",
         "lg:translate-x-0 lg:pointer-events-auto",
         mobileOpen ? "translate-x-0 pointer-events-auto" : "-translate-x-full pointer-events-none lg:translate-x-0"
       )}

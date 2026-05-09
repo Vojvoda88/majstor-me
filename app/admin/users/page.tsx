@@ -97,7 +97,7 @@ export default async function AdminUsersPage({
       />
 
       {adminRole === "SUPER_ADMIN" && (
-        <Card>
+        <Card className="rounded-2xl border-slate-200/90 shadow-sm">
           <CardHeader>
             <CardTitle>Admin nalozi i pod-admin pristup</CardTitle>
           </CardHeader>
@@ -107,14 +107,14 @@ export default async function AdminUsersPage({
         </Card>
       )}
 
-      <Card>
+      <Card className="rounded-2xl border-slate-200/90 shadow-sm">
         <CardHeader>
           <CardTitle>Lista korisnika ({total})</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto rounded-xl border border-slate-200">
             <table className="w-full text-sm">
-              <thead>
+              <thead className="bg-slate-50/80">
                 <tr className="border-b text-left">
                   <th className="pb-3 pr-4">Ime</th>
                   <th className="pb-3 pr-4">Telefon</th>
@@ -132,7 +132,7 @@ export default async function AdminUsersPage({
                   const isSuspended = !!u.suspendedAt;
                   const isBanned = !!u.bannedAt;
                   return (
-                    <tr key={u.id} className="border-b last:border-0">
+                    <tr key={u.id} className="border-b last:border-0 hover:bg-slate-50/70">
                       <td className="py-3 pr-4 font-medium">{u.name}</td>
                       <td className="py-3 pr-4">{u.phone ?? "-"}</td>
                       <td className="py-3 pr-4">{u.email}</td>
