@@ -266,6 +266,14 @@
         "U_NAREDNA_2_DANA": "?o?u acil onar?m i?in yeterince h?zl?d?r.",
         "NIJE_HITNO": "Planl? i?ler ve esnek zamanlar i?in uygundur."
       }
+    },
+    "guestLink": {
+      "title": "Talep takibi i?in kaydedilmi? ?zel bir ba?lant?n?z var",
+      "savedAt": "Kaydedildi: {date}.",
+      "savedOnDevice": "Bu cihazda kaydedildi.",
+      "continueHint": "Kald???n?z yerden hemen devam edebilirsiniz.",
+      "continueButton": "Talep takibine devam et",
+      "removeButton": "Kaydedilmi? ba?lant?y? kald?r"
     }
   },
   "seo": {

@@ -266,6 +266,14 @@
         "U_NAREDNA_2_DANA": "Fast enough for most urgent fixes.",
         "NIJE_HITNO": "Best for planned work and flexible timing."
       }
+    },
+    "guestLink": {
+      "title": "You have a saved private request tracking link",
+      "savedAt": "Saved: {date}.",
+      "savedOnDevice": "Saved on this device.",
+      "continueHint": "You can continue right where you left off.",
+      "continueButton": "Continue request tracking",
+      "removeButton": "Remove saved link"
     }
   },
   "seo": {

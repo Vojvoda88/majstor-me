@@ -266,6 +266,14 @@
         "U_NAREDNA_2_DANA": "Dovoljno brzo za ve?inu hitnih popravki.",
         "NIJE_HITNO": "Za planirane radove i fleksibilne termine."
       }
+    },
+    "guestLink": {
+      "title": "Imate sa?uvan privatni link za pra?enje zahtjeva",
+      "savedAt": "Sa?uvano: {date}.",
+      "savedOnDevice": "Sa?uvano na ovom ure?aju.",
+      "continueHint": "Mo?ete odmah nastaviti gde ste stali.",
+      "continueButton": "Nastavi pra?enje zahtjeva",
+      "removeButton": "Ukloni sa?uvani link"
     }
   },
   "seo": {
