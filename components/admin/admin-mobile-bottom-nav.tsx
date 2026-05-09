@@ -2,31 +2,15 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import type { LucideIcon } from "lucide-react";
-import { LayoutDashboard, Inbox, FileText, Wrench, Users, Coins, CreditCard } from "lucide-react";
 import { cn } from "@/lib/utils";
-import type { AdminRole, Permission } from "@/lib/admin/permissions";
+import type { AdminRole } from "@/lib/admin/permissions";
 import { hasPermission } from "@/lib/admin/permissions";
+import { ADMIN_NAV_ITEMS } from "@/components/admin/admin-nav-config";
 
 /**
  * Sticky bottom navigacija za admin (samo mobilni, lg+ sakriveno).
  * Prioritet redoslijeda; max 5 stavki — filtrirano po dozvolama (npr. finansije: Panel, Krediti, Uplate).
  */
-const ITEMS: {
-  href: string;
-  label: string;
-  icon: LucideIcon;
-  permission: Permission;
-}[] = [
-  { href: "/admin", label: "Početak", icon: LayoutDashboard, permission: "dashboard" },
-  { href: "/admin/moderation", label: "Moderacija", icon: Inbox, permission: "moderation" },
-  { href: "/admin/requests", label: "Zahtjevi", icon: FileText, permission: "requests" },
-  { href: "/admin/handymen", label: "Majstori", icon: Wrench, permission: "workers" },
-  { href: "/admin/users", label: "Korisnici", icon: Users, permission: "users" },
-  { href: "/admin/credits", label: "Krediti", icon: Coins, permission: "credits" },
-  { href: "/admin/payments", label: "Uplate", icon: CreditCard, permission: "payments" },
-];
-
 type Props = {
   adminRole: AdminRole;
   /** Kad je otvoren drawer meni, sakrij bottom bar da ne preklapa UX */
@@ -38,7 +22,10 @@ type Props = {
 export function AdminMobileBottomNav({ adminRole, hidden = false, pendingTotal = 0 }: Props) {
   const pathname = usePathname() ?? "";
 
-  const visible = ITEMS.filter((item) => hasPermission(adminRole, item.permission));
+  const visible = ADMIN_NAV_ITEMS
+    .filter((item) => hasPermission(adminRole, item.permission))
+    .sort((a, b) => a.mobilePriority - b.mobilePriority)
+    .slice(0, 5);
 
   if (hidden || visible.length === 0) return null;
 

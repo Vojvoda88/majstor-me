@@ -4,6 +4,8 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { AdminVerifyEmailButton } from "@/components/admin/verify-email-button";
 import { AdminStaffManager } from "./admin-staff-manager";
+import { AdminPageHeader } from "@/components/admin/admin-page-header";
+import { AdminListPagination } from "@/components/admin/admin-list-pagination";
 
 export const dynamic = "force-dynamic";
 
@@ -88,10 +90,11 @@ export default async function AdminUsersPage({
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-[#0F172A]">Korisnici</h1>
-        <p className="mt-1 text-sm text-[#64748B]">Korisnici koji šalju zahtjeve</p>
-      </div>
+      <AdminPageHeader
+        title="Korisnici"
+        description="Korisnici koji šalju zahtjeve"
+        meta={`Ukupno: ${total}`}
+      />
 
       {adminRole === "SUPER_ADMIN" && (
         <Card>
@@ -164,23 +167,12 @@ export default async function AdminUsersPage({
             </table>
           </div>
           {users.length === 0 && <p className="py-8 text-center text-[#64748B]">Nema korisnika</p>}
-          {totalPages > 1 && (
-            <div className="mt-4 flex items-center justify-center gap-2">
-              {page > 1 && (
-                <Link href={`/admin/users?page=${page - 1}`} className="rounded border px-3 py-1 text-sm hover:bg-slate-100">
-                  ← Prethodna
-                </Link>
-              )}
-              <span className="text-sm text-[#64748B]">
-                Strana {page} / {totalPages}
-              </span>
-              {page < totalPages && (
-                <Link href={`/admin/users?page=${page + 1}`} className="rounded border px-3 py-1 text-sm hover:bg-slate-100">
-                  Sljedeća →
-                </Link>
-              )}
-            </div>
-          )}
+          <AdminListPagination
+            page={page}
+            totalPages={totalPages}
+            prevHref={page > 1 ? `/admin/users?page=${page - 1}` : undefined}
+            nextHref={page < totalPages ? `/admin/users?page=${page + 1}` : undefined}
+          />
         </CardContent>
       </Card>
     </div>

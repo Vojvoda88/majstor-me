@@ -12,6 +12,7 @@ import { AdminRouteLoadError } from "@/lib/admin/admin-ssr-fallback";
 import { ADMIN_REQUEST_DETAIL_SELECT } from "@/lib/admin/admin-prisma-selects";
 import { logAdminSsrFatal, prismaErrorCode } from "@/lib/admin/admin-ssr-params";
 import { hasPermission } from "@/lib/admin/permissions";
+import { AdminPageHeader } from "@/components/admin/admin-page-header";
 
 export const dynamic = "force-dynamic";
 
@@ -72,11 +73,15 @@ export default async function AdminRequestDetailPage({ params }: { params: Promi
 
   return (
       <div className="space-y-6">
-        <div>
-          <h1 className="text-2xl font-bold text-[#0F172A]">{req.title ?? req.category}</h1>
-          <p className="mt-1 text-sm text-[#64748B]">
-            {req.category} – {req.city}
-          </p>
+        <div className="space-y-2">
+          <Link href="/admin/requests" className="text-sm font-medium text-[#2563EB] hover:underline">
+            ← Nazad na listu zahtjeva
+          </Link>
+          <AdminPageHeader
+            title={req.title ?? req.category}
+            description={`${req.category} – ${req.city}`}
+            meta={`ID: ${req.id.slice(0, 8)} · Datum: ${new Date(req.createdAt).toLocaleString("sr")}`}
+          />
         </div>
 
         <div className="grid gap-6 lg:grid-cols-2">

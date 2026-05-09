@@ -117,7 +117,7 @@ export async function PendingRequestsList({
     logAdminSsrFatal("[AdminModerationSSR]", "PendingRequestsList.findMany", { tab: "requests" }, err);
     return (
       <AdminRouteLoadError
-        routeTitle="Moderation"
+        routeTitle="Moderacija"
         cardTitle="Ne možemo učitati zahtjeve na čekanju"
         logPrefix="[AdminModerationSSR]"
         message={e.message}

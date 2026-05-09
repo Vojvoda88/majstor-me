@@ -8,6 +8,7 @@ import { PendingRequestsList } from "./pending-requests-list";
 import { PendingWorkersList } from "./pending-workers-list";
 import { ReportedItemsList } from "./reported-items-list";
 import { SpamList } from "./spam-list";
+import { AdminPageHeader } from "@/components/admin/admin-page-header";
 
 export const dynamic = "force-dynamic";
 
@@ -28,7 +29,7 @@ export default async function ModerationPage({
     logAdminSsrFatal("[AdminModerationSSR]", "resolveModerationTab", {}, err);
     return (
       <AdminRouteLoadError
-        routeTitle="Moderation"
+        routeTitle="Moderacija"
         cardTitle="Ne možemo učitati tab parametar"
         logPrefix="[AdminModerationSSR]"
         message={e.message}
@@ -41,12 +42,10 @@ export default async function ModerationPage({
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-[#0F172A]">Moderation Inbox</h1>
-        <p className="mt-1 text-sm text-[#64748B]">
-          Zahtjevi na čekanju, majstori, prijave i spam
-        </p>
-      </div>
+      <AdminPageHeader
+        title="Moderacija"
+        description="Zahtjevi na čekanju, majstori, prijave i spam"
+      />
 
       <ModerationTabs currentTab={tab} />
 

@@ -116,7 +116,7 @@ export async function ReportedItemsList() {
     logAdminSsrFatal("[AdminModerationSSR]", "ReportedItemsList.findMany", { tab: "reports" }, err);
     return (
       <AdminRouteLoadError
-        routeTitle="Moderation"
+        routeTitle="Moderacija"
         cardTitle="Ne možemo učitati prijave"
         logPrefix="[AdminModerationSSR]"
         message={e.message}

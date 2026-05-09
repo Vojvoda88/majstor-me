@@ -2,64 +2,20 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  LayoutDashboard,
-  Inbox,
-  Wrench,
-  Users,
-  FileText,
-  Tag,
-  Coins,
-  CreditCard,
-  MessageSquare,
-  FolderTree,
-  MapPin,
-  Bell,
-  Shield,
-  FileQuestion,
-  Settings,
-  ScrollText,
-  BarChart3,
-  Home,
-} from "lucide-react";
+import { Home } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { AdminPendingReviewCounts } from "@/lib/admin-pending-counts";
 import type { AdminRole } from "@/lib/admin/permissions";
 import { hasPermission } from "@/lib/admin/permissions";
+import {
+  ADMIN_NAV_ITEMS,
+  type AdminNavItem,
+  type AdminNavSection,
+} from "@/components/admin/admin-nav-config";
 
-type NavSection = "pregled" | "moderacija" | "operativa" | "sadrzaj";
+const SECTION_ORDER: AdminNavSection[] = ["pregled", "moderacija", "operativa", "sadrzaj"];
 
-type NavItemDef = {
-  href: string;
-  label: string;
-  icon: React.ComponentType<{ className?: string }>;
-  permission: string;
-  section: NavSection;
-};
-
-const NAV_ITEMS: NavItemDef[] = [
-  { href: "/admin", label: "Početak", icon: LayoutDashboard, permission: "dashboard", section: "pregled" },
-  { href: "/admin/moderation", label: "Moderacija", icon: Inbox, permission: "moderation", section: "moderacija" },
-  { href: "/admin/handymen", label: "Majstori", icon: Wrench, permission: "workers", section: "operativa" },
-  { href: "/admin/users", label: "Korisnici", icon: Users, permission: "users", section: "operativa" },
-  { href: "/admin/requests", label: "Zahtjevi", icon: FileText, permission: "requests", section: "operativa" },
-  { href: "/admin/offers", label: "Ponude", icon: Tag, permission: "offers", section: "operativa" },
-  { href: "/admin/credits", label: "Krediti", icon: Coins, permission: "credits", section: "operativa" },
-  { href: "/admin/funnel", label: "Tok konverzija", icon: BarChart3, permission: "credits", section: "operativa" },
-  { href: "/admin/payments", label: "Plaćanja", icon: CreditCard, permission: "payments", section: "operativa" },
-  { href: "/admin/chat", label: "Poruke", icon: MessageSquare, permission: "chat", section: "operativa" },
-  { href: "/admin/categories", label: "Kategorije", icon: FolderTree, permission: "categories", section: "sadrzaj" },
-  { href: "/admin/cities", label: "Gradovi", icon: MapPin, permission: "cities", section: "sadrzaj" },
-  { href: "/admin/notifications", label: "Notifikacije", icon: Bell, permission: "notifications", section: "sadrzaj" },
-  { href: "/admin/trust-safety", label: "Povjerenje i sigurnost", icon: Shield, permission: "trust_safety", section: "sadrzaj" },
-  { href: "/admin/content", label: "Sadržaj i FAQ", icon: FileQuestion, permission: "content", section: "sadrzaj" },
-  { href: "/admin/settings", label: "Podešavanja", icon: Settings, permission: "settings", section: "sadrzaj" },
-  { href: "/admin/audit", label: "Zapis aktivnosti", icon: ScrollText, permission: "audit_log", section: "sadrzaj" },
-];
-
-const SECTION_ORDER: NavSection[] = ["pregled", "moderacija", "operativa", "sadrzaj"];
-
-const SECTION_TITLES: Record<NavSection, string> = {
+const SECTION_TITLES: Record<AdminNavSection, string> = {
   pregled: "Pregled",
   moderacija: "Moderacija",
   operativa: "Operativa",
@@ -76,7 +32,7 @@ type SidebarProps = {
 export function AdminSidebar({ adminRole, pendingReview, mobileOpen = false, onClose }: SidebarProps) {
   const pathname = usePathname() ?? "";
 
-  const visibleItems = NAV_ITEMS.filter((item) =>
+  const visibleItems = ADMIN_NAV_ITEMS.filter((item) =>
     hasPermission(adminRole, item.permission as Parameters<typeof hasPermission>[1])
   );
 
@@ -86,7 +42,7 @@ export function AdminSidebar({ adminRole, pendingReview, mobileOpen = false, onC
     items: visibleItems.filter((i) => i.section === section),
   })).filter((g) => g.items.length > 0);
 
-  const renderItem = (item: NavItemDef) => {
+  const renderItem = (item: AdminNavItem) => {
     const Icon = item.icon;
     const isActive = pathname === item.href || (item.href !== "/admin" && pathname.startsWith(item.href + "/"));
     const testId = item.href === "/admin" ? "admin-nav-dashboard" : "admin-nav-" + item.href.replace(/^\/admin\/?/, "");

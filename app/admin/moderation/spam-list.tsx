@@ -96,7 +96,7 @@ export async function SpamList() {
     logAdminSsrFatal("[AdminModerationSSR]", "SpamList.findMany", { tab: "spam" }, err);
     return (
       <AdminRouteLoadError
-        routeTitle="Moderation"
+        routeTitle="Moderacija"
         cardTitle="Ne možemo učitati spam listu"
         logPrefix="[AdminModerationSSR]"
         message={e.message}

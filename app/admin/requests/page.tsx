@@ -14,6 +14,9 @@ import { RequestFilters } from "./request-filters";
 import { RestoreButtonInline } from "./restore-button-inline";
 import { DeleteButtonInline } from "./delete-button-inline";
 import { ADMIN_REQUEST_LIST_SELECT } from "@/lib/admin/admin-prisma-selects";
+import type { Prisma } from "@prisma/client";
+import { AdminPageHeader } from "@/components/admin/admin-page-header";
+import { AdminListPagination } from "@/components/admin/admin-list-pagination";
 
 export const dynamic = "force-dynamic";
 
@@ -35,22 +38,20 @@ const ADMIN_STATUS_LABELS: Record<string, string> = {
 };
 
 const PAGE_SIZE = 25;
-
-/** Samo kolone potrebne za listu — izbjegava P2022 kad DB nema novije kolone koje puni Prisma model. */
-const REQUEST_LIST_SELECT = {
-  id: true,
-  adminStatus: true,
-  requesterName: true,
-  city: true,
-  category: true,
-  title: true,
-  description: true,
-  createdAt: true,
-  status: true,
-  user: { select: { name: true } },
-  offers: { select: { id: true } },
-  contactUnlocks: { select: { id: true } },
-} as const;
+const SORT_VALUES = ["createdAt_desc", "createdAt_asc"] as const;
+type RequestSort = (typeof SORT_VALUES)[number];
+const REQUEST_STATUS_VALUES = ["OPEN", "IN_PROGRESS", "COMPLETED", "CANCELLED"] as const;
+const REQUEST_ADMIN_STATUS_VALUES = [
+  "PENDING_REVIEW",
+  "DISTRIBUTED",
+  "HAS_OFFERS",
+  "CONTACT_UNLOCKED",
+  "CLOSED",
+  "SPAM",
+  "DELETED",
+] as const;
+type RequestStatusValue = (typeof REQUEST_STATUS_VALUES)[number];
+type RequestAdminStatusValue = (typeof REQUEST_ADMIN_STATUS_VALUES)[number];
 
 type AdminRequestsSnapshot = {
   statusFilter?: string;
@@ -58,8 +59,29 @@ type AdminRequestsSnapshot = {
   cityFilter?: string;
   categoryFilter?: string;
   searchQ?: string;
+  sort: RequestSort;
   page: number;
 };
+
+function buildRequestsQuery(params: {
+  status?: string;
+  adminStatus?: string;
+  city?: string;
+  category?: string;
+  search?: string;
+  sort?: string;
+  page?: number;
+}) {
+  const q = new URLSearchParams();
+  if (params.status) q.set("status", params.status);
+  if (params.adminStatus) q.set("adminStatus", params.adminStatus);
+  if (params.city) q.set("city", params.city);
+  if (params.category) q.set("category", params.category);
+  if (params.search) q.set("search", params.search);
+  if (params.sort && params.sort !== "createdAt_desc") q.set("sort", params.sort);
+  if (params.page && params.page > 1) q.set("page", String(params.page));
+  return q.toString();
+}
 
 export default async function AdminRequestsPage({
   searchParams,
@@ -71,7 +93,7 @@ export default async function AdminRequestsPage({
   const { adminRole } = await requireAdminPermission("requests");
   const canWriteRequests = adminRole !== "READ_ONLY";
 
-  let snapshot: AdminRequestsSnapshot = { page: 1 };
+  let snapshot: AdminRequestsSnapshot = { page: 1, sort: "createdAt_desc" };
 
   try {
     const { prisma } = await import("@/lib/db");
@@ -82,6 +104,9 @@ export default async function AdminRequestsPage({
     const cityFilter = firstQueryString(raw.city);
     const categoryFilter = firstQueryString(raw.category);
     const searchQ = firstQueryString(raw.search)?.trim();
+    const sortRaw = firstQueryString(raw.sort);
+    const sort: RequestSort =
+      sortRaw && (SORT_VALUES as readonly string[]).includes(sortRaw) ? (sortRaw as RequestSort) : "createdAt_desc";
     const { page, skip, take } = adminPaginationPage(firstQueryString(raw.page), PAGE_SIZE);
 
     snapshot = {
@@ -90,6 +115,7 @@ export default async function AdminRequestsPage({
       cityFilter,
       categoryFilter,
       searchQ: searchQ || undefined,
+      sort,
       page,
     };
 
@@ -97,17 +123,15 @@ export default async function AdminRequestsPage({
       console.warn("[AdminRequestsSSR] start", snapshot);
     }
 
-    const where: Record<string, unknown> = {};
-    if (statusFilter && ["OPEN", "IN_PROGRESS", "COMPLETED", "CANCELLED"].includes(statusFilter)) {
-      where.status = statusFilter;
+    const where: Prisma.RequestWhereInput = {};
+    if (statusFilter && (REQUEST_STATUS_VALUES as readonly string[]).includes(statusFilter)) {
+      where.status = statusFilter as RequestStatusValue;
     }
     if (
       adminStatusFilter &&
-      ["PENDING_REVIEW", "DISTRIBUTED", "HAS_OFFERS", "CONTACT_UNLOCKED", "CLOSED", "SPAM", "DELETED"].includes(
-        adminStatusFilter
-      )
+      (REQUEST_ADMIN_STATUS_VALUES as readonly string[]).includes(adminStatusFilter)
     ) {
-      where.adminStatus = adminStatusFilter;
+      where.adminStatus = adminStatusFilter as RequestAdminStatusValue;
     }
     if (cityFilter) where.city = cityFilter;
     if (categoryFilter) where.category = categoryFilter;
@@ -124,6 +148,9 @@ export default async function AdminRequestsPage({
       where.deletedAt = null;
     }
 
+    const orderBy: Prisma.RequestOrderByWithRelationInput =
+      sort === "createdAt_asc" ? { createdAt: "asc" } : { createdAt: "desc" };
+
     let requests;
     let total: number;
 
@@ -132,7 +159,7 @@ export default async function AdminRequestsPage({
         prisma.request.findMany({
           where,
           select: ADMIN_REQUEST_LIST_SELECT,
-          orderBy: { createdAt: "desc" },
+          orderBy,
           skip,
           take,
         }),
@@ -149,21 +176,23 @@ export default async function AdminRequestsPage({
     }
 
     const totalPages = Math.ceil(total / PAGE_SIZE) || 1;
-    const baseQuery = new URLSearchParams();
-    if (statusFilter) baseQuery.set("status", statusFilter);
-    if (adminStatusFilter) baseQuery.set("adminStatus", adminStatusFilter);
-    if (cityFilter) baseQuery.set("city", cityFilter);
-    if (categoryFilter) baseQuery.set("category", categoryFilter);
-    if (searchQ) baseQuery.set("search", searchQ);
-    const queryStr = baseQuery.toString();
+    const queryStr = buildRequestsQuery({
+      status: statusFilter,
+      adminStatus: adminStatusFilter,
+      city: cityFilter,
+      category: categoryFilter,
+      search: searchQ,
+      sort,
+    });
     const pageLink = (p: number) => `/admin/requests${queryStr ? `?${queryStr}&page=${p}` : `?page=${p}`}`;
 
     return (
       <div className="space-y-5 sm:space-y-6">
-        <div>
-          <h1 className="text-2xl font-bold text-[#0F172A]">Zahtjevi</h1>
-          <p className="mt-1 text-sm text-[#64748B]">Svi zahtjevi / leadovi</p>
-        </div>
+        <AdminPageHeader
+          title="Zahtjevi"
+          description="Svi zahtjevi / leadovi"
+          meta={`Ukupno: ${total}`}
+        />
 
         {/** useSearchParams u RequestFilters zahtijeva Suspense — inače RSC digest na mobilnom/admin. */}
         <Suspense
@@ -179,34 +208,53 @@ export default async function AdminRequestsPage({
 
         <div className="flex flex-wrap gap-2">
           <span className="text-sm text-[#64748B]">Status:</span>
-          <Link href="/admin/requests">
+          <Link href={`/admin/requests${buildRequestsQuery({ adminStatus: adminStatusFilter, city: cityFilter, category: categoryFilter, search: searchQ, sort }) ? `?${buildRequestsQuery({ adminStatus: adminStatusFilter, city: cityFilter, category: categoryFilter, search: searchQ, sort })}` : ""}`}>
             <Badge variant={!statusFilter ? "default" : "outline"}>Svi</Badge>
           </Link>
           {(["OPEN", "IN_PROGRESS", "COMPLETED", "CANCELLED"] as const).map((s) => (
             <Link
               key={s}
-              href={`/admin/requests?status=${s}${adminStatusFilter ? `&adminStatus=${adminStatusFilter}` : ""}${cityFilter ? `&city=${cityFilter}` : ""}${categoryFilter ? `&category=${categoryFilter}` : ""}${searchQ ? `&search=${encodeURIComponent(searchQ)}` : ""}`}
+              href={`/admin/requests?${buildRequestsQuery({
+                status: s,
+                adminStatus: adminStatusFilter,
+                city: cityFilter,
+                category: categoryFilter,
+                search: searchQ,
+                sort,
+              })}`}
             >
               <Badge variant={statusFilter === s ? "default" : "outline"}>{STATUS_LABELS[s]}</Badge>
             </Link>
           ))}
           <span className="ml-4 text-sm text-[#64748B]">Admin:</span>
           <Link
-            href={(() => {
-              const p = new URLSearchParams();
-              if (statusFilter) p.set("status", statusFilter);
-              if (cityFilter) p.set("city", cityFilter);
-              if (categoryFilter) p.set("category", categoryFilter);
-              if (searchQ) p.set("search", searchQ);
-              return `/admin/requests${p.toString() ? `?${p.toString()}` : ""}`;
-            })()}
+            href={`/admin/requests${buildRequestsQuery({
+              status: statusFilter,
+              city: cityFilter,
+              category: categoryFilter,
+              search: searchQ,
+              sort,
+            }) ? `?${buildRequestsQuery({
+              status: statusFilter,
+              city: cityFilter,
+              category: categoryFilter,
+              search: searchQ,
+              sort,
+            })}` : ""}`}
           >
             <Badge variant={!adminStatusFilter ? "default" : "outline"}>Svi</Badge>
           </Link>
-          {(["PENDING_REVIEW", "DISTRIBUTED", "SPAM", "DELETED"] as const).map((s) => (
+          {(["PENDING_REVIEW", "DISTRIBUTED", "HAS_OFFERS", "CONTACT_UNLOCKED", "CLOSED", "SPAM", "DELETED"] as const).map((s) => (
             <Link
               key={s}
-              href={`/admin/requests?adminStatus=${s}${statusFilter ? `&status=${statusFilter}` : ""}${cityFilter ? `&city=${cityFilter}` : ""}${categoryFilter ? `&category=${categoryFilter}` : ""}${searchQ ? `&search=${encodeURIComponent(searchQ)}` : ""}`}
+              href={`/admin/requests?${buildRequestsQuery({
+                adminStatus: s,
+                status: statusFilter,
+                city: cityFilter,
+                category: categoryFilter,
+                search: searchQ,
+                sort,
+              })}`}
             >
               <Badge variant={adminStatusFilter === s ? "default" : "outline"}>{ADMIN_STATUS_LABELS[s]}</Badge>
             </Link>
@@ -215,7 +263,9 @@ export default async function AdminRequestsPage({
 
         <Card className="overflow-hidden rounded-2xl border-slate-200/90">
           <CardHeader>
-            <CardTitle>Lista zahtjeva ({requests.length})</CardTitle>
+            <CardTitle>
+              Lista zahtjeva ({total}) · Strana {page}/{totalPages}
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-3 md:hidden">
@@ -315,23 +365,12 @@ export default async function AdminRequestsPage({
               </table>
             </div>
             {requests.length === 0 && <p className="py-8 text-center text-[#64748B]">Nema zahtjeva</p>}
-            {totalPages > 1 && (
-              <div className="mt-4 flex items-center justify-center gap-2">
-                {page > 1 && (
-                  <Link href={pageLink(page - 1)} className="rounded border px-3 py-1 text-sm hover:bg-slate-100">
-                    ← Prethodna
-                  </Link>
-                )}
-                <span className="text-sm text-[#64748B]">
-                  Strana {page} / {totalPages}
-                </span>
-                {page < totalPages && (
-                  <Link href={pageLink(page + 1)} className="rounded border px-3 py-1 text-sm hover:bg-slate-100">
-                    Sljedeća →
-                  </Link>
-                )}
-              </div>
-            )}
+            <AdminListPagination
+              page={page}
+              totalPages={totalPages}
+              prevHref={page > 1 ? pageLink(page - 1) : undefined}
+              nextHref={page < totalPages ? pageLink(page + 1) : undefined}
+            />
           </CardContent>
         </Card>
       </div>

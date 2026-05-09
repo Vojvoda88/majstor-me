@@ -12,6 +12,8 @@ import { Badge } from "@/components/ui/badge";
 import { prismaWhereAdminHandymanUserBase } from "@/lib/admin/admin-handyman-filters";
 import { ADMIN_HANDYMAN_LIST_SELECT } from "@/lib/admin/admin-prisma-selects";
 import type { Prisma } from "@prisma/client";
+import { AdminPageHeader } from "@/components/admin/admin-page-header";
+import { AdminListPagination } from "@/components/admin/admin-list-pagination";
 
 export const dynamic = "force-dynamic";
 
@@ -106,10 +108,11 @@ export default async function AdminHandymenPage({
 
     return (
       <div className="space-y-5 sm:space-y-6">
-        <div>
-          <h1 className="text-2xl font-bold text-[#0F172A]">Majstori</h1>
-          <p className="mt-1 text-sm text-[#64748B]">Upravljanje majstorima platforme</p>
-        </div>
+        <AdminPageHeader
+          title="Majstori"
+          description="Upravljanje majstorima platforme"
+          meta={`Ukupno: ${total}`}
+        />
 
         <div className="flex flex-wrap items-center gap-2">
           <span className="text-sm text-[#64748B]">Status:</span>
@@ -130,7 +133,7 @@ export default async function AdminHandymenPage({
                     ? "Aktivan"
                     : s === "SUSPENDED"
                       ? "Suspendovan"
-                      : "Banned"}
+                      : "Banovan"}
               </Badge>
             </Link>
           ))}
@@ -217,7 +220,7 @@ export default async function AdminHandymenPage({
                           ) : hp.workerStatus === "SUSPENDED" || isSuspended ? (
                             <Badge variant="secondary">Suspendovan</Badge>
                           ) : hp.workerStatus === "PENDING_REVIEW" ? (
-                            <Badge variant="outline">Čeka pregled</Badge>
+                            <Badge variant="outline">Na čekanju</Badge>
                           ) : (
                             <Badge variant="success">Aktivan</Badge>
                           )}
@@ -250,23 +253,12 @@ export default async function AdminHandymenPage({
               </table>
             </div>
             {withProfile.length === 0 && <p className="py-8 text-center text-[#64748B]">Nema majstora</p>}
-            {totalPages > 1 && (
-              <div className="mt-4 flex items-center justify-center gap-2">
-                {page > 1 && (
-                  <Link href={pageLink(page - 1)} className="rounded border px-3 py-1 text-sm hover:bg-slate-100">
-                    ← Prethodna
-                  </Link>
-                )}
-                <span className="text-sm text-[#64748B]">
-                  Strana {page} / {totalPages}
-                </span>
-                {page < totalPages && (
-                  <Link href={pageLink(page + 1)} className="rounded border px-3 py-1 text-sm hover:bg-slate-100">
-                    Sljedeća →
-                  </Link>
-                )}
-              </div>
-            )}
+            <AdminListPagination
+              page={page}
+              totalPages={totalPages}
+              prevHref={page > 1 ? pageLink(page - 1) : undefined}
+              nextHref={page < totalPages ? pageLink(page + 1) : undefined}
+            />
           </CardContent>
         </Card>
       </div>

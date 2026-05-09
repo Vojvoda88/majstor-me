@@ -3,11 +3,15 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { AdminDashboardData } from "@/lib/admin-dashboard-metrics";
 import { getCachedAdminDashboardData } from "@/lib/admin-dashboard-metrics";
 import Link from "next/link";
+import { requireAdminPermission } from "@/lib/admin/auth";
+import { AdminPageHeader } from "@/components/admin/admin-page-header";
 
 /** KPI iz keša (60s); layout je force-dynamic zbog auth — ova stranica koristi Data Cache za metrike. */
 export const revalidate = 60;
 
 export default async function AdminDashboardPage() {
+  await requireAdminPermission("dashboard");
+
   const emptyData: AdminDashboardData = {
     requestsToday: 0,
     requestsWeek: 0,
@@ -67,10 +71,10 @@ export default async function AdminDashboardPage() {
 
   return (
     <div className="space-y-6 sm:space-y-8">
-      <div>
-        <h1 className="text-xl font-bold text-[#0F172A] sm:text-2xl">Početak</h1>
-        <p className="mt-1 text-xs text-[#64748B] sm:text-sm">Pregled platforme i ključnih metrika</p>
-      </div>
+      <AdminPageHeader
+        title="Početak"
+        description="Pregled platforme i ključnih metrika"
+      />
 
       <AdminPushEntryCard />
 

@@ -3,9 +3,9 @@
 import Link from "next/link";
 
 const TABS = [
-  { id: "requests", label: "Pending Requests" },
-  { id: "workers", label: "Pending Workers" },
-  { id: "reports", label: "Reported Items" },
+  { id: "requests", label: "Zahtjevi na čekanju" },
+  { id: "workers", label: "Majstori na čekanju" },
+  { id: "reports", label: "Prijave" },
   { id: "spam", label: "Spam" },
 ] as const;
 
