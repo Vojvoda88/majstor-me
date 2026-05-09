@@ -175,10 +175,10 @@ export function InstallCTA() {
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
             <h2 id="pwa-entry-title" className="font-display text-base font-bold tracking-tight text-brand-navy sm:text-lg">
-              {t(locale, "pwa.ctaTitle", "Preuzmi aplikaciju")}
+              {t(locale, "pwa.installTitle", "Preuzmi aplikaciju")}
             </h2>
             <p className="mt-1.5 text-[13px] leading-snug text-slate-600 sm:text-sm">
-              {t(locale, "pwa.ctaSubtitle", "Ikonica na početnom ekranu i obavještenja o ponudama i zahtjevima.")}
+              {t(locale, "pwa.installBody", "Ikonica na početnom ekranu i obavještenja o ponudama i zahtjevima.")}
             </p>
           </div>
           <button
@@ -200,7 +200,7 @@ export function InstallCTA() {
               className="flex min-h-[48px] w-full touch-manipulation items-center justify-center gap-2 rounded-xl bg-[#2563EB] px-4 py-3 text-[15px] font-bold text-white shadow-md transition hover:bg-[#1D4ED8] disabled:opacity-70"
             >
               <Download className="h-5 w-5 shrink-0" aria-hidden />
-              {installing ? t(locale, "common.loading", "Čekaj…") : t(locale, "pwa.installApp", "Instaliraj aplikaciju")}
+              {installing ? t(locale, "common.loading", "Čekaj…") : t(locale, "pwa.install", "Instaliraj aplikaciju")}
             </button>
           ) : (
             <Link
@@ -209,7 +209,7 @@ export function InstallCTA() {
               className="flex min-h-[48px] w-full touch-manipulation items-center justify-center gap-2 rounded-xl border-2 border-slate-200 bg-slate-50 px-4 py-3 text-[15px] font-bold text-brand-navy transition hover:bg-slate-100"
             >
               <Download className="h-5 w-5 shrink-0" aria-hidden />
-              {t(locale, "pwa.howToInstall", "Kako instalirati (iPhone / Android)")}
+              {t(locale, "pwa.iosStepsTitle", "Kako instalirati na iPhone")} / {t(locale, "pwa.androidStepsTitle", "Kako instalirati na Android")}
             </Link>
           )}
 
@@ -224,12 +224,12 @@ export function InstallCTA() {
                 >
                   <Bell className="h-5 w-5 shrink-0" aria-hidden />
                   {notifDone
-                    ? t(locale, "pwa.notificationsEnabled", "Obavještenja su uključena")
+                    ? t(locale, "push.enabled", "Obavještenja su uključena")
                     : notifBusy
                       ? t(locale, "common.loading", "Čekaj…")
                       : isAdmin
-                        ? t(locale, "pwa.adminPush", "Primaj push obavještenja (admin)")
-                        : t(locale, "pwa.handymanPush", "Primaj obavještenja za nove poslove")}
+                        ? t(locale, "push.enable", "Primaj push obavještenja (admin)")
+                        : t(locale, "push.enable", "Primaj obavještenja za nove poslove")}
                 </button>
               ) : loggedIn && !isHandyman && !isAdmin ? (
                 <p className="rounded-lg bg-slate-50 px-3 py-2 text-center text-xs text-slate-600">
@@ -285,7 +285,7 @@ export function InstallCTA() {
           onClick={close}
           className="mt-3 w-full py-2 text-center text-sm font-medium text-slate-500 transition hover:text-slate-800"
         >
-          {t(locale, "common.buttons.later", "Kasnije")}
+          {t(locale, "pwa.later", "Kasnije")}
         </button>
       </div>
     </>

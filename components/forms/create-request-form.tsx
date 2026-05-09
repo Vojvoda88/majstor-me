@@ -81,13 +81,6 @@ function coerceQueryString(v: unknown): string {
   return "";
 }
 
-/** Kratke oznake za korak 2 (mobilni izbor hitnosti). */
-const URGENCY_SHORT_LABEL: Record<(typeof URGENCY_OPTIONS)[number]["value"], string> = {
-  HITNO_DANAS: "Danas",
-  U_NAREDNA_2_DANA: "Uskoro",
-  NIJE_HITNO: "Fleksibilno",
-};
-
 export function CreateRequestForm({ initialCategory, initialCity }: CreateRequestFormProps) {
   const language = useUiLanguage();
   const copy = (key: string, fallback: string) => t(language, key, fallback);
@@ -277,7 +270,7 @@ export function CreateRequestForm({ initialCategory, initialCity }: CreateReques
           </p>
           <CardTitle className="mt-3 font-display text-lg text-brand-navy sm:text-xl">{copy("request.create.heading", "Podaci za zahtjev")}</CardTitle>
           <CardDescription className="mt-1.5 text-sm text-slate-600">
-            {copy("home.howUsers.stepLabel", "Korak")} {step} od 3 — polja označena (*) su obavezna.
+            {copy("request.create.stepLabel", "Korak")} {step} {copy("request.create.stepOf", "od")} 3 — {copy("request.create.requiredFields", "polja označena (*) su obavezna.")}
           </CardDescription>
           <div className="mt-4 flex items-center justify-center gap-2" aria-hidden>
             {[1, 2, 3].map((n) => (
@@ -307,7 +300,7 @@ export function CreateRequestForm({ initialCategory, initialCity }: CreateReques
 
             {/* Korak 1 — šta vam treba */}
             <div className={cn("space-y-4 sm:space-y-5", step !== 1 && "hidden")} aria-hidden={step !== 1}>
-              <h3 className="font-display text-base font-bold text-brand-navy md:text-lg">{copy("request.create.form.category", "Šta vam treba?")}</h3>
+              <h3 className="font-display text-base font-bold text-brand-navy md:text-lg">{copy("request.create.step1Title", "Šta vam treba?")}</h3>
               <div className="space-y-2">
                 <Label htmlFor="category">{copy("request.create.form.category", "Kategorija")} *</Label>
                 <select id="category" className="select-premium min-h-[52px] text-base" {...register("category")}>
@@ -319,7 +312,7 @@ export function CreateRequestForm({ initialCategory, initialCity }: CreateReques
                   ))}
                 </select>
                 <p className="text-xs text-slate-500">
-                  Nema tačne stavke? Izaberite „Ostalo / Ne vidim svoju uslugu“ i opišite u polju ispod.
+                  {copy("request.create.hints.categoryOther", "Nema tačne stavke? Izaberite „Ostalo / Ne vidim svoju uslugu“ i opišite u polju ispod.")}
                 </p>
                 {errors.category && (
                   <p className="text-sm text-destructive">{errors.category.message}</p>
@@ -329,7 +322,7 @@ export function CreateRequestForm({ initialCategory, initialCity }: CreateReques
                 <Label htmlFor="title">{copy("request.create.form.title", "Kratki naslov")} *</Label>
                 <Input
                   id="title"
-                  placeholder="Npr. curenje slavine u kuhinji"
+                  placeholder={copy("request.create.placeholders.title", "Npr. curenje slavine u kuhinji")}
                   className="min-h-[52px] text-base"
                   {...register("title")}
                 />
@@ -339,13 +332,13 @@ export function CreateRequestForm({ initialCategory, initialCity }: CreateReques
                 <Label htmlFor="description">{copy("request.create.form.description", "Opis posla")} *</Label>
                 <Textarea
                   id="description"
-                  placeholder="Šta treba uraditi, gde, rok ako je bitan. Što jasnije — to bolje ponude."
+                  placeholder={copy("request.create.placeholders.description", "Šta treba uraditi, gde, rok ako je bitan. Što jasnije — to bolje ponude.")}
                   rows={5}
                   className="min-h-[120px] text-base"
                   {...register("description")}
                 />
                 <p className="text-xs text-slate-500">
-                  Bez telefona i emaila u tekstu — koristite polja za kontakt u zadnjem koraku.
+                  {copy("request.create.hints.noContact", "Bez telefona i emaila u tekstu — koristite polja za kontakt u zadnjem koraku.")}
                 </p>
                 {errors.description && (
                   <p className="text-sm text-destructive">{errors.description.message}</p>
@@ -355,7 +348,7 @@ export function CreateRequestForm({ initialCategory, initialCity }: CreateReques
 
             {/* Korak 2 — gdje i kada */}
             <div className={cn("space-y-4 sm:space-y-5", step !== 2 && "hidden")} aria-hidden={step !== 2}>
-              <h3 className="font-display text-base font-bold text-brand-navy md:text-lg">{copy("request.create.form.urgency", "Gdje i kada?")}</h3>
+              <h3 className="font-display text-base font-bold text-brand-navy md:text-lg">{copy("request.create.step2Title", "Gdje i kada?")}</h3>
               <div className="space-y-2">
                 <Label htmlFor="city">{copy("request.create.form.city", "Grad")} *</Label>
                 <select id="city" className="select-premium min-h-[52px] text-base" {...register("city")}>
@@ -370,7 +363,7 @@ export function CreateRequestForm({ initialCategory, initialCity }: CreateReques
               </div>
 
               <fieldset className="space-y-2">
-                <legend className="mb-1 text-sm font-medium text-slate-800">{copy("request.create.form.urgency", "Kada vam treba majstor?")}</legend>
+                <legend className="mb-1 text-sm font-medium text-slate-800">{copy("request.create.urgencyQuestion", "Kada vam treba majstor?")}</legend>
                 <div className="grid gap-2 sm:grid-cols-3">
                   {URGENCY_OPTIONS.map((opt) => (
                     <label
@@ -389,9 +382,9 @@ export function CreateRequestForm({ initialCategory, initialCity }: CreateReques
                         {...register("urgency")}
                       />
                       <span>
-                        {URGENCY_SHORT_LABEL[opt.value]}
+                        {copy(`request.create.urgencyShort.${opt.value}`, opt.value)}
                         <span className="mt-0.5 block text-[11px] font-normal text-slate-500 sm:text-xs">
-                          {opt.label}
+                          {copy(`request.create.urgencyLabel.${opt.value}`, opt.label)}
                         </span>
                       </span>
                     </label>
@@ -399,7 +392,7 @@ export function CreateRequestForm({ initialCategory, initialCity }: CreateReques
                 </div>
                 {errors.urgency && <p className="text-sm text-destructive">{errors.urgency.message}</p>}
                 {urgencyHint && !errors.urgency && (
-                  <p className="text-xs leading-relaxed text-slate-600">{urgencyHint}</p>
+                  <p className="text-xs leading-relaxed text-slate-600">{copy(`request.create.urgencyHint.${urgencyWatch}`, urgencyHint)}</p>
                 )}
               </fieldset>
 
@@ -407,7 +400,7 @@ export function CreateRequestForm({ initialCategory, initialCity }: CreateReques
                 <Label htmlFor="address">{copy("request.create.form.address", "Adresa")} (opciono)</Label>
                 <Input
                   id="address"
-                  placeholder="Ulica i broj, ako želite"
+                  placeholder={copy("request.create.placeholders.address", "Ulica i broj, ako želite")}
                   className="min-h-[52px] text-base"
                   {...register("address")}
                 />
@@ -416,18 +409,18 @@ export function CreateRequestForm({ initialCategory, initialCity }: CreateReques
               <div className="space-y-2 border-t border-slate-100 pt-4">
                 <Label htmlFor="photos">{copy("request.create.form.photos", "Slike")} (opciono)</Label>
                 <RequestPhotosEditor photos={photos} onChange={(p) => setValue("photos", p)} />
-                <p className="text-xs text-slate-500">Ako pomažu da se posao bolje razumije.</p>
+                <p className="text-xs text-slate-500">{copy("request.create.hints.photos", "Ako pomažu da se posao bolje razumije.")}</p>
               </div>
             </div>
 
             {/* Korak 3 — kontakt */}
             <div className={cn("space-y-4 sm:space-y-5", step !== 3 && "hidden")} aria-hidden={step !== 3}>
-              <h3 className="font-display text-base font-bold text-brand-navy md:text-lg">{copy("request.create.form.phone", "Kontakt")}</h3>
+              <h3 className="font-display text-base font-bold text-brand-navy md:text-lg">{copy("request.create.step3Title", "Kontakt")}</h3>
               <div className="space-y-2">
                 <Label htmlFor="requesterName">{copy("request.create.form.name", "Vaše ime")} *</Label>
                 <Input
                   id="requesterName"
-                  placeholder="Ime"
+                  placeholder={copy("request.create.placeholders.name", "Ime")}
                   autoComplete="name"
                   className="min-h-[52px] text-base"
                   {...register("requesterName")}
@@ -456,7 +449,7 @@ export function CreateRequestForm({ initialCategory, initialCity }: CreateReques
                   <Input
                     id="requesterViberPhone"
                     type="tel"
-                    placeholder="Opciono"
+                    placeholder={copy("request.create.placeholders.optional", "Opciono")}
                     autoComplete="tel"
                     className="min-h-[48px] text-base"
                     {...register("requesterViberPhone")}
@@ -467,7 +460,7 @@ export function CreateRequestForm({ initialCategory, initialCity }: CreateReques
                   <Input
                     id="requesterWhatsappPhone"
                     type="tel"
-                    placeholder="Opciono"
+                    placeholder={copy("request.create.placeholders.optional", "Opciono")}
                     autoComplete="tel"
                     className="min-h-[48px] text-base"
                     {...register("requesterWhatsappPhone")}
@@ -479,7 +472,7 @@ export function CreateRequestForm({ initialCategory, initialCity }: CreateReques
                 <Input
                   id="requesterEmail"
                   type="email"
-                  placeholder="Opciono"
+                  placeholder={copy("request.create.placeholders.optional", "Opciono")}
                   autoComplete="email"
                   className="min-h-[52px] text-base"
                   {...register("requesterEmail")}
@@ -490,7 +483,7 @@ export function CreateRequestForm({ initialCategory, initialCity }: CreateReques
               </div>
 
               <p className="rounded-xl bg-slate-50 px-3 py-2.5 text-xs leading-relaxed text-slate-600">
-                Nakon slanja: kratki admin pregled, zatim ponude ako odobre. Vi birate da li i koga angažujete.
+                {copy("request.create.hints.afterSubmit", "Nakon slanja: kratki admin pregled, zatim ponude ako odobre. Vi birate da li i koga angažujete.")}
               </p>
             </div>
 
@@ -504,7 +497,7 @@ export function CreateRequestForm({ initialCategory, initialCity }: CreateReques
                   className="inline-flex min-h-[52px] flex-1 items-center justify-center rounded-2xl border-2 border-slate-200 bg-white px-4 text-base font-semibold text-slate-800 transition hover:bg-slate-50 disabled:opacity-50"
                   data-testid="create-request-back"
                 >
-                  {copy("common.buttons.backLogin", "Nazad")}
+                  {copy("request.create.buttons.back", "Nazad")}
                 </button>
               ) : (
                 <span className="flex-1" aria-hidden />
@@ -517,7 +510,7 @@ export function CreateRequestForm({ initialCategory, initialCity }: CreateReques
                   className="btn-primary inline-flex min-h-[52px] flex-[2] items-center justify-center px-6 disabled:opacity-50"
                   data-testid="create-request-next"
                 >
-                  Nastavi
+                  {copy("request.create.buttons.next", "Nastavi")}
                 </button>
               ) : (
                 <button
@@ -545,7 +538,7 @@ export function CreateRequestForm({ initialCategory, initialCity }: CreateReques
               className={stickySecondaryClass}
               data-testid="create-request-back"
             >
-              {copy("common.buttons.backLogin", "Nazad")}
+              {copy("request.create.buttons.back", "Nazad")}
             </button>
           ) : null}
           {step < 3 ? (
@@ -556,7 +549,7 @@ export function CreateRequestForm({ initialCategory, initialCity }: CreateReques
               className={cn(stickyPrimaryClass, step === 1 && "w-full flex-none")}
               data-testid="create-request-next"
             >
-              Nastavi
+              {copy("request.create.buttons.next", "Nastavi")}
             </button>
           ) : (
             <button

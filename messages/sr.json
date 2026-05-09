@@ -15,8 +15,14 @@
       "register": "Registruj se",
       "backHome": "Nazad na početnu",
       "backLogin": "Nazad na prijavu",
-      "continueGoogle": "Nastavi sa Google"
-    }
+      "continueGoogle": "Nastavi sa Google",
+      "close": "Zatvori",
+      "later": "Kasnije",
+      "retry": "Poku?aj ponovo"
+    },
+    "loading": "U?itavanje?",
+    "page": "Strana",
+    "total": "Ukupno"
   },
   "navigation": {
     "home": "Početna",
@@ -29,7 +35,8 @@
     "forHandymen": "Za majstore",
     "faq": "Česta pitanja",
     "privacy": "Politika privatnosti",
-    "terms": "Uslovi korišćenja"
+    "terms": "Uslovi korišćenja",
+    "dashboard": "dashboardu"
   },
   "footer": {
     "description": "Platforma za lakše povezivanje korisnika i majstora u Crnoj Gori — zatražite majstora, besplatno za korisnike.",
@@ -219,6 +226,45 @@
         "dailyLimit": "Dostigli ste dnevni limit zahtjeva (5)",
         "duplicate": "Već ste objavili isti zahtjev danas",
         "saveError": "Greška pri snimanju zahtjeva. Pokušajte ponovo za nekoliko trenutaka."
+      },
+      "stepLabel": "Korak",
+      "stepOf": "od",
+      "requiredFields": "polja ozna?ena (*) su obavezna.",
+      "step1Title": "?ta vam treba?",
+      "step2Title": "Gdje i kada?",
+      "step3Title": "Kontakt",
+      "urgencyQuestion": "Kada vam treba majstor?",
+      "buttons": {
+        "back": "Nazad",
+        "next": "Nastavi"
+      },
+      "placeholders": {
+        "title": "Npr. curenje slavine u kuhinji",
+        "description": "?ta treba uraditi, gde, rok ako je bitan. ?to jasnije ? to bolje ponude.",
+        "address": "Ulica i broj, ako ?elite",
+        "name": "Ime",
+        "optional": "Opciono"
+      },
+      "hints": {
+        "categoryOther": "Nema ta?ne stavke? Izaberite ?Ostalo / Ne vidim svoju uslugu? i opi?ite u polju ispod.",
+        "noContact": "Bez telefona i emaila u tekstu ? koristite polja za kontakt u zadnjem koraku.",
+        "photos": "Ako poma?u da se posao bolje razumije.",
+        "afterSubmit": "Nakon slanja: kratki admin pregled, zatim ponude ako odobre. Vi birate da li i koga anga?ujete."
+      },
+      "urgencyShort": {
+        "HITNO_DANAS": "Danas",
+        "U_NAREDNA_2_DANA": "Uskoro",
+        "NIJE_HITNO": "Fleksibilno"
+      },
+      "urgencyLabel": {
+        "HITNO_DANAS": "Hitno danas",
+        "U_NAREDNA_2_DANA": "U narednih 7 dana",
+        "NIJE_HITNO": "Nije hitno"
+      },
+      "urgencyHint": {
+        "HITNO_DANAS": "Objava odmah ide na prioritetnu distribuciju.",
+        "U_NAREDNA_2_DANA": "Dovoljno brzo za ve?inu hitnih popravki.",
+        "NIJE_HITNO": "Za planirane radove i fleksibilne termine."
       }
     }
   },
@@ -434,7 +480,16 @@
     "iosStepsTitle": "Kako instalirati na iPhone",
     "androidStepsTitle": "Kako instalirati na Android",
     "updateAvailable": "Dostupna je nova verzija aplikacije.",
-    "update": "Ažuriraj"
+    "update": "Ažuriraj",
+    "whyNoInstall": "Za?to ne vidim ?Instaliraj??",
+    "notifForHandymanOnly": "Obavje?tenja o novim poslovima dostupna su u dashboardu majstora nakon prijave kao majstor.",
+    "loginForNotifications": "Prijavi se za obavje?tenja",
+    "pushUnavailable": "Push obavje?tenja trenutno nisu dostupna u ovom okru?enju (konfiguracija).",
+    "enableLaterPrefix": "Kasnije mo?ete uklju?iti push u",
+    "adminArea": "administraciji",
+    "orIn": "ili u",
+    "notificationsArea": "obavje?tenjima",
+    "handymanArea": "dijelu za majstore"
   },
   "emailPush": {
     "newRequestTitle": "Novi zahtjev za posao",

@@ -15,8 +15,14 @@
       "register": "Kayit ol",
       "backHome": "Ana sayfaya don",
       "backLogin": "Girise don",
-      "continueGoogle": "Google ile devam et"
-    }
+      "continueGoogle": "Google ile devam et",
+      "close": "Kapat",
+      "later": "Daha sonra",
+      "retry": "Tekrar dene"
+    },
+    "loading": "Y?kleniyor?",
+    "page": "Sayfa",
+    "total": "Toplam"
   },
   "navigation": {
     "home": "Ana sayfa",
@@ -29,7 +35,8 @@
     "forHandymen": "Ustalar icin",
     "faq": "Sik sorulan sorular",
     "privacy": "Gizlilik politikasi",
-    "terms": "Kullanim sartlari"
+    "terms": "Kullanim sartlari",
+    "dashboard": "panelde"
   },
   "footer": {
     "description": "Karadag'da kullanicilarla ustalari daha kolay bulusturan platform — kullanicilar icin usta talebi ucretsizdir.",
@@ -219,6 +226,45 @@
         "dailyLimit": "Gunluk talep limitine ulastiniz (5)",
         "duplicate": "Ayni talebi bugun zaten yayinladiniz",
         "saveError": "Talep kaydedilirken hata olustu. Lutfen biraz sonra tekrar deneyin."
+      },
+      "stepLabel": "Ad?m",
+      "stepOf": "/",
+      "requiredFields": "(*) i?aretli alanlar zorunludur.",
+      "step1Title": "Neye ihtiyac?n?z var?",
+      "step2Title": "Nerede ve ne zaman?",
+      "step3Title": "?leti?im",
+      "urgencyQuestion": "Ustaya ne zaman ihtiyac?n?z var?",
+      "buttons": {
+        "back": "Geri",
+        "next": "Devam"
+      },
+      "placeholders": {
+        "title": "?rn. mutfakta musluk s?zd?r?yor",
+        "description": "Ne yap?lacak, nerede, varsa son tarih. Ne kadar net olursa teklifler o kadar iyi olur.",
+        "address": "?sterseniz sokak ve numara",
+        "name": "?sim",
+        "optional": "Opsiyonel"
+      },
+      "hints": {
+        "categoryOther": "Tam uygun se?enek yok mu? ?Di?er / Hizmetimi g?remiyorum? se?in ve a?a??da a??klay?n.",
+        "noContact": "Metne telefon veya e-posta yazmay?n ? son ad?mda ileti?im alanlar?n? kullan?n.",
+        "photos": "??i daha iyi anlat?yorsa foto?raf ekleyin.",
+        "afterSubmit": "G?nderdikten sonra: k?sa y?netici kontrol?, onaylan?rsa teklifler gelir. Kimi i?e alaca??n?za siz karar verirsiniz."
+      },
+      "urgencyShort": {
+        "HITNO_DANAS": "Bug?n",
+        "U_NAREDNA_2_DANA": "Yak?nda",
+        "NIJE_HITNO": "Esnek"
+      },
+      "urgencyLabel": {
+        "HITNO_DANAS": "Bug?n acil",
+        "U_NAREDNA_2_DANA": "?n?m?zdeki 7 g?n",
+        "NIJE_HITNO": "Acil de?il"
+      },
+      "urgencyHint": {
+        "HITNO_DANAS": "Talebiniz hemen ?ncelikli da??t?ma gider.",
+        "U_NAREDNA_2_DANA": "?o?u acil onar?m i?in yeterince h?zl?d?r.",
+        "NIJE_HITNO": "Planl? i?ler ve esnek zamanlar i?in uygundur."
       }
     }
   },
@@ -434,7 +480,16 @@
     "iosStepsTitle": "iPhone'a nasil yuklenir",
     "androidStepsTitle": "Android'e nasil yuklenir",
     "updateAvailable": "Uygulamanin yeni surumu mevcut.",
-    "update": "Guncelle"
+    "update": "Guncelle",
+    "whyNoInstall": "Neden ?Y?kle?yi g?remiyorum?",
+    "notifForHandymanOnly": "Yeni i? bildirimleri, usta olarak giri? yapt?ktan sonra usta panelinde kullan?labilir.",
+    "loginForNotifications": "Bildirimler i?in giri? yap",
+    "pushUnavailable": "Push bildirimleri ?u anda bu ortamda kullan?lam?yor (yap?land?rma).",
+    "enableLaterPrefix": "Push'u daha sonra ?uradan a?abilirsiniz:",
+    "adminArea": "y?netim",
+    "orIn": "veya",
+    "notificationsArea": "bildirimler",
+    "handymanArea": "usta b?l?m?"
   },
   "emailPush": {
     "newRequestTitle": "Yeni is talebi",

@@ -8,11 +8,14 @@ import {
   requestPermissionAndSubscribe,
   type PushUiState,
 } from "@/lib/push-client";
+import { useUiLanguage } from "@/lib/i18n/ui-language";
+import { t } from "@/lib/i18n/messages";
 
 /**
  * Korisnik: uključivanje push obavještenja kada stigne nova ponuda na zahtjev.
  */
 export function UserPushNotificationsCard() {
+  const locale = useUiLanguage();
   const [status, setStatus] = useState<PushUiState | { kind: "loading" }>({ kind: "loading" });
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -34,7 +37,7 @@ export function UserPushNotificationsCard() {
     setError(null);
     const result = await requestPermissionAndSubscribe(vapidKey);
     if (!result.ok && result.reason !== "permission_denied") {
-      setError(result.message ?? "Greška pri uključivanju obavještenja.");
+      setError(result.message ?? t(locale, "push.enable", "Greška pri uključivanju obavještenja."));
     }
     await refresh();
     setBusy(false);
@@ -45,7 +48,7 @@ export function UserPushNotificationsCard() {
       <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
         <div className="flex items-center gap-2 text-sm text-slate-500">
           <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
-          Provjera obavještenja…
+          {t(locale, "notifications.loading", "Provjera obavještenja…")}
         </div>
       </div>
     );
@@ -65,7 +68,7 @@ export function UserPushNotificationsCard() {
   if (status.kind === "no_vapid") {
     return (
       <div className="rounded-xl border border-amber-200 bg-amber-50/80 p-4 text-sm text-amber-950">
-        Obavještenja na telefonu nisu podešena na serveru. Ako treba uključiti push, kontaktirajte podršku.
+        {t(locale, "push.unsupported", "Obavještenja na telefonu nisu podešena na serveru. Ako treba uključiti push, kontaktirajte podršku.")}
       </div>
     );
   }
@@ -79,10 +82,10 @@ export function UserPushNotificationsCard() {
       <div className="min-w-0">
         <div className="flex items-center gap-2">
           <Bell className="h-5 w-5 shrink-0 text-emerald-700" aria-hidden />
-          <h2 className="font-display text-base font-bold text-brand-navy md:text-lg">Obavještenja o novim ponudama</h2>
+          <h2 className="font-display text-base font-bold text-brand-navy md:text-lg">{t(locale, "push.enableTitle", "Obavještenja o novim ponudama")}</h2>
         </div>
         <p className="mt-2 text-sm leading-relaxed text-slate-600">
-          Dobij obavještenje na telefon kad majstor pošalje ponudu na tvoj zahtjev. Klik na obavještenje otvara zahtjev.
+          {t(locale, "push.enableBody", "Dobij obavještenje na telefon kad majstor pošalje ponudu na tvoj zahtjev. Klik na obavještenje otvara zahtjev.")}
         </p>
       </div>
 
@@ -96,7 +99,7 @@ export function UserPushNotificationsCard() {
         {enabled ? (
           <p className="flex items-center gap-2 text-sm font-semibold text-emerald-800">
             <span className="inline-flex h-2 w-2 rounded-full bg-emerald-500" aria-hidden />
-            Obavještenja su uključena za ovaj uređaj
+            {t(locale, "push.enabled", "Obavještenja su uključena za ovaj uređaj")}
           </p>
         ) : permission === "denied" ? (
           <p className="text-sm text-amber-900">
@@ -117,7 +120,7 @@ export function UserPushNotificationsCard() {
             ) : (
               <>
                 <Bell className="mr-2 h-4 w-4" aria-hidden />
-                Uključi obavještenja
+                {t(locale, "push.enable", "Uključi obavještenja")}
               </>
             )}
           </Button>

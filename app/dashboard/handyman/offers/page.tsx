@@ -4,6 +4,9 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, CalendarDays, MapPin, Tag } from "lucide-react";
+import { headers } from "next/headers";
+import { LOCALE_HEADER, normalizeLocale } from "@/lib/i18n/config";
+import { t } from "@/lib/i18n/messages";
 
 export const metadata: Metadata = {
   title: "Moje ponude",
@@ -25,15 +28,16 @@ const PRICE_LABELS: Record<string, string> = {
   DRUGO: "Drugo",
 };
 
-const STATUS_CONFIG: Record<string, { label: string; variant: "default" | "secondary" | "success" | "destructive" | "outline" }> = {
-  PENDING: { label: "Čeka odgovor", variant: "secondary" },
-  ACCEPTED: { label: "Prihvaćena", variant: "success" },
-  REJECTED: { label: "Odbijena", variant: "destructive" },
-  WITHDRAWN: { label: "Povučena", variant: "outline" },
+const STATUS_CONFIG: Record<string, { variant: "default" | "secondary" | "success" | "destructive" | "outline" }> = {
+  PENDING: { variant: "secondary" },
+  ACCEPTED: { variant: "success" },
+  REJECTED: { variant: "destructive" },
+  WITHDRAWN: { variant: "outline" },
 };
 
 export default async function HandymanOffersPage() {
   const session = await auth();
+  const locale = normalizeLocale(headers().get(LOCALE_HEADER));
   if (!session) redirect("/login");
   if (session.user.role !== "HANDYMAN") redirect("/");
 
@@ -72,30 +76,30 @@ export default async function HandymanOffersPage() {
           className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-600 hover:text-slate-900"
         >
           <ArrowLeft className="h-4 w-4" />
-          Nazad
+          {t(locale, "requestDetail.back", "Nazad")}
         </Link>
       </div>
 
       <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
-        Moje ponude
+        {t(locale, "handymanDashboard.myOffers", "Moje ponude")}
       </h1>
       <p className="mt-1 text-sm text-slate-500">
-        Sve ponude koje ste poslali klijentima
+        {t(locale, "offers.noOffersDescription", "Sve ponude koje ste poslali klijentima")}
       </p>
 
       {/* KPI strip */}
       <div className="mt-6 grid grid-cols-3 gap-4">
         <div className="rounded-xl border border-slate-200 bg-white p-4 text-center shadow-sm">
           <p className="text-2xl font-bold text-slate-900">{counts.total}</p>
-          <p className="mt-0.5 text-xs font-medium text-slate-500">Ukupno</p>
+          <p className="mt-0.5 text-xs font-medium text-slate-500">{t(locale, "common.total", "Ukupno")}</p>
         </div>
         <div className="rounded-xl border border-slate-200 bg-white p-4 text-center shadow-sm">
           <p className="text-2xl font-bold text-emerald-600">{counts.accepted}</p>
-          <p className="mt-0.5 text-xs font-medium text-slate-500">Prihvaćene</p>
+          <p className="mt-0.5 text-xs font-medium text-slate-500">{t(locale, "offers.accepted", "Prihvaćene")}</p>
         </div>
         <div className="rounded-xl border border-slate-200 bg-white p-4 text-center shadow-sm">
           <p className="text-2xl font-bold text-amber-600">{counts.pending}</p>
-          <p className="mt-0.5 text-xs font-medium text-slate-500">Na čekanju</p>
+          <p className="mt-0.5 text-xs font-medium text-slate-500">{t(locale, "offers.pending", "Na čekanju")}</p>
         </div>
       </div>
 
@@ -103,11 +107,11 @@ export default async function HandymanOffersPage() {
       <div className="mt-8 space-y-4">
         {offers.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-slate-200 bg-white p-10 text-center">
-            <p className="font-medium text-slate-600">Još niste poslali nijednu ponudu.</p>
+            <p className="font-medium text-slate-600">{t(locale, "offers.noOffersTitle", "Još niste poslali nijednu ponudu.")}</p>
             <p className="mt-1 text-sm text-slate-400">
-              Pronađite otvorene zahtjeve na{" "}
+              {t(locale, "handymanRequests.emptyDescription", "Pronađite otvorene zahtjeve na")}{" "}
               <Link href="/dashboard/handyman" className="text-blue-600 hover:underline">
-                dashboardu
+                {t(locale, "navigation.dashboard", "dashboardu")}
               </Link>
               .
             </p>
@@ -115,7 +119,8 @@ export default async function HandymanOffersPage() {
         ) : (
           offers.map((offer) => {
             const req = offer.request;
-            const statusCfg = STATUS_CONFIG[offer.status] ?? { label: offer.status, variant: "secondary" as const };
+            const statusCfg = STATUS_CONFIG[offer.status] ?? { variant: "secondary" as const };
+            const statusLabel = t(locale, `offers.${offer.status.toLowerCase()}`, offer.status);
             const priceLabel = PRICE_LABELS[offer.priceType] ?? offer.priceType;
             const priceDisplay =
               offer.priceValue != null && offer.priceType !== "DRUGO"
@@ -149,14 +154,14 @@ export default async function HandymanOffersPage() {
                       {req.description || "—"}
                     </p>
                     <p className="mt-2 text-xs font-medium text-slate-500">
-                      Vaša ponuda: <span className="text-slate-800">{priceDisplay}</span>
+                      {t(locale, "offers.formTitle", "Vaša ponuda")}: <span className="text-slate-800">{priceDisplay}</span>
                     </p>
                   </div>
                   <div className="flex shrink-0 flex-col items-end gap-2">
-                    <Badge variant={statusCfg.variant}>{statusCfg.label}</Badge>
+                    <Badge variant={statusCfg.variant}>{statusLabel}</Badge>
                     <span className="inline-flex items-center gap-1 text-xs text-slate-400">
                       <CalendarDays className="h-3 w-3" />
-                      {new Date(offer.createdAt).toLocaleDateString("sr")}
+                      {new Date(offer.createdAt).toLocaleDateString(locale)}
                     </span>
                   </div>
                 </div>

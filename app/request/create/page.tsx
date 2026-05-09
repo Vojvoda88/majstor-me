@@ -71,42 +71,38 @@ export default async function CreateRequestPage(props: {
       <div className="mx-auto max-w-[430px] px-4 py-6 md:max-w-2xl md:py-10">
         <Breadcrumbs
           items={[
-            { label: "Početna", href: "/" },
-            { label: "Novi zahtjev" },
+            { label: t(locale, "navigation.home", "Početna"), href: "/" },
+            { label: t(locale, "request.create.heading", "Novi zahtjev") },
           ]}
         />
 
         <header className="mb-6 md:mb-8">
           <h1 className="font-display text-2xl font-bold tracking-tight text-brand-navy md:text-3xl">
-            {t(locale, "request.create.title", "Zatraži majstora")}
+            {t(locale, "request.create.heading", "Zatraži majstora")}
           </h1>
           <p className="mt-3 text-[15px] leading-relaxed text-slate-600 md:text-base">
-            {t(
-              locale,
-              "request.create.intro",
-              "Besplatno za vas. Opišite posao što jasnije — jedan zahtjev umjesto više poziva."
-            )}
+            {t(locale, "request.create.subheading", "Besplatno za vas. Opišite posao što jasnije — jedan zahtjev umjesto više poziva.")}
           </p>
         </header>
         {!session?.user?.id && (
           <div className="mb-5 rounded-[1.35rem] border border-amber-200/80 bg-gradient-to-br from-amber-50 via-white to-slate-50 p-4 shadow-[0_16px_38px_-28px_rgba(15,23,42,0.28)]">
-            <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-amber-700">Preporučeno</p>
-            <h2 className="mt-1.5 font-display text-lg font-bold text-slate-900">Otvorite nalog prije slanja (opciono)</h2>
+            <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-amber-700">{t(locale, "request.create.recommended", "Preporučeno")}</p>
+            <h2 className="mt-1.5 font-display text-lg font-bold text-slate-900">{t(locale, "request.create.openAccountTitle", "Otvorite nalog prije slanja (opciono)")}</h2>
             <p className="mt-2 text-sm leading-relaxed text-slate-600">
-              Nije obavezno, ali je lakše da kasnije pratite zahtjev, ponude i status na jednom mjestu.
+              {t(locale, "request.create.openAccountDescription", "Nije obavezno, ali je lakše da kasnije pratite zahtjev, ponude i status na jednom mjestu.")}
             </p>
             <div className="mt-3 flex flex-col gap-2 sm:flex-row">
               <Link
                 href="/register"
                 className="inline-flex min-h-[46px] items-center justify-center rounded-xl bg-[#2563EB] px-4 text-sm font-bold text-white shadow-sm transition hover:bg-[#1d4ed8]"
               >
-                Registruj se
+                {t(locale, "request.create.register", "Registruj se")}
               </Link>
               <Link
                 href="/login"
                 className="inline-flex min-h-[46px] items-center justify-center rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
               >
-                Već imam nalog
+                {t(locale, "request.create.alreadyHaveAccount", "Već imam nalog")}
               </Link>
             </div>
           </div>

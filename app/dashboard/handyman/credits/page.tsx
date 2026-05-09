@@ -9,6 +9,9 @@ import { isPaymentConfigured, isStripeWebhookConfigured } from "@/lib/payment";
 import { CreditPackagesPremium } from "@/components/credits/credit-packages-premium";
 import { CreditTransactionHistory } from "@/components/credits/credit-transaction-history";
 import { HandymanCreditsCtaBlock } from "@/components/credits/handyman-credits-cta-block";
+import { headers } from "next/headers";
+import { LOCALE_HEADER, normalizeLocale } from "@/lib/i18n/config";
+import { t } from "@/lib/i18n/messages";
 
 export const dynamic = "force-dynamic";
 
@@ -18,6 +21,7 @@ export default async function HandymanCreditsPage({
   searchParams: Promise<{ success?: string; canceled?: string }>;
 }) {
   const session = await auth();
+  const locale = normalizeLocale(headers().get(LOCALE_HEADER));
   if (!session) redirect("/login");
   if (session.user.role !== "HANDYMAN") redirect("/");
 
@@ -56,7 +60,7 @@ export default async function HandymanCreditsPage({
     <div className="container mx-auto max-w-5xl px-4 py-8">
       <div className="mb-6">
         <Link href="/dashboard/handyman" className="text-sm text-slate-500 hover:text-slate-700">
-          ← Početak
+          ← {t(locale, "requestDetail.back", "Početak")}
         </Link>
       </div>
 
@@ -87,7 +91,7 @@ export default async function HandymanCreditsPage({
         </div>
       )}
 
-      <h1 className="text-2xl font-bold tracking-tight text-slate-900">Krediti — kako dopuniti</h1>
+      <h1 className="text-2xl font-bold tracking-tight text-slate-900">{t(locale, "credits.title", "Krediti — kako dopuniti")}</h1>
       <p className="mt-2 text-slate-600">
         Krediti se troše tek kada uzmete kontakt korisnika (obično 200–400 ovisno o hitnosti, plus dodatci za slike, duži opis ili verifikovane
         podatke; max oko 650). Ispod birate: <strong className="font-semibold text-slate-800">online kupovinu</strong> ili{" "}
@@ -113,8 +117,8 @@ export default async function HandymanCreditsPage({
       </div>
 
       <div className="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-4">
-        <p className="text-sm font-medium text-slate-700">Trenutni balans</p>
-        <p className="text-2xl font-bold text-slate-900">{balance} kredita</p>
+        <p className="text-sm font-medium text-slate-700">{t(locale, "credits.balance", "Trenutni balans")}</p>
+        <p className="text-2xl font-bold text-slate-900">{balance}</p>
         {balance > 0 && balance < LOW_CREDITS_THRESHOLD && (
           <p className="mt-1 text-xs font-medium text-amber-600">Preostalo vam je još {balance} kredita.</p>
         )}
@@ -169,8 +173,8 @@ export default async function HandymanCreditsPage({
 
       <Card className="mt-8">
         <CardHeader>
-          <CardTitle>Istorija transakcija</CardTitle>
-          <CardDescription>Pregled potrošnje, kupovine i povrata kredita</CardDescription>
+          <CardTitle>{t(locale, "credits.history", "Istorija transakcija")}</CardTitle>
+          <CardDescription>{t(locale, "credits.subtitle", "Pregled potrošnje, kupovine i povrata kredita")}</CardDescription>
         </CardHeader>
         <CardContent>
           <CreditTransactionHistory transactions={transactions} />

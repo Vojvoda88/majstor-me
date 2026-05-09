@@ -15,8 +15,14 @@
       "register": "Register",
       "backHome": "Back to home",
       "backLogin": "Back to login",
-      "continueGoogle": "Continue with Google"
-    }
+      "continueGoogle": "Continue with Google",
+      "close": "Close",
+      "later": "Later",
+      "retry": "Try again"
+    },
+    "loading": "Loading?",
+    "page": "Page",
+    "total": "Total"
   },
   "navigation": {
     "home": "Home",
@@ -29,7 +35,8 @@
     "forHandymen": "For handymen",
     "faq": "FAQ",
     "privacy": "Privacy policy",
-    "terms": "Terms of use"
+    "terms": "Terms of use",
+    "dashboard": "dashboard"
   },
   "footer": {
     "description": "A platform that helps users and handymen connect in Montenegro — request a handyman free of charge.",
@@ -219,6 +226,45 @@
         "dailyLimit": "You have reached your daily request limit (5)",
         "duplicate": "You already posted the same request today",
         "saveError": "Error while saving the request. Please try again shortly."
+      },
+      "stepLabel": "Step",
+      "stepOf": "of",
+      "requiredFields": "fields marked with (*) are required.",
+      "step1Title": "What do you need?",
+      "step2Title": "Where and when?",
+      "step3Title": "Contact",
+      "urgencyQuestion": "When do you need a handyman?",
+      "buttons": {
+        "back": "Back",
+        "next": "Continue"
+      },
+      "placeholders": {
+        "title": "E.g. kitchen faucet leaking",
+        "description": "What needs to be done, where, and deadline if important. The clearer, the better offers.",
+        "address": "Street and number, if you want",
+        "name": "Name",
+        "optional": "Optional"
+      },
+      "hints": {
+        "categoryOther": "No exact match? Select ?Other / I don't see my service? and describe it below.",
+        "noContact": "Do not include phone or email in the text ? use contact fields in the last step.",
+        "photos": "If photos help explain the job better.",
+        "afterSubmit": "After sending: short admin review, then offers if approved. You choose whether and whom to hire."
+      },
+      "urgencyShort": {
+        "HITNO_DANAS": "Today",
+        "U_NAREDNA_2_DANA": "Soon",
+        "NIJE_HITNO": "Flexible"
+      },
+      "urgencyLabel": {
+        "HITNO_DANAS": "Urgent today",
+        "U_NAREDNA_2_DANA": "Within next 7 days",
+        "NIJE_HITNO": "Not urgent"
+      },
+      "urgencyHint": {
+        "HITNO_DANAS": "Your request goes to priority distribution immediately.",
+        "U_NAREDNA_2_DANA": "Fast enough for most urgent fixes.",
+        "NIJE_HITNO": "Best for planned work and flexible timing."
       }
     }
   },
@@ -434,7 +480,16 @@
     "iosStepsTitle": "How to install on iPhone",
     "androidStepsTitle": "How to install on Android",
     "updateAvailable": "A new version of the app is available.",
-    "update": "Update"
+    "update": "Update",
+    "whyNoInstall": "Why can't I see ?Install??",
+    "notifForHandymanOnly": "New job notifications are available in the handyman dashboard after signing in as a handyman.",
+    "loginForNotifications": "Log in for notifications",
+    "pushUnavailable": "Push notifications are currently unavailable in this environment (configuration).",
+    "enableLaterPrefix": "You can enable push later in",
+    "adminArea": "administration",
+    "orIn": "or in",
+    "notificationsArea": "notifications",
+    "handymanArea": "the handyman section"
   },
   "emailPush": {
     "newRequestTitle": "New job request",

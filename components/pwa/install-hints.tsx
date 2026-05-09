@@ -44,20 +44,20 @@ export function InstallHints() {
     <div className="mt-8 space-y-6">
       {canPrompt && (
         <div className="rounded-2xl border border-blue-200 bg-blue-50/80 p-4">
-          <p className="text-sm font-semibold text-brand-navy">{t(locale, "pwa.installPromptTitle", "Tvoj browser nudi instalaciju")}</p>
+          <p className="text-sm font-semibold text-brand-navy">{t(locale, "pwa.installTitle", "Tvoj browser nudi instalaciju")}</p>
           <button
             type="button"
             onClick={handleInstall}
             disabled={busy}
             className="mt-3 w-full rounded-xl bg-[#2563EB] py-3 text-[15px] font-bold text-white shadow-sm transition hover:bg-[#1D4ED8] disabled:opacity-70"
           >
-            {busy ? t(locale, "common.loading", "Čekaj…") : t(locale, "pwa.installNow", "Instaliraj sada")}
+            {busy ? t(locale, "common.loading", "Čekaj…") : t(locale, "pwa.install", "Instaliraj sada")}
           </button>
         </div>
       )}
 
       <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-        <h2 className="font-display text-lg font-bold text-brand-navy">{t(locale, "pwa.iosTitle", "iPhone / iPad (Safari)")}</h2>
+        <h2 className="font-display text-lg font-bold text-brand-navy">{t(locale, "pwa.iosStepsTitle", "iPhone / iPad (Safari)")}</h2>
         <ol className="mt-3 list-decimal space-y-2 pl-5 text-sm leading-relaxed text-slate-700">
           <li>Otvori brzimajstor.me u <strong>Safari</strong> (ne u Chrome/Facebook in-app browseru ako možeš).</li>
           <li>Pritisni dugme <strong>Dijeli</strong> (kvadrat sa strelicom).</li>
@@ -67,7 +67,7 @@ export function InstallHints() {
       </section>
 
       <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-        <h2 className="font-display text-lg font-bold text-brand-navy">{t(locale, "pwa.androidTitle", "Android (Chrome)")}</h2>
+        <h2 className="font-display text-lg font-bold text-brand-navy">{t(locale, "pwa.androidStepsTitle", "Android (Chrome)")}</h2>
         <ol className="mt-3 list-decimal space-y-2 pl-5 text-sm leading-relaxed text-slate-700">
           <li>Otvori sajt u <strong>Chrome</strong>.</li>
           <li>Ako se pojavi poruka „Instaliraj aplikaciju“ ili ikona instalacije u meniju — prati korake.</li>

@@ -9,6 +9,8 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { REQUEST_CATEGORIES, CITIES } from "@/lib/constants";
 import { MapPin, MessageSquare, Calendar, User } from "lucide-react";
 import { UrgencyBadge } from "@/components/request/urgency-badge";
+import { useUiLanguage } from "@/lib/i18n/ui-language";
+import { t } from "@/lib/i18n/messages";
 
 const URGENCY_FILTER_OPTIONS = [
   { value: "", label: "Sve hitnosti" },
@@ -50,6 +52,7 @@ export function HandymanRequestList({
   page?: number;
   limit?: number;
 }) {
+  const locale = useUiLanguage();
   const router = useRouter();
 
   const buildUrl = (cat: string, city: string, urg: string, p = 1) => {
@@ -67,13 +70,13 @@ export function HandymanRequestList({
   return (
     <div className="mt-6 space-y-4 sm:mt-8">
       <div className="flex flex-wrap items-center gap-3 rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
-        <span className="w-full text-sm font-medium text-gray-600 sm:w-auto">Filtri:</span>
+        <span className="w-full text-sm font-medium text-gray-600 sm:w-auto">{t(locale, "handymanRequests.filters.apply", "Filtri")}:</span>
         <select
           className="min-h-[44px] flex-1 rounded-xl border border-gray-200 bg-white px-4 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 sm:min-h-0 sm:flex-initial sm:h-11"
           value={currentCategory}
           onChange={(e) => router.push(buildUrl(e.target.value, currentCity, currentUrgency, 1))}
         >
-          <option value="">Sve kategorije</option>
+          <option value="">{t(locale, "handymanRequests.filters.allCategories", "Sve kategorije")}</option>
           {profileCategories.length > 0
             ? profileCategories.map((c) => (
                 <option key={c} value={c}>{c}</option>
@@ -87,7 +90,7 @@ export function HandymanRequestList({
           value={currentCity}
           onChange={(e) => router.push(buildUrl(currentCategory, e.target.value, currentUrgency, 1))}
         >
-          <option value="">Svi gradovi</option>
+          <option value="">{t(locale, "handymanRequests.filters.allCities", "Svi gradovi")}</option>
           {(profileCities.length > 0 ? profileCities : [...CITIES]).map((c) => (
             <option key={c} value={c}>{c}</option>
           ))}
@@ -105,8 +108,8 @@ export function HandymanRequestList({
 
       {requests.length === 0 ? (
         <EmptyState
-          title="Nema otvorenih zahtjeva"
-          description="Nema zahtjeva za izabrane filtere. Pokušajte promeniti kategoriju ili grad."
+          title={t(locale, "handymanRequests.emptyTitle", "Nema otvorenih zahtjeva")}
+          description={t(locale, "handymanRequests.emptyDescription", "Nema zahtjeva za izabrane filtere. Pokušajte promeniti kategoriju ili grad.")}
         />
       ) : (
         <div className="space-y-4">
@@ -138,7 +141,7 @@ export function HandymanRequestList({
                       </span>
                       <span className="flex items-center gap-1 text-sm text-[#64748B]">
                         <MessageSquare className="h-4 w-4" />
-                        {req.offersCount} ponuda
+                        {t(locale, "userDashboard.offersCount", "{count} ponuda").replace("{count}", String(req.offersCount))}
                       </span>
                       <span className="flex items-center gap-1 text-sm text-[#94A3B8]">
                         <Calendar className="h-4 w-4" />
@@ -150,13 +153,13 @@ export function HandymanRequestList({
                       </span>
                       {req.isRequesterVerified && (
                         <Badge variant="outline" className="border-emerald-300 bg-emerald-50 px-2 py-0 text-xs text-emerald-800">
-                          Verifikovan
+                          {t(locale, "userDashboard.verified", "Verifikovan")}
                         </Badge>
                       )}
                     </div>
                   </div>
                   <Link href={`/request/${req.id}`} className="shrink-0">
-                    <Button size="lg">Pošalji ponudu</Button>
+                    <Button size="lg">{t(locale, "handymanRequests.sendOffer", "Pošalji ponudu")}</Button>
                   </Link>
                 </div>
               </CardHeader>
@@ -171,16 +174,16 @@ export function HandymanRequestList({
             href={buildUrl(currentCategory, currentCity, currentUrgency, page - 1)}
             className={`rounded-lg px-4 py-2 text-sm ${page <= 1 ? "pointer-events-none text-[#94A3B8]" : "text-[#475569] hover:bg-[#F1F5F9]"}`}
           >
-            ← Prethodna
+            ← {t(locale, "handymanRequests.previous", "Prethodna")}
           </Link>
           <span className="text-sm text-[#64748B]">
-            Strana {page} / {totalPages}
+            {t(locale, "common.page", "Strana")} {page} / {totalPages}
           </span>
           <Link
             href={buildUrl(currentCategory, currentCity, currentUrgency, page + 1)}
             className={`rounded-lg px-4 py-2 text-sm ${page >= totalPages ? "pointer-events-none text-[#94A3B8]" : "text-[#475569] hover:bg-[#F1F5F9]"}`}
           >
-            Sljedeća →
+            {t(locale, "handymanRequests.next", "Sljedeća")} →
           </Link>
         </div>
       )}
