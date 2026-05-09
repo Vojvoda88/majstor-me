@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
+import { useUiLanguage } from "@/lib/i18n/ui-language";
+import { t } from "@/lib/i18n/messages";
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<{ outcome: string }>;
@@ -9,6 +11,7 @@ interface BeforeInstallPromptEvent extends Event {
 
 /** Uputstva za iOS / Android + dugme kad Chrome ponudi instalaciju */
 export function InstallHints() {
+  const locale = useUiLanguage();
   const [canPrompt, setCanPrompt] = useState(false);
   const [busy, setBusy] = useState(false);
   const deferred = useRef<BeforeInstallPromptEvent | null>(null);
@@ -41,20 +44,20 @@ export function InstallHints() {
     <div className="mt-8 space-y-6">
       {canPrompt && (
         <div className="rounded-2xl border border-blue-200 bg-blue-50/80 p-4">
-          <p className="text-sm font-semibold text-brand-navy">Tvoj browser nudi instalaciju</p>
+          <p className="text-sm font-semibold text-brand-navy">{t(locale, "pwa.installPromptTitle", "Tvoj browser nudi instalaciju")}</p>
           <button
             type="button"
             onClick={handleInstall}
             disabled={busy}
             className="mt-3 w-full rounded-xl bg-[#2563EB] py-3 text-[15px] font-bold text-white shadow-sm transition hover:bg-[#1D4ED8] disabled:opacity-70"
           >
-            {busy ? "Čekaj…" : "Instaliraj sada"}
+            {busy ? t(locale, "common.loading", "Čekaj…") : t(locale, "pwa.installNow", "Instaliraj sada")}
           </button>
         </div>
       )}
 
       <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-        <h2 className="font-display text-lg font-bold text-brand-navy">iPhone / iPad (Safari)</h2>
+        <h2 className="font-display text-lg font-bold text-brand-navy">{t(locale, "pwa.iosTitle", "iPhone / iPad (Safari)")}</h2>
         <ol className="mt-3 list-decimal space-y-2 pl-5 text-sm leading-relaxed text-slate-700">
           <li>Otvori brzimajstor.me u <strong>Safari</strong> (ne u Chrome/Facebook in-app browseru ako možeš).</li>
           <li>Pritisni dugme <strong>Dijeli</strong> (kvadrat sa strelicom).</li>
@@ -64,7 +67,7 @@ export function InstallHints() {
       </section>
 
       <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-        <h2 className="font-display text-lg font-bold text-brand-navy">Android (Chrome)</h2>
+        <h2 className="font-display text-lg font-bold text-brand-navy">{t(locale, "pwa.androidTitle", "Android (Chrome)")}</h2>
         <ol className="mt-3 list-decimal space-y-2 pl-5 text-sm leading-relaxed text-slate-700">
           <li>Otvori sajt u <strong>Chrome</strong>.</li>
           <li>Ako se pojavi poruka „Instaliraj aplikaciju“ ili ikona instalacije u meniju — prati korake.</li>
@@ -73,7 +76,7 @@ export function InstallHints() {
       </section>
 
       <section className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
-        <h2 className="font-display text-lg font-bold text-brand-navy">Zašto ne vidim „Instaliraj“?</h2>
+        <h2 className="font-display text-lg font-bold text-brand-navy">{t(locale, "pwa.whyNoInstall", "Zašto ne vidim „Instaliraj“?")}</h2>
         <ul className="mt-3 list-disc space-y-1.5 pl-5 text-sm text-slate-600">
           <li>Na iPhone-u <strong>ne postoji</strong> isti dijalog kao na Androidu — uvijek preko Podijeli → Početni ekran.</li>
           <li>Ako si već dodao aplikaciju ili je otvoriš iz „installed“ moda, ponuda se ne prikazuje.</li>

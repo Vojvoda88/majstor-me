@@ -5,6 +5,8 @@ import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { Bell, Download, X } from "lucide-react";
 import { fetchPublicVapidServerKey, requestPermissionAndSubscribe } from "@/lib/push-client";
+import { useUiLanguage } from "@/lib/i18n/ui-language";
+import { t } from "@/lib/i18n/messages";
 
 const DISMISS_KEY = "pwa-entry-modal-dismissed";
 /** Koliko dugo ne prikazuj ponovo nakon „Kasnije“ */
@@ -52,6 +54,7 @@ interface BeforeInstallPromptEvent extends Event {
  * iOS: nema beforeinstallprompt — i dalje se prikaže sa linkom na uputstva.
  */
 export function InstallCTA() {
+  const locale = useUiLanguage();
   const { data: session, status } = useSession();
   const [visible, setVisible] = useState(false);
   const [installing, setInstalling] = useState(false);
@@ -172,17 +175,17 @@ export function InstallCTA() {
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
             <h2 id="pwa-entry-title" className="font-display text-base font-bold tracking-tight text-brand-navy sm:text-lg">
-              Preuzmi aplikaciju
+              {t(locale, "pwa.ctaTitle", "Preuzmi aplikaciju")}
             </h2>
             <p className="mt-1.5 text-[13px] leading-snug text-slate-600 sm:text-sm">
-              Ikonica na početnom ekranu i obavještenja o ponudama i zahtjevima.
+              {t(locale, "pwa.ctaSubtitle", "Ikonica na početnom ekranu i obavještenja o ponudama i zahtjevima.")}
             </p>
           </div>
           <button
             type="button"
             onClick={close}
             className="shrink-0 rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
-            aria-label="Zatvori"
+            aria-label={t(locale, "common.buttons.close", "Zatvori")}
           >
             <X className="h-5 w-5" />
           </button>
@@ -197,7 +200,7 @@ export function InstallCTA() {
               className="flex min-h-[48px] w-full touch-manipulation items-center justify-center gap-2 rounded-xl bg-[#2563EB] px-4 py-3 text-[15px] font-bold text-white shadow-md transition hover:bg-[#1D4ED8] disabled:opacity-70"
             >
               <Download className="h-5 w-5 shrink-0" aria-hidden />
-              {installing ? "Čekaj…" : "Instaliraj aplikaciju"}
+              {installing ? t(locale, "common.loading", "Čekaj…") : t(locale, "pwa.installApp", "Instaliraj aplikaciju")}
             </button>
           ) : (
             <Link
@@ -206,7 +209,7 @@ export function InstallCTA() {
               className="flex min-h-[48px] w-full touch-manipulation items-center justify-center gap-2 rounded-xl border-2 border-slate-200 bg-slate-50 px-4 py-3 text-[15px] font-bold text-brand-navy transition hover:bg-slate-100"
             >
               <Download className="h-5 w-5 shrink-0" aria-hidden />
-              Kako instalirati (iPhone / Android)
+              {t(locale, "pwa.howToInstall", "Kako instalirati (iPhone / Android)")}
             </Link>
           )}
 
@@ -221,16 +224,16 @@ export function InstallCTA() {
                 >
                   <Bell className="h-5 w-5 shrink-0" aria-hidden />
                   {notifDone
-                    ? "Obavještenja su uključena"
+                    ? t(locale, "pwa.notificationsEnabled", "Obavještenja su uključena")
                     : notifBusy
-                      ? "Čekaj…"
+                      ? t(locale, "common.loading", "Čekaj…")
                       : isAdmin
-                        ? "Primaj push obavještenja (admin)"
-                        : "Primaj obavještenja za nove poslove"}
+                        ? t(locale, "pwa.adminPush", "Primaj push obavještenja (admin)")
+                        : t(locale, "pwa.handymanPush", "Primaj obavještenja za nove poslove")}
                 </button>
               ) : loggedIn && !isHandyman && !isAdmin ? (
                 <p className="rounded-lg bg-slate-50 px-3 py-2 text-center text-xs text-slate-600">
-                  Obavještenja o novim poslovima dostupna su u dashboardu majstora nakon prijave kao majstor.
+                  {t(locale, "pwa.notifForHandymanOnly", "Obavještenja o novim poslovima dostupna su u dashboardu majstora nakon prijave kao majstor.")}
                 </p>
               ) : !loggedIn ? (
                 <Link
@@ -238,11 +241,11 @@ export function InstallCTA() {
                   className="flex min-h-[48px] w-full touch-manipulation items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-3 text-[15px] font-semibold text-slate-800 transition hover:bg-slate-50"
                 >
                   <Bell className="h-5 w-5 shrink-0 text-amber-600" aria-hidden />
-                  Prijavi se za obavještenja
+                  {t(locale, "pwa.loginForNotifications", "Prijavi se za obavještenja")}
                 </Link>
               ) : (
                 <p className="rounded-lg bg-slate-50 px-3 py-2 text-center text-xs text-slate-500">
-                  Push obavještenja trenutno nisu dostupna u ovom okruženju (konfiguracija).
+                  {t(locale, "pwa.pushUnavailable", "Push obavještenja trenutno nisu dostupna u ovom okruženju (konfiguracija).")}
                 </p>
               )}
             </>
@@ -251,18 +254,18 @@ export function InstallCTA() {
 
         {loggedIn && (isHandyman || isAdmin) && (
           <p className="mt-3 text-center text-xs leading-snug text-slate-500">
-            Kasnije možete uključiti push u{" "}
+            {t(locale, "pwa.enableLaterPrefix", "Kasnije možete uključiti push u")}{" "}
             {isAdmin ? (
               <>
                 <Link href="/admin" className="font-medium text-slate-700 underline-offset-2 hover:underline">
-                  administraciji
+                  {t(locale, "pwa.adminArea", "administraciji")}
                 </Link>{" "}
-                ili u{" "}
+                {t(locale, "pwa.orIn", "ili u")}{" "}
                 <Link
                   href="/admin/notifications"
                   className="font-medium text-slate-700 underline-offset-2 hover:underline"
                 >
-                  obavještenjima
+                  {t(locale, "pwa.notificationsArea", "obavještenjima")}
                 </Link>
                 .
               </>
@@ -271,7 +274,7 @@ export function InstallCTA() {
                 href="/dashboard/handyman"
                 className="font-medium text-slate-700 underline-offset-2 hover:underline"
               >
-                dijelu za majstore
+                {t(locale, "pwa.handymanArea", "dijelu za majstore")}
               </Link>
             )}
           </p>
@@ -282,7 +285,7 @@ export function InstallCTA() {
           onClick={close}
           className="mt-3 w-full py-2 text-center text-sm font-medium text-slate-500 transition hover:text-slate-800"
         >
-          Kasnije
+          {t(locale, "common.buttons.later", "Kasnije")}
         </button>
       </div>
     </>

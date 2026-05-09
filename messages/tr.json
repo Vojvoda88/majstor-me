@@ -1,21 +1,453 @@
 {
   "common": {
+    "brand": "BrziMajstor.ME",
     "language": "Dil",
     "languages": {
       "sr": "Karadagca",
       "en": "Ingilizce",
       "ru": "Rusca",
       "tr": "Turkce"
+    },
+    "buttons": {
+      "requestHandyman": "Usta talep et",
+      "viewCategories": "Kategorileri gor",
+      "login": "Giris yap",
+      "register": "Kayit ol",
+      "backHome": "Ana sayfaya don",
+      "backLogin": "Girise don",
+      "continueGoogle": "Google ile devam et"
+    }
+  },
+  "navigation": {
+    "home": "Ana sayfa",
+    "categories": "Kategoriler",
+    "howItWorks": "Nasil calisir",
+    "installApp": "Uygulamayi yukle",
+    "contact": "Iletisim",
+    "support": "Iletisim / destek",
+    "requestHandyman": "Usta talep et",
+    "forHandymen": "Ustalar icin",
+    "faq": "Sik sorulan sorular",
+    "privacy": "Gizlilik politikasi",
+    "terms": "Kullanim sartlari"
+  },
+  "footer": {
+    "description": "Karadag'da kullanicilarla ustalari daha kolay bulusturan platform — kullanicilar icin usta talebi ucretsizdir.",
+    "platform": "Platform",
+    "legal": "Yasal",
+    "copyright": "Tum haklari saklidir."
+  },
+  "home": {
+    "hero": {
+      "imageAlt": "Calisan usta",
+      "headline": "Karadag'da ustalar — hizli, kolay ve bircok yeri aramadan",
+      "subline": "Isi bir kez tarif edin. Sehir ve hizmet turune uygun ustalar platform uzerinden cevap verir.",
+      "primaryCta": "Usta talep et",
+      "secondaryCta": "Kategorileri gor",
+      "handymanCta": "Ustalar: isleri alin",
+      "loginCta": "Zaten hesabin var mi? Giris yap",
+      "trustFree": "100% ucretsiz",
+      "trustNoCalling": "Birden fazla yeri aramaya gerek yok",
+      "trustFast": "Hizli ve kolay"
+    },
+    "howUsers": {
+      "eyebrow": "Kullanicilar icin",
+      "title": "Kullanicilar icin nasil calisir",
+      "subtitle": "Tek kisa talep — sehrinizdeki ustalar platform uzerinden cevap verir, kapı kapı arama yok.",
+      "stepLabel": "Adim",
+      "steps": [
+        {
+          "title": "Ucretsiz usta talep edin",
+          "description": "Kisa aciklama, sehir ve gerekirse fotograf ekleyin. Talep yayinlamak ucretsizdir."
+        },
+        {
+          "title": "Ustalar talebi gorur",
+          "description": "Kontrolden sonra talep, sehir ve is turune uygun ustalara gorunur."
+        },
+        {
+          "title": "Anlasma",
+          "description": "Usta ile size uygun sekilde konusmaya devam edersiniz."
+        }
+      ],
+      "primaryCta": "Usta talep et",
+      "note": "Birden fazla arama yerine tek talep.",
+      "detailsCta": "Kullanicilar icin detaylar"
+    },
+    "howHandymen": {
+      "eyebrow": "Ustalar",
+      "title": "Ustalar icin",
+      "subtitle": "Abonelik yok. Baslangic kredileri alirsiniz ve sadece musteri iletisimini actiginizda odersiniz.",
+      "badgeNoSubscription": "Abonelik yok • Aninda bildirimler",
+      "badgeStandardContact": "Standart iletisim yaklasik 1,99 €",
+      "featuredBenefit": "Ana avantaj",
+      "stepLabel": "Adim",
+      "steps": [
+        {
+          "title": "Isler size gelir",
+          "description": "Talep, uzmanlik alaniniza ve sehrinize uygunsa bildirim alirsiniz."
+        },
+        {
+          "title": "Ucretsiz kayit + baslangic kredileri",
+          "description": "Kayit ucretsizdir. Baslangic kredileri alir ve aboneliksiz baslarsiniz."
+        },
+        {
+          "title": "Sadece iletisim istediginizde odersiniz",
+          "description": "Krediler sadece musteri iletisimini acmaya karar verdiginizde kullanilir."
+        }
+      ],
+      "creditNote": "Krediler abonelik degildir. Sadece istediginiz is icin iletisim actiginizda kullanilir.",
+      "registerCta": "Usta olarak kayit ol",
+      "creditsCta": "Krediler nasil calisir?"
+    }
+  },
+  "auth": {
+    "login": {
+      "metadataTitle": "Giris",
+      "metadataDescription": "BrziMajstor.ME'de kullanici veya usta olarak giris yapin.",
+      "heading": "Tekrar hos geldiniz",
+      "subheading": "Devam etmek icin hesabiniza giris yapin",
+      "verifiedBanner": "E-posta basariyla dogrulandi. Simdi giris yapabilirsiniz.",
+      "email": "E-posta",
+      "password": "Sifre",
+      "submit": "Giris yap",
+      "submitting": "Giris yapiliyor...",
+      "or": "veya",
+      "continueGoogle": "Google ile devam et",
+      "noAccount": "Hesabiniz yok mu?",
+      "openRegistration": "Hesap olustur",
+      "secureNote": "Guvenli giris • Verileriniz korunur",
+      "errors": {
+        "emailInvalid": "Gecerli bir e-posta girin",
+        "passwordRequired": "Sifrenizi girin",
+        "wrongCredentials": "E-posta veya sifre hatali",
+        "accessDenied": "Erisim reddedildi.",
+        "sessionExpired": "Oturum suresi doldu. Lutfen tekrar giris yapin."
+      }
+    },
+    "register": {
+      "metadataTitle": "Kayit",
+      "metadataDescription": "BrziMajstor.ME'de kullanici veya usta hesabi olusturun.",
+      "heading": "Hesap olusturun",
+      "subheading": "Kullanici veya usta — platformu nasil kullanmak istediginizi secin",
+      "inviteSubheading": "Usta olarak kaydolmaya davet edildiniz.",
+      "accountType": "Hesap tipi",
+      "user": "Kullanici",
+      "handyman": "Usta",
+      "userSubtitle": "Usta ariyorum",
+      "handymanSubtitle": "Hizmet veriyorum",
+      "handymanNotice": "Kayit ucretsizdir. Baslangic kredileri alirsiniz. Abonelik yok — krediler size uygun islerde iletisim acmak icin kullanilir.",
+      "nameUser": "Ad ve soyad",
+      "nameHandyman": "Profil adi (firma, servis, ekip veya isim)",
+      "password": "Sifre",
+      "phoneOptional": "Telefon (opsiyonel)",
+      "cityOptional": "Sehir (opsiyonel)",
+      "categories": "Hizmet verdiginiz kategoriler",
+      "workCities": "Calistiginiz sehirler",
+      "gallery": "Is fotograflari",
+      "bio": "Profil aciklamasi",
+      "submit": "Kayit ol",
+      "submitting": "Kayit yapiliyor...",
+      "hasAccount": "Zaten hesabin var mi?",
+      "login": "Giris yap",
+      "freeNote": "Ucretsiz kayit • Gizli ucret yok"
+    },
+    "forgotPassword": {
+      "metadataTitle": "Sifremi unuttum",
+      "metadataDescription": "Sifre sifirlama — BrziMajstor.ME",
+      "heading": "Sifremi unuttum",
+      "subheading": "E-postanizi girin — hesap varsa sifre yenileme baglantisi gondeririz.",
+      "email": "E-posta",
+      "submit": "Baglanti gonder",
+      "submitting": "Gonderiliyor...",
+      "sentInfo": "Bu e-postaya ait ve sifresi olan bir hesap varsa, sifre yenileme baglantisi gonderildi. Gelen kutusunu ve spam klasorunu kontrol edin.",
+      "backToLogin": "Girise don"
+    },
+    "resetPassword": {
+      "metadataTitle": "Yeni sifre",
+      "metadataDescription": "Yeni sifre belirleyin — BrziMajstor.ME",
+      "heading": "Yeni sifre",
+      "subheading": "Hesabiniz icin yeni sifre girin.",
+      "newPassword": "Yeni sifre",
+      "confirmPassword": "Sifreyi onayla",
+      "submit": "Yeni sifreyi kaydet",
+      "submitting": "Kaydediliyor...",
+      "invalidLink": "Baglanti eksik veya gecersiz. Sifremi unuttum sayfasindan yeni bir sifirlama isteyin."
     }
   },
   "request": {
     "create": {
-      "title": "Usta talep et",
-      "intro": "Sizin icin ucretsiz. Isi net tarif edin — birden fazla arama yerine tek bir talep."
+      "metadataTitle": "Usta talep et",
+      "metadataDescription": "Talep gonderin ve Karadag'da usta bulun.",
+      "heading": "Usta talep et",
+      "subheading": "Sizin icin ucretsiz. Isi net tarif edin — birden fazla arama yerine tek talep. Once yonetici talebi inceler, sonra uygun ustalar cevap verir.",
+      "recommended": "Onerilir",
+      "openAccountTitle": "Gondermeden once hesap acin (opsiyonel)",
+      "openAccountDescription": "Zorunlu degil, ancak talebinizi, teklifleri ve durumu tek yerden takip etmeyi kolaylastirir.",
+      "register": "Kayit ol",
+      "alreadyHaveAccount": "Zaten hesabim var",
+      "form": {
+        "name": "Ad",
+        "category": "Kategori",
+        "title": "Baslik",
+        "description": "Is aciklamasi",
+        "city": "Sehir",
+        "phone": "Telefon",
+        "viber": "Viber numarasi",
+        "whatsapp": "WhatsApp numarasi",
+        "address": "Adres",
+        "email": "E-posta",
+        "urgency": "Aciliyet",
+        "photos": "Fotograflar",
+        "submit": "Talep gonder",
+        "submitting": "Talep gonderiliyor..."
+      },
+      "validation": {
+        "enterName": "Adinizi girin",
+        "selectCategory": "Kategori secin",
+        "titleMin": "Baslik en az 3 karakter olmali",
+        "descMin": "Aciklama en az 10 karakter olmali",
+        "enterCity": "Sehir girin",
+        "enterPhone": "Telefon numarasi girin",
+        "emailInvalid": "Gecersiz e-posta",
+        "maxPhotos": "En fazla 5 fotograf",
+        "noContactInTitle": "Baslikta iletisim bilgisi birakmayin. Ozel alanlari kullanin.",
+        "noContactInDescription": "Aciklamada telefon, e-posta, Instagram, Viber, WhatsApp veya adres birakmayin. Ozel alanlari kullanin."
+      },
+      "serverErrors": {
+        "onlyUsers": "Sadece kullanicilar talep olusturabilir",
+        "verifyEmail": "Talep yayinlamadan once e-postanizi dogrulamaniz gerekir.",
+        "dailyLimit": "Gunluk talep limitine ulastiniz (5)",
+        "duplicate": "Ayni talebi bugun zaten yayinladiniz",
+        "saveError": "Talep kaydedilirken hata olustu. Lutfen biraz sonra tekrar deneyin."
+      }
     }
   },
-  "auth": {
-    "login": "Giris",
-    "register": "Kayit ol"
+  "seo": {
+    "homeTitle": "Karadag'da ustalar",
+    "homeDescription": "BrziMajstor.ME, Karadag'da kullanicilarla ustalari bulusturur. Ucretsiz talep gonderin ve isiniz icin usta bulun.",
+    "requestCreateTitle": "Usta talep et",
+    "requestCreateDescription": "Ucretsiz talep gonderin ve Karadag'da usta bulun.",
+    "categoriesTitle": "Usta kategorileri",
+    "categoriesDescription": "Hizmet kategorilerini inceleyin ve Karadag'da ustalar bulun."
+  },
+  "userDashboard": {
+    "title": "Taleplerim",
+    "subtitle": "Yayinladiginiz taleplerin ozeti",
+    "newRequest": "Yeni talep",
+    "savedHandymen": "Kaydedilen ustalar",
+    "verified": "Dogrulanmis",
+    "view": "Gor",
+    "emptyTitle": "Yayinlanmis talebiniz yok",
+    "emptyDescription": "Uygun ustalardan teklif almak icin usta talep edin",
+    "requestCta": "Usta talep et",
+    "status": {
+      "OPEN": "Acik",
+      "IN_PROGRESS": "Devam ediyor",
+      "COMPLETED": "Tamamlandi",
+      "CANCELLED": "Iptal edildi",
+      "PENDING_REVIEW": "Yonetici incelemesi bekliyor",
+      "DISTRIBUTED": "Onaylandi — ustalar cevap verebilir"
+    },
+    "offersCount": "{count} teklif",
+    "acceptedHandyman": "Usta: {name}",
+    "reviewLeft": "Yorum birakildi"
+  },
+  "handymanDashboard": {
+    "metadataTitle": "Usta profili",
+    "metadataDescription": "Acik talepleri gorun ve teklif gonderin",
+    "profileReceivedTitle": "Usta profili",
+    "profileReceivedDescription": "Basvurunuz alindi. Profilinizi doldurup kaydedin — daha sonra yonetici incelemesine gider. Onaylandiginda bilgilendirileceksiniz.",
+    "updateProfile": "Profili guncelle",
+    "title": "Usta profili",
+    "subtitle": "Acik talepler ve teklifler tek yerde",
+    "profileStatus": "Profil durumu",
+    "statusActive": "Profil aktif",
+    "statusPending": "Yonetici incelemesi bekliyor",
+    "statusInactive": "Profil su anda aktif degil",
+    "activeDescription": "Profiliniz herkese acik ve talepleri takip edebilir, iletisimleri acabilir ve teklif gonderebilirsiniz.",
+    "inactiveDescription": "Profiliniz henuz yayinlanmadi. Yonetici daha hizli inceleyip onaylayabilsin diye mumkun oldugunca cok bilgi doldurun.",
+    "verified": "Profil dogrulandi",
+    "verificationPending": "Dogrulama devam ediyor",
+    "verificationRejected": "Dogrulama onaylanmadi — destekle iletisime gecin",
+    "nextStep": "Sonraki adim",
+    "profileComplete": "Profil tamamlandi.",
+    "remainingSteps": "Daha dolu bir profil icin {count} madde kaldi.",
+    "allBasicsDone": "Profilin temel ogeleri tamamlandi.",
+    "openProfile": "Profili ac ve tamamla",
+    "openRequests": "Acik talepler",
+    "myOffers": "Gonderdigim teklifler",
+    "viewAll": "Hepsini gor",
+    "acceptedJobs": "Kabul edilen isler",
+    "credits": "Krediler",
+    "lowCredits": "Krediniz az — iletisim gerekmeden once yukleyin.",
+    "buyCredits": "Kredi satin al",
+    "activateCredits": "Kredileri etkinlestir",
+    "creditsPolicy": "Genelde iletisim basina 200–400 kredi (aciliyet + detaylar; eklerle en fazla yaklasik 650)",
+    "creditsFreeEnv": "Bu ortamda iletisim krediler olmadan acilabilir",
+    "systemTitle": "Sistem nasil calisir",
+    "systemIntro": "Musteriler talep yayinlar — siz listede gorursunuz. Aciklama, sehir, kategori ve fotograflari gormek ucretsizdir.",
+    "phoneHidden": "Telefon numarasini hemen gormezsiniz: bu is icin iletisim istediginizi onayladiktan sonra alirsiniz.",
+    "creditsExplanation": "Krediler iletisim bilgilerini acmak icin kullanilir. Sadece o anda harcanir. Actiktan sonra teklif gonderebilir veya musteriyi arayabilirsiniz.",
+    "refundPolicy": "Kredi iadesi, admin spam veya platform disi iletisim denemesi isaretlerse ya da teknik hata olursa vardir — kullanici cevap vermezse degil.",
+    "creditsPage": "Krediler sayfasi"
+  },
+  "handymanRequests": {
+    "filters": {
+      "category": "Kategori",
+      "city": "Sehir",
+      "urgency": "Aciliyet",
+      "allCategories": "Tum kategoriler",
+      "allCities": "Tum sehirler",
+      "allUrgencies": "Tum aciliyetler",
+      "apply": "Filtreleri uygula",
+      "clear": "Temizle"
+    },
+    "emptyTitle": "Su anda talep yok",
+    "emptyDescription": "Kategorilerinize ve sehirlerinize uygun talepler geldiginde burada gorunecek.",
+    "sendOffer": "Teklif gonder",
+    "unlockContact": "Iletisimi ac",
+    "alreadyOffered": "Zaten teklif gonderdiniz",
+    "previous": "Onceki",
+    "next": "Sonraki"
+  },
+  "requestDetail": {
+    "back": "Geri",
+    "verifiedUser": "Dogrulanmis kullanici",
+    "description": "Aciklama",
+    "photos": "Fotograflar",
+    "address": "Adres",
+    "contact": "Iletisim",
+    "phone": "Telefon",
+    "viber": "Viber",
+    "whatsapp": "WhatsApp",
+    "email": "E-posta",
+    "pendingReview": "Talep su anda yonetici incelemesi bekliyor. Onaydan sonra ustalar talebi gorebilir ve teklif gonderebilir.",
+    "distributed": "Talep onaylandi ve ustalara gonderildi. Yakinda teklifler gelebilir.",
+    "hasOffers": "Yeni teklifleriniz var — asagidan inceleyin.",
+    "quickContact": "Tekliften once veya teklifle birlikte hizli musteri iletisimi:",
+    "viberUser": "Musteriye Viber",
+    "whatsappUser": "Musteriye WhatsApp",
+    "unlockTitle": "Bu is icin iletisimi ac",
+    "unlockIntro": "Aciklama, sehir ve fotograflari gormek ucretsizdir. Sadece iletisim istediginizde odersiniz — abonelik yok.",
+    "unlockSteps": "Once kredilerle iletisimi acarsiniz. Sonra telefon / Viber / WhatsApp hemen gorunur; musteriyi arayabilir veya formdan teklif gonderebilirsiniz.",
+    "acceptedOffer": "Kabul edilen teklif",
+    "jobInProgress": "Is devam ediyor. Usta bitirdiginde tamamlandi olarak isaretleyin.",
+    "choiceReceived": "Seciminiz alindi. Usta sizinle iletisime gececek.",
+    "chatWithUser": "Kullanici ile sohbet",
+    "leaveReview": "Yorum birak",
+    "reviewHandyman": "{name} ustasini degerlendir",
+    "yourReview": "Yorumunuz",
+    "alreadySentOffer": "Bu talebe zaten teklif gonderdiniz. Musteri cevabini bekliyorsunuz.",
+    "offers": "Teklifler ({count})",
+    "offersDescription": "Teklifleri karsilastirin ve en iyi ustayi secin",
+    "noOffersTitle": "Teklifler",
+    "noOffersDescription": "Henuz teklif yok. Geldiginde burada gorunecek.",
+    "loginToViewOffers": "Teklifleri gormek icin giris yapin"
+  },
+  "offers": {
+    "formTitle": "Teklif gonder",
+    "formDescription": "Ne sundugunuzu, tahmini fiyatı ve ne zaman baslayabileceginizi aciklayin.",
+    "price": "Fiyat",
+    "priceType": "Fiyat tipi",
+    "message": "Mesaj",
+    "availability": "Musaitlik",
+    "submit": "Teklif gonder",
+    "submitting": "Teklif gonderiliyor...",
+    "sentTitle": "Teklif gonderildi",
+    "accepted": "Kabul edildi",
+    "pending": "Cevap bekliyor",
+    "rejected": "Reddedildi",
+    "withdrawn": "Geri cekildi",
+    "noOffersTitle": "Henuz teklif gondermediniz",
+    "noOffersDescription": "Bir talebe teklif gonderdiginizde burada gorunecek.",
+    "validation": {
+      "messageRequired": "Teklif mesajini girin",
+      "priceRequired": "Fiyat veya tahmin girin",
+      "availabilityRequired": "Musaitlik secin"
+    }
+  },
+  "profile": {
+    "title": "Usta profili",
+    "intro": "Kullanicilar sizinle iletisime gecmeden once gorecekleri profil bilgilerini duzenleyin.",
+    "name": "Profil adi",
+    "city": "Sehir",
+    "phone": "Telefon",
+    "viber": "Viber numarasi",
+    "whatsapp": "WhatsApp numarasi",
+    "categories": "Kategoriler",
+    "workCities": "Calistiginiz sehirler",
+    "bio": "Profil aciklamasi",
+    "gallery": "Is fotograflari",
+    "avatar": "Profil fotografi",
+    "save": "Profili kaydet",
+    "saving": "Kaydediliyor...",
+    "saved": "Profil kaydedildi",
+    "aiSuggest": "AI ile aciklama oner",
+    "aiSuggesting": "Oneri hazirlaniyor...",
+    "validation": {
+      "bioRequired": "Profil aciklamasi girin",
+      "categoryRequired": "En az bir kategori secin",
+      "cityRequired": "Sehir girin"
+    }
+  },
+  "credits": {
+    "title": "Krediler",
+    "subtitle": "Krediler, is size uygunsa musteri iletisimini acmak icin kullanilir.",
+    "balance": "Mevcut bakiye",
+    "buyOnline": "Online satin al",
+    "activateCash": "Nakit odeme aktivasyonu",
+    "packages": "Kredi paketleri",
+    "history": "Islem gecmisi",
+    "emptyHistory": "Henuz islem yok.",
+    "refund": "Kredi iadesi",
+    "cashActivationTitle": "Nakit odeme ile kredi aktivasyonu",
+    "cashActivationDescription": "Anlasilan odemeden sonra kredi aktivasyon talebi gonderin.",
+    "paymentMethod": "Odeme yontemi",
+    "amount": "Tutar",
+    "submitCash": "Talep gonder",
+    "cashSubmitted": "Talep gonderildi. Admin odemeyi kontrol edecek."
+  },
+  "notifications": {
+    "title": "Bildirimler",
+    "markAllRead": "Tumunu okundu isaretle",
+    "empty": "Yeni bildiriminiz yok.",
+    "loading": "Bildirimler yukleniyor...",
+    "error": "Bildirimler yuklenirken hata olustu.",
+    "open": "Ac",
+    "close": "Kapat"
+  },
+  "push": {
+    "enableTitle": "Yeni talepleri kacirmayin",
+    "enableBody": "Size uygun bir is geldiginde hemen haber almak icin push bildirimlerini acin.",
+    "enable": "Bildirimleri ac",
+    "enabled": "Bildirimler acik",
+    "unsupported": "Bu cihaz veya tarayici push bildirimlerini desteklemiyor.",
+    "test": "Test gonder",
+    "testSent": "Test bildirimi gonderildi.",
+    "iosHint": "iPhone'da once uygulamayi ana ekrana ekleyin, sonra bildirimleri acin."
+  },
+  "pwa": {
+    "installTitle": "BrziMajstor.ME'yi yukle",
+    "installBody": "Taleplere, tekliflere ve bildirimlere daha hizli erisim icin uygulamayi ana ekrana ekleyin.",
+    "install": "Yukle",
+    "later": "Sonra",
+    "iosStepsTitle": "iPhone'a nasil yuklenir",
+    "androidStepsTitle": "Android'e nasil yuklenir",
+    "updateAvailable": "Uygulamanin yeni surumu mevcut.",
+    "update": "Guncelle"
+  },
+  "emailPush": {
+    "newRequestTitle": "Yeni is talebi",
+    "newRequestBody": "Kategorinize ve sehrinize uygun yeni bir talep var.",
+    "newOfferTitle": "Talebiniz icin yeni teklif",
+    "newOfferBody": "Bir usta teklif gonderdi. Talebi acin ve detaylari inceleyin.",
+    "offerAcceptedTitle": "Teklif kabul edildi",
+    "offerAcceptedBody": "Kullanici teklifinizi kabul etti. Iletisime gecin ve detaylari kararlastirin.",
+    "jobCompletedTitle": "Is tamamlandi olarak isaretlendi",
+    "jobCompletedBody": "Talep tamamlandi olarak isaretlendi. Yorum birakabilirsiniz.",
+    "passwordResetSubject": "Sifre sifirlama",
+    "verifyEmailSubject": "E-posta adresinizi onaylayin",
+    "welcomeHandymanSubject": "BrziMajstor.ME'ye hos geldiniz",
+    "welcomeHandymanBody": "Su anda usta veritabanini olusturuyoruz. Yakinda kullanicilara daha guclu tanitim baslayacak."
   }
 }

@@ -1,4 +1,8 @@
+"use client";
+
 import Link from "next/link";
+import { useUiLanguage } from "@/lib/i18n/ui-language";
+import { t } from "@/lib/i18n/messages";
 
 const FOOTER_NAV = [
   { href: "/", label: "Početna" },
@@ -20,6 +24,8 @@ const FOOTER_LEGAL = [
  * Javno podnožje — brend, navigacija, pravni dokumenti, copyright.
  */
 export function PublicFooter() {
+  const locale = useUiLanguage();
+
   return (
     <footer className="border-t border-slate-200/90 bg-gradient-to-b from-[#FAFBFC] to-slate-100/40">
       <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 md:py-12">
@@ -30,14 +36,14 @@ export function PublicFooter() {
               BrziMajstor.ME
             </p>
             <p className="mt-2 text-sm leading-relaxed text-slate-600">
-              Platforma za lakše povezivanje korisnika i majstora u Crnoj Gori — zatražite majstora, besplatno za korisnike.
+              {t(locale, "footer.description", "Platforma za lakše povezivanje korisnika i majstora u Crnoj Gori.")}
             </p>
           </div>
 
           {/* Navigacija */}
           <nav aria-label="Navigacija" className="flex flex-col gap-2">
             <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-400">
-              Platforma
+              {t(locale, "footer.platform", "Platforma")}
             </p>
             {FOOTER_NAV.map((item) => (
               <Link
@@ -45,7 +51,7 @@ export function PublicFooter() {
                 href={item.href}
                 className="text-sm text-slate-600 underline-offset-4 transition hover:text-brand-navy hover:underline"
               >
-                {item.label}
+                {t(locale, `navigation.${item.href === "/" ? "home" : item.href === "/categories" ? "categories" : item.href === "/request/create" ? "requestHandyman" : item.href === "/#kako-radi" ? "howItWorks" : item.href === "/register?type=majstor" ? "forHandymen" : item.href === "/#faq" ? "faq" : item.href === "/instaliraj" ? "installApp" : "support"}`, item.label)}
               </Link>
             ))}
           </nav>
@@ -53,7 +59,7 @@ export function PublicFooter() {
           {/* Pravni dokumenti */}
           <nav aria-label="Pravni dokumenti" className="flex flex-col gap-2">
             <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-400">
-              Pravno
+              {t(locale, "footer.legal", "Pravno")}
             </p>
             {FOOTER_LEGAL.map((item) => (
               <Link
@@ -61,7 +67,7 @@ export function PublicFooter() {
                 href={item.href}
                 className="text-sm text-slate-600 underline-offset-4 transition hover:text-brand-navy hover:underline"
               >
-                {item.label}
+                {t(locale, item.href === "/politika-privatnosti" ? "navigation.privacy" : "navigation.terms", item.label)}
               </Link>
             ))}
           </nav>
@@ -69,7 +75,7 @@ export function PublicFooter() {
 
         <div className="mt-10 flex flex-col gap-1 border-t border-slate-200/80 pt-6 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-xs text-slate-500">
-            © {new Date().getFullYear()} BrziMajstor.ME — Sva prava zadržana.
+            © {new Date().getFullYear()} BrziMajstor.ME — {t(locale, "footer.copyright", "Sva prava zadržana.")}
           </p>
           <div className="flex gap-4">
             {FOOTER_LEGAL.map((item) => (
@@ -78,7 +84,7 @@ export function PublicFooter() {
                 href={item.href}
                 className="text-xs text-slate-400 underline-offset-2 hover:text-slate-600 hover:underline"
               >
-                {item.label}
+                {t(locale, item.href === "/politika-privatnosti" ? "navigation.privacy" : "navigation.terms", item.label)}
               </Link>
             ))}
           </div>

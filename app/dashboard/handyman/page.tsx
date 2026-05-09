@@ -18,6 +18,9 @@ import { HandymanCreditsCtaBlock } from "@/components/credits/handyman-credits-c
 import { CheckCircle2, Clock, XCircle } from "lucide-react";
 import { VerifyEmailBanner } from "@/components/account/verify-email-banner";
 import { withPerfLog } from "@/lib/perf";
+import { headers } from "next/headers";
+import { LOCALE_HEADER, normalizeLocale } from "@/lib/i18n/config";
+import { t } from "@/lib/i18n/messages";
 
 function isRequesterVerifiedUser(
   user: { emailVerified?: Date | null; phoneVerified?: Date | null } | null | undefined
@@ -44,6 +47,7 @@ export default async function HandymanDashboardPage({
   searchParams: Promise<{ category?: string; city?: string; page?: string; urgency?: string }>;
 }) {
   const session = await auth();
+  const locale = normalizeLocale(headers().get(LOCALE_HEADER));
   if (!session) redirect("/login");
   if (session.user.role !== "HANDYMAN") redirect("/");
 
@@ -84,15 +88,14 @@ export default async function HandymanDashboardPage({
       <div className="mx-auto max-w-5xl px-6 py-8">
         <Card className="rounded-xl bg-white shadow-sm transition hover:shadow-md">
           <CardHeader>
-            <CardTitle className="text-xl">Profil majstora</CardTitle>
+            <CardTitle className="text-xl">{t(locale, "handymanDashboard.profileReceivedTitle", "Profil majstora")}</CardTitle>
             <CardDescription>
-              Prijava je primljena. Popunite profil (kategorije, grad) i sačuvajte — nakon toga profil ide na pregled
-              administratora. Bićete obaviješteni kada profil bude odobren.
+              {t(locale, "handymanDashboard.profileReceivedDescription", "Prijava je primljena. Popunite profil i sačuvajte.")}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <Link href="/dashboard/handyman/profile">
-              <Button size="lg">Ažuriraj profil</Button>
+              <Button size="lg">{t(locale, "handymanDashboard.updateProfile", "Ažuriraj profil")}</Button>
             </Link>
           </CardContent>
         </Card>
@@ -195,10 +198,10 @@ export default async function HandymanDashboardPage({
   const pendingSteps = onboarding.steps.filter((step) => !step.done);
   const statusLabel =
     profile.workerStatus === "ACTIVE"
-      ? "Profil je aktivan"
+      ? t(locale, "handymanDashboard.statusActive", "Profil je aktivan")
       : profile.workerStatus === "PENDING_REVIEW"
-        ? "Čeka pregled admina"
-        : "Profil trenutno nije aktivan";
+        ? t(locale, "handymanDashboard.statusPending", "Čeka pregled admina")
+        : t(locale, "handymanDashboard.statusInactive", "Profil trenutno nije aktivan");
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-5 sm:px-6 sm:py-8">
@@ -213,16 +216,16 @@ export default async function HandymanDashboardPage({
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-[#0F172A] sm:text-3xl">
-            Profil majstora
+            {t(locale, "handymanDashboard.title", "Profil majstora")}
           </h1>
           <p className="mt-2 text-base text-[#64748B]">
-            Otvoreni zahtjevi i ponude na jednom mjestu
+            {t(locale, "handymanDashboard.subtitle", "Otvoreni zahtjevi i ponude na jednom mjestu")}
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
           <Link href="/dashboard/handyman/profile">
             <Button variant="outline" size="sm">
-              Ažuriraj profil
+              {t(locale, "handymanDashboard.updateProfile", "Ažuriraj profil")}
             </Button>
           </Link>
           <SignOutButton />
@@ -232,46 +235,46 @@ export default async function HandymanDashboardPage({
       <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
         <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
           <div className="space-y-2">
-            <p className="text-sm font-semibold text-slate-500">Status profila</p>
+            <p className="text-sm font-semibold text-slate-500">{t(locale, "handymanDashboard.profileStatus", "Status profila")}</p>
             <h2 className="text-xl font-bold text-[#0F172A]">{statusLabel}</h2>
             <p className="max-w-2xl text-sm leading-relaxed text-slate-600">
               {profile.workerStatus === "ACTIVE"
-                ? "Profil je javno vidljiv i možete normalno pratiti zahtjeve, otključavati kontakte i slati ponude."
-                : "Profil još nije javno objavljen. Popunite što više podataka da admin može brže pregledati i odobriti profil."}
+                ? t(locale, "handymanDashboard.activeDescription", "Profil je javno vidljiv.")
+                : t(locale, "handymanDashboard.inactiveDescription", "Profil još nije javno objavljen.")}
             </p>
             {/* Verifikacijski status */}
             {profile.verifiedStatus === "VERIFIED" && (
               <div className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1 text-sm font-medium text-emerald-700 ring-1 ring-emerald-200">
                 <CheckCircle2 className="h-4 w-4" />
-                Profil verifikovan
+                {t(locale, "handymanDashboard.verified", "Profil verifikovan")}
               </div>
             )}
             {profile.verifiedStatus === "PENDING" && (
               <div className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-3 py-1 text-sm font-medium text-amber-700 ring-1 ring-amber-200">
                 <Clock className="h-4 w-4" />
-                Verifikacija u toku
+                {t(locale, "handymanDashboard.verificationPending", "Verifikacija u toku")}
               </div>
             )}
             {profile.verifiedStatus === "REJECTED" && (
               <div className="inline-flex items-center gap-1.5 rounded-full bg-red-50 px-3 py-1 text-sm font-medium text-red-700 ring-1 ring-red-200">
                 <XCircle className="h-4 w-4" />
-                Verifikacija nije odobrena — kontaktirajte podršku
+                {t(locale, "handymanDashboard.verificationRejected", "Verifikacija nije odobrena — kontaktirajte podršku")}
               </div>
             )}
           </div>
           <div className="min-w-[220px] rounded-xl border border-slate-200 bg-slate-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Sledeći korak</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">{t(locale, "handymanDashboard.nextStep", "Sledeći korak")}</p>
             <p className="mt-2 text-sm font-semibold text-slate-900">
-              {pendingSteps[0]?.label ?? "Profil je kompletiran."}
+              {pendingSteps[0]?.label ?? t(locale, "handymanDashboard.profileComplete", "Profil je kompletiran.")}
             </p>
             <p className="mt-1 text-xs leading-relaxed text-slate-600">
               {pendingSteps.length > 0
-                ? `Preostalo još ${pendingSteps.length} stvari prije punijeg profila.`
-                : "Svi osnovni elementi profila su popunjeni."}
+                ? t(locale, "handymanDashboard.remainingSteps", "Preostalo još {count} stvari prije punijeg profila.").replace("{count}", String(pendingSteps.length))
+                : t(locale, "handymanDashboard.allBasicsDone", "Svi osnovni elementi profila su popunjeni.")}
             </p>
             <Link href="/dashboard/handyman/profile" className="mt-3 inline-block">
               <Button size="sm" className="w-full">
-                Otvori profil i završi
+                {t(locale, "handymanDashboard.openProfile", "Otvori profil i završi")}
               </Button>
             </Link>
           </div>
@@ -280,38 +283,38 @@ export default async function HandymanDashboardPage({
 
       <div className="mt-6 grid grid-cols-2 gap-6 md:grid-cols-4">
         <div className="rounded-xl bg-white p-5 shadow-sm transition hover:shadow-md sm:p-6">
-          <p className="text-sm font-medium text-[#64748B]">Otvoreni zahtjevi</p>
+          <p className="text-sm font-medium text-[#64748B]">{t(locale, "handymanDashboard.openRequests", "Otvoreni zahtjevi")}</p>
           <p className="mt-1 text-2xl font-bold text-[#0F172A]">{totalDisplayed}</p>
         </div>
         <Link href="/dashboard/handyman/offers" className="rounded-xl bg-white p-5 shadow-sm transition hover:shadow-md sm:p-6 block">
-          <p className="text-sm font-medium text-[#64748B]">Moje poslane ponude</p>
+          <p className="text-sm font-medium text-[#64748B]">{t(locale, "handymanDashboard.myOffers", "Moje poslane ponude")}</p>
           <p className="mt-1 text-2xl font-bold text-[#0F172A]">{myOffersCount}</p>
-          <p className="mt-1 text-xs font-medium text-blue-600">Pogledaj sve →</p>
+          <p className="mt-1 text-xs font-medium text-blue-600">{t(locale, "handymanDashboard.viewAll", "Pogledaj sve")} →</p>
         </Link>
         <div className="rounded-xl bg-white p-5 shadow-sm transition hover:shadow-md sm:p-6">
-          <p className="text-sm font-medium text-[#64748B]">Prihvaćeni poslovi</p>
+          <p className="text-sm font-medium text-[#64748B]">{t(locale, "handymanDashboard.acceptedJobs", "Prihvaćeni poslovi")}</p>
           <p className="mt-1 text-2xl font-bold text-[#16A34A]">{acceptedCount}</p>
         </div>
         <div id="credits" className="rounded-xl bg-white p-6 shadow-sm transition hover:shadow-md scroll-mt-24">
-          <p className="text-sm font-medium text-[#64748B]">Krediti</p>
+          <p className="text-sm font-medium text-[#64748B]">{t(locale, "handymanDashboard.credits", "Krediti")}</p>
           <p className="mt-1 text-2xl font-bold text-[#0F172A]">{(profile as { creditsBalance?: number }).creditsBalance ?? 0}</p>
           {(profile as { creditsBalance?: number }).creditsBalance !== undefined &&
             ((profile as { creditsBalance?: number }).creditsBalance ?? 0) < LOW_CREDITS_THRESHOLD &&
             ((profile as { creditsBalance?: number }).creditsBalance ?? 0) > 0 && (
             <p className="mt-1 text-xs font-medium text-amber-600">
-              Malo kredita — dopunite prije nego što vam zatreba kontakt.
+              {t(locale, "handymanDashboard.lowCredits", "Malo kredita — dopunite prije nego što vam zatreba kontakt.")}
             </p>
           )}
           <Link
             href="/dashboard/handyman/credits"
             className="mt-2 inline-block text-sm font-semibold text-blue-600 hover:underline"
           >
-            {isPaymentConfigured() ? "Kupi kredite →" : "Aktiviraj kredite →"}
+            {isPaymentConfigured() ? `${t(locale, "handymanDashboard.buyCredits", "Kupi kredite")} →` : `${t(locale, "handymanDashboard.activateCredits", "Aktiviraj kredite")} →`}
           </Link>
           <p className="mt-1 text-xs text-[#94A3B8]">
             {isCreditsRequired()
-              ? "Obično 200–400 kredita po kontaktu (hitnost + detalji; max oko 650 sa dodacima)"
-              : "U ovom okruženju kontakt može biti bez kredita"}
+              ? t(locale, "handymanDashboard.creditsPolicy", "Obično 200–400 kredita po kontaktu")
+              : t(locale, "handymanDashboard.creditsFreeEnv", "U ovom okruženju kontakt može biti bez kredita")}
           </p>
         </div>
       </div>
@@ -323,25 +326,23 @@ export default async function HandymanDashboardPage({
       )}
 
       <div className="mt-6 rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-        <h2 className="text-lg font-semibold text-[#0F172A]">Kako radi sistem</h2>
+        <h2 className="text-lg font-semibold text-[#0F172A]">{t(locale, "handymanDashboard.systemTitle", "Kako radi sistem")}</h2>
         <p className="mt-2 text-sm leading-relaxed text-slate-700">
-          Klijenti objavljaju zahtjeve — vi ih vidite na listi. Pregled opisa, grada, kategorije i slika je{" "}
-          <strong className="font-semibold text-[#0F172A]">besplatan</strong>.{" "}
-          <strong className="font-semibold text-[#0F172A]">Broj telefona ne vidite odmah</strong>: dobijate ga tek kad
-          potvrdite da želite kontakt za taj posao.
+          {t(locale, "handymanDashboard.systemIntro", "Klijenti objavljaju zahtjeve — vi ih vidite na listi.")}
+          {" "}
+          {t(locale, "handymanDashboard.phoneHidden", "Broj telefona ne vidite odmah.")}
         </p>
         {isCreditsRequired() ? (
           <>
             <p className="mt-3 text-sm leading-relaxed text-slate-700">
-              <strong className="font-semibold text-[#0F172A]">Krediti</strong> su način da otključate kontakt. Troše se
-              samo u tom trenutku (obično 200–400 za hitnost + dodatci). Nakon otključavanja možete poslati ponudu ili pozvati klijenta. Povrat
-              kredita postoji ako admin označi spam ili zaobilaženje, ili zbog tehničke greške — ne ako se korisnik ne
-              javi.
+              {t(locale, "handymanDashboard.creditsExplanation", "Krediti su način da otključate kontakt.")}
+              {" "}
+              {t(locale, "handymanDashboard.refundPolicy", "Povrat kredita postoji u posebnim slučajevima.")}
             </p>
             <p className="mt-3 text-sm text-slate-600">
               Sve opcije za dopunu (online i keš) su na{" "}
               <Link href="/dashboard/handyman/credits" className="font-semibold text-blue-600 underline underline-offset-2">
-                stranici Krediti
+                {t(locale, "handymanDashboard.creditsPage", "stranici Krediti")}
               </Link>
               .
             </p>

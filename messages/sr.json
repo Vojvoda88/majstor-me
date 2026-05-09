@@ -1,21 +1,453 @@
 {
   "common": {
+    "brand": "BrziMajstor.ME",
     "language": "Jezik",
     "languages": {
       "sr": "Crnogorski",
       "en": "English",
       "ru": "Русский",
       "tr": "Türkçe"
+    },
+    "buttons": {
+      "requestHandyman": "Zatraži majstora",
+      "viewCategories": "Pogledaj kategorije",
+      "login": "Prijavi se",
+      "register": "Registruj se",
+      "backHome": "Nazad na početnu",
+      "backLogin": "Nazad na prijavu",
+      "continueGoogle": "Nastavi sa Google"
+    }
+  },
+  "navigation": {
+    "home": "Početna",
+    "categories": "Kategorije",
+    "howItWorks": "Kako radi",
+    "installApp": "Instaliraj aplikaciju",
+    "contact": "Kontakt",
+    "support": "Kontakt / podrška",
+    "requestHandyman": "Zatraži majstora",
+    "forHandymen": "Za majstore",
+    "faq": "Česta pitanja",
+    "privacy": "Politika privatnosti",
+    "terms": "Uslovi korišćenja"
+  },
+  "footer": {
+    "description": "Platforma za lakše povezivanje korisnika i majstora u Crnoj Gori — zatražite majstora, besplatno za korisnike.",
+    "platform": "Platforma",
+    "legal": "Pravno",
+    "copyright": "Sva prava zadržana."
+  },
+  "home": {
+    "hero": {
+      "imageAlt": "Majstor na poslu",
+      "headline": "Majstori u Crnoj Gori — brzo, jednostavno i bez zvanja na više mjesta",
+      "subline": "Opišite posao jednom. Majstori kojima odgovara grad i vrsta posla javljaju se preko platforme.",
+      "primaryCta": "Zatraži majstora",
+      "secondaryCta": "Pogledaj kategorije",
+      "handymanCta": "Majstori: preuzmite poslove",
+      "loginCta": "Već imate nalog? Prijavi se",
+      "trustFree": "100% besplatno",
+      "trustNoCalling": "Bez zvanja na više mjesta",
+      "trustFast": "Brzo i jednostavno"
+    },
+    "howUsers": {
+      "eyebrow": "Za korisnike",
+      "title": "Kako radi za korisnike",
+      "subtitle": "Jedan kratki zahtjev — majstori iz vašeg grada odgovaraju preko platforme, bez zvanja od vrata do vrata.",
+      "stepLabel": "Korak",
+      "steps": [
+        {
+          "title": "Zatražite majstora besplatno",
+          "description": "Kratak opis, grad i po želji slike. Objavljivanje je besplatno."
+        },
+        {
+          "title": "Majstori vide oglas",
+          "description": "Nakon provjere, zahtjev je vidljiv majstorima kojima odgovara grad i vrsta posla."
+        },
+        {
+          "title": "Dogovor",
+          "description": "Nastavljate razgovor s majstorom kako vama odgovara."
+        }
+      ],
+      "primaryCta": "Zatraži majstora",
+      "note": "Jedan zahtjev umjesto niza pojedinačnih poziva.",
+      "detailsCta": "Detaljno za korisnike"
+    },
+    "howHandymen": {
+      "eyebrow": "Majstori",
+      "title": "Za majstore",
+      "subtitle": "Bez pretplate. Dobijate start kredite i plaćate samo kada otključate kontakt klijenta.",
+      "badgeNoSubscription": "Nema pretplate • Obavještenja odmah",
+      "badgeStandardContact": "Standardan kontakt oko 1,99 €",
+      "featuredBenefit": "Glavni benefit",
+      "stepLabel": "Korak",
+      "steps": [
+        {
+          "title": "Poslovi dolaze do vas",
+          "description": "Dobijate obavještenje kada oglas odgovara vašoj branši i gradu."
+        },
+        {
+          "title": "Registracija besplatna + start krediti",
+          "description": "Registracija je besplatna. Dobijate start kredite i krećete bez pretplate."
+        },
+        {
+          "title": "Plaćate samo kada želite kontakt",
+          "description": "Krediti se troše samo kada želite da otključate kontakt klijenta."
+        }
+      ],
+      "creditNote": "Krediti nijesu pretplata. Troše se samo kada otključate kontakt za posao koji želite.",
+      "registerCta": "Registruj se kao majstor",
+      "creditsCta": "Kako rade krediti?"
+    }
+  },
+  "auth": {
+    "login": {
+      "metadataTitle": "Prijava",
+      "metadataDescription": "Prijava na nalog — korisnik ili majstor na BrziMajstor.ME.",
+      "heading": "Dobrodošli nazad",
+      "subheading": "Prijavite se na svoj nalog da nastavite",
+      "verifiedBanner": "Email adresa je uspješno verifikovana! Sada se možete prijaviti.",
+      "email": "Email",
+      "password": "Lozinka",
+      "submit": "Prijavi se",
+      "submitting": "Prijava...",
+      "or": "ili",
+      "continueGoogle": "Nastavi sa Google",
+      "noAccount": "Nemate nalog?",
+      "openRegistration": "Otvorite registraciju",
+      "secureNote": "Sigurna prijava • Vaši podaci su zaštićeni",
+      "errors": {
+        "emailInvalid": "Unesite validan email",
+        "passwordRequired": "Unesite lozinku",
+        "wrongCredentials": "Pogrešan email ili lozinka",
+        "accessDenied": "Pristup je odbijen.",
+        "sessionExpired": "Sesija je istekla. Prijavite se ponovo."
+      }
+    },
+    "register": {
+      "metadataTitle": "Registracija",
+      "metadataDescription": "Novi nalog: korisnik ili majstor na BrziMajstor.ME.",
+      "heading": "Kreirajte nalog",
+      "subheading": "Korisnik ili majstor — izaberite kako želite da koristite platformu",
+      "inviteSubheading": "Pozvani ste da se registrujete kao majstor.",
+      "accountType": "Tip naloga",
+      "user": "Korisnik",
+      "handyman": "Majstor",
+      "userSubtitle": "Tražim majstora",
+      "handymanSubtitle": "Nudim usluge",
+      "handymanNotice": "Registracija je besplatna. Dobijate start kredite. Nema pretplate — krediti idu na otključavanje kontakta kad vam posao odgovara.",
+      "nameUser": "Ime i prezime",
+      "nameHandyman": "Naziv profila (firma, servis, tim ili ime)",
+      "password": "Lozinka",
+      "phoneOptional": "Telefon (opciono)",
+      "cityOptional": "Grad (opciono)",
+      "categories": "Kategorije koje pokrivate",
+      "workCities": "Gradovi u kojima radite",
+      "gallery": "Fotografije radova",
+      "bio": "Opis profila",
+      "submit": "Registruj se",
+      "submitting": "Registracija...",
+      "hasAccount": "Već imate nalog?",
+      "login": "Prijavite se",
+      "freeNote": "Besplatna registracija • Bez skrivenih troškova"
+    },
+    "forgotPassword": {
+      "metadataTitle": "Zaboravljena lozinka",
+      "metadataDescription": "Reset lozinke — BrziMajstor.ME",
+      "heading": "Zaboravljena lozinka",
+      "subheading": "Unesite email — šaljemo link za novu lozinku ako nalog postoji.",
+      "email": "Email",
+      "submit": "Pošalji link",
+      "submitting": "Slanje...",
+      "sentInfo": "Ako nalog sa tim emailom postoji i ima lozinku, poslali smo link za novu lozinku. Provjerite poštu i spam.",
+      "backToLogin": "Nazad na prijavu"
+    },
+    "resetPassword": {
+      "metadataTitle": "Nova lozinka",
+      "metadataDescription": "Postavite novu lozinku — BrziMajstor.ME",
+      "heading": "Nova lozinka",
+      "subheading": "Unesite novu lozinku za svoj nalog.",
+      "newPassword": "Nova lozinka",
+      "confirmPassword": "Potvrdi lozinku",
+      "submit": "Sačuvaj novu lozinku",
+      "submitting": "Snimam...",
+      "invalidLink": "Nedostaje ili je neispravan link. Zatražite novi reset sa stranice za zaboravljenu lozinku."
     }
   },
   "request": {
     "create": {
-      "title": "Zatraži majstora",
-      "intro": "Besplatno za vas. Opišite posao što jasnije — jedan zahtjev umjesto više poziva."
+      "metadataTitle": "Zatraži majstora",
+      "metadataDescription": "Pošaljite zahtjev i pronađite majstora u Crnoj Gori.",
+      "heading": "Zatraži majstora",
+      "subheading": "Besplatno za vas. Opišite posao što jasnije — jedan zahtjev umjesto više poziva. Administrator prvo pregleda zahtjev, zatim se javljaju majstori kojima posao odgovara.",
+      "recommended": "Preporučeno",
+      "openAccountTitle": "Otvorite nalog prije slanja (opciono)",
+      "openAccountDescription": "Nije obavezno, ali je lakše da kasnije pratite zahtjev, ponude i status na jednom mjestu.",
+      "register": "Registruj se",
+      "alreadyHaveAccount": "Već imam nalog",
+      "form": {
+        "name": "Ime",
+        "category": "Kategorija",
+        "title": "Naslov",
+        "description": "Opis posla",
+        "city": "Grad",
+        "phone": "Telefon",
+        "viber": "Viber broj",
+        "whatsapp": "WhatsApp broj",
+        "address": "Adresa",
+        "email": "Email",
+        "urgency": "Hitnost",
+        "photos": "Fotografije",
+        "submit": "Pošalji zahtjev",
+        "submitting": "Slanje zahtjeva..."
+      },
+      "validation": {
+        "enterName": "Unesite ime",
+        "selectCategory": "Izaberite kategoriju",
+        "titleMin": "Naslov mora imati najmanje 3 karaktera",
+        "descMin": "Opis mora imati najmanje 10 karaktera",
+        "enterCity": "Unesite grad",
+        "enterPhone": "Unesite broj telefona",
+        "emailInvalid": "Neispravan email",
+        "maxPhotos": "Maksimalno 5 slika",
+        "noContactInTitle": "Ne ostavljajte kontakt podatke u naslovu. Koristite posebna polja.",
+        "noContactInDescription": "Ne ostavljajte telefon, email, Instagram, Viber, WhatsApp ili adresu u opisu. Koristite posebna polja."
+      },
+      "serverErrors": {
+        "onlyUsers": "Samo korisnici mogu kreirati zahtjeve",
+        "verifyEmail": "Morate verifikovati email adresu prije objave zahtjeva.",
+        "dailyLimit": "Dostigli ste dnevni limit zahtjeva (5)",
+        "duplicate": "Već ste objavili isti zahtjev danas",
+        "saveError": "Greška pri snimanju zahtjeva. Pokušajte ponovo za nekoliko trenutaka."
+      }
     }
   },
-  "auth": {
-    "login": "Prijava",
-    "register": "Registracija"
+  "seo": {
+    "homeTitle": "Majstori u Crnoj Gori",
+    "homeDescription": "BrziMajstor.ME povezuje korisnike i majstore u Crnoj Gori. Pošaljite zahtjev besplatno i pronađite majstora za posao.",
+    "requestCreateTitle": "Zatraži majstora",
+    "requestCreateDescription": "Besplatno pošaljite zahtjev i pronađite majstora u Crnoj Gori.",
+    "categoriesTitle": "Kategorije majstora",
+    "categoriesDescription": "Pregledajte kategorije usluga i pronađite majstore u Crnoj Gori."
+  },
+  "userDashboard": {
+    "title": "Moji zahtjevi",
+    "subtitle": "Pregled vaših objavljenih zahtjeva",
+    "newRequest": "Novi zahtjev",
+    "savedHandymen": "Sačuvani majstori",
+    "verified": "Verifikovan",
+    "view": "Pogledaj",
+    "emptyTitle": "Nemate objavljenih zahtjeva",
+    "emptyDescription": "Zatražite majstora da biste primali ponude od majstora kojima posao odgovara",
+    "requestCta": "Zatraži majstora",
+    "status": {
+      "OPEN": "Otvoren",
+      "IN_PROGRESS": "U toku",
+      "COMPLETED": "Završen",
+      "CANCELLED": "Otkazan",
+      "PENDING_REVIEW": "Čeka pregled administratora",
+      "DISTRIBUTED": "Odobren — majstori mogu odgovoriti"
+    },
+    "offersCount": "{count} ponuda",
+    "acceptedHandyman": "Majstor: {name}",
+    "reviewLeft": "Recenzija ostavljena"
+  },
+  "handymanDashboard": {
+    "metadataTitle": "Profil majstora",
+    "metadataDescription": "Pregled otvorenih zahtjeva i slanje ponuda",
+    "profileReceivedTitle": "Profil majstora",
+    "profileReceivedDescription": "Prijava je primljena. Popunite profil i sačuvajte — nakon toga profil ide na pregled administratora. Bićete obaviješteni kada profil bude odobren.",
+    "updateProfile": "Ažuriraj profil",
+    "title": "Profil majstora",
+    "subtitle": "Otvoreni zahtjevi i ponude na jednom mjestu",
+    "profileStatus": "Status profila",
+    "statusActive": "Profil je aktivan",
+    "statusPending": "Čeka pregled admina",
+    "statusInactive": "Profil trenutno nije aktivan",
+    "activeDescription": "Profil je javno vidljiv i možete normalno pratiti zahtjeve, otključavati kontakte i slati ponude.",
+    "inactiveDescription": "Profil još nije javno objavljen. Popunite što više podataka da admin može brže pregledati i odobriti profil.",
+    "verified": "Profil verifikovan",
+    "verificationPending": "Verifikacija u toku",
+    "verificationRejected": "Verifikacija nije odobrena — kontaktirajte podršku",
+    "nextStep": "Sledeći korak",
+    "profileComplete": "Profil je kompletiran.",
+    "remainingSteps": "Preostalo još {count} stvari prije punijeg profila.",
+    "allBasicsDone": "Svi osnovni elementi profila su popunjeni.",
+    "openProfile": "Otvori profil i završi",
+    "openRequests": "Otvoreni zahtjevi",
+    "myOffers": "Moje poslane ponude",
+    "viewAll": "Pogledaj sve",
+    "acceptedJobs": "Prihvaćeni poslovi",
+    "credits": "Krediti",
+    "lowCredits": "Malo kredita — dopunite prije nego što vam zatreba kontakt.",
+    "buyCredits": "Kupi kredite",
+    "activateCredits": "Aktiviraj kredite",
+    "creditsPolicy": "Obično 200–400 kredita po kontaktu (hitnost + detalji; max oko 650 sa dodacima)",
+    "creditsFreeEnv": "U ovom okruženju kontakt može biti bez kredita",
+    "systemTitle": "Kako radi sistem",
+    "systemIntro": "Klijenti objavljaju zahtjeve — vi ih vidite na listi. Pregled opisa, grada, kategorije i slika je besplatan.",
+    "phoneHidden": "Broj telefona ne vidite odmah: dobijate ga tek kad potvrdite da želite kontakt za taj posao.",
+    "creditsExplanation": "Krediti su način da otključate kontakt. Troše se samo u tom trenutku. Nakon otključavanja možete poslati ponudu ili pozvati klijenta.",
+    "refundPolicy": "Povrat kredita postoji ako admin označi spam ili zaobilaženje, ili zbog tehničke greške — ne ako se korisnik ne javi.",
+    "creditsPage": "stranici Krediti"
+  },
+  "handymanRequests": {
+    "filters": {
+      "category": "Kategorija",
+      "city": "Grad",
+      "urgency": "Hitnost",
+      "allCategories": "Sve kategorije",
+      "allCities": "Svi gradovi",
+      "allUrgencies": "Sve hitnosti",
+      "apply": "Primijeni filtere",
+      "clear": "Očisti"
+    },
+    "emptyTitle": "Trenutno nema zahtjeva",
+    "emptyDescription": "Kada se pojave zahtjevi koji odgovaraju vašim kategorijama i gradovima, biće prikazani ovdje.",
+    "sendOffer": "Pošalji ponudu",
+    "unlockContact": "Otključaj kontakt",
+    "alreadyOffered": "Već ste poslali ponudu",
+    "previous": "Prethodna",
+    "next": "Sljedeća"
+  },
+  "requestDetail": {
+    "back": "Nazad",
+    "verifiedUser": "Verifikovan korisnik",
+    "description": "Opis",
+    "photos": "Slike",
+    "address": "Adresa",
+    "contact": "Kontakt",
+    "phone": "Telefon",
+    "viber": "Viber",
+    "whatsapp": "WhatsApp",
+    "email": "Email",
+    "pendingReview": "Zahtjev trenutno čeka pregled administratora. Nakon odobrenja, majstori će moći da vide zahtjev i da šalju ponude.",
+    "distributed": "Zahtjev je odobren i prosleđen majstorima. Uskoro možete očekivati ponude.",
+    "hasOffers": "Imate nove ponude — pogledajte ih ispod.",
+    "quickContact": "Brzi kontakt klijenta prije ili uz slanje ponude:",
+    "viberUser": "Viber korisniku",
+    "whatsappUser": "WhatsApp korisniku",
+    "unlockTitle": "Otključaj kontakt za ovaj posao",
+    "unlockIntro": "Pregled opisa, grada i slika je besplatan. Plaćate samo kada želite kontakt — bez pretplate.",
+    "unlockSteps": "Prvo otključavate kontakt kreditima. Zatim odmah vidite telefon / Viber / WhatsApp — možete kontaktirati klijenta i poslati ponudu kroz formu.",
+    "acceptedOffer": "Prihvaćena ponuda",
+    "jobInProgress": "Posao je u toku. Kada majstor završi, označite ga kao završen.",
+    "choiceReceived": "Vaš izbor je primljen. Majstor će vas kontaktirati.",
+    "chatWithUser": "Razgovor sa korisnikom",
+    "leaveReview": "Ostavite recenziju",
+    "reviewHandyman": "Ocijenite majstora {name}",
+    "yourReview": "Vaša recenzija",
+    "alreadySentOffer": "Već ste poslali ponudu na ovaj zahtjev. Čekate odgovor od klijenta.",
+    "offers": "Ponude ({count})",
+    "offersDescription": "Uporedite ponude i izaberite najboljeg majstora",
+    "noOffersTitle": "Ponude",
+    "noOffersDescription": "Još nema ponuda. Biće prikazane ovdje čim stignu.",
+    "loginToViewOffers": "Prijavite se da vidite ponude"
+  },
+  "offers": {
+    "formTitle": "Pošalji ponudu",
+    "formDescription": "Objasnite šta nudite, okvirnu cijenu i kada možete da počnete.",
+    "price": "Cijena",
+    "priceType": "Tip cijene",
+    "message": "Poruka",
+    "availability": "Dostupnost",
+    "submit": "Pošalji ponudu",
+    "submitting": "Slanje ponude...",
+    "sentTitle": "Ponuda poslata",
+    "accepted": "Prihvaćena",
+    "pending": "Čeka odgovor",
+    "rejected": "Odbijena",
+    "withdrawn": "Povučena",
+    "noOffersTitle": "Još niste poslali ponude",
+    "noOffersDescription": "Kada pošaljete ponudu za zahtjev, pojaviće se ovdje.",
+    "validation": {
+      "messageRequired": "Unesite poruku ponude",
+      "priceRequired": "Unesite cijenu ili okvirnu procjenu",
+      "availabilityRequired": "Izaberite dostupnost"
+    }
+  },
+  "profile": {
+    "title": "Profil majstora",
+    "intro": "Uredite podatke profila koji će korisnici vidjeti prije nego što vas kontaktiraju.",
+    "name": "Naziv profila",
+    "city": "Grad",
+    "phone": "Telefon",
+    "viber": "Viber broj",
+    "whatsapp": "WhatsApp broj",
+    "categories": "Kategorije",
+    "workCities": "Gradovi u kojima radite",
+    "bio": "Opis profila",
+    "gallery": "Fotografije radova",
+    "avatar": "Profilna slika",
+    "save": "Sačuvaj profil",
+    "saving": "Čuvanje...",
+    "saved": "Profil je sačuvan",
+    "aiSuggest": "Predloži opis uz pomoć AI",
+    "aiSuggesting": "Pripremam predlog...",
+    "validation": {
+      "bioRequired": "Unesite opis profila",
+      "categoryRequired": "Izaberite najmanje jednu kategoriju",
+      "cityRequired": "Unesite grad"
+    }
+  },
+  "credits": {
+    "title": "Krediti",
+    "subtitle": "Krediti se koriste za otključavanje kontakta klijenta kada vam posao odgovara.",
+    "balance": "Trenutno stanje",
+    "buyOnline": "Kupi online",
+    "activateCash": "Aktivacija keš uplatom",
+    "packages": "Paketi kredita",
+    "history": "Istorija transakcija",
+    "emptyHistory": "Još nema transakcija.",
+    "refund": "Povrat kredita",
+    "cashActivationTitle": "Aktivacija kredita keš uplatom",
+    "cashActivationDescription": "Pošaljite zahtjev za aktivaciju kredita nakon dogovorene uplate.",
+    "paymentMethod": "Način plaćanja",
+    "amount": "Iznos",
+    "submitCash": "Pošalji zahtjev",
+    "cashSubmitted": "Zahtjev je poslat. Admin će provjeriti uplatu."
+  },
+  "notifications": {
+    "title": "Obavještenja",
+    "markAllRead": "Označi sve kao pročitano",
+    "empty": "Nemate novih obavještenja.",
+    "loading": "Učitavanje obavještenja...",
+    "error": "Greška pri učitavanju obavještenja.",
+    "open": "Otvori",
+    "close": "Zatvori"
+  },
+  "push": {
+    "enableTitle": "Ne propusti nove zahtjeve",
+    "enableBody": "Uključi push obavještenja da odmah saznaš kada se pojavi posao koji ti odgovara.",
+    "enable": "Uključi obavještenja",
+    "enabled": "Obavještenja su uključena",
+    "unsupported": "Ovaj uređaj ili browser ne podržava push obavještenja.",
+    "test": "Pošalji test",
+    "testSent": "Test obavještenje je poslato.",
+    "iosHint": "Na iPhone-u prvo instalirajte aplikaciju na početni ekran, zatim uključite obavještenja."
+  },
+  "pwa": {
+    "installTitle": "Instaliraj BrziMajstor.ME",
+    "installBody": "Dodajte aplikaciju na početni ekran za brži pristup zahtjevima, ponudama i obavještenjima.",
+    "install": "Instaliraj",
+    "later": "Kasnije",
+    "iosStepsTitle": "Kako instalirati na iPhone",
+    "androidStepsTitle": "Kako instalirati na Android",
+    "updateAvailable": "Dostupna je nova verzija aplikacije.",
+    "update": "Ažuriraj"
+  },
+  "emailPush": {
+    "newRequestTitle": "Novi zahtjev za posao",
+    "newRequestBody": "Imate novi zahtjev koji odgovara vašoj kategoriji i gradu.",
+    "newOfferTitle": "Nova ponuda za vaš zahtjev",
+    "newOfferBody": "Majstor je poslao ponudu. Otvorite zahtjev i pogledajte detalje.",
+    "offerAcceptedTitle": "Ponuda je prihvaćena",
+    "offerAcceptedBody": "Korisnik je prihvatio vašu ponudu. Kontaktirajte ga i dogovorite detalje.",
+    "jobCompletedTitle": "Posao je označen kao završen",
+    "jobCompletedBody": "Zahtjev je označen kao završen. Možete ostaviti recenziju.",
+    "passwordResetSubject": "Reset lozinke",
+    "verifyEmailSubject": "Potvrdite email adresu",
+    "welcomeHandymanSubject": "Dobrodošli na BrziMajstor.ME",
+    "welcomeHandymanBody": "Trenutno formiramo bazu majstora. Uskoro krećemo sa jačom promocijom prema korisnicima."
   }
 }

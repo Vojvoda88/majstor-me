@@ -4,6 +4,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useUiLanguage } from "@/lib/i18n/ui-language";
+import { t } from "@/lib/i18n/messages";
 
 type Notification = {
   id: string;
@@ -28,6 +30,7 @@ export function NotificationsDropdown({
   const [loading, setLoading] = useState(false);
   const [fetchError, setFetchError] = useState(false);
   const [liveBanner, setLiveBanner] = useState<Notification | null>(null);
+  const locale = useUiLanguage();
   const [panelStyle, setPanelStyle] = useState<{
     top: number;
     left: number;
@@ -179,14 +182,14 @@ export function NotificationsDropdown({
             }}
           >
             <div className="flex items-center justify-between gap-3 border-b border-slate-100 px-4 py-3">
-              <span className="text-sm font-semibold tracking-tight text-slate-900">Notifikacije</span>
+              <span className="text-sm font-semibold tracking-tight text-slate-900">{t(locale, "notifications.title", "Notifikacije")}</span>
               {unreadCount > 0 && (
                 <button
                   type="button"
                   onClick={markAllRead}
                   className="shrink-0 text-xs font-medium text-blue-600 hover:underline"
                 >
-                  Označi sve kao pročitano
+                  {t(locale, "notifications.markAllRead", "Označi sve kao pročitano")}
                 </button>
               )}
             </div>
@@ -196,24 +199,24 @@ export function NotificationsDropdown({
             >
               {loading ? (
                 <div className="p-5 text-center text-sm text-slate-500">
-                  Učitavanje...
+                  {t(locale, "notifications.loading", "Učitavanje...")}
                 </div>
               ) : fetchError ? (
                 <div className="flex flex-col items-center justify-center gap-2 p-8 text-center">
                   <Bell className="h-10 w-10 text-slate-300" />
-                  <p className="text-sm font-medium text-slate-600">Greška pri učitavanju</p>
+                  <p className="text-sm font-medium text-slate-600">{t(locale, "notifications.error", "Greška pri učitavanju")}</p>
                   <button
                     type="button"
                     onClick={() => void fetchNotifications()}
                     className="mt-1 text-xs font-medium text-blue-600 hover:underline"
                   >
-                    Pokušaj ponovo
+                    {t(locale, "common.buttons.retry", "Pokušaj ponovo")}
                   </button>
                 </div>
               ) : notifications.length === 0 ? (
                 <div className="flex flex-col items-center justify-center gap-2 p-8 text-center">
                   <Bell className="h-10 w-10 text-slate-300" />
-                  <p className="text-sm font-medium text-slate-600">Nema notifikacija</p>
+                  <p className="text-sm font-medium text-slate-600">{t(locale, "notifications.empty", "Nema notifikacija")}</p>
                   <p className="text-xs text-slate-400">
                     Obavještenja ćete dobiti kad dobijete ponudu ili novu poruku
                   </p>
@@ -258,7 +261,7 @@ export function NotificationsDropdown({
               className="rounded-md px-2 py-1 text-xs text-slate-500 hover:bg-slate-100"
               onClick={() => setLiveBanner(null)}
             >
-              Zatvori
+              {t(locale, "notifications.close", "Zatvori")}
             </button>
             <Link
               href={liveBanner.link ?? "#"}
@@ -268,7 +271,7 @@ export function NotificationsDropdown({
               }}
               className="rounded-md bg-blue-600 px-2.5 py-1 text-xs font-semibold text-white hover:bg-blue-700"
             >
-              Otvori
+              {t(locale, "notifications.open", "Otvori")}
             </Link>
           </div>
         </div>

@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { SiteHeaderSimple } from "@/components/layout/site-header-simple";
 import { getSiteUrl } from "@/lib/site-url";
 import { buildAlternates, getLocaleFromHeaderValue, LOCALE_HEADER, localizedPath } from "@/lib/i18n/seo";
+import { t } from "@/lib/i18n/messages";
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = getLocaleFromHeaderValue(headers().get(LOCALE_HEADER));
@@ -37,6 +38,7 @@ export default async function LoginPage({
 
   const params = await searchParams;
   const emailVerified = params.verified === "1";
+  const locale = getLocaleFromHeaderValue(headers().get(LOCALE_HEADER));
 
   return (
     <div className="min-h-screen bg-brand-page">
@@ -46,21 +48,21 @@ export default async function LoginPage({
           {emailVerified && (
             <div className="mb-6 flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-800">
               <svg className="h-5 w-5 shrink-0 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
-              Email adresa je uspješno verifikovana! Sada se možete prijaviti.
+              {t(locale, "auth.login.verifiedBanner", "Email adresa je uspješno verifikovana! Sada se možete prijaviti.")}
             </div>
           )}
           <div className="mb-8 text-center">
-            <h1 className="font-display text-2xl font-bold text-brand-navy md:text-3xl">Dobrodošli nazad</h1>
-            <p className="mt-3 text-slate-600">Prijavite se na svoj nalog da nastavite</p>
+            <h1 className="font-display text-2xl font-bold text-brand-navy md:text-3xl">{t(locale, "auth.login.heading", "Dobrodošli nazad")}</h1>
+            <p className="mt-3 text-slate-600">{t(locale, "auth.login.subheading", "Prijavite se na svoj nalog da nastavite")}</p>
           </div>
           <LoginForm />
           <p className="mt-6 text-center">
             <Link href="/">
-              <Button variant="ghost" size="sm">← Nazad na početnu</Button>
+              <Button variant="ghost" size="sm">← {t(locale, "common.buttons.backHome", "Nazad na početnu")}</Button>
             </Link>
           </p>
           <p className="mt-4 text-center text-xs text-[#94A3B8]">
-            Sigurna prijava • Vaši podaci su zaštićeni
+            {t(locale, "auth.login.secureNote", "Sigurna prijava • Vaši podaci su zaštićeni")}
           </p>
         </div>
       </div>

@@ -1,21 +1,453 @@
 {
   "common": {
+    "brand": "BrziMajstor.ME",
     "language": "Language",
     "languages": {
       "sr": "Montenegrin",
       "en": "English",
       "ru": "Russian",
       "tr": "Turkish"
+    },
+    "buttons": {
+      "requestHandyman": "Request a handyman",
+      "viewCategories": "View categories",
+      "login": "Log in",
+      "register": "Register",
+      "backHome": "Back to home",
+      "backLogin": "Back to login",
+      "continueGoogle": "Continue with Google"
+    }
+  },
+  "navigation": {
+    "home": "Home",
+    "categories": "Categories",
+    "howItWorks": "How it works",
+    "installApp": "Install app",
+    "contact": "Contact",
+    "support": "Contact / support",
+    "requestHandyman": "Request a handyman",
+    "forHandymen": "For handymen",
+    "faq": "FAQ",
+    "privacy": "Privacy policy",
+    "terms": "Terms of use"
+  },
+  "footer": {
+    "description": "A platform that helps users and handymen connect in Montenegro — request a handyman free of charge.",
+    "platform": "Platform",
+    "legal": "Legal",
+    "copyright": "All rights reserved."
+  },
+  "home": {
+    "hero": {
+      "imageAlt": "Handyman at work",
+      "headline": "Handymen in Montenegro — fast, simple, and without calling around",
+      "subline": "Describe the job once. Handymen who match your city and service type respond through the platform.",
+      "primaryCta": "Request a handyman",
+      "secondaryCta": "View categories",
+      "handymanCta": "Handymen: take jobs",
+      "loginCta": "Already have an account? Log in",
+      "trustFree": "100% free",
+      "trustNoCalling": "No calling multiple places",
+      "trustFast": "Fast and simple"
+    },
+    "howUsers": {
+      "eyebrow": "For users",
+      "title": "How it works for users",
+      "subtitle": "One short request — handymen from your city respond through the platform, without calling door to door.",
+      "stepLabel": "Step",
+      "steps": [
+        {
+          "title": "Request a handyman for free",
+          "description": "Add a short description, city, and photos if needed. Posting is free."
+        },
+        {
+          "title": "Handymen see the request",
+          "description": "After review, the request is visible to handymen who match the city and job type."
+        },
+        {
+          "title": "Make an agreement",
+          "description": "Continue the conversation with the handyman in the way that suits you."
+        }
+      ],
+      "primaryCta": "Request a handyman",
+      "note": "One request instead of many separate calls.",
+      "detailsCta": "Details for users"
+    },
+    "howHandymen": {
+      "eyebrow": "Handymen",
+      "title": "For handymen",
+      "subtitle": "No subscription. You receive starter credits and pay only when you unlock a client contact.",
+      "badgeNoSubscription": "No subscription • Instant notifications",
+      "badgeStandardContact": "Standard contact around €1.99",
+      "featuredBenefit": "Main benefit",
+      "stepLabel": "Step",
+      "steps": [
+        {
+          "title": "Jobs come to you",
+          "description": "You get notified when a request matches your trade and city."
+        },
+        {
+          "title": "Free registration + starter credits",
+          "description": "Registration is free. You get starter credits and begin without a subscription."
+        },
+        {
+          "title": "Pay only when you want the contact",
+          "description": "Credits are used only when you decide to unlock the client contact."
+        }
+      ],
+      "creditNote": "Credits are not a subscription. They are spent only when you unlock a contact for a job you want.",
+      "registerCta": "Register as a handyman",
+      "creditsCta": "How do credits work?"
+    }
+  },
+  "auth": {
+    "login": {
+      "metadataTitle": "Login",
+      "metadataDescription": "Log in as a user or handyman on BrziMajstor.ME.",
+      "heading": "Welcome back",
+      "subheading": "Log in to your account to continue",
+      "verifiedBanner": "Email address successfully verified. You can now log in.",
+      "email": "Email",
+      "password": "Password",
+      "submit": "Log in",
+      "submitting": "Logging in...",
+      "or": "or",
+      "continueGoogle": "Continue with Google",
+      "noAccount": "No account yet?",
+      "openRegistration": "Create an account",
+      "secureNote": "Secure login • Your data is protected",
+      "errors": {
+        "emailInvalid": "Enter a valid email address",
+        "passwordRequired": "Enter your password",
+        "wrongCredentials": "Incorrect email or password",
+        "accessDenied": "Access denied.",
+        "sessionExpired": "Session expired. Please log in again."
+      }
+    },
+    "register": {
+      "metadataTitle": "Register",
+      "metadataDescription": "Create a user or handyman account on BrziMajstor.ME.",
+      "heading": "Create an account",
+      "subheading": "User or handyman — choose how you want to use the platform",
+      "inviteSubheading": "You have been invited to register as a handyman.",
+      "accountType": "Account type",
+      "user": "User",
+      "handyman": "Handyman",
+      "userSubtitle": "I need a handyman",
+      "handymanSubtitle": "I offer services",
+      "handymanNotice": "Registration is free. You receive starter credits. There is no subscription — credits are used to unlock contacts for jobs that suit you.",
+      "nameUser": "Full name",
+      "nameHandyman": "Profile name (company, service, team, or name)",
+      "password": "Password",
+      "phoneOptional": "Phone (optional)",
+      "cityOptional": "City (optional)",
+      "categories": "Categories you cover",
+      "workCities": "Cities where you work",
+      "gallery": "Work photos",
+      "bio": "Profile description",
+      "submit": "Register",
+      "submitting": "Creating account...",
+      "hasAccount": "Already have an account?",
+      "login": "Log in",
+      "freeNote": "Free registration • No hidden costs"
+    },
+    "forgotPassword": {
+      "metadataTitle": "Forgot password",
+      "metadataDescription": "Reset password — BrziMajstor.ME",
+      "heading": "Forgot password",
+      "subheading": "Enter your email — if the account exists, we will send a reset link.",
+      "email": "Email",
+      "submit": "Send link",
+      "submitting": "Sending...",
+      "sentInfo": "If an account with this email exists and has a password, we sent a reset link. Check your inbox and spam.",
+      "backToLogin": "Back to login"
+    },
+    "resetPassword": {
+      "metadataTitle": "New password",
+      "metadataDescription": "Set a new password — BrziMajstor.ME",
+      "heading": "New password",
+      "subheading": "Enter a new password for your account.",
+      "newPassword": "New password",
+      "confirmPassword": "Confirm password",
+      "submit": "Save new password",
+      "submitting": "Saving...",
+      "invalidLink": "The link is missing or invalid. Request a new reset from the forgot-password page."
     }
   },
   "request": {
     "create": {
-      "title": "Request a handyman",
-      "intro": "Free for you. Describe the job clearly — one request instead of multiple calls."
+      "metadataTitle": "Request a handyman",
+      "metadataDescription": "Send a request and find a handyman in Montenegro.",
+      "heading": "Request a handyman",
+      "subheading": "Free for you. Describe the job clearly — one request instead of multiple calls. An administrator reviews the request first, then matching handymen respond.",
+      "recommended": "Recommended",
+      "openAccountTitle": "Create an account before sending (optional)",
+      "openAccountDescription": "It is not required, but it makes it easier to track your request, offers, and status in one place.",
+      "register": "Register",
+      "alreadyHaveAccount": "I already have an account",
+      "form": {
+        "name": "Name",
+        "category": "Category",
+        "title": "Title",
+        "description": "Job description",
+        "city": "City",
+        "phone": "Phone",
+        "viber": "Viber number",
+        "whatsapp": "WhatsApp number",
+        "address": "Address",
+        "email": "Email",
+        "urgency": "Urgency",
+        "photos": "Photos",
+        "submit": "Send request",
+        "submitting": "Sending request..."
+      },
+      "validation": {
+        "enterName": "Enter your name",
+        "selectCategory": "Select a category",
+        "titleMin": "Title must have at least 3 characters",
+        "descMin": "Description must have at least 10 characters",
+        "enterCity": "Enter city",
+        "enterPhone": "Enter phone number",
+        "emailInvalid": "Invalid email",
+        "maxPhotos": "Maximum 5 photos",
+        "noContactInTitle": "Do not leave contact details in the title. Use the dedicated fields.",
+        "noContactInDescription": "Do not leave phone, email, Instagram, Viber, WhatsApp, or address in the description. Use the dedicated fields."
+      },
+      "serverErrors": {
+        "onlyUsers": "Only users can create requests",
+        "verifyEmail": "You must verify your email before posting a request.",
+        "dailyLimit": "You have reached your daily request limit (5)",
+        "duplicate": "You already posted the same request today",
+        "saveError": "Error while saving the request. Please try again shortly."
+      }
     }
   },
-  "auth": {
-    "login": "Login",
-    "register": "Register"
+  "seo": {
+    "homeTitle": "Handymen in Montenegro",
+    "homeDescription": "BrziMajstor.ME connects users and handymen in Montenegro. Send a request for free and find a handyman for the job.",
+    "requestCreateTitle": "Request a handyman",
+    "requestCreateDescription": "Send a request for free and find a handyman in Montenegro.",
+    "categoriesTitle": "Handyman categories",
+    "categoriesDescription": "Browse service categories and find handymen in Montenegro."
+  },
+  "userDashboard": {
+    "title": "My requests",
+    "subtitle": "Overview of your published requests",
+    "newRequest": "New request",
+    "savedHandymen": "Saved handymen",
+    "verified": "Verified",
+    "view": "View",
+    "emptyTitle": "You have no published requests",
+    "emptyDescription": "Request a handyman to receive offers from handymen who match the job",
+    "requestCta": "Request a handyman",
+    "status": {
+      "OPEN": "Open",
+      "IN_PROGRESS": "In progress",
+      "COMPLETED": "Completed",
+      "CANCELLED": "Cancelled",
+      "PENDING_REVIEW": "Waiting for admin review",
+      "DISTRIBUTED": "Approved — handymen can respond"
+    },
+    "offersCount": "{count} offers",
+    "acceptedHandyman": "Handyman: {name}",
+    "reviewLeft": "Review submitted"
+  },
+  "handymanDashboard": {
+    "metadataTitle": "Handyman profile",
+    "metadataDescription": "View open requests and send offers",
+    "profileReceivedTitle": "Handyman profile",
+    "profileReceivedDescription": "Your application has been received. Complete and save your profile — after that it goes to admin review. You will be notified when approved.",
+    "updateProfile": "Update profile",
+    "title": "Handyman profile",
+    "subtitle": "Open requests and offers in one place",
+    "profileStatus": "Profile status",
+    "statusActive": "Profile is active",
+    "statusPending": "Waiting for admin review",
+    "statusInactive": "Profile is currently inactive",
+    "activeDescription": "Your profile is public and you can track requests, unlock contacts, and send offers normally.",
+    "inactiveDescription": "Your profile is not public yet. Fill in as much information as possible so admin can review and approve it faster.",
+    "verified": "Profile verified",
+    "verificationPending": "Verification in progress",
+    "verificationRejected": "Verification was not approved — contact support",
+    "nextStep": "Next step",
+    "profileComplete": "Profile is complete.",
+    "remainingSteps": "{count} things left before a fuller profile.",
+    "allBasicsDone": "All basic profile elements are completed.",
+    "openProfile": "Open profile and finish",
+    "openRequests": "Open requests",
+    "myOffers": "My sent offers",
+    "viewAll": "View all",
+    "acceptedJobs": "Accepted jobs",
+    "credits": "Credits",
+    "lowCredits": "Low credits — top up before you need a contact.",
+    "buyCredits": "Buy credits",
+    "activateCredits": "Activate credits",
+    "creditsPolicy": "Usually 200–400 credits per contact (urgency + details; max around 650 with add-ons)",
+    "creditsFreeEnv": "In this environment contact unlock may be free",
+    "systemTitle": "How the system works",
+    "systemIntro": "Clients publish requests — you see them in the list. Viewing the description, city, category, and photos is free.",
+    "phoneHidden": "You do not see the phone number immediately: you get it only after confirming that you want the contact for that job.",
+    "creditsExplanation": "Credits are used to unlock contact details. They are spent only at that moment. After unlocking, you can send an offer or call the client.",
+    "refundPolicy": "Credit refunds apply if admin marks spam or bypass attempts, or for a technical error — not if the user does not respond.",
+    "creditsPage": "Credits page"
+  },
+  "handymanRequests": {
+    "filters": {
+      "category": "Category",
+      "city": "City",
+      "urgency": "Urgency",
+      "allCategories": "All categories",
+      "allCities": "All cities",
+      "allUrgencies": "All urgency levels",
+      "apply": "Apply filters",
+      "clear": "Clear"
+    },
+    "emptyTitle": "There are no requests right now",
+    "emptyDescription": "When requests match your categories and cities, they will appear here.",
+    "sendOffer": "Send offer",
+    "unlockContact": "Unlock contact",
+    "alreadyOffered": "You already sent an offer",
+    "previous": "Previous",
+    "next": "Next"
+  },
+  "requestDetail": {
+    "back": "Back",
+    "verifiedUser": "Verified user",
+    "description": "Description",
+    "photos": "Photos",
+    "address": "Address",
+    "contact": "Contact",
+    "phone": "Phone",
+    "viber": "Viber",
+    "whatsapp": "WhatsApp",
+    "email": "Email",
+    "pendingReview": "The request is currently waiting for admin review. After approval, handymen will be able to see it and send offers.",
+    "distributed": "The request has been approved and distributed to handymen. You can expect offers soon.",
+    "hasOffers": "You have new offers — review them below.",
+    "quickContact": "Quick client contact before or alongside sending an offer:",
+    "viberUser": "Viber the client",
+    "whatsappUser": "WhatsApp the client",
+    "unlockTitle": "Unlock contact for this job",
+    "unlockIntro": "Viewing the description, city, and photos is free. You pay only when you want the contact — no subscription.",
+    "unlockSteps": "First you unlock the contact with credits. Then you immediately see phone / Viber / WhatsApp and can contact the client or send an offer through the form.",
+    "acceptedOffer": "Accepted offer",
+    "jobInProgress": "The job is in progress. When the handyman finishes, mark it as completed.",
+    "choiceReceived": "Your choice has been received. The handyman will contact you.",
+    "chatWithUser": "Chat with the user",
+    "leaveReview": "Leave a review",
+    "reviewHandyman": "Review handyman {name}",
+    "yourReview": "Your review",
+    "alreadySentOffer": "You already sent an offer for this request. Waiting for the client response.",
+    "offers": "Offers ({count})",
+    "offersDescription": "Compare offers and choose the best handyman",
+    "noOffersTitle": "Offers",
+    "noOffersDescription": "No offers yet. They will appear here as soon as they arrive.",
+    "loginToViewOffers": "Log in to view offers"
+  },
+  "offers": {
+    "formTitle": "Send offer",
+    "formDescription": "Explain what you offer, approximate price, and when you can start.",
+    "price": "Price",
+    "priceType": "Price type",
+    "message": "Message",
+    "availability": "Availability",
+    "submit": "Send offer",
+    "submitting": "Sending offer...",
+    "sentTitle": "Offer sent",
+    "accepted": "Accepted",
+    "pending": "Waiting for response",
+    "rejected": "Rejected",
+    "withdrawn": "Withdrawn",
+    "noOffersTitle": "You have not sent any offers yet",
+    "noOffersDescription": "When you send an offer for a request, it will appear here.",
+    "validation": {
+      "messageRequired": "Enter offer message",
+      "priceRequired": "Enter a price or estimate",
+      "availabilityRequired": "Choose availability"
+    }
+  },
+  "profile": {
+    "title": "Handyman profile",
+    "intro": "Edit the profile information users will see before contacting you.",
+    "name": "Profile name",
+    "city": "City",
+    "phone": "Phone",
+    "viber": "Viber number",
+    "whatsapp": "WhatsApp number",
+    "categories": "Categories",
+    "workCities": "Cities where you work",
+    "bio": "Profile description",
+    "gallery": "Work photos",
+    "avatar": "Profile photo",
+    "save": "Save profile",
+    "saving": "Saving...",
+    "saved": "Profile saved",
+    "aiSuggest": "Suggest description with AI",
+    "aiSuggesting": "Preparing suggestion...",
+    "validation": {
+      "bioRequired": "Enter profile description",
+      "categoryRequired": "Select at least one category",
+      "cityRequired": "Enter city"
+    }
+  },
+  "credits": {
+    "title": "Credits",
+    "subtitle": "Credits are used to unlock client contact when the job suits you.",
+    "balance": "Current balance",
+    "buyOnline": "Buy online",
+    "activateCash": "Cash payment activation",
+    "packages": "Credit packages",
+    "history": "Transaction history",
+    "emptyHistory": "No transactions yet.",
+    "refund": "Credit refund",
+    "cashActivationTitle": "Cash payment credit activation",
+    "cashActivationDescription": "Send a credit activation request after the agreed payment.",
+    "paymentMethod": "Payment method",
+    "amount": "Amount",
+    "submitCash": "Send request",
+    "cashSubmitted": "Request sent. Admin will verify the payment."
+  },
+  "notifications": {
+    "title": "Notifications",
+    "markAllRead": "Mark all as read",
+    "empty": "You have no new notifications.",
+    "loading": "Loading notifications...",
+    "error": "Error loading notifications.",
+    "open": "Open",
+    "close": "Close"
+  },
+  "push": {
+    "enableTitle": "Do not miss new requests",
+    "enableBody": "Enable push notifications to know immediately when a matching job appears.",
+    "enable": "Enable notifications",
+    "enabled": "Notifications are enabled",
+    "unsupported": "This device or browser does not support push notifications.",
+    "test": "Send test",
+    "testSent": "Test notification sent.",
+    "iosHint": "On iPhone, first install the app to the home screen, then enable notifications."
+  },
+  "pwa": {
+    "installTitle": "Install BrziMajstor.ME",
+    "installBody": "Add the app to your home screen for faster access to requests, offers, and notifications.",
+    "install": "Install",
+    "later": "Later",
+    "iosStepsTitle": "How to install on iPhone",
+    "androidStepsTitle": "How to install on Android",
+    "updateAvailable": "A new version of the app is available.",
+    "update": "Update"
+  },
+  "emailPush": {
+    "newRequestTitle": "New job request",
+    "newRequestBody": "You have a new request matching your category and city.",
+    "newOfferTitle": "New offer for your request",
+    "newOfferBody": "A handyman sent an offer. Open the request and review the details.",
+    "offerAcceptedTitle": "Offer accepted",
+    "offerAcceptedBody": "The user accepted your offer. Contact them and arrange the details.",
+    "jobCompletedTitle": "Job marked as completed",
+    "jobCompletedBody": "The request has been marked as completed. You can leave a review.",
+    "passwordResetSubject": "Password reset",
+    "verifyEmailSubject": "Confirm your email address",
+    "welcomeHandymanSubject": "Welcome to BrziMajstor.ME",
+    "welcomeHandymanBody": "We are currently building the handyman database. Stronger promotion toward users is coming soon."
   }
 }

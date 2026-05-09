@@ -10,6 +10,7 @@ import { SiteHeaderSimple } from "@/components/layout/site-header-simple";
 import { RegisterMajstorSignOutCta } from "@/components/auth/register-majstor-sign-out-cta";
 import { getSiteUrl } from "@/lib/site-url";
 import { buildAlternates, getLocaleFromHeaderValue, LOCALE_HEADER, localizedPath } from "@/lib/i18n/seo";
+import { t } from "@/lib/i18n/messages";
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = getLocaleFromHeaderValue(headers().get(LOCALE_HEADER));
@@ -34,6 +35,7 @@ export default async function RegisterPage({
   searchParams: Promise<{ type?: string; invite?: string }>;
 }) {
   const { type, invite } = await searchParams;
+  const locale = getLocaleFromHeaderValue(headers().get(LOCALE_HEADER));
   const wantsHandyman = String(type ?? "")
     .toLowerCase()
     .trim() === "majstor";
@@ -72,12 +74,12 @@ export default async function RegisterPage({
       <div className="flex min-h-[calc(100vh-4rem)] flex-col items-center justify-center px-4 py-12">
         <div className="w-full max-w-md rounded-[2rem] border border-slate-200/80 bg-white p-8 shadow-marketplace sm:p-10">
           <div className="mb-8 text-center">
-            <h1 className="font-display text-2xl font-bold text-brand-navy sm:text-3xl">Kreirajte nalog</h1>
+            <h1 className="font-display text-2xl font-bold text-brand-navy sm:text-3xl">{t(locale, "auth.register.heading", "Kreirajte nalog")}</h1>
             {inviteToken ? (
-              <p className="mt-3 text-slate-600">Pozvani ste da se registrujete kao majstor.</p>
+              <p className="mt-3 text-slate-600">{t(locale, "auth.register.inviteSubheading", "Pozvani ste da se registrujete kao majstor.")}</p>
             ) : (
               <p className="mt-3 text-slate-600">
-                Korisnik ili majstor — izaberite kako želite da koristite platformu
+                {t(locale, "auth.register.subheading", "Korisnik ili majstor — izaberite kako želite da koristite platformu")}
               </p>
             )}
           </div>
@@ -88,8 +90,8 @@ export default async function RegisterPage({
                 className="mb-4 w-full"
                 label={
                   wantsHandyman || inviteToken
-                    ? "Nastavi sa Google (dopunite profil poslije)"
-                    : "Nastavi sa Google"
+                    ? `${t(locale, "common.buttons.continueGoogle", "Nastavi sa Google")} (dopunite profil poslije)`
+                    : t(locale, "common.buttons.continueGoogle", "Nastavi sa Google")
                 }
               />
               <div className="relative mb-4 flex items-center gap-3">
@@ -102,11 +104,11 @@ export default async function RegisterPage({
           <RegisterForm defaultRole={defaultRole} inviteToken={inviteToken} />
           <p className="mt-6 text-center">
             <Link href="/">
-              <Button variant="ghost" size="sm">← Nazad na početnu</Button>
+              <Button variant="ghost" size="sm">← {t(locale, "common.buttons.backHome", "Nazad na početnu")}</Button>
             </Link>
           </p>
           <p className="mt-4 text-center text-xs text-[#94A3B8]">
-            Besplatna registracija • Bez skrivenih troškova
+            {t(locale, "auth.register.freeNote", "Besplatna registracija • Bez skrivenih troškova")}
           </p>
         </div>
       </div>

@@ -12,6 +12,8 @@ import {
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useUiLanguage } from "@/lib/i18n/ui-language";
+import { t } from "@/lib/i18n/messages";
 import {
   CREDIT_PACKAGES,
   HANDYMAN_START_BONUS_CREDITS,
@@ -207,15 +209,16 @@ function HandymanStepGrid({ steps }: { steps: readonly HandymanStep[] }) {
 }
 
 export function HowItWorksForUsers() {
+  const locale = useUiLanguage();
   return (
     <section id="kako-radi" className="scroll-mt-24 py-8 md:py-14">
       <div className="mx-auto max-w-3xl text-center md:max-w-none">
-        <p className="text-xs font-bold uppercase tracking-[0.2em] text-sky-700">Za korisnike</p>
+        <p className="text-xs font-bold uppercase tracking-[0.2em] text-sky-700">{t(locale, "home.howUsers.eyebrow", "Za korisnike")}</p>
         <h2 className="mt-2 font-display text-[1.6rem] font-bold tracking-tight text-brand-navy sm:text-3xl md:text-4xl">
-          Kako radi za korisnike
+          {t(locale, "home.howUsers.title", "Kako radi za korisnike")}
         </h2>
         <p className="mx-auto mt-3 max-w-2xl text-[15px] font-medium leading-relaxed text-slate-600 sm:text-base md:text-lg">
-          Jedan kratki zahtjev — majstori iz vašeg grada odgovaraju preko platforme, bez zvanja od vrata do vrata.
+          {t(locale, "home.howUsers.subtitle", "Jedan kratki zahtjev — majstori iz vašeg grada odgovaraju preko platforme.")}
         </p>
       </div>
       <div className="mx-auto mt-8 max-w-6xl md:mt-10">
@@ -231,16 +234,16 @@ export function HowItWorksForUsers() {
             href="/request/create"
             className="inline-flex min-h-[52px] w-full max-w-md items-center justify-center rounded-2xl bg-gradient-to-br from-[#3b82f6] to-[#1d4ed8] px-8 text-base font-bold text-white shadow-[0_14px_32px_-12px_rgba(37,99,235,0.45)] transition hover:brightness-105 active:scale-[0.99] sm:w-auto sm:min-w-[280px]"
           >
-            Zatraži majstora
+            {t(locale, "home.howUsers.primaryCta", "Zatraži majstora")}
           </Link>
           <p className="mt-4 text-sm text-slate-500 md:text-[15px]">
-            Jedan zahtjev umjesto niza pojedinačnih poziva.
+            {t(locale, "home.howUsers.note", "Jedan zahtjev umjesto niza pojedinačnih poziva.")}
           </p>
           <Link
             href="/kako-radi-korisnici"
             className="mt-4 inline-flex items-center rounded-full border border-slate-300/80 bg-white/95 px-4 py-2 text-sm font-semibold text-slate-800 shadow-[0_10px_24px_-18px_rgba(15,23,42,0.45)] transition hover:border-slate-400/70 hover:bg-white"
           >
-            Detaljno za korisnike
+            {t(locale, "home.howUsers.detailsCta", "Detaljno za korisnike")}
           </Link>
         </div>
       </div>
@@ -249,6 +252,7 @@ export function HowItWorksForUsers() {
 }
 
 export function HowItWorksForHandymen() {
+  const locale = useUiLanguage();
   return (
     <section
       id="kako-radi-majstore"
@@ -266,23 +270,22 @@ export function HowItWorksForHandymen() {
           />
           <div className="flex flex-wrap items-start justify-between gap-3.5">
             <div className="max-w-2xl">
-              <p className="text-xs font-bold uppercase tracking-[0.2em] text-slate-500">Majstori</p>
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-slate-500">{t(locale, "home.howHandymen.eyebrow", "Majstori")}</p>
               <h2 className="mt-1.5 font-display text-[1.58rem] font-bold tracking-tight text-slate-900 sm:text-3xl md:text-4xl">
-                Za majstore
+                {t(locale, "home.howHandymen.title", "Za majstore")}
               </h2>
               <p className="mt-2.5 text-[15px] font-medium leading-relaxed text-slate-600 sm:text-base md:text-lg">
-                Bez pretplate. Dobijate {HANDYMAN_START_BONUS_CREDITS.toLocaleString("sr-Latn-ME")} start kredita i plaćate
-                samo kada otključate kontakt klijenta.
+                {t(locale, "home.howHandymen.subtitle", "Bez pretplate. Dobijate start kredite i plaćate samo kada otključate kontakt klijenta.")}
               </p>
             </div>
             <div className="inline-flex max-w-[min(100%,20rem)] flex-col gap-1.5 sm:max-w-none sm:flex-row sm:items-center sm:gap-2">
               <div className="inline-flex items-center gap-2 rounded-full border border-slate-200/90 bg-white/90 px-3.5 py-1.5 text-xs font-semibold text-slate-700 shadow-[0_8px_20px_-16px_rgba(15,23,42,0.45)]">
                 <ShieldTruth />
-                Nema pretplate • Obavještenja odmah
+                {t(locale, "home.howHandymen.badgeNoSubscription", "Nema pretplate • Obavještenja odmah")}
               </div>
               <div className="inline-flex items-center gap-2 rounded-full border border-slate-200/90 bg-white/90 px-3.5 py-1.5 text-xs font-semibold text-slate-700 shadow-[0_8px_20px_-16px_rgba(15,23,42,0.45)]">
                 <ShieldTruth />
-                Standardan kontakt oko 1,99 €
+                {t(locale, "home.howHandymen.badgeStandardContact", "Standardan kontakt oko 1,99 €")}
               </div>
             </div>
           </div>
@@ -297,7 +300,7 @@ export function HowItWorksForHandymen() {
 
           <div className="mt-5 rounded-2xl border border-slate-200/80 bg-slate-50/70 px-4 py-4 text-center sm:px-6">
             <p className="text-sm font-medium leading-relaxed text-slate-700 sm:text-[15px]">
-              Krediti nijesu pretplata. Troše se samo kada otključate kontakt za posao koji želite.
+              {t(locale, "home.howHandymen.creditNote", "Krediti nijesu pretplata.")}
             </p>
           </div>
 
@@ -306,7 +309,7 @@ export function HowItWorksForHandymen() {
               href="/register?type=majstor"
               className="inline-flex min-h-[52px] items-center justify-center gap-2 rounded-2xl bg-gradient-to-br from-amber-300 via-amber-400 to-amber-500 px-8 text-base font-bold text-brand-navy shadow-[0_16px_40px_-14px_rgba(245,158,11,0.55)] ring-1 ring-white/45 transition hover:brightness-105 active:scale-[0.99]"
             >
-              Registruj se kao majstor
+              {t(locale, "home.howHandymen.registerCta", "Registruj se kao majstor")}
               <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
@@ -315,7 +318,7 @@ export function HowItWorksForHandymen() {
               href="/kako-radi-majstori#krediti"
               className="inline-flex min-h-[44px] items-center justify-center rounded-full border border-slate-300/90 bg-white/95 px-5 py-2 text-sm font-bold text-brand-navy shadow-[0_10px_24px_-18px_rgba(15,23,42,0.42)] transition hover:border-slate-400/80 hover:bg-white"
             >
-              Kako rade krediti?
+              {t(locale, "home.howHandymen.creditsCta", "Kako rade krediti?")}
             </Link>
           </p>
         </div>

@@ -10,6 +10,9 @@ import { useSession, signOut } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { NotificationsDropdown } from "@/components/layout/notifications-dropdown";
 import { cn } from "@/lib/utils";
+import { stripLocalePrefix } from "@/lib/i18n/config";
+import { useUiLanguage } from "@/lib/i18n/ui-language";
+import { t } from "@/lib/i18n/messages";
 
 /**
  * Public header – statična navigacija za goste; za prijavljene: dashboard/admin + odjava.
@@ -22,6 +25,8 @@ export function PublicHeader() {
   const [isDesktopViewport, setIsDesktopViewport] = useState(false);
   const [hash, setHash] = useState("");
   const pathname = usePathname();
+  const currentPath = stripLocalePrefix(pathname || "/");
+  const locale = useUiLanguage();
   const router = useRouter();
   const { data: session, status } = useSession();
 
@@ -94,15 +99,15 @@ export function PublicHeader() {
     router.prefetch("/register");
   }, [router, session?.user?.role]);
 
-  const isHome = pathname === "/";
+  const isHome = currentPath === "/";
   const homeTheme = isHome;
   const isKakoActive = isHome && hash === "#kako-radi";
   const isPocetnaActive = isHome && !isKakoActive;
-  const isKategorijeActive = pathname === "/categories";
+  const isKategorijeActive = currentPath === "/categories";
   const isProfilActive = pathname?.startsWith("/dashboard/handyman") ?? false;
   const isUserDashActive = pathname?.startsWith("/dashboard/user") ?? false;
-  const isInstalirajActive = pathname === "/instaliraj";
-  const isKontaktActive = pathname === "/kontakt";
+  const isInstalirajActive = currentPath === "/instaliraj";
+  const isKontaktActive = currentPath === "/kontakt";
   const loginForNotificationsHref = `/login?callbackUrl=${encodeURIComponent(pathname || "/")}`;
 
   const navLinkDesktop = (active: boolean) =>
@@ -136,7 +141,7 @@ export function PublicHeader() {
         data-testid="nav-registracija-majstor"
         {...linkProps}
       >
-        Registruj se kao majstor
+        {t(locale, "navigation.forHandymen", "Registruj se kao majstor")}
       </Link>
       <Link
         href="/login"
@@ -149,7 +154,7 @@ export function PublicHeader() {
         data-testid="nav-prijava"
         {...linkProps}
       >
-        Prijava
+        {t(locale, "common.buttons.login", "Prijava")}
       </Link>
     </>
   );
@@ -261,7 +266,7 @@ export function PublicHeader() {
                 data-testid="nav-pocetna"
                 {...linkProps}
               >
-                Početna
+                {t(locale, "navigation.home", "Početna")}
               </Link>
               <Link
                 href="/categories"
@@ -270,7 +275,7 @@ export function PublicHeader() {
                 data-testid="nav-kategorije"
                 {...linkProps}
               >
-                Kategorije
+                {t(locale, "navigation.categories", "Kategorije")}
               </Link>
               <Link
                 href="/#kako-radi"
@@ -279,7 +284,7 @@ export function PublicHeader() {
                 data-testid="nav-kako-radi"
                 {...linkProps}
               >
-                Kako radi
+                {t(locale, "navigation.howItWorks", "Kako radi")}
               </Link>
               <Link
                 href="/instaliraj"
@@ -288,7 +293,7 @@ export function PublicHeader() {
                 data-testid="nav-instaliraj-mobile"
                 {...linkProps}
               >
-                Instaliraj aplikaciju
+                {t(locale, "navigation.installApp", "Instaliraj aplikaciju")}
               </Link>
               <Link
                 href="/kontakt"
@@ -297,7 +302,7 @@ export function PublicHeader() {
                 data-testid="nav-kontakt"
                 {...linkProps}
               >
-                Kontakt / podrška
+                {t(locale, "navigation.support", "Kontakt / podrška")}
               </Link>
               </div>
             </div>
@@ -357,7 +362,7 @@ export function PublicHeader() {
                   data-testid="nav-registracija-majstor"
                   {...linkProps}
                 >
-                  Registruj se kao majstor
+                  {t(locale, "navigation.forHandymen", "Registruj se kao majstor")}
                 </Link>
                 <div className="mt-4 flex flex-col gap-2">
                   <Link
@@ -367,7 +372,7 @@ export function PublicHeader() {
                     data-testid="nav-prijava"
                     {...linkProps}
                   >
-                    Prijava
+                    {t(locale, "common.buttons.login", "Prijava")}
                   </Link>
                   <Link
                     href="/register"
@@ -376,7 +381,7 @@ export function PublicHeader() {
                     data-testid="nav-registracija"
                     {...linkProps}
                   >
-                    Registracija
+                    {t(locale, "common.buttons.register", "Registracija")}
                   </Link>
                 </div>
               </div>
@@ -430,19 +435,19 @@ export function PublicHeader() {
 
         <nav className="relative z-[100] ml-4 hidden items-center gap-x-4 lg:ml-6 lg:gap-x-6 xl:gap-x-8 md:flex" aria-label="Glavna navigacija">
           <Link href="/" className={navLinkDesktop(isPocetnaActive)} data-testid="nav-pocetna" {...linkProps}>
-            Početna
+            {t(locale, "navigation.home", "Početna")}
           </Link>
           <Link href="/categories" className={navLinkDesktop(isKategorijeActive)} data-testid="nav-kategorije" {...linkProps}>
-            Kategorije
+            {t(locale, "navigation.categories", "Kategorije")}
           </Link>
           <Link href="/#kako-radi" className={navLinkDesktop(isKakoActive)} data-testid="nav-kako-radi" {...linkProps}>
-            Kako radi
+            {t(locale, "navigation.howItWorks", "Kako radi")}
           </Link>
           <Link href="/instaliraj" className={navLinkDesktop(isInstalirajActive)} data-testid="nav-instaliraj" {...linkProps}>
-            Instaliraj aplikaciju
+            {t(locale, "navigation.installApp", "Instaliraj aplikaciju")}
           </Link>
           <Link href="/kontakt" className={navLinkDesktop(isKontaktActive)} data-testid="nav-kontakt-desktop" {...linkProps}>
-            Kontakt
+            {t(locale, "navigation.contact", "Kontakt")}
           </Link>
           {session && isDesktopViewport ? (
             <NotificationsDropdown

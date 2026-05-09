@@ -24,6 +24,7 @@ import { containsContactBypass } from "@/lib/contact-sanitization";
 import { createRequestAction } from "@/app/actions/create-request";
 import { cn } from "@/lib/utils";
 import { useUiLanguage } from "@/lib/i18n/ui-language";
+import { t } from "@/lib/i18n/messages";
 
 const DRAFT_STORAGE_KEY = "brzimajstor-request-draft-v1";
 
@@ -89,6 +90,7 @@ const URGENCY_SHORT_LABEL: Record<(typeof URGENCY_OPTIONS)[number]["value"], str
 
 export function CreateRequestForm({ initialCategory, initialCity }: CreateRequestFormProps) {
   const language = useUiLanguage();
+  const copy = (key: string, fallback: string) => t(language, key, fallback);
   const router = useRouter();
   const searchParams = useSearchParams();
   const urlCategory = coerceQueryString(searchParams.get("category") ?? initialCategory ?? "");
@@ -211,7 +213,7 @@ export function CreateRequestForm({ initialCategory, initialCity }: CreateReques
     mutationFn: async (data: CreateRequestFormData) => {
       const result = await createRequestAction({ ...data, locale: language });
       if (!result.ok) {
-        throw new Error(result.error ?? "Došlo je do greške prilikom slanja zahtjeva. Pokušajte ponovo.");
+        throw new Error(result.error ?? copy("request.create.serverErrors.saveError", "Došlo je do greške prilikom slanja zahtjeva. Pokušajte ponovo."));
       }
       return result.data;
     },
@@ -271,11 +273,11 @@ export function CreateRequestForm({ initialCategory, initialCity }: CreateReques
       <Card className="w-full overflow-hidden rounded-[1.75rem] border border-slate-200/80 bg-white shadow-marketplace">
         <CardHeader className="border-b border-slate-100/80 bg-gradient-to-r from-slate-50/80 to-white px-5 py-5 sm:px-8 sm:py-6">
           <p className="text-[13px] font-semibold leading-snug text-slate-700 md:text-sm">
-            Majstori u vašem području dobijaju vaš zahtjev odmah nakon slanja.
+            {copy("request.create.subheading", "Majstori u vašem području dobijaju vaš zahtjev odmah nakon slanja.")}
           </p>
-          <CardTitle className="mt-3 font-display text-lg text-brand-navy sm:text-xl">Podaci za zahtjev</CardTitle>
+          <CardTitle className="mt-3 font-display text-lg text-brand-navy sm:text-xl">{copy("request.create.heading", "Podaci za zahtjev")}</CardTitle>
           <CardDescription className="mt-1.5 text-sm text-slate-600">
-            Korak {step} od 3 — polja označena (*) su obavezna.
+            {copy("home.howUsers.stepLabel", "Korak")} {step} od 3 — polja označena (*) su obavezna.
           </CardDescription>
           <div className="mt-4 flex items-center justify-center gap-2" aria-hidden>
             {[1, 2, 3].map((n) => (
@@ -299,17 +301,17 @@ export function CreateRequestForm({ initialCategory, initialCity }: CreateReques
             {mutation.error && (
               <div className="form-error text-sm text-[#B91C1C]">
                 {(mutation.error as Error).message ||
-                  "Došlo je do greške prilikom slanja zahtjeva. Pokušajte ponovo."}
+                  copy("request.create.serverErrors.saveError", "Došlo je do greške prilikom slanja zahtjeva. Pokušajte ponovo.")}
               </div>
             )}
 
             {/* Korak 1 — šta vam treba */}
             <div className={cn("space-y-4 sm:space-y-5", step !== 1 && "hidden")} aria-hidden={step !== 1}>
-              <h3 className="font-display text-base font-bold text-brand-navy md:text-lg">Šta vam treba?</h3>
+              <h3 className="font-display text-base font-bold text-brand-navy md:text-lg">{copy("request.create.form.category", "Šta vam treba?")}</h3>
               <div className="space-y-2">
-                <Label htmlFor="category">Kategorija *</Label>
+                <Label htmlFor="category">{copy("request.create.form.category", "Kategorija")} *</Label>
                 <select id="category" className="select-premium min-h-[52px] text-base" {...register("category")}>
-                  <option value="">Izaberite…</option>
+                  <option value="">{copy("request.create.validation.selectCategory", "Izaberite…")}</option>
                   {categorySelectOptions.map((cat) => (
                     <option key={cat} value={cat}>
                       {displayLabelForRequestCategory(cat)}
@@ -324,7 +326,7 @@ export function CreateRequestForm({ initialCategory, initialCity }: CreateReques
                 )}
               </div>
               <div className="space-y-2">
-                <Label htmlFor="title">Kratki naslov *</Label>
+                <Label htmlFor="title">{copy("request.create.form.title", "Kratki naslov")} *</Label>
                 <Input
                   id="title"
                   placeholder="Npr. curenje slavine u kuhinji"
@@ -334,7 +336,7 @@ export function CreateRequestForm({ initialCategory, initialCity }: CreateReques
                 {errors.title && <p className="text-sm text-destructive">{errors.title.message}</p>}
               </div>
               <div className="space-y-2">
-                <Label htmlFor="description">Opis posla *</Label>
+                <Label htmlFor="description">{copy("request.create.form.description", "Opis posla")} *</Label>
                 <Textarea
                   id="description"
                   placeholder="Šta treba uraditi, gde, rok ako je bitan. Što jasnije — to bolje ponude."
@@ -353,11 +355,11 @@ export function CreateRequestForm({ initialCategory, initialCity }: CreateReques
 
             {/* Korak 2 — gdje i kada */}
             <div className={cn("space-y-4 sm:space-y-5", step !== 2 && "hidden")} aria-hidden={step !== 2}>
-              <h3 className="font-display text-base font-bold text-brand-navy md:text-lg">Gdje i kada?</h3>
+              <h3 className="font-display text-base font-bold text-brand-navy md:text-lg">{copy("request.create.form.urgency", "Gdje i kada?")}</h3>
               <div className="space-y-2">
-                <Label htmlFor="city">Grad *</Label>
+                <Label htmlFor="city">{copy("request.create.form.city", "Grad")} *</Label>
                 <select id="city" className="select-premium min-h-[52px] text-base" {...register("city")}>
-                  <option value="">Izaberite grad</option>
+                  <option value="">{copy("request.create.validation.enterCity", "Izaberite grad")}</option>
                   {CITIES.map((c) => (
                     <option key={c} value={c}>
                       {c}
@@ -368,7 +370,7 @@ export function CreateRequestForm({ initialCategory, initialCity }: CreateReques
               </div>
 
               <fieldset className="space-y-2">
-                <legend className="mb-1 text-sm font-medium text-slate-800">Kada vam treba majstor?</legend>
+                <legend className="mb-1 text-sm font-medium text-slate-800">{copy("request.create.form.urgency", "Kada vam treba majstor?")}</legend>
                 <div className="grid gap-2 sm:grid-cols-3">
                   {URGENCY_OPTIONS.map((opt) => (
                     <label
@@ -402,7 +404,7 @@ export function CreateRequestForm({ initialCategory, initialCity }: CreateReques
               </fieldset>
 
               <div className="space-y-2">
-                <Label htmlFor="address">Adresa (opciono)</Label>
+                <Label htmlFor="address">{copy("request.create.form.address", "Adresa")} (opciono)</Label>
                 <Input
                   id="address"
                   placeholder="Ulica i broj, ako želite"
@@ -412,7 +414,7 @@ export function CreateRequestForm({ initialCategory, initialCity }: CreateReques
               </div>
 
               <div className="space-y-2 border-t border-slate-100 pt-4">
-                <Label htmlFor="photos">Slike (opciono)</Label>
+                <Label htmlFor="photos">{copy("request.create.form.photos", "Slike")} (opciono)</Label>
                 <RequestPhotosEditor photos={photos} onChange={(p) => setValue("photos", p)} />
                 <p className="text-xs text-slate-500">Ako pomažu da se posao bolje razumije.</p>
               </div>
@@ -420,9 +422,9 @@ export function CreateRequestForm({ initialCategory, initialCity }: CreateReques
 
             {/* Korak 3 — kontakt */}
             <div className={cn("space-y-4 sm:space-y-5", step !== 3 && "hidden")} aria-hidden={step !== 3}>
-              <h3 className="font-display text-base font-bold text-brand-navy md:text-lg">Kontakt</h3>
+              <h3 className="font-display text-base font-bold text-brand-navy md:text-lg">{copy("request.create.form.phone", "Kontakt")}</h3>
               <div className="space-y-2">
-                <Label htmlFor="requesterName">Vaše ime *</Label>
+                <Label htmlFor="requesterName">{copy("request.create.form.name", "Vaše ime")} *</Label>
                 <Input
                   id="requesterName"
                   placeholder="Ime"
@@ -435,7 +437,7 @@ export function CreateRequestForm({ initialCategory, initialCity }: CreateReques
                 )}
               </div>
               <div className="space-y-2">
-                <Label htmlFor="requesterPhone">Telefon *</Label>
+                <Label htmlFor="requesterPhone">{copy("request.create.form.phone", "Telefon")} *</Label>
                 <Input
                   id="requesterPhone"
                   type="tel"
@@ -450,7 +452,7 @@ export function CreateRequestForm({ initialCategory, initialCity }: CreateReques
               </div>
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
-                  <Label htmlFor="requesterViberPhone">Viber broj</Label>
+                  <Label htmlFor="requesterViberPhone">{copy("request.create.form.viber", "Viber broj")}</Label>
                   <Input
                     id="requesterViberPhone"
                     type="tel"
@@ -461,7 +463,7 @@ export function CreateRequestForm({ initialCategory, initialCity }: CreateReques
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="requesterWhatsappPhone">WhatsApp broj</Label>
+                  <Label htmlFor="requesterWhatsappPhone">{copy("request.create.form.whatsapp", "WhatsApp broj")}</Label>
                   <Input
                     id="requesterWhatsappPhone"
                     type="tel"
@@ -473,7 +475,7 @@ export function CreateRequestForm({ initialCategory, initialCity }: CreateReques
                 </div>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="requesterEmail">Email (opciono)</Label>
+                <Label htmlFor="requesterEmail">{copy("request.create.form.email", "Email")} (opciono)</Label>
                 <Input
                   id="requesterEmail"
                   type="email"
@@ -502,7 +504,7 @@ export function CreateRequestForm({ initialCategory, initialCity }: CreateReques
                   className="inline-flex min-h-[52px] flex-1 items-center justify-center rounded-2xl border-2 border-slate-200 bg-white px-4 text-base font-semibold text-slate-800 transition hover:bg-slate-50 disabled:opacity-50"
                   data-testid="create-request-back"
                 >
-                  Nazad
+                  {copy("common.buttons.backLogin", "Nazad")}
                 </button>
               ) : (
                 <span className="flex-1" aria-hidden />
@@ -524,7 +526,7 @@ export function CreateRequestForm({ initialCategory, initialCity }: CreateReques
                   className="btn-primary inline-flex min-h-[52px] flex-[2] items-center justify-center disabled:opacity-50"
                   data-testid="create-request-submit"
                 >
-                  {mutation.isPending ? "Šaljem zahtjev..." : "Pošalji zahtjev"}
+                  {mutation.isPending ? copy("request.create.form.submitting", "Šaljem zahtjev...") : copy("request.create.form.submit", "Pošalji zahtjev")}
                 </button>
               )}
             </div>
@@ -543,7 +545,7 @@ export function CreateRequestForm({ initialCategory, initialCity }: CreateReques
               className={stickySecondaryClass}
               data-testid="create-request-back"
             >
-              Nazad
+              {copy("common.buttons.backLogin", "Nazad")}
             </button>
           ) : null}
           {step < 3 ? (
@@ -564,7 +566,7 @@ export function CreateRequestForm({ initialCategory, initialCity }: CreateReques
               className={cn(stickyPrimaryClass, "flex-1")}
               data-testid="create-request-submit"
             >
-              {mutation.isPending ? "Šaljem zahtjev..." : "Pošalji zahtjev"}
+              {mutation.isPending ? copy("request.create.form.submitting", "Šaljem zahtjev...") : copy("request.create.form.submit", "Pošalji zahtjev")}
             </button>
           )}
         </div>

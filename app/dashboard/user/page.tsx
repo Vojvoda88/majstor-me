@@ -14,15 +14,11 @@ import { shouldShowOwnerFollowUp } from "@/lib/request-follow-up";
 import { LeaveReviewForm } from "@/components/user/leave-review-form";
 import { VerifyEmailBanner } from "@/components/account/verify-email-banner";
 import { Heart, Star } from "lucide-react";
+import { headers } from "next/headers";
+import { LOCALE_HEADER, normalizeLocale } from "@/lib/i18n/config";
+import { t } from "@/lib/i18n/messages";
 
 export const dynamic = "force-dynamic";
-
-const STATUS_LABELS: Record<string, string> = {
-  OPEN: "Otvoren",
-  IN_PROGRESS: "U toku",
-  COMPLETED: "Završen",
-  CANCELLED: "Otkazan",
-};
 
 export default async function UserDashboardPage() {
   const session = await auth();
@@ -71,6 +67,7 @@ export default async function UserDashboardPage() {
       select: { emailVerified: true, email: true },
     }),
   ]);
+  const locale = normalizeLocale(headers().get(LOCALE_HEADER));
 
   return (
     <div className="min-h-screen bg-[#F4F7FB] pb-28 md:pb-10">
@@ -79,15 +76,15 @@ export default async function UserDashboardPage() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-[#0F172A] sm:text-3xl">
-            Moji zahtjevi
+            {t(locale, "userDashboard.title", "Moji zahtjevi")}
           </h1>
           <p className="mt-2 text-base text-[#64748B]">
-            Pregled vaših objavljenih zahtjeva
+            {t(locale, "userDashboard.subtitle", "Pregled vaših objavljenih zahtjeva")}
           </p>
         </div>
         <Link href="/request/create">
           <Button size="lg" className="h-12 px-6">
-            Novi zahtjev
+            {t(locale, "userDashboard.newRequest", "Novi zahtjev")}
           </Button>
         </Link>
       </div>
@@ -101,7 +98,7 @@ export default async function UserDashboardPage() {
         <div className="mt-8">
           <h2 className="mb-3 flex items-center gap-2 text-lg font-semibold text-slate-900">
             <Heart className="h-5 w-5 fill-rose-400 text-rose-400" />
-            Sačuvani majstori
+            {t(locale, "userDashboard.savedHandymen", "Sačuvani majstori")}
           </h2>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {savedHandymen.map(({ handyman }) => {
@@ -140,7 +137,7 @@ export default async function UserDashboardPage() {
                       )}
                       {isVerified && (
                         <span className="rounded-full bg-emerald-50 px-1.5 py-0.5 text-[10px] font-medium text-emerald-700 ring-1 ring-emerald-200">
-                          Verifikovan
+                          {t(locale, "userDashboard.verified", "Verifikovan")}
                         </span>
                       )}
                       {handyman.city && (
@@ -148,7 +145,7 @@ export default async function UserDashboardPage() {
                       )}
                     </div>
                   </div>
-                  <span className="shrink-0 text-xs font-medium text-blue-600">Pogledaj →</span>
+                  <span className="shrink-0 text-xs font-medium text-blue-600">{t(locale, "userDashboard.view", "Pogledaj")} →</span>
                 </Link>
               );
             })}
@@ -159,11 +156,11 @@ export default async function UserDashboardPage() {
       {requests.length === 0 ? (
         <EmptyState
           className="mt-8"
-          title="Nemate objavljenih zahtjeva"
-          description="Zatražite majstora da biste primali ponude od majstora kojima posao odgovara"
+          title={t(locale, "userDashboard.emptyTitle", "Nemate objavljenih zahtjeva")}
+          description={t(locale, "userDashboard.emptyDescription", "Zatražite majstora da biste primali ponude od majstora kojima posao odgovara")}
           action={
             <Link href="/request/create">
-              <Button size="lg">Zatraži majstora</Button>
+              <Button size="lg">{t(locale, "userDashboard.requestCta", "Zatraži majstora")}</Button>
             </Link>
           }
         />
@@ -201,7 +198,7 @@ export default async function UserDashboardPage() {
                         </p>
                       </div>
                       <span className="shrink-0 text-sm font-medium text-[#2563EB]">
-                        Pogledaj →
+                        {t(locale, "userDashboard.view", "Pogledaj")} →
                       </span>
                     </div>
                     <div className="mt-3 flex flex-wrap items-center gap-2">
@@ -214,16 +211,16 @@ export default async function UserDashboardPage() {
                               : "default"
                         }
                       >
-                        {STATUS_LABELS[req.status]}
+                        {t(locale, `userDashboard.status.${req.status}`, req.status)}
                       </Badge>
                       {req.status === "OPEN" && req.adminStatus === "PENDING_REVIEW" && (
                         <Badge variant="outline" className="border-amber-300 bg-amber-50 text-amber-900">
-                          Čeka pregled administratora
+                          {t(locale, "userDashboard.status.PENDING_REVIEW", "Čeka pregled administratora")}
                         </Badge>
                       )}
                       {req.status === "OPEN" && req.adminStatus === "DISTRIBUTED" && (
                         <Badge variant="outline" className="border-emerald-200 bg-emerald-50 text-emerald-800">
-                          Odobren — majstori mogu odgovoriti
+                          {t(locale, "userDashboard.status.DISTRIBUTED", "Odobren — majstori mogu odgovoriti")}
                         </Badge>
                       )}
                       <UrgencyBadge urgency={req.urgency} />
@@ -233,7 +230,7 @@ export default async function UserDashboardPage() {
                       </span>
                       <span className="flex items-center gap-1 text-sm text-[#64748B]">
                         <MessageSquare className="h-4 w-4" />
-                        {totalOffers} ponuda
+                        {t(locale, "userDashboard.offersCount", "{count} ponuda").replace("{count}", String(totalOffers))}
                       </span>
                       <span className="flex items-center gap-1 text-sm text-[#94A3B8]">
                         <Calendar className="h-4 w-4" />
@@ -242,12 +239,12 @@ export default async function UserDashboardPage() {
                     </div>
                     {acceptedOffer && (
                       <p className="mt-2 text-sm text-[#16A34A]">
-                        Majstor: {acceptedOffer.handyman.name}
+                        {t(locale, "userDashboard.acceptedHandyman", "Majstor: {name}").replace("{name}", acceptedOffer.handyman.name ?? "")}
                       </p>
                     )}
                     {req.status === "COMPLETED" && req.review != null && (
                       <p className="mt-2 flex items-center gap-1 text-sm text-slate-500">
-                        ★ Recenzija ostavljena
+                        ★ {t(locale, "userDashboard.reviewLeft", "Recenzija ostavljena")}
                       </p>
                     )}
                   </CardHeader>

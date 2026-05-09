@@ -26,13 +26,9 @@ import type { RequestDetailPayload } from "@/lib/requests/request-detail-include
 import { viberHref, whatsappHref } from "@/lib/contact-links";
 import { RequestOwnerFollowUp } from "@/components/user/request-owner-follow-up";
 import { shouldShowOwnerFollowUp } from "@/lib/request-follow-up";
-
-const STATUS_LABELS: Record<string, string> = {
-  OPEN: "Otvoren",
-  IN_PROGRESS: "U toku",
-  COMPLETED: "Završen",
-  CANCELLED: "Otkazan",
-};
+import { headers } from "next/headers";
+import { LOCALE_HEADER, normalizeLocale } from "@/lib/i18n/config";
+import { t } from "@/lib/i18n/messages";
 
 function getFirstName(fullName: string | null | undefined): string {
   if (!fullName?.trim()) return "-";
@@ -54,6 +50,7 @@ export async function RequestDetailView({
   /** Pristup preko /request-access/[token] — jači copy za success banner. */
   isGuestAccessRoute?: boolean;
 }) {
+  const locale = normalizeLocale(headers().get(LOCALE_HEADER));
   const { prisma } = await import("@/lib/db");
   const id = req.id;
   const fullRequesterName = req.user?.name ?? req.requesterName ?? "Korisnik";
@@ -100,7 +97,7 @@ export async function RequestDetailView({
   return (
     <>
       <Link href={backHref} className="mb-6 inline-flex text-sm font-medium text-[#64748B] hover:text-[#0F172A]">
-        ← Nazad
+        ← {t(locale, "requestDetail.back", "Nazad")}
       </Link>
 
       {isOwner && (
@@ -138,7 +135,7 @@ export async function RequestDetailView({
               }
               className={req.status === "IN_PROGRESS" ? "border-blue-200 bg-blue-100 text-blue-800" : undefined}
             >
-              {STATUS_LABELS[req.status]}
+              {t(locale, `userDashboard.status.${req.status}`, req.status)}
             </Badge>
             <UrgencyBadge urgency={req.urgency} />
             <span className="flex items-center gap-1 text-sm text-[#64748B]">
@@ -155,7 +152,7 @@ export async function RequestDetailView({
             </span>
             {isRequesterVerified && (
               <Badge variant="outline" className="border-emerald-300 bg-emerald-50 text-emerald-800">
-                Verifikovan korisnik
+                {t(locale, "requestDetail.verifiedUser", "Verifikovan korisnik")}
               </Badge>
             )}
           </div>
@@ -163,27 +160,26 @@ export async function RequestDetailView({
         <CardContent className="space-y-4">
           {isOwner && req.status === "OPEN" && req.adminStatus === "PENDING_REVIEW" && (
             <p className="rounded-lg border border-amber-200 bg-amber-50/90 px-3 py-2 text-sm text-amber-950">
-              Zahtjev trenutno čeka pregled administratora. Nakon odobrenja, majstori će moći da vide zahtjev i da šalju
-              ponude.
+              {t(locale, "requestDetail.pendingReview", "Zahtjev trenutno čeka pregled administratora.")}
             </p>
           )}
           {isOwner && req.status === "OPEN" && req.adminStatus === "DISTRIBUTED" && (
             <p className="rounded-lg bg-emerald-50 px-3 py-2 text-sm text-emerald-800">
-              Zahtjev je odobren i prosleđen majstorima. Uskoro možete očekivati ponude.
+              {t(locale, "requestDetail.distributed", "Zahtjev je odobren i prosleđen majstorima.")}
             </p>
           )}
           {isOwner && req.status === "OPEN" && req.adminStatus === "HAS_OFFERS" && (
             <p className="rounded-lg border border-sky-200 bg-sky-50 px-3 py-2 text-sm text-sky-950">
-              Imate nove ponude — pogledajte ih ispod.
+              {t(locale, "requestDetail.hasOffers", "Imate nove ponude — pogledajte ih ispod.")}
             </p>
           )}
           <div>
-            <h3 className="text-sm font-medium text-[#475569]">Opis</h3>
+            <h3 className="text-sm font-medium text-[#475569]">{t(locale, "requestDetail.description", "Opis")}</h3>
             <p className="mt-1 text-[#64748B]">{req.description}</p>
           </div>
           {req.photos && req.photos.length > 0 && (
             <div>
-              <h3 className="text-sm font-medium text-[#475569]">Slike</h3>
+              <h3 className="text-sm font-medium text-[#475569]">{t(locale, "requestDetail.photos", "Slike")}</h3>
               <div className="mt-2 flex flex-wrap gap-2">
                 {req.photos.map((url) => (
                   <a key={url} href={url} target="_blank" rel="noreferrer" className="relative block h-24 w-24">
@@ -195,17 +191,17 @@ export async function RequestDetailView({
           )}
           {(isOwner || handymanUnlocked) && req.address && (
             <div>
-              <h3 className="text-sm font-medium text-[#475569]">Adresa</h3>
+              <h3 className="text-sm font-medium text-[#475569]">{t(locale, "requestDetail.address", "Adresa")}</h3>
               <p className="mt-1 text-[#64748B]">{req.address}</p>
             </div>
           )}
           {(isOwner || handymanUnlocked) && (req.requesterPhone || req.requesterViberPhone || req.requesterWhatsappPhone || req.requesterEmail) && (
             <div className="rounded-2xl border border-slate-200/80 bg-slate-50/80 p-4">
-              <h3 className="text-sm font-medium text-[#475569]">Kontakt</h3>
+              <h3 className="text-sm font-medium text-[#475569]">{t(locale, "requestDetail.contact", "Kontakt")}</h3>
               <div className="mt-2 space-y-1.5 text-sm text-[#64748B]">
                 {req.requesterPhone && (
                   <p>
-                    Telefon:{" "}
+                    {t(locale, "requestDetail.phone", "Telefon")}:{" "}
                     <a className="font-medium text-blue-700 hover:underline" href={`tel:${req.requesterPhone.replace(/\s/g, "")}`}>
                       {req.requesterPhone}
                     </a>
@@ -239,7 +235,7 @@ export async function RequestDetailView({
                   (req.requesterViberPhone || req.requesterWhatsappPhone) && (
                     <div className="mt-4 flex flex-col gap-3 border-t border-slate-200/80 pt-4 sm:flex-row sm:flex-wrap">
                       <p className="w-full text-xs font-medium text-slate-600">
-                        Brzi kontakt klijenta prije ili uz slanje ponude:
+                      {t(locale, "requestDetail.quickContact", "Brzi kontakt klijenta prije ili uz slanje ponude:")}
                       </p>
                       {req.requesterViberPhone && (
                         <a
@@ -249,7 +245,7 @@ export async function RequestDetailView({
                           className="inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-xl bg-[#7360F2] px-4 text-sm font-semibold text-white transition hover:bg-[#6350E0] sm:min-w-[200px] sm:flex-initial"
                         >
                           <MessageCircleMore className="h-5 w-5 shrink-0" />
-                          Viber korisniku
+                          {t(locale, "requestDetail.viberUser", "Viber korisniku")}
                         </a>
                       )}
                       {req.requesterWhatsappPhone && (
@@ -260,7 +256,7 @@ export async function RequestDetailView({
                           className="inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-xl bg-[#25D366] px-4 text-sm font-semibold text-white transition hover:bg-[#20BD5A] sm:min-w-[200px] sm:flex-initial"
                         >
                           <MessageCircle className="h-5 w-5 shrink-0" />
-                          WhatsApp korisniku
+                          {t(locale, "requestDetail.whatsappUser", "WhatsApp korisniku")}
                         </a>
                       )}
                     </div>
@@ -270,19 +266,12 @@ export async function RequestDetailView({
           )}
           {session?.user?.role === "HANDYMAN" && !isOwner && (
             <div className="rounded-3xl border border-amber-200/60 bg-gradient-to-br from-amber-50/90 via-white to-slate-50 p-6 shadow-inner md:p-7">
-              <h3 className="font-display text-lg font-bold text-brand-navy">Otključaj kontakt za ovaj posao</h3>
+              <h3 className="font-display text-lg font-bold text-brand-navy">{t(locale, "requestDetail.unlockTitle", "Otključaj kontakt za ovaj posao")}</h3>
               <p className="mt-3 text-sm leading-relaxed text-slate-600">
-                Pregled opisa, grada i slika je besplatan.{" "}
-                <strong className="font-semibold text-slate-800">Plaćate samo kada želite kontakt</strong> — bez
-                pretplate. Pošaljite ponudu za manje od 2&nbsp;€ u odnosu na klasične oglase (standardni kontakt je oko
-                200 kredita ≈ 2&nbsp;€; hitnije oglase više).
+                {t(locale, "requestDetail.unlockIntro", "Pregled opisa, grada i slika je besplatan. Plaćate samo kada želite kontakt — bez pretplate.")}
               </p>
               <p className="mt-2 text-sm leading-relaxed text-slate-600">
-                Prvo <strong className="font-semibold text-slate-800">otključavate kontakt kreditima</strong> (korak
-                ispod). Zatim odmah vidite telefon / Viber / WhatsApp — možete kontaktirati klijenta i poslati ponudu
-                kroz formu. <strong className="font-semibold text-slate-800">Nije potrebno</strong> da korisnik prihvati
-                ponudu da biste mu pisali na Viber ili WhatsApp; in-app chat u platformi otvara se tek nakon prihvaćene
-                ponude.
+                {t(locale, "requestDetail.unlockSteps", "Prvo otključavate kontakt kreditima. Zatim odmah vidite telefon / Viber / WhatsApp.")}
               </p>
               <LeadPriceBreakdown breakdown={creditsBreakdown} />
               <div className="mt-5">
@@ -311,11 +300,11 @@ export async function RequestDetailView({
       {isOwner && req.status === "IN_PROGRESS" && acceptedOffer && (
         <Card className="mt-6 rounded-xl bg-white shadow-sm transition hover:shadow-md">
           <CardHeader>
-            <CardTitle>Prihvaćena ponuda</CardTitle>
+            <CardTitle>{t(locale, "requestDetail.acceptedOffer", "Prihvaćena ponuda")}</CardTitle>
             <CardDescription>
               {session
-                ? "Posao je u toku. Kada majstor završi, označite ga kao završen."
-                : "Vaš izbor je primljen. Majstor će vas kontaktirati."}
+                ? t(locale, "requestDetail.jobInProgress", "Posao je u toku. Kada majstor završi, označite ga kao završen.")
+                : t(locale, "requestDetail.choiceReceived", "Vaš izbor je primljen. Majstor će vas kontaktirati.")}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -344,7 +333,7 @@ export async function RequestDetailView({
         acceptedOffer?.handymanId === session.user.id && (
           <Card className="mt-6 rounded-xl bg-white shadow-sm transition hover:shadow-md">
             <CardHeader>
-              <CardTitle>Razgovor sa korisnikom</CardTitle>
+              <CardTitle>{t(locale, "requestDetail.chatWithUser", "Razgovor sa korisnikom")}</CardTitle>
             </CardHeader>
             <CardContent>
               <RequestChatPanel requestId={req.id} />
@@ -355,8 +344,8 @@ export async function RequestDetailView({
       {isOwner && session?.user?.id && req.status === "COMPLETED" && !req.review && acceptedOffer && (
         <Card className="mt-6 rounded-xl bg-white shadow-sm transition hover:shadow-md">
           <CardHeader>
-            <CardTitle>Ostavite recenziju</CardTitle>
-            <CardDescription>Ocijenite majstora {acceptedOffer.handyman.name}</CardDescription>
+            <CardTitle>{t(locale, "requestDetail.leaveReview", "Ostavite recenziju")}</CardTitle>
+            <CardDescription>{t(locale, "requestDetail.reviewHandyman", "Ocijenite majstora {name}").replace("{name}", acceptedOffer.handyman.name ?? "")}</CardDescription>
           </CardHeader>
           <CardContent>
             <RequestDetailClient
@@ -372,7 +361,7 @@ export async function RequestDetailView({
       {req.review && (
         <Card className="mt-6 rounded-xl bg-white shadow-sm transition hover:shadow-md">
           <CardHeader>
-            <CardTitle>Vaša recenzija</CardTitle>
+            <CardTitle>{t(locale, "requestDetail.yourReview", "Vaša recenzija")}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex items-center gap-2">
@@ -395,7 +384,7 @@ export async function RequestDetailView({
         const alreadySent = req.offers.some((o) => o.handyman.id === session.user.id);
         return alreadySent ? (
           <div className="mt-6 rounded-xl border border-emerald-200 bg-emerald-50 px-5 py-4 text-sm font-medium text-emerald-800">
-            Već ste poslali ponudu na ovaj zahtjev. Čekate odgovor od klijenta.
+            {t(locale, "requestDetail.alreadySentOffer", "Već ste poslali ponudu na ovaj zahtjev. Čekate odgovor od klijenta.")}
           </div>
         ) : (
           <div className="mt-6">
@@ -407,8 +396,8 @@ export async function RequestDetailView({
       {isOwner && req.offers.length === 0 && (
         <Card className="mt-6 rounded-xl border border-dashed border-slate-200 bg-slate-50/80">
           <CardHeader>
-            <CardTitle className="text-base">Ponude</CardTitle>
-            <CardDescription>Još nema ponuda. Biće prikazane ovdje čim stignu.</CardDescription>
+            <CardTitle className="text-base">{t(locale, "requestDetail.noOffersTitle", "Ponude")}</CardTitle>
+            <CardDescription>{t(locale, "requestDetail.noOffersDescription", "Još nema ponuda. Biće prikazane ovdje čim stignu.")}</CardDescription>
           </CardHeader>
         </Card>
       )}
@@ -416,8 +405,8 @@ export async function RequestDetailView({
       {(isOwner || session?.user?.role === "HANDYMAN") && req.offers.length > 0 && (
         <Card className="mt-6 rounded-xl bg-white shadow-sm transition hover:shadow-md">
           <CardHeader>
-            <CardTitle className="text-xl">Ponude ({req.offers.length})</CardTitle>
-            <CardDescription>Uporedite ponude i izaberite najboljeg majstora</CardDescription>
+            <CardTitle className="text-xl">{t(locale, "requestDetail.offers", "Ponude ({count})").replace("{count}", String(req.offers.length))}</CardTitle>
+            <CardDescription>{t(locale, "requestDetail.offersDescription", "Uporedite ponude i izaberite najboljeg majstora")}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
@@ -438,7 +427,7 @@ export async function RequestDetailView({
       {!session && !isOwner && (
         <div className="mt-6 text-center">
           <Link href={`/login?callbackUrl=/request/${id}`}>
-            <Button>Prijavite se da vidite ponude</Button>
+            <Button>{t(locale, "requestDetail.loginToViewOffers", "Prijavite se da vidite ponude")}</Button>
           </Link>
         </div>
       )}
