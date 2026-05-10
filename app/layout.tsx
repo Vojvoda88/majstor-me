@@ -89,6 +89,7 @@ export const metadata: Metadata = {
   },
   /** Standardni PWA tag; smanjuje deprecation upozorenje uz apple-mobile-web-app-capable iz appleWebApp. */
   other: {
+    google: "notranslate",
     "mobile-web-app-capable": "yes",
     "geo.region": "ME",
     "geo.placename": "Montenegro",
@@ -111,7 +112,11 @@ export default async function RootLayout({
   const htmlLang = locale === "sr" ? "sr-Latn-ME" : locale;
 
   return (
-    <html lang={htmlLang} className={`${inter.variable} ${dmSans.variable} ${outfit.variable}`}>
+    <html
+      lang={htmlLang}
+      translate="no"
+      className={`notranslate ${inter.variable} ${dmSans.variable} ${outfit.variable}`}
+    >
       <body className="min-h-[100dvh] overflow-x-hidden font-sans antialiased bg-[#FAFBFC] text-[#0F172A] [padding-bottom:env(safe-area-inset-bottom)]">
         <Providers>
           {children}
