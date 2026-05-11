@@ -29,8 +29,8 @@ function asSet(values: string[]): Set<string> {
 }
 
 function diff(base: Set<string>, target: Set<string>) {
-  const missing = [...base].filter((k) => !target.has(k));
-  const extra = [...target].filter((k) => !base.has(k));
+  const missing = Array.from(base).filter((k) => !target.has(k));
+  const extra = Array.from(target).filter((k) => !base.has(k));
   return { missing, extra };
 }
 
