@@ -18,8 +18,20 @@ const SEO_CORE_CITY_SLUGS = new Set([
   "kotor",
 ]);
 
+const HANDYMAN_SITEMAP_TIMEOUT_MS = 2500;
+
+function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
+  return new Promise<T>((resolve, reject) => {
+    const timer = setTimeout(() => reject(new Error("timeout")), ms);
+    promise
+      .then((value) => resolve(value))
+      .catch((error) => reject(error))
+      .finally(() => clearTimeout(timer));
+  });
+}
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const base = getSiteUrl();
+  const base = getSiteUrl().replace(/\/$/, "");
   const now = new Date();
   const localized = (path: string) =>
     SUPPORTED_LOCALES.map((locale) => `${base}/${locale}${path === "/" ? "" : path}`);
@@ -37,64 +49,70 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...localized("/kontakt").map((url) => ({ url, lastModified: now, changeFrequency: "monthly" as const, priority: 0.55 })),
   ];
 
-  const categoryPages: MetadataRoute.Sitemap = PUBLIC_CATEGORY_LISTING.flatMap((c) =>
-    localized(`/category/${c.slug}`).map((url) => ({
-      url,
-      lastModified: now,
-      changeFrequency: "weekly" as const,
-      priority: 0.8,
-    }))
-  );
-
-  const cityPages: MetadataRoute.Sitemap = HOMEPAGE_CITIES.flatMap((c) =>
-    localized(`/grad/${c.slug}`).map((url) => ({
-      url,
-      lastModified: now,
-      changeFrequency: "weekly" as const,
-      priority: 0.75,
-    }))
-  );
-
-  /** Kanonski format /{usluga}/{grad} — ~15×20 */
-  const pairs = getProgrammaticServiceCityParams();
-  const serviceCityPages: MetadataRoute.Sitemap = pairs.flatMap(({ slug, city }) =>
-    localized(`/${slug}/${city}`).map((url) => ({
-      url,
-      lastModified: now,
-      changeFrequency: "weekly" as const,
-      priority: SEO_CORE_CITY_SLUGS.has(city) ? 0.84 : 0.7,
-    }))
-  );
-
-  /** Long-tail /problemi/{problem}-{grad} */
-  const problemPages: MetadataRoute.Sitemap = getProblemCityStaticParams().flatMap(({ slug }) =>
-    localized(`/problemi/${slug}`).map((url) => ({
-      url,
-      lastModified: now,
-      changeFrequency: "weekly" as const,
-      priority: 0.72,
-    }))
-  );
-
-  let handymanPages: MetadataRoute.Sitemap = [];
   try {
-    const { prisma } = await import("@/lib/db");
-    const handymen = await prisma.user.findMany({
-      where: prismaWhereHandymanSitemapEligible(),
-      select: { id: true },
-      take: 500,
-    });
-    handymanPages = handymen.flatMap((u) =>
-      localized(`/handyman/${u.id}`).map((url) => ({
+    const categoryPages: MetadataRoute.Sitemap = PUBLIC_CATEGORY_LISTING.flatMap((c) =>
+      localized(`/category/${c.slug}`).map((url) => ({
         url,
         lastModified: now,
         changeFrequency: "weekly" as const,
-        priority: 0.55,
+        priority: 0.8,
       }))
     );
-  } catch {
-    /* build bez DB */
-  }
 
-  return [...staticPages, ...categoryPages, ...cityPages, ...serviceCityPages, ...problemPages, ...handymanPages];
+    const cityPages: MetadataRoute.Sitemap = HOMEPAGE_CITIES.flatMap((c) =>
+      localized(`/grad/${c.slug}`).map((url) => ({
+        url,
+        lastModified: now,
+        changeFrequency: "weekly" as const,
+        priority: 0.75,
+      }))
+    );
+
+    const pairs = getProgrammaticServiceCityParams();
+    const serviceCityPages: MetadataRoute.Sitemap = pairs.flatMap(({ slug, city }) =>
+      localized(`/${slug}/${city}`).map((url) => ({
+        url,
+        lastModified: now,
+        changeFrequency: "weekly" as const,
+        priority: SEO_CORE_CITY_SLUGS.has(city) ? 0.84 : 0.7,
+      }))
+    );
+
+    const problemPages: MetadataRoute.Sitemap = getProblemCityStaticParams().flatMap(({ slug }) =>
+      localized(`/problemi/${slug}`).map((url) => ({
+        url,
+        lastModified: now,
+        changeFrequency: "weekly" as const,
+        priority: 0.72,
+      }))
+    );
+
+    let handymanPages: MetadataRoute.Sitemap = [];
+    try {
+      const { prisma } = await import("@/lib/db");
+      const handymen = await withTimeout(
+        prisma.user.findMany({
+          where: prismaWhereHandymanSitemapEligible(),
+          select: { id: true },
+          take: 500,
+        }),
+        HANDYMAN_SITEMAP_TIMEOUT_MS
+      );
+      handymanPages = handymen.flatMap((u) =>
+        localized(`/handyman/${u.id}`).map((url) => ({
+          url,
+          lastModified: now,
+          changeFrequency: "weekly" as const,
+          priority: 0.55,
+        }))
+      );
+    } catch (e) {
+      console.error("[sitemap] skipping handyman URLs", e);
+    }
+
+    return [...staticPages, ...categoryPages, ...cityPages, ...serviceCityPages, ...problemPages, ...handymanPages];
+  } catch (e) {
+    console.error("[sitemap] fallback to static pages only", e);
+    return staticPages;
+  }
 }
