@@ -1,31 +1,37 @@
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import Link from "next/link";
 import { PublicHeader } from "@/components/layout/PublicHeader";
 import { PublicFooter } from "@/components/layout/PublicFooter";
 import { getSiteUrl } from "@/lib/site-url";
+import { buildAlternates, getLocaleFromHeaderValue, LOCALE_HEADER, localizedPath } from "@/lib/i18n/seo";
 
 const baseUrl = getSiteUrl();
 
-export const metadata: Metadata = {
-  title: "Kako radi za korisnike",
-  description:
-    "Narodno i jasno: kako ide objava zahtjeva, admin pregled i ponude majstora na BrziMajstor.ME.",
-  alternates: { canonical: `${baseUrl}/kako-radi-korisnici` },
-  openGraph: {
-    title: "Kako radi za korisnike | BrziMajstor.ME",
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = getLocaleFromHeaderValue(headers().get(LOCALE_HEADER));
+  const localizedUrl = `${baseUrl.replace(/\/$/, "")}${localizedPath("/kako-radi-korisnici", locale)}`;
+  return {
+    title: "Kako radi za korisnike",
     description:
-      "Objava je besplatna, ide kratak admin pregled, pa ponude majstora. Pročitajte korak po korak.",
-    url: `${baseUrl}/kako-radi-korisnici`,
-    siteName: "BrziMajstor.ME",
-    type: "website",
-  },
-  twitter: {
-    card: "summary",
-    title: "Kako radi za korisnike | BrziMajstor.ME",
-    description:
-      "Objava zahtjeva je besplatna, a ponude birate svojim tempom.",
-  },
-};
+      "Narodno i jasno: kako ide objava zahtjeva, admin pregled i ponude majstora na BrziMajstor.ME.",
+    alternates: buildAlternates(baseUrl, "/kako-radi-korisnici", locale),
+    openGraph: {
+      title: "Kako radi za korisnike | BrziMajstor.ME",
+      description:
+        "Objava je besplatna, ide kratak admin pregled, pa ponude majstora. Pročitajte korak po korak.",
+      url: localizedUrl,
+      siteName: "BrziMajstor.ME",
+      type: "website",
+    },
+    twitter: {
+      card: "summary",
+      title: "Kako radi za korisnike | BrziMajstor.ME",
+      description:
+        "Objava zahtjeva je besplatna, a ponude birate svojim tempom.",
+    },
+  };
+}
 
 const steps = [
   {

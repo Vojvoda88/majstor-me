@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import { PublicHeader } from "@/components/layout/PublicHeader";
 import { PublicFooter } from "@/components/layout/PublicFooter";
 import {
@@ -14,6 +15,7 @@ import { ArrowRight } from "lucide-react";
 import { buildPublicListingPageJsonLd } from "@/lib/json-ld";
 import { getSiteUrl } from "@/lib/site-url";
 import { SEO_CATEGORIES_DESCRIPTION } from "@/lib/seo-brand";
+import { buildAlternates, getLocaleFromHeaderValue, LOCALE_HEADER, localizedPath } from "@/lib/i18n/seo";
 
 const baseUrl = getSiteUrl();
 
@@ -38,35 +40,40 @@ const CATEGORY_SUBTEXT: Record<string, string> = {
   "sitni-kucni-poslovi": "Montaža, sitne popravke i pomoć po kući",
 };
 
-export const metadata: Metadata = {
-  title: "Majstori po kategorijama",
-  description: categoriesDescription,
-  alternates: {
-    canonical: `${baseUrl}/categories`,
-  },
-  openGraph: {
-    title: "Majstori po kategorijama | BrziMajstor.ME",
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = getLocaleFromHeaderValue(headers().get(LOCALE_HEADER));
+  const localizedUrl = `${baseUrl.replace(/\/$/, "")}${localizedPath("/categories", locale)}`;
+  return {
+    title: "Majstori po kategorijama",
     description: categoriesDescription,
-    url: `${baseUrl}/categories`,
-    siteName: "BrziMajstor.ME",
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Majstori po kategorijama | BrziMajstor.ME",
-    description: categoriesDescription,
-  },
-};
+    alternates: buildAlternates(baseUrl, "/categories", locale),
+    openGraph: {
+      title: "Majstori po kategorijama | BrziMajstor.ME",
+      description: categoriesDescription,
+      url: localizedUrl,
+      siteName: "BrziMajstor.ME",
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: "Majstori po kategorijama | BrziMajstor.ME",
+      description: categoriesDescription,
+    },
+  };
+}
 
 export default function CategoriesPage() {
+  const locale = getLocaleFromHeaderValue(headers().get(LOCALE_HEADER));
   const base = baseUrl.replace(/\/$/, "");
+  const localizedCategoriesPath = localizedPath("/categories", locale);
+  const localizedHomePath = localizedPath("/", locale);
   const categoriesJsonLd = buildPublicListingPageJsonLd({
-    canonicalUrl: `${base}/categories`,
+    canonicalUrl: `${base}${localizedCategoriesPath}`,
     pageTitle: "Majstori po kategorijama",
     description: categoriesDescription,
     breadcrumbs: [
-      { name: "Početna", itemUrl: base },
-      { name: "Sve kategorije", itemUrl: `${base}/categories` },
+      { name: "Početna", itemUrl: `${base}${localizedHomePath}` },
+      { name: "Sve kategorije", itemUrl: `${base}${localizedCategoriesPath}` },
     ],
   });
 

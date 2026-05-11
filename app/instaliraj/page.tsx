@@ -1,31 +1,37 @@
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import Link from "next/link";
 import { PublicHeader } from "@/components/layout/PublicHeader";
 import { PublicFooter } from "@/components/layout/PublicFooter";
 import { InstallHints } from "@/components/pwa/install-hints";
 import { getSiteUrl } from "@/lib/site-url";
+import { buildAlternates, getLocaleFromHeaderValue, LOCALE_HEADER, localizedPath } from "@/lib/i18n/seo";
 
 const baseUrl = getSiteUrl();
 
-export const metadata: Metadata = {
-  title: "Instaliraj aplikaciju (PWA)",
-  description:
-    "Dodaj BrziMajstor.ME na početni ekran — brži pristup. Nije u App Store / Play Store.",
-  alternates: { canonical: `${baseUrl}/instaliraj` },
-  openGraph: {
-    title: "Instaliraj aplikaciju | BrziMajstor.ME",
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = getLocaleFromHeaderValue(headers().get(LOCALE_HEADER));
+  const localizedUrl = `${baseUrl.replace(/\/$/, "")}${localizedPath("/instaliraj", locale)}`;
+  return {
+    title: "Instaliraj aplikaciju (PWA)",
     description:
-      "PWA na početnom ekranu: pun ekran, kao obična aplikacija.",
-    url: `${baseUrl}/instaliraj`,
-    siteName: "BrziMajstor.ME",
-    type: "website",
-  },
-  twitter: {
-    card: "summary",
-    title: "Instaliraj aplikaciju | BrziMajstor.ME",
-    description: "Dodaj BrziMajstor.ME na telefon kao PWA.",
-  },
-};
+      "Dodaj BrziMajstor.ME na početni ekran — brži pristup. Nije u App Store / Play Store.",
+    alternates: buildAlternates(baseUrl, "/instaliraj", locale),
+    openGraph: {
+      title: "Instaliraj aplikaciju | BrziMajstor.ME",
+      description:
+        "PWA na početnom ekranu: pun ekran, kao obična aplikacija.",
+      url: localizedUrl,
+      siteName: "BrziMajstor.ME",
+      type: "website",
+    },
+    twitter: {
+      card: "summary",
+      title: "Instaliraj aplikaciju | BrziMajstor.ME",
+      description: "Dodaj BrziMajstor.ME na telefon kao PWA.",
+    },
+  };
+}
 
 export default function InstalirajPage() {
   return (

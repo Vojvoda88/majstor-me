@@ -40,6 +40,7 @@ export function NotificationsDropdown({
   const buttonRef = useRef<HTMLButtonElement | null>(null);
   const firstLoadRef = useRef(true);
   const latestIdRef = useRef<string | null>(null);
+  const panelId = "notifications-dropdown-panel";
 
   const fetchNotifications = useCallback(async (opts?: { silent?: boolean }) => {
     if (!opts?.silent) setLoading(true);
@@ -157,6 +158,10 @@ export function NotificationsDropdown({
           }
         }}
         className={`relative h-10 min-h-[44px] w-10 ${buttonClassName}`}
+        aria-haspopup="dialog"
+        aria-expanded={open}
+        aria-controls={open ? panelId : undefined}
+        aria-label={t(locale, "notifications.title", "Notifikacije")}
       >
         <Bell className={`h-5 w-5 ${iconClassName}`} />
         {unreadCount > 0 && (
@@ -173,6 +178,9 @@ export function NotificationsDropdown({
             aria-hidden
           />
           <div
+            id={panelId}
+            role="dialog"
+            aria-modal="true"
             className="fixed z-50 overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-[0_20px_48px_rgba(15,23,42,0.2)]"
             style={{
               top: panelStyle?.top ?? 68,
@@ -218,7 +226,7 @@ export function NotificationsDropdown({
                   <Bell className="h-10 w-10 text-slate-300" />
                   <p className="text-sm font-medium text-slate-600">{t(locale, "notifications.empty", "Nema notifikacija")}</p>
                   <p className="text-xs text-slate-400">
-                    Obavještenja ćete dobiti kad dobijete ponudu ili novu poruku
+                    {t(locale, "notifications.emptyHint", "Obavještenja ćete dobiti kad dobijete ponudu ili novu poruku")}
                   </p>
                 </div>
               ) : (

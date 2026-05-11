@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
-export function AddPhoneForm() {
+export function AddPhoneForm({ canWrite = true }: { canWrite?: boolean }) {
   const router = useRouter();
   const [phone, setPhone] = useState("");
   const [reason, setReason] = useState("");
@@ -13,6 +13,7 @@ export function AddPhoneForm() {
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!canWrite) return;
     if (!phone.trim()) return;
     setLoading(true);
     try {
@@ -45,6 +46,7 @@ export function AddPhoneForm() {
           onChange={(e) => setPhone(e.target.value)}
           placeholder="+382 69 123 456"
           className="w-40"
+          disabled={!canWrite}
         />
       </div>
       <div>
@@ -54,11 +56,17 @@ export function AddPhoneForm() {
           onChange={(e) => setReason(e.target.value)}
           placeholder="npr. spam, zloupotreba"
           className="w-32"
+          disabled={!canWrite}
         />
       </div>
-      <Button type="submit" disabled={loading || !phone.trim()}>
+      <Button type="submit" disabled={!canWrite || loading || !phone.trim()}>
         Dodaj na listu
       </Button>
+      {!canWrite ? (
+        <p className="w-full text-xs text-[#64748B]">
+          Vaša admin rola ima pregled, ali nema dozvolu za izmjene ove liste.
+        </p>
+      ) : null}
     </form>
   );
 }

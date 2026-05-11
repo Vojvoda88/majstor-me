@@ -73,7 +73,7 @@ export default async function AdminUsersPage({
       id: a.id,
       email: a.email,
       name: a.name,
-      adminRole: (a.adminProfile?.adminRole ?? "SUPER_ADMIN") as
+      adminRole: (a.adminProfile?.adminRole ?? "READ_ONLY") as
         | "SUPER_ADMIN"
         | "OPERATIONS_ADMIN"
         | "MODERATION_ADMIN"

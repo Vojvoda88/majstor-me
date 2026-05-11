@@ -11,7 +11,7 @@ const bodySchema = z.object({
 });
 
 export async function POST(req: Request) {
-  const auth = await requireAdminApi("trust_safety", req);
+  const auth = await requireAdminApi("trust_safety_write", req);
   if (!auth.ok) return auth.response;
 
   try {
@@ -46,14 +46,9 @@ export async function POST(req: Request) {
       },
     });
 
-    const adminProfile = await prisma.adminProfile.findUnique({
-      where: { userId: auth.session.user.id },
-      select: { adminRole: true },
-    });
-
     await createAuditLog(prisma, {
       adminId: auth.session.user.id,
-      adminRole: adminProfile?.adminRole ?? "SUPER_ADMIN",
+      adminRole: auth.adminRole,
       actionType: "BLACKLIST_PHONE",
       entityType: "blacklist",
       entityId: rec.id,

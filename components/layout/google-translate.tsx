@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import { DEFAULT_LOCALE, LOCALE_COOKIE, type AppLocale, getLocaleFromPathname, normalizeLocale, withLocalePrefix } from "@/lib/i18n/config";
 import { t } from "@/lib/i18n/messages";
@@ -10,6 +10,7 @@ export function LanguageSwitcher() {
   const [activeLang, setActiveLang] = useState<AppLocale>(DEFAULT_LOCALE);
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const wrapperRef = useRef<HTMLDivElement | null>(null);
 
   const languageOptions = useMemo(
     () => [
@@ -62,12 +63,30 @@ export function LanguageSwitcher() {
     setActiveLang(readPreferredLanguage());
   }, [pathname]);
 
+  useEffect(() => {
+    if (!open) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setOpen(false);
+    };
+    const onPointerDown = (event: MouseEvent) => {
+      if (!wrapperRef.current?.contains(event.target as Node)) {
+        setOpen(false);
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    window.addEventListener("mousedown", onPointerDown);
+    return () => {
+      window.removeEventListener("keydown", onKeyDown);
+      window.removeEventListener("mousedown", onPointerDown);
+    };
+  }, [open]);
+
   const activeOption =
     languageOptions.find((option) => option.code === activeLang) ?? languageOptions[0];
 
   return (
     <div className="fixed bottom-20 right-3 z-50">
-      <div className="relative">
+      <div className="relative" ref={wrapperRef}>
         <button
           type="button"
           onClick={() => setOpen((prev) => !prev)}

@@ -14,7 +14,11 @@ const getAdminRoleByUserId = cache(async (userId: string): Promise<AdminRole> =>
     where: { userId },
     select: { adminRole: true },
   });
-  return (adminProfile?.adminRole ?? "SUPER_ADMIN") as AdminRole;
+  if (!adminProfile?.adminRole) {
+    console.error("[admin-auth] Missing adminProfile for admin user", { userId });
+    return "READ_ONLY";
+  }
+  return adminProfile.adminRole as AdminRole;
 });
 
 export async function requireAdmin() {

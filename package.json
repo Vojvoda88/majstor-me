@@ -25,6 +25,7 @@
     "audit:prod-demo": "tsx scripts/audit-production-demo-patterns.ts",
     "verify:login-db": "tsx scripts/verify-login-db.ts",
     "verify:public-handyman-filter": "tsx scripts/verify-public-handyman-exclusion.ts",
+    "verify:i18n-keys": "tsx scripts/verify-i18n-keys.ts",
     "admin:reset-password": "tsx scripts/reset-admin-password.ts",
     "admin:create-staff": "tsx scripts/create-admin-staff.ts",
     "admin:revoke-access": "tsx scripts/revoke-admin-access.ts",

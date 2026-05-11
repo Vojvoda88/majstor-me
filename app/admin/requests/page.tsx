@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import { requireAdminPermission } from "@/lib/admin/auth";
+import { hasPermission } from "@/lib/admin/permissions";
 import { AdminRouteLoadError } from "@/lib/admin/admin-ssr-fallback";
 import {
   adminPaginationPage,
@@ -91,7 +92,7 @@ export default async function AdminRequestsPage({
     | Record<string, string | string[] | undefined>;
 }) {
   const { adminRole } = await requireAdminPermission("requests");
-  const canWriteRequests = adminRole !== "READ_ONLY";
+  const canWriteRequests = hasPermission(adminRole, "requests_write");
 
   let snapshot: AdminRequestsSnapshot = { page: 1, sort: "createdAt_desc" };
 

@@ -292,7 +292,7 @@ export function CreateRequestForm({ initialCategory, initialCity }: CreateReques
             data-testid="create-request-form"
           >
             {mutation.error && (
-              <div className="form-error text-sm text-[#B91C1C]">
+              <div className="form-error text-sm text-[#B91C1C]" role="alert" aria-live="polite">
                 {(mutation.error as Error).message ||
                   copy("request.create.serverErrors.saveError", "Došlo je do greške prilikom slanja zahtjeva. Pokušajte ponovo.")}
               </div>

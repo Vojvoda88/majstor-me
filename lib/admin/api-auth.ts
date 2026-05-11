@@ -31,7 +31,12 @@ export async function requireAdminApi(permission: Permission, request?: Request)
       where: { userId: session.user.id },
       select: { adminRole: true },
     });
-    adminRole = (adminProfile?.adminRole ?? "SUPER_ADMIN") as AdminRole;
+    if (!adminProfile?.adminRole) {
+      console.error("[requireAdminApi] Missing adminProfile for admin user", { userId: session.user.id });
+      adminRole = "READ_ONLY";
+    } else {
+      adminRole = adminProfile.adminRole as AdminRole;
+    }
   } catch (e) {
     console.error("[requireAdminApi] prisma adminProfile failed", e);
     return {

@@ -1,19 +1,24 @@
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import Link from "next/link";
 import { PublicHeader } from "@/components/layout/PublicHeader";
 import { PublicFooter } from "@/components/layout/PublicFooter";
 import { HOMEPAGE_CITIES } from "@/lib/homepage-data";
 import { SEO_PROBLEMS } from "@/lib/seo-problems-data";
 import { getSiteUrl } from "@/lib/site-url";
+import { buildAlternates, getLocaleFromHeaderValue, LOCALE_HEADER } from "@/lib/i18n/seo";
 
 const EXAMPLES = SEO_PROBLEMS.slice(0, 12);
 
-export const metadata: Metadata = {
-  title: "Česti problemi — majstori po gradu",
-  description:
-    "Vodiči za curenje vode, struju, klimu i druge kućne probleme u Crnoj Gori. Linkovi ka zahtjevu i majstorima u vašem gradu.",
-  alternates: { canonical: `${getSiteUrl().replace(/\/$/, "")}/problemi` },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = getLocaleFromHeaderValue(headers().get(LOCALE_HEADER));
+  return {
+    title: "Česti problemi — majstori po gradu",
+    description:
+      "Vodiči za curenje vode, struju, klimu i druge kućne probleme u Crnoj Gori. Linkovi ka zahtjevu i majstorima u vašem gradu.",
+    alternates: buildAlternates(getSiteUrl().replace(/\/$/, ""), "/problemi", locale),
+  };
+}
 
 export default function ProblemiHubPage() {
   const base = getSiteUrl().replace(/\/$/, "");

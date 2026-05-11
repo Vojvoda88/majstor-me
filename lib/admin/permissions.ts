@@ -35,6 +35,7 @@ export type Permission =
   | "cities"
   | "notifications"
   | "trust_safety"
+  | "trust_safety_write"
   | "content"
   | "settings"
   | "audit_log"
@@ -61,6 +62,7 @@ const ROLE_PERMISSIONS: Record<AdminRole, Permission[]> = {
     "cities",
     "notifications",
     "trust_safety",
+    "trust_safety_write",
     "content",
     "settings",
     "audit_log",
@@ -112,6 +114,7 @@ const ROLE_PERMISSIONS: Record<AdminRole, Permission[]> = {
     "requests",
     "chat",
     "trust_safety",
+    "trust_safety_write",
     "workers_write",
     "requests_write",
     "moderation_write",
@@ -143,6 +146,7 @@ export function canWrite(role: AdminRole, section: Permission): boolean {
 }
 
 export function getAdminRole(userRole: string | null, adminProfileRole: AdminRole | null): AdminRole {
+  void userRole;
   if (adminProfileRole) return adminProfileRole;
-  return userRole === "ADMIN" ? "SUPER_ADMIN" : "READ_ONLY";
+  return "READ_ONLY";
 }

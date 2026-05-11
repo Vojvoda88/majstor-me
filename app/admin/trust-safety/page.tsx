@@ -1,11 +1,13 @@
 import { requireAdminPermission } from "@/lib/admin/auth";
+import { hasPermission } from "@/lib/admin/permissions";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AddPhoneForm } from "./add-phone-form";
 
 export const dynamic = "force-dynamic";
 
 export default async function TrustSafetyPage() {
-  await requireAdminPermission("trust_safety");
+  const { adminRole } = await requireAdminPermission("trust_safety");
+  const canWrite = hasPermission(adminRole, "trust_safety_write");
   const { prisma } = await import("@/lib/db");
 
   const [blacklistedPhones, blacklistedEmails] = await Promise.all([
@@ -24,7 +26,7 @@ export default async function TrustSafetyPage() {
         <Card>
           <CardHeader>
             <CardTitle>Blokirani telefoni ({blacklistedPhones.length})</CardTitle>
-            <AddPhoneForm />
+            <AddPhoneForm canWrite={canWrite} />
           </CardHeader>
           <CardContent>
             <ul className="space-y-2 text-sm">

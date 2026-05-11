@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import Link from "next/link";
 import { PublicHeader } from "@/components/layout/PublicHeader";
@@ -26,6 +27,7 @@ import { SaveHandymanButton } from "@/components/handyman/save-handyman-button";
 import { GalleryLightbox } from "@/components/handyman/gallery-lightbox";
 import { cache } from "react";
 import { withPerfLog } from "@/lib/perf";
+import { buildAlternates, getLocaleFromHeaderValue, LOCALE_HEADER, localizedPath } from "@/lib/i18n/seo";
 
 export const dynamic = "force-dynamic";
 
@@ -87,6 +89,8 @@ export async function generateMetadata({
   const cat = categories[0] || "Majstor";
   const city = user.city || "";
   const base = getSiteUrl();
+  const locale = getLocaleFromHeaderValue(headers().get(LOCALE_HEADER));
+  const localizedRoute = localizedPath(`/handyman/${id}`, locale);
   const title = `${user.name} – ${cat}${city ? `, ${city}` : ""}`.trim();
   const bioTrim = user.handymanProfile.bio?.trim() ?? "";
   const description =
@@ -101,11 +105,11 @@ export async function generateMetadata({
   return {
     title,
     description,
-    alternates: { canonical: `${base}/handyman/${id}` },
+    alternates: buildAlternates(base, `/handyman/${id}`, locale),
     openGraph: {
       title: `${title} | BrziMajstor.ME`,
       description,
-      url: `${base}/handyman/${id}`,
+      url: `${base.replace(/\/$/, "")}${localizedRoute}`,
       siteName: "BrziMajstor.ME",
       type: "profile",
       images: imageUrl ? [{ url: imageUrl }] : undefined,

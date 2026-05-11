@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import Link from "next/link";
 import { PublicHeader } from "@/components/layout/PublicHeader";
 import { PublicFooter } from "@/components/layout/PublicFooter";
 import { getSiteUrl } from "@/lib/site-url";
+import { buildAlternates, getLocaleFromHeaderValue, LOCALE_HEADER, localizedPath } from "@/lib/i18n/seo";
 import {
   CREDIT_PACKAGES,
   HANDYMAN_START_BONUS_CREDITS,
@@ -16,26 +18,30 @@ const STARTER_PRICE_LABEL = `${CREDITS_STARTER_PACK.priceEur.toLocaleString("sr-
   maximumFractionDigits: 2,
 })} €`;
 
-export const metadata: Metadata = {
-  title: "Kako radi za majstore",
-  description:
-    "Detaljno i jasno za majstore: onboarding, odobreni poslovi, krediti i kada se troše na BrziMajstor.ME.",
-  alternates: { canonical: `${baseUrl}/kako-radi-majstori` },
-  openGraph: {
-    title: "Kako radi za majstore | BrziMajstor.ME",
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = getLocaleFromHeaderValue(headers().get(LOCALE_HEADER));
+  const localizedUrl = `${baseUrl.replace(/\/$/, "")}${localizedPath("/kako-radi-majstori", locale)}`;
+  return {
+    title: "Kako radi za majstore",
     description:
-      "Registracija je besplatna, poslovi su relevantni i odobreni, a krediti se troše samo kada vi odlučite da otključate kontakt.",
-    url: `${baseUrl}/kako-radi-majstori`,
-    siteName: "BrziMajstor.ME",
-    type: "website",
-  },
-  twitter: {
-    card: "summary",
-    title: "Kako radi za majstore | BrziMajstor.ME",
-    description:
-      "Bez pretplate. Birate poslove i kredite trošite samo kad vam posao odgovara.",
-  },
-};
+      "Detaljno i jasno za majstore: onboarding, odobreni poslovi, krediti i kada se troše na BrziMajstor.ME.",
+    alternates: buildAlternates(baseUrl, "/kako-radi-majstori", locale),
+    openGraph: {
+      title: "Kako radi za majstore | BrziMajstor.ME",
+      description:
+        "Registracija je besplatna, poslovi su relevantni i odobreni, a krediti se troše samo kada vi odlučite da otključate kontakt.",
+      url: localizedUrl,
+      siteName: "BrziMajstor.ME",
+      type: "website",
+    },
+    twitter: {
+      card: "summary",
+      title: "Kako radi za majstore | BrziMajstor.ME",
+      description:
+        "Bez pretplate. Birate poslove i kredite trošite samo kad vam posao odgovara.",
+    },
+  };
+}
 
 const steps = [
   {

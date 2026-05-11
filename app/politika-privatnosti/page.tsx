@@ -1,23 +1,29 @@
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import { PublicHeader } from "@/components/layout/PublicHeader";
 import { PublicFooter } from "@/components/layout/PublicFooter";
 import { getSiteUrl } from "@/lib/site-url";
+import { buildAlternates, getLocaleFromHeaderValue, LOCALE_HEADER, localizedPath } from "@/lib/i18n/seo";
 
 const baseUrl = getSiteUrl();
 
-export const metadata: Metadata = {
-  title: "Politika privatnosti | BrziMajstor.ME",
-  description:
-    "Saznajte kako BrziMajstor.ME prikuplja, koristi i štiti vaše lične podatke u skladu sa GDPR-om i Zakonom o zaštiti ličnih podataka Crne Gore.",
-  alternates: { canonical: `${baseUrl}/politika-privatnosti` },
-  openGraph: {
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = getLocaleFromHeaderValue(headers().get(LOCALE_HEADER));
+  const localizedUrl = `${baseUrl.replace(/\/$/, "")}${localizedPath("/politika-privatnosti", locale)}`;
+  return {
     title: "Politika privatnosti | BrziMajstor.ME",
-    description: "Transparentnost u rukovanju ličnim podacima korisnika i majstora.",
-    url: `${baseUrl}/politika-privatnosti`,
-    siteName: "BrziMajstor.ME",
-    type: "website",
-  },
-};
+    description:
+      "Saznajte kako BrziMajstor.ME prikuplja, koristi i štiti vaše lične podatke u skladu sa GDPR-om i Zakonom o zaštiti ličnih podataka Crne Gore.",
+    alternates: buildAlternates(baseUrl, "/politika-privatnosti", locale),
+    openGraph: {
+      title: "Politika privatnosti | BrziMajstor.ME",
+      description: "Transparentnost u rukovanju ličnim podacima korisnika i majstora.",
+      url: localizedUrl,
+      siteName: "BrziMajstor.ME",
+      type: "website",
+    },
+  };
+}
 
 const LAST_UPDATED = "18. april 2025.";
 const CONTACT_EMAIL = "support@brzimajstor.me";

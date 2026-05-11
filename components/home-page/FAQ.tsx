@@ -22,6 +22,8 @@ export function FAQ() {
       <div className="space-y-3 md:space-y-4">
         {FAQ_ITEMS.map((faq, i) => {
           const isOpen = open === i;
+          const buttonId = `faq-question-${i}`;
+          const panelId = `faq-answer-${i}`;
           return (
             <div
               key={faq.q}
@@ -34,6 +36,9 @@ export function FAQ() {
               <button
                 type="button"
                 onClick={() => setOpen(isOpen ? null : i)}
+                id={buttonId}
+                aria-expanded={isOpen}
+                aria-controls={panelId}
                 className="flex min-h-[52px] w-full touch-manipulation cursor-pointer items-start gap-4 px-4 py-4 text-left md:items-center md:px-7 md:py-6"
               >
                 <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-brand-navy text-sm font-bold text-white md:mt-0">
@@ -53,7 +58,12 @@ export function FAQ() {
                 </span>
               </button>
               {isOpen && (
-                <div className="border-t border-slate-100 bg-slate-50/40 px-5 py-5 pl-[4.5rem] text-[15px] leading-relaxed text-slate-700 md:px-7 md:py-6 md:pl-[5.25rem] md:text-[16px]">
+                <div
+                  id={panelId}
+                  role="region"
+                  aria-labelledby={buttonId}
+                  className="border-t border-slate-100 bg-slate-50/40 px-5 py-5 pl-[4.5rem] text-[15px] leading-relaxed text-slate-700 md:px-7 md:py-6 md:pl-[5.25rem] md:text-[16px]"
+                >
                   {faq.a}
                 </div>
               )}

@@ -1,23 +1,29 @@
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import { PublicHeader } from "@/components/layout/PublicHeader";
 import { PublicFooter } from "@/components/layout/PublicFooter";
 import { getSiteUrl } from "@/lib/site-url";
+import { buildAlternates, getLocaleFromHeaderValue, LOCALE_HEADER, localizedPath } from "@/lib/i18n/seo";
 
 const baseUrl = getSiteUrl();
 
-export const metadata: Metadata = {
-  title: "Uslovi korišćenja | BrziMajstor.ME",
-  description:
-    "Uslovi korišćenja platforme BrziMajstor.ME — prava i obaveze korisnika, majstora i platforme. Pročitajte prije registracije.",
-  alternates: { canonical: `${baseUrl}/uslovi-koriscenja` },
-  openGraph: {
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = getLocaleFromHeaderValue(headers().get(LOCALE_HEADER));
+  const localizedUrl = `${baseUrl.replace(/\/$/, "")}${localizedPath("/uslovi-koriscenja", locale)}`;
+  return {
     title: "Uslovi korišćenja | BrziMajstor.ME",
-    description: "Prava i obaveze korisnika i majstora na BrziMajstor.ME platformi.",
-    url: `${baseUrl}/uslovi-koriscenja`,
-    siteName: "BrziMajstor.ME",
-    type: "website",
-  },
-};
+    description:
+      "Uslovi korišćenja platforme BrziMajstor.ME — prava i obaveze korisnika, majstora i platforme. Pročitajte prije registracije.",
+    alternates: buildAlternates(baseUrl, "/uslovi-koriscenja", locale),
+    openGraph: {
+      title: "Uslovi korišćenja | BrziMajstor.ME",
+      description: "Prava i obaveze korisnika i majstora na BrziMajstor.ME platformi.",
+      url: localizedUrl,
+      siteName: "BrziMajstor.ME",
+      type: "website",
+    },
+  };
+}
 
 const LAST_UPDATED = "18. april 2025.";
 const CONTACT_EMAIL = "support@brzimajstor.me";

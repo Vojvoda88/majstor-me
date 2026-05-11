@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import Link from "next/link";
 import { Mail, Phone, ArrowLeft, MessageCircleMore } from "lucide-react";
 import { PublicHeader } from "@/components/layout/PublicHeader";
@@ -13,30 +14,34 @@ import {
 import { Button } from "@/components/ui/button";
 import { getSiteUrl } from "@/lib/site-url";
 import { SEO_OG_IMAGE_PATH } from "@/lib/seo-brand";
+import { buildAlternates, getLocaleFromHeaderValue, LOCALE_HEADER, localizedPath } from "@/lib/i18n/seo";
 
 const baseUrl = getSiteUrl().replace(/\/$/, "");
-const canonical = `${baseUrl}/kontakt`;
 
-export const metadata: Metadata = {
-  title: "Kontakt i podrška",
-  description: "Pitanja za tim BrziMajstor.ME — korisnici, majstori, tehnička podrška.",
-  robots: { index: true, follow: true },
-  alternates: { canonical },
-  openGraph: {
-    title: "Kontakt i podrška | BrziMajstor.ME",
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = getLocaleFromHeaderValue(headers().get(LOCALE_HEADER));
+  const localizedUrl = `${baseUrl}${localizedPath("/kontakt", locale)}`;
+  return {
+    title: "Kontakt i podrška",
     description: "Pitanja za tim BrziMajstor.ME — korisnici, majstori, tehnička podrška.",
-    url: canonical,
-    siteName: "BrziMajstor.ME",
-    type: "website",
-    images: [SEO_OG_IMAGE_PATH],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Kontakt i podrška | BrziMajstor.ME",
-    description: "Pitanja za tim BrziMajstor.ME — korisnici, majstori, tehnička podrška.",
-    images: [SEO_OG_IMAGE_PATH],
-  },
-};
+    robots: { index: true, follow: true },
+    alternates: buildAlternates(baseUrl, "/kontakt", locale),
+    openGraph: {
+      title: "Kontakt i podrška | BrziMajstor.ME",
+      description: "Pitanja za tim BrziMajstor.ME — korisnici, majstori, tehnička podrška.",
+      url: localizedUrl,
+      siteName: "BrziMajstor.ME",
+      type: "website",
+      images: [SEO_OG_IMAGE_PATH],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: "Kontakt i podrška | BrziMajstor.ME",
+      description: "Pitanja za tim BrziMajstor.ME — korisnici, majstori, tehnička podrška.",
+      images: [SEO_OG_IMAGE_PATH],
+    },
+  };
+}
 
 export default function KontaktPage() {
   const email = getSupportEmail();
