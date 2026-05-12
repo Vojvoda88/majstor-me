@@ -56,11 +56,6 @@ export default async function CreateRequestPage(props: {
     const parsed = parseRequestCreateSearchParams(raw);
     initialCategory = parsed.initialCategory;
     initialCity = parsed.initialCity;
-    console.info("[RequestCreateSSR]", {
-      ok: true,
-      hasCategory: Boolean(initialCategory),
-      hasCity: Boolean(initialCity),
-    });
   } catch (e) {
     console.error("[RequestCreateSSR] parse_failed", e);
   }

@@ -2,16 +2,9 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Gift, PhoneOff, Zap } from "lucide-react";
 import { HERO_IMAGE } from "@/lib/homepage-data";
 import { useUiLanguage } from "@/lib/i18n/ui-language";
 import { t } from "@/lib/i18n/messages";
-
-const TRUST = [
-  { icon: Gift, key: "home.hero.trustFree" },
-  { icon: PhoneOff, key: "home.hero.trustNoCalling" },
-  { icon: Zap, key: "home.hero.trustFast" },
-];
 
 export function Hero() {
   const locale = useUiLanguage();
@@ -58,32 +51,20 @@ export function Hero() {
           >
             {t(locale, "home.hero.secondaryCta", "Pogledaj kategorije")}
           </Link>
+        </div>
+        <div className="mt-3 flex flex-wrap items-center justify-center gap-2.5 md:mt-4">
           <Link
             href="/register?type=majstor"
-            className="inline-flex h-14 min-h-[52px] items-center justify-center rounded-2xl border border-amber-300/45 bg-white/12 px-6 text-base font-semibold text-amber-100 shadow-lg shadow-amber-500/10 backdrop-blur-md transition hover:bg-white/18 hover:text-white active:scale-[0.98] max-[380px]:text-sm md:px-8"
+            className="inline-flex min-h-[44px] items-center justify-center rounded-xl border border-amber-300/45 bg-white/10 px-5 py-2.5 text-sm font-semibold text-amber-100 shadow-lg shadow-amber-500/10 backdrop-blur-md transition hover:bg-white/18 hover:text-white active:scale-[0.98]"
           >
             {t(locale, "home.hero.handymanCta", "Majstori: preuzmite poslove")}
           </Link>
-        </div>
-        <div className="mt-3 md:mt-4">
           <Link
             href="/login"
             className="inline-flex min-h-[44px] items-center justify-center rounded-xl border border-white/25 bg-black/15 px-5 py-2.5 text-sm font-semibold text-white/95 backdrop-blur-sm transition hover:bg-black/25 hover:text-white active:scale-[0.98]"
           >
             {t(locale, "home.hero.loginCta", "Već imate nalog? Prijavi se")}
           </Link>
-        </div>
-
-        <div className="mt-4 flex flex-wrap items-center justify-center gap-2 sm:gap-3 md:mt-6 md:gap-4">
-          {TRUST.map(({ icon: Icon, key }) => (
-            <span
-              key={key}
-              className="inline-flex max-w-[min(100%,20rem)] items-center gap-1.5 rounded-xl border border-white/20 bg-white/10 px-3 py-2 text-xs font-semibold text-white shadow-sm backdrop-blur-md sm:max-w-none sm:gap-2 sm:rounded-2xl sm:px-4 sm:py-2.5 sm:text-sm"
-            >
-              <Icon className="h-4 w-4 shrink-0 text-amber-300" aria-hidden />
-              {t(locale, key)}
-            </span>
-          ))}
         </div>
       </div>
     </section>
