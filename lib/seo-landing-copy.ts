@@ -45,11 +45,16 @@ export function buildSeoLandingDescription(parsed: SeoCombinedParsed): string {
     "klima-servis": `Klima servis u ${loc}: montaža, punjenje, servis. Pregledajte profile ili objavite zahtjev da se zainteresovani majstori jave.`,
     keramicar: `Keramičar u ${loc} za kupatila, pločice i završne radove. Lista ispod; jedan zahtjev šalje opis majstorima ako želite da vam se jave više njih.`,
     stolar: `Stolar u ${loc} za namještaj, vrata i drvo. Profili ispod; zahtjev možete ostaviti sa dimenzijama i rokom.`,
+    "pvc-stolarija": `PVC stolarija u ${loc}: prozori, vrata, podešavanje i zamjena okova. Uporedite profile ili pošaljite zahtjev za ponude.`,
     ciscenje: `Čišćenje stanova i poslovnih prostora u ${loc}. Pregledajte profile ili pošaljite zahtjev za procjenu površine i termina.`,
     moler: `Moler u ${loc}: krečenje, gletovanje i priprema zidova. Pogledajte profile i ocjene ili pošaljite jedan zahtjev da dobijete ponude.`,
     bravar: `Bravar u ${loc}: brave, metalni radovi i hitne intervencije. Uporedite profile ili pošaljite zahtjev i sačekajte odgovore majstora.`,
     gipsar: `Gipsar u ${loc}: spušteni plafoni, pregradni zidovi i dekorativni radovi. Profili i ponude na jednom mjestu.`,
     fasader: `Fasader u ${loc} za izolaciju i obnovu fasade. Pregledajte profile ili pošaljite zahtjev sa detaljima objekta.`,
+    "grubi-gradjevinski-radovi": `Grubi građevinski radovi u ${loc}: zidanje, betoniranje i konstrukcijski radovi. Pošaljite zahtjev i dobijte ponude izvođača.`,
+    selidbe: `Selidbe u ${loc}: stanovi, kancelarije i transport stvari. Pregledajte profile ili pošaljite zahtjev sa relacijom i obimom posla.`,
+    bastovanstvo: `Dvorište i bašta u ${loc}: košenje, rezidba, čišćenje i uređenje. Jedan zahtjev vam pomaže da dobijete više ponuda.`,
+    "sitni-kucni-poslovi": `Sitni kućni poslovi u ${loc}: montaže i manje popravke u stanu ili kući. Profili majstora i zahtjev za ponude na jednom mjestu.`,
   };
 
   return (
@@ -72,11 +77,16 @@ export function buildSeoCombinedIntroParagraph(parsed: SeoCombinedParsed): strin
     "klima-servis": `Za klimu u ${loc} — montaža, servis, punjenje. Pregledajte profile; zahtjevom isti problem mogu procijeniti zainteresovani majstori.`,
     keramicar: `Keramičar u ${loc}: pločice, kupatila, završni radovi. Jedan zahtjev šalje opis jednom — bez ponavljanja poziva.`,
     stolar: `Stolar u ${loc}: namještaj, vrata, drvo. Profili ispod; u zahtjev unesite mjere i rok ako tražite ponude usporedive po cijeni.`,
+    "pvc-stolarija": `PVC stolarija u ${loc}: podešavanje, popravke i zamjene. Pregledajte profile i pošaljite zahtjev sa dimenzijama i tipom otvora.`,
     ciscenje: `Čišćenje u ${loc}: birajte profil ili pošaljite jedan zahtjev za površinu i termin.`,
     moler: `Moler u ${loc}: krečenje, gletovanje i priprema zidova. Ispod su profili; jednim zahtjevom dobijate ponude bez zvanja više brojeva.`,
     bravar: `Bravar u ${loc}: brave, sigurnosna vrata i metalni radovi. Pregledajte profile i pošaljite zahtjev kad želite ponude.`,
     gipsar: `Gipsar u ${loc}: spušteni plafoni i pregradni zidovi. Jedan zahtjev je dovoljan da majstori pošalju odgovore.`,
     fasader: `Fasader u ${loc}: termoizolacija, mrežica i završni sloj. Profili i zahtjev za ponude na jednom mjestu.`,
+    "grubi-gradjevinski-radovi": `Grubi građevinski radovi u ${loc}: zidanje, beton, konstrukcija i priprema objekta. Jedan zahtjev šalje opis majstorima u gradu.`,
+    selidbe: `Selidbe u ${loc}: stan, kancelarija ili manji transport. Profili su ispod, a zahtjev vam pomaže da uporedite ponude i rokove.`,
+    bastovanstvo: `Dvorište i bašta u ${loc}: održavanje zelenih površina, rezidba i uređenje. Jednim zahtjevom dobijate odgovore više majstora.`,
+    "sitni-kucni-poslovi": `Sitni kućni poslovi u ${loc}: montaže i popravke koje treba brzo završiti. Pregledajte profile ili pošaljite jedan zahtjev.`,
   };
 
   return (

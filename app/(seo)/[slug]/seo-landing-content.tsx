@@ -58,7 +58,7 @@ export function SeoLandingContent({
   };
   const priority = getPrioritySeoLandingContent(slug);
   const intro = priority?.intro ?? buildSeoCombinedIntroParagraph(parsed);
-  const relatedServiceLinks = PUBLIC_CATEGORY_LISTING.filter((c) => c.slug !== categorySlug).slice(0, 8);
+  const relatedServiceLinks = PUBLIC_CATEGORY_LISTING.filter((c) => c.slug !== categorySlug);
 
   const skipFirstClientFetch = useRef(!!initialListing);
 
