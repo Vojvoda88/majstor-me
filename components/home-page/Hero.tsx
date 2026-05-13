@@ -30,38 +30,34 @@ export function Hero() {
       />
       <div className="pointer-events-auto relative z-10 w-full max-w-4xl text-center">
         <h1 className="font-display mb-4 text-[1.72rem] font-extrabold leading-[1.12] tracking-tight text-white sm:text-[2rem] md:mb-5 md:text-5xl lg:text-[3.25rem] lg:leading-[1.08]">
-          {t(locale, "home.hero.headline", "Majstori u Crnoj Gori")}
+          {t(locale, "home.hero.headline", "Treba vam majstor?")}
         </h1>
-        <p className="mx-auto mb-6 max-w-2xl text-[15px] font-medium leading-relaxed text-slate-100 sm:text-base md:mb-8 md:text-lg md:leading-relaxed">
-          <span className="bg-gradient-to-r from-white to-white/85 bg-clip-text font-semibold text-transparent">
-            {t(locale, "home.hero.subline", "Opišite posao jednom.")}
-          </span>
+        <p className="mx-auto mb-6 max-w-2xl text-[15px] font-medium leading-relaxed text-slate-100/95 sm:text-base md:mb-8 md:text-lg md:leading-relaxed">
+          {t(locale, "home.hero.subline", "Nađite uslugu bez zvanja redom.")}
         </p>
 
-        <div className="mt-2 flex flex-col items-stretch gap-2.5 sm:flex-row sm:items-center sm:justify-center sm:gap-3 md:mt-4">
+        <div className="mx-auto mt-2 grid w-full max-w-xl grid-cols-1 gap-3 sm:grid-cols-2 md:mt-4">
           <Link
             href="/request/create"
-            className="inline-flex h-14 min-h-[52px] items-center justify-center rounded-2xl bg-gradient-to-br from-[#3b82f6] to-[#1d4ed8] px-8 text-base font-bold text-white shadow-lg shadow-blue-600/30 transition hover:brightness-105 active:scale-[0.98] md:h-[52px] md:px-10"
+            className="inline-flex h-14 min-h-[52px] w-full items-center justify-center rounded-2xl bg-gradient-to-br from-[#3b82f6] to-[#1d4ed8] px-6 text-base font-bold text-white shadow-lg shadow-blue-600/30 transition hover:brightness-105 active:scale-[0.98] sm:px-8"
           >
             {t(locale, "home.hero.primaryCta", "Zatraži majstora")}
           </Link>
           <Link
+            href="/register?type=majstor"
+            className="inline-flex h-14 min-h-[52px] w-full items-center justify-center rounded-2xl border-2 border-amber-300/90 bg-gradient-to-br from-amber-500/25 to-amber-600/15 px-6 text-base font-bold text-amber-50 shadow-lg shadow-amber-900/25 ring-1 ring-amber-200/30 backdrop-blur-md transition hover:from-amber-500/35 hover:to-amber-600/25 hover:text-white active:scale-[0.98] sm:px-8"
+          >
+            {t(locale, "home.hero.handymanCta", "Majstor? Prijavi se ovdje")}
+          </Link>
+          <Link
             href="/categories"
-            className="inline-flex h-14 min-h-[52px] items-center justify-center rounded-2xl border border-white/25 bg-white/10 px-6 text-base font-semibold text-white backdrop-blur-md transition hover:bg-white/15 active:scale-[0.98] md:px-8"
+            className="inline-flex h-14 min-h-[52px] w-full items-center justify-center rounded-2xl border border-white/25 bg-white/10 px-6 text-base font-semibold text-white backdrop-blur-md transition hover:bg-white/15 active:scale-[0.98] sm:px-8"
           >
             {t(locale, "home.hero.secondaryCta", "Pogledaj kategorije")}
           </Link>
-        </div>
-        <div className="mt-3 flex flex-wrap items-center justify-center gap-2.5 md:mt-4">
-          <Link
-            href="/register?type=majstor"
-            className="inline-flex min-h-[44px] items-center justify-center rounded-xl border border-amber-300/45 bg-white/10 px-5 py-2.5 text-sm font-semibold text-amber-100 shadow-lg shadow-amber-500/10 backdrop-blur-md transition hover:bg-white/18 hover:text-white active:scale-[0.98]"
-          >
-            {t(locale, "home.hero.handymanCta", "Majstori: preuzmite poslove")}
-          </Link>
           <Link
             href="/login"
-            className="inline-flex min-h-[44px] items-center justify-center rounded-xl border border-white/25 bg-black/15 px-5 py-2.5 text-sm font-semibold text-white/95 backdrop-blur-sm transition hover:bg-black/25 hover:text-white active:scale-[0.98]"
+            className="inline-flex h-14 min-h-[52px] w-full items-center justify-center rounded-2xl border border-white/25 bg-black/20 px-6 text-base font-semibold text-white backdrop-blur-sm transition hover:bg-black/30 hover:text-white active:scale-[0.98] sm:px-8"
           >
             {t(locale, "home.hero.loginCta", "Već imate nalog? Prijavi se")}
           </Link>

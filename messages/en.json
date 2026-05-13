@@ -47,11 +47,11 @@
   "home": {
     "hero": {
       "imageAlt": "Handyman at work",
-      "headline": "Handymen in Montenegro — fast, simple, and without calling around",
-      "subline": "Describe the job once. Handymen who match your city and service type respond through the platform.",
+      "headline": "Need a handyman?",
+      "subline": "Find the help you need without calling place after place.",
       "primaryCta": "Request a handyman",
       "secondaryCta": "View categories",
-      "handymanCta": "Handymen: take jobs",
+      "handymanCta": "Handyman? Sign up here",
       "loginCta": "Already have an account? Log in",
       "trustFree": "100% free",
       "trustNoCalling": "No calling multiple places",
@@ -60,7 +60,7 @@
     "howUsers": {
       "eyebrow": "For users",
       "title": "How it works for users",
-      "subtitle": "One short request — handymen from your city respond through the platform, without calling door to door.",
+      "subtitle": "One short request — handymen who match your listing respond through the platform.",
       "stepLabel": "Step",
       "steps": [
         {

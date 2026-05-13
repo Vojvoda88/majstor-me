@@ -47,11 +47,11 @@
   "home": {
     "hero": {
       "imageAlt": "Majstor na poslu",
-      "headline": "Majstori u Crnoj Gori — brzo, jednostavno i bez zvanja na više mjesta",
-      "subline": "Opišite posao jednom. Majstori kojima odgovara grad i vrsta posla javljaju se preko platforme.",
+      "headline": "Treba vam majstor?",
+      "subline": "Nađite uslugu bez zvanja redom.",
       "primaryCta": "Zatraži majstora",
       "secondaryCta": "Pogledaj kategorije",
-      "handymanCta": "Majstori: preuzmite poslove",
+      "handymanCta": "Majstor? Prijavi se ovdje",
       "loginCta": "Već imate nalog? Prijavi se",
       "trustFree": "100% besplatno",
       "trustNoCalling": "Bez zvanja na više mjesta",
@@ -60,7 +60,7 @@
     "howUsers": {
       "eyebrow": "Za korisnike",
       "title": "Kako radi za korisnike",
-      "subtitle": "Jedan kratki zahtjev — majstori iz vašeg grada odgovaraju preko platforme, bez zvanja od vrata do vrata.",
+      "subtitle": "Jedan kratki zahtjev — majstori kojima odgovara oglas odgovaraju preko platforme.",
       "stepLabel": "Korak",
       "steps": [
         {

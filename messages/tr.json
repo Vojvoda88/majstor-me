@@ -47,11 +47,11 @@
   "home": {
     "hero": {
       "imageAlt": "Calisan usta",
-      "headline": "Karadag'da ustalar — hizli, kolay ve bircok yeri aramadan",
-      "subline": "Isi bir kez tarif edin. Sehir ve hizmet turune uygun ustalar platform uzerinden cevap verir.",
+      "headline": "Ustaya ihtiyaciniz var mi?",
+      "subline": "Sirayla tek tek aramadan hizmeti bulun.",
       "primaryCta": "Usta talep et",
       "secondaryCta": "Kategorileri gor",
-      "handymanCta": "Ustalar: isleri alin",
+      "handymanCta": "Usta misiniz? Buradan kayit olun",
       "loginCta": "Zaten hesabin var mi? Giris yap",
       "trustFree": "100% ucretsiz",
       "trustNoCalling": "Birden fazla yeri aramaya gerek yok",
@@ -60,7 +60,7 @@
     "howUsers": {
       "eyebrow": "Kullanicilar icin",
       "title": "Kullanicilar icin nasil calisir",
-      "subtitle": "Tek kisa talep — sehrinizdeki ustalar platform uzerinden cevap verir, kapı kapı arama yok.",
+      "subtitle": "Kisa bir talep — ilaniniza uyan ustalar platform uzerinden yanitlar.",
       "stepLabel": "Adim",
       "steps": [
         {
