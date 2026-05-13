@@ -91,7 +91,7 @@ export function AdminSidebar({ adminRole, pendingReview, mobileOpen = false, onC
       className={cn(
             "fixed left-0 top-0 z-50 flex h-screen w-[min(100vw,17.5rem)] max-w-[88vw] flex-col border-r border-[#E2E8F0] bg-white shadow-xl transition-transform duration-200 ease-out lg:z-40 lg:max-w-none lg:shadow-none",
         "lg:translate-x-0 lg:pointer-events-auto",
-        mobileOpen ? "translate-x-0 pointer-events-auto" : "-translate-x-full pointer-events-none lg:translate-x-0"
+        mobileOpen ? "translate-x-0 pointer-events-auto" : "-translate-x-full pointer-events-none lg:translate-x-0 lg:pointer-events-auto"
       )}
     >
       <div className="flex h-full min-h-0 flex-col">

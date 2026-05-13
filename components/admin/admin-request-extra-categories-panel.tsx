@@ -1,12 +1,13 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
+import { cn } from "@/lib/utils";
 import { REQUEST_CATEGORY_FALLBACK, REQUEST_CREATE_CATEGORY_CHOICES } from "@/lib/constants";
-import { displayLabelForRequestCategory } from "@/lib/categories";
+import { displayLabelForRequestCategory, getInternalCategory } from "@/lib/categories";
 
 const CHOICE_SET = new Set(REQUEST_CREATE_CATEGORY_CHOICES as readonly string[]);
 
@@ -29,13 +30,31 @@ export function AdminRequestExtraCategoriesPanel({
   const [error, setError] = useState<string | null>(null);
   const [ok, setOk] = useState<string | null>(null);
   const [pick, setPick] = useState("");
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  const primaryCanonical = useMemo(
+    () => (getInternalCategory(primaryCategory) ?? primaryCategory).trim(),
+    [primaryCategory]
+  );
 
   const addableOptions = useMemo(() => {
-    const blocked = new Set<string>([primaryCategory, ...initialExtras]);
+    const blocked = new Set<string>([primaryCanonical, primaryCategory.trim(), ...initialExtras]);
     return (REQUEST_CREATE_CATEGORY_CHOICES as readonly string[]).filter(
       (c) => c !== REQUEST_CATEGORY_FALLBACK && !blocked.has(c)
     );
-  }, [primaryCategory, initialExtras]);
+  }, [primaryCanonical, primaryCategory, initialExtras]);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    const onDoc = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", onDoc);
+    return () => document.removeEventListener("mousedown", onDoc);
+  }, [menuOpen]);
 
   const callApi = async (body: { action: "add" | "remove"; category: string }) => {
     setError(null);
@@ -60,6 +79,8 @@ export function AdminRequestExtraCategoriesPanel({
       } else {
         setOk("Sačuvano.");
       }
+      setPick("");
+      setMenuOpen(false);
       router.refresh();
     } catch (e) {
       setError((e as Error).message);
@@ -102,23 +123,26 @@ export function AdminRequestExtraCategoriesPanel({
     );
   }
 
+  const canPick = canDistribute && addableOptions.length > 0 && !loading;
+  const statusHint = !canDistribute
+    ? "Čeka se status „Distribuiran“ (ili kasniji otvoren lead) da bi se majstorima moglo slati."
+    : addableOptions.length === 0
+      ? "Nema više kategorija za dodavanje (sve su već glavna ili dodatna)."
+      : null;
+
   return (
-    <Card>
+    <Card className="relative z-10">
       <CardHeader>
         <CardTitle className="text-lg">Dodatne kategorije za obavještenja majstorima</CardTitle>
         <p className="text-sm text-[#64748B]">
           Glavna kategorija zahtjeva ostaje <strong className="font-medium text-slate-800">{primaryCategory}</strong>.
-          Ovdje možete ručno dodati još jednu uslugu da <strong className="font-medium text-slate-800">dodatno</strong>{" "}
-          obavijestite majstore u toj kategoriji (npr. sitni kućni poslovi uz vodoinstalatera). Nema automatskog
-          povezivanja — samo ono što dodate. Majstori koji su već dobili obavještenje neće duplikat.
+          Ovdje ručno birate još jednu uslugu da <strong className="font-medium text-slate-800">dodatno</strong> obavijestite
+          majstore u toj kategoriji. Nema automatskog povezivanja. Već obaviješteni majstori neće duplikat.
         </p>
       </CardHeader>
       <CardContent className="space-y-4">
-        {!canDistribute && (
-          <p className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-900">
-            Dodavanje i talas notifikacija mogu tek kad je zahtjev odobren za distribuciju majstorima (npr. status
-            „Distribuiran“).
-          </p>
+        {statusHint && (
+          <p className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-900">{statusHint}</p>
         )}
 
         {initialExtras.length > 0 && (
@@ -141,33 +165,61 @@ export function AdminRequestExtraCategoriesPanel({
         )}
 
         <div className="space-y-2">
-          <Label htmlFor="extra-cat-pick">Dodaj kategoriju</Label>
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-end">
-            <select
-              id="extra-cat-pick"
-              className="min-h-[44px] flex-1 rounded-lg border border-slate-200 bg-white px-3 text-sm"
-              value={pick}
-              onChange={(e) => setPick(e.target.value)}
-              disabled={loading || !canDistribute || addableOptions.length === 0}
-            >
-              <option value="">— izaberite —</option>
-              {addableOptions.map((c) => (
-                <option key={c} value={c}>
-                  {displayLabelForRequestCategory(c)}
-                </option>
-              ))}
-            </select>
+          <Label id="extra-cat-label">Dodaj kategoriju</Label>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-start">
+            <div ref={menuRef} className="relative min-w-0 flex-1">
+              <Button
+                type="button"
+                variant="outline"
+                aria-haspopup="listbox"
+                aria-expanded={menuOpen}
+                aria-labelledby="extra-cat-label"
+                disabled={!canPick}
+                className={cn(
+                  "h-auto min-h-[44px] w-full justify-between px-3 py-2.5 text-left font-normal",
+                  !pick && "text-muted-foreground"
+                )}
+                onClick={() => canPick && setMenuOpen((o) => !o)}
+              >
+                <span className="truncate">
+                  {pick ? displayLabelForRequestCategory(pick) : "— kliknite da izaberete kategoriju —"}
+                </span>
+                <span className="ml-2 shrink-0 text-slate-400" aria-hidden>
+                  {menuOpen ? "▲" : "▼"}
+                </span>
+              </Button>
+              {menuOpen && canPick && (
+                <ul
+                  role="listbox"
+                  className="absolute left-0 right-0 z-[100] mt-1 max-h-64 overflow-auto rounded-lg border border-slate-200 bg-white py-1 shadow-xl"
+                >
+                  {addableOptions.map((c) => (
+                    <li key={c} role="option">
+                      <button
+                        type="button"
+                        className="w-full px-3 py-2.5 text-left text-sm text-slate-800 hover:bg-slate-100"
+                        onClick={() => {
+                          setPick(c);
+                          setMenuOpen(false);
+                          setError(null);
+                        }}
+                      >
+                        {displayLabelForRequestCategory(c)}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
             <Button
               type="button"
-              disabled={loading || !canDistribute || !pick || addableOptions.length === 0}
+              disabled={loading || !canDistribute || !pick}
               onClick={() => onAdd()}
+              className="shrink-0"
             >
               {loading ? "Slanje…" : "Dodaj i obavijesti"}
             </Button>
           </div>
-          {addableOptions.length === 0 && canDistribute && (
-            <p className="text-xs text-slate-500">Nema više dostupnih kategorija za dodavanje.</p>
-          )}
         </div>
 
         {error && <p className="text-sm text-red-600">{error}</p>}
