@@ -92,6 +92,7 @@ export const ADMIN_REQUEST_DETAIL_SELECT = {
   requesterPhone: true,
   requesterEmail: true,
   guestAccessTokenHash: true,
+  extraDistributionCategories: true,
   adminStatus: true,
   deletedAt: true,
   createdAt: true,

@@ -387,6 +387,7 @@ model Request {
   id              String        @id @default(cuid())
   userId          String?       @map("user_id") // null = guest zahtjev
   category        String
+  extraDistributionCategories String[] @default([]) @map("extra_distribution_categories") // admin-only extra notify pools; does not replace category
   subcategory     String?
   title           String?       @map("title") // naslov problema
   description     String
