@@ -9,7 +9,8 @@ export type NotificationType =
   | "NEW_JOB"
   | "WELCOME_HANDYMAN"
   | "ADMIN_PENDING_REQUEST"
-  | "ADMIN_PENDING_HANDYMAN";
+  | "ADMIN_PENDING_HANDYMAN"
+  | "PROFILE_MODERATED";
 
 export async function createNotification(
   userId: string,

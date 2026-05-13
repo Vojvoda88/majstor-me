@@ -51,7 +51,9 @@ const REQUEST_COPY: Record<
     onlyUsers: string;
     verifyEmail: string;
     dailyLimit: string;
+    guestDailyLimit: string;
     duplicate: string;
+    guestDuplicate: string;
     saveError: string;
   }
 > = {
@@ -66,7 +68,9 @@ const REQUEST_COPY: Record<
     onlyUsers: "Samo korisnici mogu kreirati zahtjeve",
     verifyEmail: "Morate verifikovati email adresu prije objave zahtjeva.",
     dailyLimit: "Dostigli ste dnevni limit zahtjeva (5)",
+    guestDailyLimit: "Previše zahtjeva sa istog broja telefona danas. Pokušajte ponovo kasnije.",
     duplicate: "Već ste objavili isti zahtjev danas",
+    guestDuplicate: "Identičan zahtjev je već poslat sa ovog broja telefona.",
     saveError: "Greška pri snimanju zahtjeva. Pokušajte ponovo za nekoliko trenutaka.",
   },
   en: {
@@ -80,7 +84,9 @@ const REQUEST_COPY: Record<
     onlyUsers: "Only users can create requests",
     verifyEmail: "You must verify your email before posting a request.",
     dailyLimit: "You have reached your daily request limit (5)",
+    guestDailyLimit: "Too many requests from the same phone number today. Please try again later.",
     duplicate: "You already posted the same request today",
+    guestDuplicate: "An identical request has already been submitted from this phone number.",
     saveError: "Error while saving request. Please try again shortly.",
   },
   ru: {
@@ -94,7 +100,9 @@ const REQUEST_COPY: Record<
     onlyUsers: "Только пользователи могут создавать заявки",
     verifyEmail: "Подтвердите email перед публикацией заявки.",
     dailyLimit: "Вы достигли дневного лимита заявок (5)",
+    guestDailyLimit: "С этого номера телефона сегодня отправлено слишком много заявок. Попробуйте позже.",
     duplicate: "Вы уже публиковали такую заявку сегодня",
+    guestDuplicate: "Идентичная заявка уже отправлена с этого номера телефона.",
     saveError: "Ошибка при сохранении заявки. Попробуйте снова позже.",
   },
   tr: {
@@ -108,7 +116,9 @@ const REQUEST_COPY: Record<
     onlyUsers: "Sadece kullanicilar talep olusturabilir",
     verifyEmail: "Talep yayinlamadan once e-postanizi dogrulamaniz gerekir.",
     dailyLimit: "Gunluk talep limitine ulastiniz (5)",
+    guestDailyLimit: "Ayni telefon numarasindan bugun cok fazla talep gonderildi. Lutfen daha sonra tekrar deneyin.",
     duplicate: "Ayni talebi bugun zaten yayinladiniz",
+    guestDuplicate: "Ayni telefon numarasindan ayni talep zaten gonderildi.",
     saveError: "Talep kaydedilirken hata olustu. Lutfen biraz sonra tekrar deneyin.",
   },
 };
@@ -253,6 +263,23 @@ export async function createRequestShared(
       if (requestCount >= MAX_REQUESTS_PER_DAY) {
         return { ok: false, error: copy.dailyLimit, status: 429 };
       }
+    } else {
+      const yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+      const guestPhone = typeof raw.requesterPhone === "string" ? raw.requesterPhone.trim() : "";
+      if (guestPhone.length > 0) {
+        console.info("[RequestCreateSubmit] step_enter", { step: "step_db_guest_rate_limit_count" });
+        const guestRequestCount = await prisma.request.count({
+          where: {
+            userId: null,
+            requesterPhone: guestPhone,
+            createdAt: { gte: yesterday },
+          },
+        });
+        if (guestRequestCount >= 3) {
+          return { ok: false, error: copy.guestDailyLimit, status: 429 };
+        }
+      }
     }
 
     normalizeCategoryInRaw(raw);
@@ -280,7 +307,17 @@ export async function createRequestShared(
     yesterday.setDate(yesterday.getDate() - 1);
     console.info("[RequestCreateSubmit] step_enter", { step: "step_db_duplicate_check" });
     const duplicate = isGuest
-      ? null
+      ? await prisma.request.findFirst({
+          where: {
+            userId: null,
+            requesterPhone: parsed.data.requesterPhone,
+            title: titleTrimmed,
+            category: parsed.data.category,
+            city: parsed.data.city,
+            description: descTrimmed,
+            createdAt: { gte: yesterday },
+          },
+        })
       : await prisma.request.findFirst({
           where: {
             userId: session!.user!.id,
@@ -289,7 +326,7 @@ export async function createRequestShared(
           },
         });
     if (duplicate) {
-      return { ok: false, error: copy.duplicate, status: 400 };
+      return { ok: false, error: isGuest ? copy.guestDuplicate : copy.duplicate, status: 400 };
     }
 
     const {

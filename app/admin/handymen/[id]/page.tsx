@@ -7,7 +7,9 @@ import { AdminHandymanActions } from "./admin-handyman-actions";
 import { DeleteUserButton } from "./delete-user-button";
 import { AdminSendHandymanMessage } from "./admin-send-handyman-message";
 import { AdminBypassAttemptForm } from "./admin-bypass-attempt-form";
+import { AdminHandymanProfileModeration } from "@/components/admin/admin-handyman-profile-moderation";
 import { AdminRouteLoadError } from "@/lib/admin/admin-ssr-fallback";
+import { hasPermission } from "@/lib/admin/permissions";
 import { prismaErrorCode } from "@/lib/admin/admin-ssr-params";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
@@ -152,6 +154,7 @@ export default async function AdminHandymanDetailPage({ params }: { params: Prom
 
   if (!user?.handymanProfile) notFound();
 
+  const canModerateProfile = hasPermission(adminRole, "workers_write");
   const hp = user.handymanProfile;
   const categories = hp.workerCategories.map((wc) => wc.category.name);
   const ratingDisplay = Number(hp.ratingAvg ?? 0).toFixed(1);
@@ -335,51 +338,62 @@ export default async function AdminHandymanDetailPage({ params }: { params: Prom
         </Card>
       </div>
 
-      {hp.bio && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Opis</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm">{hp.bio}</p>
-          </CardContent>
-        </Card>
-      )}
+      {canModerateProfile ? (
+        <AdminHandymanProfileModeration
+          handymanId={id}
+          initialBio={hp.bio}
+          avatarUrl={hp.avatarUrl}
+          galleryImages={hp.galleryImages}
+        />
+      ) : (
+        <>
+          {hp.bio && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Opis</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm">{hp.bio}</p>
+              </CardContent>
+            </Card>
+          )}
 
-      {(hp.avatarUrl || hp.galleryImages.length > 0) && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Fotografije profila</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {hp.avatarUrl && (
-              <div>
-                <p className="mb-2 text-sm font-medium text-slate-700">Profilna fotografija</p>
-                <div className="relative h-28 w-28 overflow-hidden rounded-2xl border bg-slate-100">
-                  <Image src={hp.avatarUrl} alt={user.name} fill className="object-cover" sizes="112px" />
-                </div>
-              </div>
-            )}
-            {hp.galleryImages.length > 0 && (
-              <div>
-                <p className="mb-2 text-sm font-medium text-slate-700">Galerija radova</p>
-                <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                  {hp.galleryImages.map((url, idx) => (
-                    <a
-                      key={`${url}-${idx}`}
-                      href={url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="relative aspect-square overflow-hidden rounded-xl border bg-slate-100"
-                    >
-                      <Image src={url} alt={`Rad ${idx + 1}`} fill className="object-cover" sizes="240px" />
-                    </a>
-                  ))}
-                </div>
-              </div>
-            )}
-          </CardContent>
-        </Card>
+          {(hp.avatarUrl || hp.galleryImages.length > 0) && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Fotografije profila</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {hp.avatarUrl && (
+                  <div>
+                    <p className="mb-2 text-sm font-medium text-slate-700">Profilna fotografija</p>
+                    <div className="relative h-28 w-28 overflow-hidden rounded-2xl border bg-slate-100">
+                      <Image src={hp.avatarUrl} alt={user.name} fill className="object-cover" sizes="112px" />
+                    </div>
+                  </div>
+                )}
+                {hp.galleryImages.length > 0 && (
+                  <div>
+                    <p className="mb-2 text-sm font-medium text-slate-700">Galerija radova</p>
+                    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                      {hp.galleryImages.map((url, idx) => (
+                        <a
+                          key={`${url}-${idx}`}
+                          href={url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="relative aspect-square overflow-hidden rounded-xl border bg-slate-100"
+                        >
+                          <Image src={url} alt={`Rad ${idx + 1}`} fill className="object-cover" sizes="240px" />
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          )}
+        </>
       )}
 
       <Card>

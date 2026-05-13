@@ -120,3 +120,33 @@ export async function uploadImage(
     return { ok: false, error: msg };
   }
 }
+
+/** Briše objekat u Supabase Storage-u ako URL pripada našem public bucket-u (best-effort). */
+export async function deleteStorageObjectByPublicUrl(publicUrl: string): Promise<void> {
+  if (!isStorageConfigured()) return;
+  try {
+    const base = process.env.SUPABASE_URL!.replace(/\/$/, "");
+    const bucket = process.env.STORAGE_BUCKET || "majstor-me";
+    const marker = `/object/public/${bucket}/`;
+    const idx = publicUrl.indexOf(marker);
+    if (idx === -1) return;
+    const objectPath = decodeURIComponent(publicUrl.slice(idx + marker.length).split("?")[0] ?? "");
+    if (!objectPath) return;
+    const encodedPath = objectPath
+      .split("/")
+      .filter(Boolean)
+      .map((seg) => encodeURIComponent(seg))
+      .join("/");
+    const deleteUrl = `${base}/storage/v1/object/${bucket}/${encodedPath}`;
+    const res = await fetch(deleteUrl, {
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY!}` },
+    });
+    if (!res.ok) {
+      const t = await res.text().catch(() => "");
+      console.warn("[storage] delete failed", { status: res.status, detail: t.slice(0, 200) });
+    }
+  } catch (e) {
+    console.warn("[storage] delete error", e instanceof Error ? e.message : e);
+  }
+}

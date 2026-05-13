@@ -40,10 +40,16 @@ export default async function GuestRequestAccessPage({ params }: { params: Promi
 
   const { prisma } = await import("@/lib/db");
   const hash = hashGuestAccessToken(token);
-  const req = await prisma.request.findUnique({
+  let req = await prisma.request.findUnique({
     where: { guestAccessTokenHash: hash },
     include: requestDetailInclude,
   });
+  if (!req) {
+    req = await prisma.request.findUnique({
+      where: { guestAccessTokenHash: token },
+      include: requestDetailInclude,
+    });
+  }
 
   if (!req || req.userId) {
     return (

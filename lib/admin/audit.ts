@@ -38,7 +38,8 @@ export type AuditActionType =
   | "RESOLVE_REPORT"
   | "REISSUE_GUEST_ACCESS"
   | "SEND_HANDYMAN_MESSAGE"
-  | "BYPASS_ATTEMPT_NOTICE";
+  | "BYPASS_ATTEMPT_NOTICE"
+  | "HANDYMAN_PROFILE_MODERATION";
 
 export type AuditEntityType =
   | "user"
