@@ -155,6 +155,7 @@ export async function PATCH(
       );
     }
     const { status, guestAccessToken } = parsed.data;
+    const isAdmin = session.user.role === "ADMIN";
 
     const req = await prisma.request.findUnique({
       where: { id },
@@ -174,30 +175,37 @@ export async function PATCH(
       );
     }
 
-    if (req.userId != null) {
-      if (!session?.user?.id || req.userId !== session.user.id) {
-        return NextResponse.json(
-          { success: false, error: "Nemate pristup ovom zahtjevu" },
-          { status: 403 }
-        );
-      }
-    } else {
-      if (!guestPlainTokenMatchesHash(guestAccessToken, req.guestAccessTokenHash)) {
-        return NextResponse.json(
-          { success: false, error: "Nemate pristup ovom zahtjevu" },
-          { status: 403 }
-        );
+    if (!isAdmin) {
+      if (req.userId != null) {
+        if (!session?.user?.id || req.userId !== session.user.id) {
+          return NextResponse.json(
+            { success: false, error: "Nemate pristup ovom zahtjevu" },
+            { status: 403 }
+          );
+        }
+      } else {
+        if (!guestPlainTokenMatchesHash(guestAccessToken, req.guestAccessTokenHash)) {
+          return NextResponse.json(
+            { success: false, error: "Nemate pristup ovom zahtjevu" },
+            { status: 403 }
+          );
+        }
       }
     }
 
-    if (req.status === "COMPLETED" || req.status === "CANCELLED") {
+    if (req.status === "COMPLETED" || (req.status === "CANCELLED" && !isAdmin)) {
       return NextResponse.json(
         { success: false, error: "Zahtjev je već završen ili otkazan" },
         { status: 400 }
       );
     }
 
-    if (status === "COMPLETED" && req.status !== "IN_PROGRESS" && req.status !== "OPEN") {
+    if (
+      status === "COMPLETED" &&
+      req.status !== "IN_PROGRESS" &&
+      req.status !== "OPEN" &&
+      !(isAdmin && req.status === "CANCELLED")
+    ) {
       return NextResponse.json(
         { success: false, error: "Zahtjev mora biti otvoren ili u toku da bi se označio završenim" },
         { status: 400 }
@@ -222,6 +230,7 @@ export async function PATCH(
         });
         return u;
       });
+      const closedByText = isAdmin ? "Administrator je zaključio" : "Klijent je zatvorio";
       await Promise.allSettled(
         pendingHandymen.map((o) =>
           createNotification(
@@ -229,7 +238,7 @@ export async function PATCH(
             "NEW_JOB",
             "Zahtjev zatvoren",
             {
-              body: `Klijent je zatvorio zahtjev za ${updated.category} — posao je označen kao riješen.`,
+              body: `${closedByText} zahtjev za ${updated.category} — posao je označen kao riješen.`,
             }
           )
         )
@@ -268,6 +277,7 @@ export async function PATCH(
         where: { requestId: id, status: "PENDING" },
         select: { handymanId: true },
       });
+      const cancelledBy = isAdmin ? "od strane administratora" : "od strane klijenta";
       await Promise.allSettled(
         pendingOffers.map((o) =>
           createNotification(
@@ -275,7 +285,7 @@ export async function PATCH(
             "NEW_JOB",
             "Zahtjev otkazan",
             {
-              body: `Zahtjev za ${updated.category} u ${updated.city || "nepoznatom gradu"} je otkazan od strane klijenta.`,
+              body: `Zahtjev za ${updated.category} u ${updated.city || "nepoznatom gradu"} je otkazan ${cancelledBy}.`,
             }
           )
         )

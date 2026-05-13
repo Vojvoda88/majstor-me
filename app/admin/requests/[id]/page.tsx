@@ -14,6 +14,7 @@ import { logAdminSsrFatal, prismaErrorCode } from "@/lib/admin/admin-ssr-params"
 import { hasPermission } from "@/lib/admin/permissions";
 import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import { AdminRequestExtraCategoriesPanel } from "@/components/admin/admin-request-extra-categories-panel";
+import { MarkAgreedButton } from "./mark-agreed-button";
 import {
   canDistributeRequestToHandymen,
   getDistributionBlockMessageSr,
@@ -107,6 +108,8 @@ export default async function AdminRequestDetailPage({ params }: { params: Promi
             })}
           />
         </div>
+
+        <MarkAgreedButton requestId={req.id} currentStatus={req.status} canWriteRequests={canWriteRequests} />
 
         <div className="grid gap-6 lg:grid-cols-2">
           <Card>
