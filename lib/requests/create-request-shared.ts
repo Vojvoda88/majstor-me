@@ -242,6 +242,14 @@ export async function createRequestShared(
     const locale = normalizeLocale(typeof raw.locale === "string" ? raw.locale : null);
     const copy = REQUEST_COPY[locale];
 
+    /** Privremeno (npr. Vercel env): isključi dnevne limite i provjeru duplikata — ugasiti čim korisnik objavi. */
+    const relaxAntispam =
+      process.env.REQUEST_CREATE_RELAX_ANTISPAM === "1" ||
+      process.env.REQUEST_CREATE_RELAX_ANTISPAM === "true";
+    if (relaxAntispam) {
+      console.warn("[RequestCreateSubmit] REQUEST_CREATE_RELAX_ANTISPAM je uključeno (bez dnevnih limita i duplikata).");
+    }
+
     if (!isGuest && session!.user!.role !== "USER") {
       return { ok: false, error: copy.onlyUsers, status: 403 };
     }
@@ -255,7 +263,7 @@ export async function createRequestShared(
       }
     }
 
-    if (!isGuest) {
+    if (!relaxAntispam && !isGuest) {
       const yesterday = new Date();
       yesterday.setDate(yesterday.getDate() - 1);
       console.info("[RequestCreateSubmit] step_enter", { step: "step_db_rate_limit_count" });
@@ -268,7 +276,7 @@ export async function createRequestShared(
       if (requestCount >= MAX_REQUESTS_PER_DAY) {
         return { ok: false, error: copy.dailyLimit, status: 429 };
       }
-    } else {
+    } else if (!relaxAntispam && isGuest) {
       const yesterday = new Date();
       yesterday.setDate(yesterday.getDate() - 1);
       const guestPhone = typeof raw.requesterPhone === "string" ? raw.requesterPhone.trim() : "";
@@ -310,34 +318,35 @@ export async function createRequestShared(
 
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
-    console.info("[RequestCreateSubmit] step_enter", { step: "step_db_duplicate_check" });
-    const duplicate = isGuest
-      ? await prisma.request.findFirst({
-          where: {
-            userId: null,
-            requesterPhone: parsed.data.requesterPhone,
-            title: titleTrimmed,
-            category: parsed.data.category,
-            city: parsed.data.city,
-            description: descTrimmed,
-            createdAt: { gte: yesterday },
-            status: { in: REQUEST_STATUSES_FOR_DUPLICATE_BLOCK },
-            deletedAt: null,
-          },
-        })
-      : await prisma.request.findFirst({
-          where: {
-            userId: session!.user!.id,
-            description: descTrimmed,
-            createdAt: { gte: yesterday },
-            status: { in: REQUEST_STATUSES_FOR_DUPLICATE_BLOCK },
-            deletedAt: null,
-          },
-        });
-    if (duplicate) {
-      return { ok: false, error: isGuest ? copy.guestDuplicate : copy.duplicate, status: 400 };
+    if (!relaxAntispam) {
+      console.info("[RequestCreateSubmit] step_enter", { step: "step_db_duplicate_check" });
+      const duplicate = isGuest
+        ? await prisma.request.findFirst({
+            where: {
+              userId: null,
+              requesterPhone: parsed.data.requesterPhone,
+              title: titleTrimmed,
+              category: parsed.data.category,
+              city: parsed.data.city,
+              description: descTrimmed,
+              createdAt: { gte: yesterday },
+              status: { in: REQUEST_STATUSES_FOR_DUPLICATE_BLOCK },
+              deletedAt: null,
+            },
+          })
+        : await prisma.request.findFirst({
+            where: {
+              userId: session!.user!.id,
+              description: descTrimmed,
+              createdAt: { gte: yesterday },
+              status: { in: REQUEST_STATUSES_FOR_DUPLICATE_BLOCK },
+              deletedAt: null,
+            },
+          });
+      if (duplicate) {
+        return { ok: false, error: isGuest ? copy.guestDuplicate : copy.duplicate, status: 400 };
+      }
     }
-
     const {
       requesterName,
       title,
