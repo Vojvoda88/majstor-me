@@ -7,6 +7,7 @@ import { PublicFooter } from "@/components/layout/PublicFooter";
 import { Wrench, ChevronLeft, ChevronRight, MapPin, ArrowRight } from "lucide-react";
 import { HandymanCard } from "@/components/lists/handyman-card";
 import { DEFAULT_PAGE_SIZE } from "@/lib/constants";
+import { PUBLIC_CATEGORY_LISTING } from "@/lib/categories";
 import { cityLocative, phraseUGradu } from "@/lib/slugs";
 import { buildSeoCombinedIntroParagraph, type SeoCombinedParsed } from "@/lib/seo-landing-copy";
 import { getPrioritySeoLandingContent } from "@/lib/seo-landing-priority-copy";
@@ -57,6 +58,7 @@ export function SeoLandingContent({
   };
   const priority = getPrioritySeoLandingContent(slug);
   const intro = priority?.intro ?? buildSeoCombinedIntroParagraph(parsed);
+  const relatedServiceLinks = PUBLIC_CATEGORY_LISTING.filter((c) => c.slug !== categorySlug).slice(0, 8);
 
   const skipFirstClientFetch = useRef(!!initialListing);
 
@@ -298,6 +300,23 @@ export function SeoLandingContent({
                 </div>
               ))}
             </div>
+          </section>
+
+          <section className="mt-10 rounded-2xl border border-white bg-white p-6 shadow-sm sm:p-8">
+            <h2 className="mb-4 text-lg font-bold text-slate-900">Slične usluge {phraseUGradu(cityName)}</h2>
+            <ul className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
+              {relatedServiceLinks.map((s) => (
+                <li key={s.slug}>
+                  <Link
+                    href={`/${s.slug}/${citySlug}`}
+                    className="inline-flex w-full items-center justify-between rounded-xl border border-slate-200 px-3 py-2 text-sm font-medium text-slate-700 transition hover:border-slate-300 hover:bg-slate-50"
+                  >
+                    {s.displayName}
+                    <ArrowRight className="h-4 w-4 text-slate-400" />
+                  </Link>
+                </li>
+              ))}
+            </ul>
           </section>
         </div>
       </div>

@@ -46,6 +46,10 @@ export function buildSeoLandingDescription(parsed: SeoCombinedParsed): string {
     keramicar: `Keramičar u ${loc} za kupatila, pločice i završne radove. Lista ispod; jedan zahtjev šalje opis majstorima ako želite da vam se jave više njih.`,
     stolar: `Stolar u ${loc} za namještaj, vrata i drvo. Profili ispod; zahtjev možete ostaviti sa dimenzijama i rokom.`,
     ciscenje: `Čišćenje stanova i poslovnih prostora u ${loc}. Pregledajte profile ili pošaljite zahtjev za procjenu površine i termina.`,
+    moler: `Moler u ${loc}: krečenje, gletovanje i priprema zidova. Pogledajte profile i ocjene ili pošaljite jedan zahtjev da dobijete ponude.`,
+    bravar: `Bravar u ${loc}: brave, metalni radovi i hitne intervencije. Uporedite profile ili pošaljite zahtjev i sačekajte odgovore majstora.`,
+    gipsar: `Gipsar u ${loc}: spušteni plafoni, pregradni zidovi i dekorativni radovi. Profili i ponude na jednom mjestu.`,
+    fasader: `Fasader u ${loc} za izolaciju i obnovu fasade. Pregledajte profile ili pošaljite zahtjev sa detaljima objekta.`,
   };
 
   return (
@@ -69,10 +73,14 @@ export function buildSeoCombinedIntroParagraph(parsed: SeoCombinedParsed): strin
     keramicar: `Keramičar u ${loc}: pločice, kupatila, završni radovi. Jedan zahtjev šalje opis jednom — bez ponavljanja poziva.`,
     stolar: `Stolar u ${loc}: namještaj, vrata, drvo. Profili ispod; u zahtjev unesite mjere i rok ako tražite ponude usporedive po cijeni.`,
     ciscenje: `Čišćenje u ${loc}: birajte profil ili pošaljite jedan zahtjev za površinu i termin.`,
+    moler: `Moler u ${loc}: krečenje, gletovanje i priprema zidova. Ispod su profili; jednim zahtjevom dobijate ponude bez zvanja više brojeva.`,
+    bravar: `Bravar u ${loc}: brave, sigurnosna vrata i metalni radovi. Pregledajte profile i pošaljite zahtjev kad želite ponude.`,
+    gipsar: `Gipsar u ${loc}: spušteni plafoni i pregradni zidovi. Jedan zahtjev je dovoljan da majstori pošalju odgovore.`,
+    fasader: `Fasader u ${loc}: termoizolacija, mrežica i završni sloj. Profili i zahtjev za ponude na jednom mjestu.`,
   };
 
   return (
     byCategory[parsed.categorySlug] ??
-    `Stranica za ${d} u ${loc}: pregled majstora u gradu i mogućnost jednog zahtjeva za ${gen}.`
+    `Stranica za ${d} u ${loc}: pregled majstora u gradu i mogućnost jednog zahtjeva u ${loc}.`
   );
 }

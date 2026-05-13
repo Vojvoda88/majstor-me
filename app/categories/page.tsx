@@ -40,6 +40,17 @@ const CATEGORY_SUBTEXT: Record<string, string> = {
   "sitni-kucni-poslovi": "Montaža, sitne popravke i pomoć po kući",
 };
 
+const SEO_POPULAR_SERVICE_CITY_LINKS = [
+  { slug: "moler", city: "podgorica", label: "Moler Podgorica" },
+  { slug: "bravar", city: "podgorica", label: "Bravar Podgorica" },
+  { slug: "vodoinstalater", city: "podgorica", label: "Vodoinstalater Podgorica" },
+  { slug: "elektricar", city: "podgorica", label: "Električar Podgorica" },
+  { slug: "moler", city: "niksic", label: "Moler Nikšić" },
+  { slug: "bravar", city: "niksic", label: "Bravar Nikšić" },
+  { slug: "vodoinstalater", city: "budva", label: "Vodoinstalater Budva" },
+  { slug: "elektricar", city: "budva", label: "Električar Budva" },
+] as const;
+
 export async function generateMetadata(): Promise<Metadata> {
   const locale = getLocaleFromHeaderValue(headers().get(LOCALE_HEADER));
   const localizedUrl = `${baseUrl.replace(/\/$/, "")}${localizedPath("/categories", locale)}`;
@@ -137,6 +148,25 @@ export default function CategoriesPage() {
             );
           })}
         </ul>
+        <section className="mt-10 rounded-3xl border border-slate-200/90 bg-white p-5 shadow-[0_12px_34px_-16px_rgba(10,22,40,0.18)] md:p-6">
+          <h2 className="font-display text-xl font-bold tracking-tight text-brand-navy md:text-2xl">Popularne pretrage po gradovima</h2>
+          <p className="mt-2 text-sm text-slate-600">
+            Najtraženije usluga+grad stranice za brži pregled majstora.
+          </p>
+          <ul className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
+            {SEO_POPULAR_SERVICE_CITY_LINKS.map((item) => (
+              <li key={`${item.slug}-${item.city}`}>
+                <Link
+                  href={localizedPath(`/${item.slug}/${item.city}`, locale)}
+                  className="inline-flex w-full items-center justify-between rounded-xl border border-slate-200 px-3 py-2 text-sm font-medium text-slate-700 transition hover:border-slate-300 hover:bg-slate-50"
+                >
+                  {item.label}
+                  <ArrowRight className="h-4 w-4 text-slate-400" />
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
       </div>
       <PublicFooter />
     </div>
