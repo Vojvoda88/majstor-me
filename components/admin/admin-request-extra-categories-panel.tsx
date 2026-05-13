@@ -1,7 +1,8 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -31,7 +32,11 @@ export function AdminRequestExtraCategoriesPanel({
   const [ok, setOk] = useState<string | null>(null);
   const [pick, setPick] = useState("");
   const [menuOpen, setMenuOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  const listRef = useRef<HTMLUListElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const [menuBox, setMenuBox] = useState<{ top: number; left: number; width: number; maxHeight: number } | null>(null);
 
   const primaryCanonical = useMemo(
     () => (getInternalCategory(primaryCategory) ?? primaryCategory).trim(),
@@ -45,12 +50,46 @@ export function AdminRequestExtraCategoriesPanel({
     );
   }, [primaryCanonical, primaryCategory, initialExtras]);
 
+  const canPick = canWrite && canDistribute && addableOptions.length > 0 && !loading;
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useLayoutEffect(() => {
+    if (!menuOpen || !canPick) {
+      setMenuBox(null);
+      return;
+    }
+    const update = () => {
+      const el = triggerRef.current;
+      if (!el) return;
+      const r = el.getBoundingClientRect();
+      const gap = 4;
+      const cap = 256;
+      const spaceBelow = window.innerHeight - r.bottom - gap - 12;
+      setMenuBox({
+        top: r.bottom + gap,
+        left: r.left,
+        width: r.width,
+        maxHeight: Math.max(120, Math.min(cap, spaceBelow)),
+      });
+    };
+    update();
+    window.addEventListener("scroll", update, true);
+    window.addEventListener("resize", update);
+    return () => {
+      window.removeEventListener("scroll", update, true);
+      window.removeEventListener("resize", update);
+    };
+  }, [menuOpen, canPick]);
+
   useEffect(() => {
     if (!menuOpen) return;
     const onDoc = (e: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
-        setMenuOpen(false);
-      }
+      const t = e.target as Node;
+      if (menuRef.current?.contains(t) || listRef.current?.contains(t)) return;
+      setMenuOpen(false);
     };
     document.addEventListener("mousedown", onDoc);
     return () => document.removeEventListener("mousedown", onDoc);
@@ -123,12 +162,58 @@ export function AdminRequestExtraCategoriesPanel({
     );
   }
 
-  const canPick = canDistribute && addableOptions.length > 0 && !loading;
   const statusHint = !canDistribute
     ? "Čeka se status „Distribuiran“ (ili kasniji otvoren lead) da bi se majstorima moglo slati."
     : addableOptions.length === 0
       ? "Nema više kategorija za dodavanje (sve su već glavna ili dodatna)."
       : null;
+
+  const pickControlTitle =
+    !canDistribute
+      ? "Dodavanje kategorije je moguće tek kad je zahtjev distribuiran majstorima (admin: Distribuiran, Ima ponude ili Kontakt otključan)."
+      : addableOptions.length === 0
+        ? "Nema više kategorija za izbor (glavna i dodatne pokrivaju sve)."
+        : loading
+          ? "Sačekajte da se završi slanje."
+          : undefined;
+
+  const dropdownPortal =
+    mounted &&
+    menuOpen &&
+    canPick &&
+    menuBox &&
+    createPortal(
+      <ul
+        ref={listRef}
+        role="listbox"
+        style={{
+          position: "fixed",
+          top: menuBox.top,
+          left: menuBox.left,
+          width: menuBox.width,
+          maxHeight: menuBox.maxHeight,
+          zIndex: 200,
+        }}
+        className="overflow-auto rounded-lg border border-slate-200 bg-white py-1 shadow-xl"
+      >
+        {addableOptions.map((c) => (
+          <li key={c} role="option">
+            <button
+              type="button"
+              className="w-full px-3 py-2.5 text-left text-sm text-slate-800 hover:bg-slate-100"
+              onClick={() => {
+                setPick(c);
+                setMenuOpen(false);
+                setError(null);
+              }}
+            >
+              {displayLabelForRequestCategory(c)}
+            </button>
+          </li>
+        ))}
+      </ul>,
+      document.body
+    );
 
   return (
     <Card className="relative z-10">
@@ -169,14 +254,16 @@ export function AdminRequestExtraCategoriesPanel({
           <div className="flex flex-col gap-2 sm:flex-row sm:items-start">
             <div ref={menuRef} className="relative min-w-0 flex-1">
               <Button
+                ref={triggerRef}
                 type="button"
                 variant="outline"
                 aria-haspopup="listbox"
                 aria-expanded={menuOpen}
                 aria-labelledby="extra-cat-label"
                 disabled={!canPick}
+                title={pickControlTitle}
                 className={cn(
-                  "h-auto min-h-[44px] w-full justify-between px-3 py-2.5 text-left font-normal",
+                  "h-auto min-h-[44px] w-full justify-between px-3 py-2.5 text-left font-normal disabled:pointer-events-auto disabled:cursor-not-allowed",
                   !pick && "text-muted-foreground"
                 )}
                 onClick={() => canPick && setMenuOpen((o) => !o)}
@@ -188,28 +275,7 @@ export function AdminRequestExtraCategoriesPanel({
                   {menuOpen ? "▲" : "▼"}
                 </span>
               </Button>
-              {menuOpen && canPick && (
-                <ul
-                  role="listbox"
-                  className="absolute left-0 right-0 z-[100] mt-1 max-h-64 overflow-auto rounded-lg border border-slate-200 bg-white py-1 shadow-xl"
-                >
-                  {addableOptions.map((c) => (
-                    <li key={c} role="option">
-                      <button
-                        type="button"
-                        className="w-full px-3 py-2.5 text-left text-sm text-slate-800 hover:bg-slate-100"
-                        onClick={() => {
-                          setPick(c);
-                          setMenuOpen(false);
-                          setError(null);
-                        }}
-                      >
-                        {displayLabelForRequestCategory(c)}
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              )}
+              {dropdownPortal}
             </div>
             <Button
               type="button"
