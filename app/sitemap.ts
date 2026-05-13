@@ -2,7 +2,6 @@ import { MetadataRoute } from "next";
 import { getSiteUrl } from "@/lib/site-url";
 import { PUBLIC_CATEGORY_LISTING } from "@/lib/categories";
 import { HOMEPAGE_CITIES } from "@/lib/homepage-data";
-import { prismaWhereHandymanSitemapEligible } from "@/lib/handyman-sitemap-eligibility";
 import { getProgrammaticServiceCityParams } from "@/lib/seo-programmatic-config";
 import { getProblemCityStaticParams } from "@/lib/seo-problems-data";
 import { SUPPORTED_LOCALES } from "@/lib/i18n/config";
@@ -17,18 +16,6 @@ const SEO_CORE_CITY_SLUGS = new Set([
   "tivat",
   "kotor",
 ]);
-
-const HANDYMAN_SITEMAP_TIMEOUT_MS = 2500;
-
-function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
-  return new Promise<T>((resolve, reject) => {
-    const timer = setTimeout(() => reject(new Error("timeout")), ms);
-    promise
-      .then((value) => resolve(value))
-      .catch((error) => reject(error))
-      .finally(() => clearTimeout(timer));
-  });
-}
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = getSiteUrl().replace(/\/$/, "");
@@ -87,30 +74,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       }))
     );
 
-    let handymanPages: MetadataRoute.Sitemap = [];
-    try {
-      const { prisma } = await import("@/lib/db");
-      const handymen = await withTimeout(
-        prisma.user.findMany({
-          where: prismaWhereHandymanSitemapEligible(),
-          select: { id: true },
-          take: 500,
-        }),
-        HANDYMAN_SITEMAP_TIMEOUT_MS
-      );
-      handymanPages = handymen.flatMap((u) =>
-        localized(`/handyman/${u.id}`).map((url) => ({
-          url,
-          lastModified: now,
-          changeFrequency: "weekly" as const,
-          priority: 0.55,
-        }))
-      );
-    } catch (e) {
-      console.error("[sitemap] skipping handyman URLs", e);
-    }
-
-    return [...staticPages, ...categoryPages, ...cityPages, ...serviceCityPages, ...problemPages, ...handymanPages];
+    return [...staticPages, ...categoryPages, ...cityPages, ...serviceCityPages, ...problemPages];
   } catch (e) {
     console.error("[sitemap] fallback to static pages only", e);
     return staticPages;
