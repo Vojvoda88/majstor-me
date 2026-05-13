@@ -18,6 +18,7 @@ export function AdminRequestExtraCategoriesPanel({
   initialExtras,
   canWrite,
   canDistribute,
+  distributionBlockMessage,
 }: {
   requestId: string;
   primaryCategory: string;
@@ -25,6 +26,8 @@ export function AdminRequestExtraCategoriesPanel({
   canWrite: boolean;
   /** Zahtjev je u statusu gdje majstori smiju vidjeti lead (npr. DISTRIBUTED) */
   canDistribute: boolean;
+  /** Kad je `canDistribute` false: srpski tekst zašto (iz servera). Kad je true: `null`. */
+  distributionBlockMessage: string | null;
 }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -163,14 +166,14 @@ export function AdminRequestExtraCategoriesPanel({
   }
 
   const statusHint = !canDistribute
-    ? "Čeka se status „Distribuiran“ (ili kasniji otvoren lead) da bi se majstorima moglo slati."
+    ? (distributionBlockMessage ?? "Trenutno nije moguće slati dodatne kategorije.")
     : addableOptions.length === 0
       ? "Nema više kategorija za dodavanje (sve su već glavna ili dodatna)."
       : null;
 
   const pickControlTitle =
     !canDistribute
-      ? "Dodavanje kategorije je moguće tek kad je zahtjev distribuiran majstorima (admin: Distribuiran, Ima ponude ili Kontakt otključan)."
+      ? (distributionBlockMessage ?? undefined)
       : addableOptions.length === 0
         ? "Nema više kategorija za izbor (glavna i dodatne pokrivaju sve)."
         : loading

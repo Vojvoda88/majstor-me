@@ -14,7 +14,10 @@ import { logAdminSsrFatal, prismaErrorCode } from "@/lib/admin/admin-ssr-params"
 import { hasPermission } from "@/lib/admin/permissions";
 import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import { AdminRequestExtraCategoriesPanel } from "@/components/admin/admin-request-extra-categories-panel";
-import { canDistributeRequestToHandymen } from "@/lib/request-approval-gates";
+import {
+  canDistributeRequestToHandymen,
+  getDistributionBlockMessageSr,
+} from "@/lib/request-approval-gates";
 
 export const dynamic = "force-dynamic";
 
@@ -93,6 +96,11 @@ export default async function AdminRequestDetailPage({ params }: { params: Promi
             initialExtras={req.extraDistributionCategories}
             canWrite={canWriteRequests}
             canDistribute={canDistributeRequestToHandymen({
+              status: req.status,
+              adminStatus: req.adminStatus,
+              deletedAt: req.deletedAt,
+            })}
+            distributionBlockMessage={getDistributionBlockMessageSr({
               status: req.status,
               adminStatus: req.adminStatus,
               deletedAt: req.deletedAt,

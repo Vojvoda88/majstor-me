@@ -3,7 +3,7 @@ import { z } from "zod";
 import { requireAdminApi } from "@/lib/admin/api-auth";
 import { createAuditLog } from "@/lib/admin/audit";
 import { REQUEST_CATEGORY_FALLBACK, REQUEST_CREATE_CATEGORY_CHOICES } from "@/lib/constants";
-import { canDistributeRequestToHandymen } from "@/lib/request-approval-gates";
+import { canDistributeRequestToHandymen, getDistributionBlockMessageSr } from "@/lib/request-approval-gates";
 import { distributeRequestToHandymenForExtraCategories } from "@/lib/request-distribution";
 
 export const dynamic = "force-dynamic";
@@ -69,7 +69,8 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
         {
           success: false,
           error:
-            "Zahtjev još nije u statusu za distribuciju majstorima. Sačekajte odobrenje / distribuciju prije dodatnog talasa.",
+            getDistributionBlockMessageSr(row) ??
+            "Zahtjev nije u statusu za novu distribuciju majstorima.",
         },
         { status: 400 }
       );
