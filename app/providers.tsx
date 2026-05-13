@@ -14,5 +14,14 @@ export function Providers({
   children: React.ReactNode;
   session?: Session | null;
 }) {
-  return <SessionProvider session={session ?? undefined}>{children}</SessionProvider>;
+  return (
+    <SessionProvider
+      session={session ?? undefined}
+      refetchOnWindowFocus={false}
+      refetchWhenOffline={false}
+      refetchInterval={0}
+    >
+      {children}
+    </SessionProvider>
+  );
 }

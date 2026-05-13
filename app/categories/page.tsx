@@ -129,7 +129,7 @@ export default function CategoriesPage() {
                       fill
                       className="object-cover object-center transition duration-500 ease-out group-hover:scale-[1.03]"
                       sizes="128px"
-                      unoptimized
+                      quality={72}
                     />
                     <div className="absolute inset-0 bg-gradient-to-r from-black/20 to-transparent md:hidden" />
                   </div>

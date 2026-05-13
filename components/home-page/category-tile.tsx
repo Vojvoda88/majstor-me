@@ -37,7 +37,7 @@ export function CategoryTile({ href, title, subtitle, imageSrc, FallbackIcon = I
           fill
           className="object-cover object-center transition duration-500 ease-out group-hover:scale-[1.025]"
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-          unoptimized
+          quality={72}
           onError={handleError}
         />
       ) : (
