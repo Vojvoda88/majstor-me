@@ -242,20 +242,26 @@ export async function createRequestShared(
     const locale = normalizeLocale(typeof raw.locale === "string" ? raw.locale : null);
     const copy = REQUEST_COPY[locale];
 
-    /** Privremeno (npr. Vercel env): isključi dnevne limite i provjeru duplikata — ugasiti čim korisnik objavi. */
+    const isAdminCreator = session?.user?.role === "ADMIN";
+
+    /** Privremeno (Vercel env) ili uloga ADMIN: bez dnevnih limita i provjere duplikata. */
     const relaxAntispam =
       process.env.REQUEST_CREATE_RELAX_ANTISPAM === "1" ||
       process.env.REQUEST_CREATE_RELAX_ANTISPAM === "true";
+    const bypassClientLimits = relaxAntispam || isAdminCreator;
     if (relaxAntispam) {
       console.warn("[RequestCreateSubmit] REQUEST_CREATE_RELAX_ANTISPAM je uključeno (bez dnevnih limita i duplikata).");
     }
+    if (isAdminCreator && !relaxAntispam) {
+      console.info("[RequestCreateSubmit] admin creator — zaobilaze se klijentski limiti i duplikat.");
+    }
 
-    if (!isGuest && session!.user!.role !== "USER") {
+    if (!isGuest && session!.user!.role !== "USER" && !isAdminCreator) {
       return { ok: false, error: copy.onlyUsers, status: 403 };
     }
 
-    // Blokiraj logirane korisnike bez verifikovanog emaila
-    if (!isGuest) {
+    // Blokiraj logirane korisnike bez verifikovanog emaila (ADMIN može uvijek)
+    if (!isGuest && !isAdminCreator) {
       const { isVerified } = await import("@/lib/auth/require-verified");
       const verified = await isVerified(session!.user!.id, session!.user!.role);
       if (!verified) {
@@ -263,7 +269,7 @@ export async function createRequestShared(
       }
     }
 
-    if (!relaxAntispam && !isGuest) {
+    if (!bypassClientLimits && !isGuest) {
       const yesterday = new Date();
       yesterday.setDate(yesterday.getDate() - 1);
       console.info("[RequestCreateSubmit] step_enter", { step: "step_db_rate_limit_count" });
@@ -276,7 +282,7 @@ export async function createRequestShared(
       if (requestCount >= MAX_REQUESTS_PER_DAY) {
         return { ok: false, error: copy.dailyLimit, status: 429 };
       }
-    } else if (!relaxAntispam && isGuest) {
+    } else if (!bypassClientLimits && isGuest) {
       const yesterday = new Date();
       yesterday.setDate(yesterday.getDate() - 1);
       const guestPhone = typeof raw.requesterPhone === "string" ? raw.requesterPhone.trim() : "";
@@ -318,7 +324,7 @@ export async function createRequestShared(
 
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
-    if (!relaxAntispam) {
+    if (!bypassClientLimits) {
       console.info("[RequestCreateSubmit] step_enter", { step: "step_db_duplicate_check" });
       const duplicate = isGuest
         ? await prisma.request.findFirst({
@@ -375,7 +381,7 @@ export async function createRequestShared(
 
     let guestSecret = isGuest ? generateGuestAccessSecret() : null;
 
-    if (isBlacklisted || isEmailBlacklisted) {
+    if ((isBlacklisted || isEmailBlacklisted) && !isAdminCreator) {
       console.info("[RequestCreateSubmit] step_enter", { step: "step_db_request_create_spam" });
       const spamData: Prisma.RequestUncheckedCreateInput = {
         userId: isGuest ? null : session!.user!.id,
@@ -407,13 +413,15 @@ export async function createRequestShared(
       };
     }
 
+    const persistRequesterIdentity = isGuest || isAdminCreator;
+
     const createData: Prisma.RequestUncheckedCreateInput = {
       userId: isGuest ? null : session!.user!.id,
-      requesterName: isGuest ? requesterName : undefined,
+      requesterName: persistRequesterIdentity ? requesterName : undefined,
       requesterPhone: requesterPhone,
       requesterViberPhone: viberTrimmed,
       requesterWhatsappPhone: whatsappTrimmed,
-      requesterEmail: isGuest ? emailTrimmed : undefined,
+      requesterEmail: persistRequesterIdentity ? emailTrimmed : undefined,
       guestAccessTokenHash: guestSecret?.hash,
       title: title ?? undefined,
       ...rest,
