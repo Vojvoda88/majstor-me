@@ -30,6 +30,7 @@
     "admin:create-staff": "tsx scripts/create-admin-staff.ts",
     "admin:revoke-access": "tsx scripts/revoke-admin-access.ts",
     "list:admin-users": "tsx scripts/list-admin-users.ts",
+    "request:create-arslan-boiler": "tsx scripts/create-arslan-boiler-request.ts",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:headed": "playwright test --headed"
