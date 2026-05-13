@@ -88,7 +88,7 @@ export function SeoLandingContent({
           throw new Error(`Failed to load handymen: ${res.status}`);
         }
         const data = await res.json();
-        const items = data.items ?? data.handymen ?? [];
+        const items = data.items ?? [];
         if (cancelled) return;
         setHandymen(items);
         setTotalPages(data.totalPages ?? 1);

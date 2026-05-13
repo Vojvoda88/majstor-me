@@ -37,9 +37,8 @@ export function FeaturedHandymenSection({ initialItems, total, pageSize = 6 }: P
       if (!res.ok) throw new Error("fetch failed");
       const data = (await res.json()) as {
         items?: PublicHandymanListItem[];
-        handymen?: PublicHandymanListItem[];
       };
-      const batch = data.items ?? data.handymen ?? [];
+      const batch = data.items ?? [];
       setItems((prev) => {
         const seen = new Set(prev.map((p) => p.id));
         const merged = [...prev];

@@ -22,7 +22,7 @@ export function TopMasters() {
   useEffect(() => {
     fetch("/api/handymen?limit=2&sort=rating")
       .then((res) => res.json())
-      .then((data) => setHandymen(data.items ?? data.handymen ?? []))
+      .then((data) => setHandymen(data.items ?? []))
       .catch(() => {});
   }, []);
 

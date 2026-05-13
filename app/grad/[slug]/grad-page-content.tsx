@@ -77,7 +77,7 @@ export function GradPageContent({
           throw new Error(`Failed to load handymen: ${res.status}`);
         }
         const data = await res.json();
-        const items = data.items ?? data.handymen ?? [];
+        const items = data.items ?? [];
         if (cancelled || gen !== loadGenRef.current) return;
         setHandymen(items);
         setTotalPages(data.totalPages ?? 1);

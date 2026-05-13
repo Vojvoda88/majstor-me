@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { PublicHeader } from "@/components/layout/PublicHeader";
@@ -8,7 +9,6 @@ import { PublicFooter } from "@/components/layout/PublicFooter";
 import { StickyBottomCTA } from "@/components/layout/StickyBottomCTA";
 import { MobileFilterSheet } from "@/components/category/MobileFilterSheet";
 import { CategoryHandymanCard } from "@/components/lists/CategoryHandymanCard";
-import { HandymanMapView } from "@/components/map/handyman-map-view";
 import { LandingValueBlock } from "@/components/landing/landing-value-block";
 import { Wrench, MapPin, List, ChevronLeft, ChevronRight, SlidersHorizontal } from "lucide-react";
 import { CITIES, DEFAULT_PAGE_SIZE } from "@/lib/constants";
@@ -32,6 +32,11 @@ type Handyman = {
   lat?: number;
   lng?: number;
 };
+
+const HandymanMapView = dynamic(
+  () => import("@/components/map/handyman-map-view").then((m) => m.HandymanMapView),
+  { ssr: false }
+);
 
 export function CategoryPageContent({
   displayName,
@@ -113,7 +118,7 @@ export function CategoryPageContent({
           throw new Error(`Failed to load handymen: ${res.status}`);
         }
         const data = await res.json();
-        const items = data.items ?? data.handymen ?? [];
+        const items = data.items ?? [];
         if (cancelled || gen !== loadGenRef.current) return;
         setHandymen(items);
         setTotalPages(data.totalPages ?? 1);

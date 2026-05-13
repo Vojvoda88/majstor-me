@@ -5,6 +5,11 @@ import { withPerfLog } from "@/lib/perf";
 export const dynamic = "force-dynamic";
 export const revalidate = 60;
 
+const LISTING_CACHE_HEADERS = {
+  // Kratak CDN cache za iste query kombinacije; ubrzava javne listinge bez velikog rizika zastarjelosti.
+  "Cache-Control": "public, s-maxage=60, stale-while-revalidate=300",
+};
+
 export async function GET(req: NextRequest) {
   try {
     const url = new URL(req.url);
@@ -27,13 +32,17 @@ export async function GET(req: NextRequest) {
       })
     );
 
-    return NextResponse.json({
-      items: result.items,
-      total: result.total,
-      page: result.page,
-      totalPages: result.totalPages,
-      handymen: result.items,
-    });
+    return NextResponse.json(
+      {
+        items: result.items,
+        total: result.total,
+        page: result.page,
+        totalPages: result.totalPages,
+      },
+      {
+        headers: LISTING_CACHE_HEADERS,
+      }
+    );
   } catch (err) {
     console.error(err);
     return NextResponse.json({ error: "Failed to fetch handymen" }, { status: 500 });
