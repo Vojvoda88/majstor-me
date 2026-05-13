@@ -86,7 +86,7 @@ export function AdminRequestExtraCategoriesPanel({
     return (
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Dodatne kategorije (distribucija)</CardTitle>
+          <CardTitle className="text-lg">Dodatne kategorije za obavještenja majstorima</CardTitle>
         </CardHeader>
         <CardContent>
           <p className="text-sm text-[#64748B]">Nemate dozvolu za izmjene zahtjeva.</p>
@@ -105,7 +105,7 @@ export function AdminRequestExtraCategoriesPanel({
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base">Dodatne kategorije (samo distribucija)</CardTitle>
+        <CardTitle className="text-lg">Dodatne kategorije za obavještenja majstorima</CardTitle>
         <p className="text-sm text-[#64748B]">
           Glavna kategorija zahtjeva ostaje <strong className="font-medium text-slate-800">{primaryCategory}</strong>.
           Ovdje možete ručno dodati još jednu uslugu da <strong className="font-medium text-slate-800">dodatno</strong>{" "}

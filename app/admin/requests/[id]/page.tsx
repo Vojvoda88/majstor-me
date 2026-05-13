@@ -86,6 +86,20 @@ export default async function AdminRequestDetailPage({ params }: { params: Promi
           />
         </div>
 
+        <div id="admin-extra-distribution">
+          <AdminRequestExtraCategoriesPanel
+            requestId={req.id}
+            primaryCategory={req.category}
+            initialExtras={req.extraDistributionCategories}
+            canWrite={canWriteRequests}
+            canDistribute={canDistributeRequestToHandymen({
+              status: req.status,
+              adminStatus: req.adminStatus,
+              deletedAt: req.deletedAt,
+            })}
+          />
+        </div>
+
         <div className="grid gap-6 lg:grid-cols-2">
           <Card>
             <CardHeader>
@@ -143,18 +157,6 @@ export default async function AdminRequestDetailPage({ params }: { params: Promi
             canReissue={canWriteRequests}
           />
         )}
-
-        <AdminRequestExtraCategoriesPanel
-          requestId={req.id}
-          primaryCategory={req.category}
-          initialExtras={req.extraDistributionCategories}
-          canWrite={canWriteRequests}
-          canDistribute={canDistributeRequestToHandymen({
-            status: req.status,
-            adminStatus: req.adminStatus,
-            deletedAt: req.deletedAt,
-          })}
-        />
 
         <Card>
           <CardHeader>
