@@ -1,5 +1,5 @@
 import type { Session } from "next-auth";
-import type { PrismaClient } from "@prisma/client";
+import type { PrismaClient, RequestStatus } from "@prisma/client";
 import { Prisma } from "@prisma/client";
 import { z } from "zod";
 import { CITIES, REQUEST_CATEGORIES, MAX_REQUESTS_PER_DAY } from "@/lib/constants";
@@ -10,7 +10,12 @@ import { trackFunnelEvent } from "@/lib/funnel-events";
 import { generateGuestAccessSecret } from "@/lib/guest-request-token";
 import { normalizeLocale, type AppLocale } from "@/lib/i18n/config";
 
-/** Jedan red u Vercel logu — tačan uzrok bez nagađanja. */
+/**
+ * Duplikat opisa smije blokirati samo zahtjeve koji su još „aktivni“.
+ * Otkazani/završeni ostaju u bazi, ali korisnik smije ponovo poslati isti opis (npr. nakon otkazivanja).
+ */
+const REQUEST_STATUSES_FOR_DUPLICATE_BLOCK: RequestStatus[] = ["OPEN", "IN_PROGRESS"];
+
 export function logRequestCreateSubmitFatal(step: string, err: unknown): void {
   if (err instanceof Prisma.PrismaClientKnownRequestError) {
     console.error("[RequestCreateSubmit] fatal", {
@@ -316,6 +321,8 @@ export async function createRequestShared(
             city: parsed.data.city,
             description: descTrimmed,
             createdAt: { gte: yesterday },
+            status: { in: REQUEST_STATUSES_FOR_DUPLICATE_BLOCK },
+            deletedAt: null,
           },
         })
       : await prisma.request.findFirst({
@@ -323,6 +330,8 @@ export async function createRequestShared(
             userId: session!.user!.id,
             description: descTrimmed,
             createdAt: { gte: yesterday },
+            status: { in: REQUEST_STATUSES_FOR_DUPLICATE_BLOCK },
+            deletedAt: null,
           },
         });
     if (duplicate) {
