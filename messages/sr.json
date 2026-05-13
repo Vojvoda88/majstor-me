@@ -18,9 +18,9 @@
       "continueGoogle": "Nastavi sa Google",
       "close": "Zatvori",
       "later": "Kasnije",
-      "retry": "Poku?aj ponovo"
+      "retry": "Pokušaj ponovo"
     },
-    "loading": "U?itavanje?",
+    "loading": "Učitavanje?",
     "page": "Strana",
     "total": "Ukupno"
   },
@@ -229,8 +229,8 @@
       },
       "stepLabel": "Korak",
       "stepOf": "od",
-      "requiredFields": "polja ozna?ena (*) su obavezna.",
-      "step1Title": "?ta vam treba?",
+      "requiredFields": "polja označena (*) su obavezna.",
+      "step1Title": "Šta vam treba?",
       "step2Title": "Gdje i kada?",
       "step3Title": "Kontakt",
       "urgencyQuestion": "Kada vam treba majstor?",
@@ -240,16 +240,16 @@
       },
       "placeholders": {
         "title": "Npr. curenje slavine u kuhinji",
-        "description": "?ta treba uraditi, gde, rok ako je bitan. ?to jasnije ? to bolje ponude.",
-        "address": "Ulica i broj, ako ?elite",
+        "description": "Šta treba uraditi, gde, rok ako je bitan. Što jasnije — to bolje ponude.",
+        "address": "Ulica i broj, ako želite",
         "name": "Ime",
         "optional": "Opciono"
       },
       "hints": {
-        "categoryOther": "Nema ta?ne stavke? Izaberite ?Ostalo / Ne vidim svoju uslugu? i opi?ite u polju ispod.",
-        "noContact": "Bez telefona i emaila u tekstu ? koristite polja za kontakt u zadnjem koraku.",
-        "photos": "Ako poma?u da se posao bolje razumije.",
-        "afterSubmit": "Nakon slanja: kratki admin pregled, zatim ponude ako odobre. Vi birate da li i koga anga?ujete."
+        "categoryOther": "Nema tačne stavke? Izaberite „Ostalo / Ne vidim svoju uslugu” i opišite u polju ispod.",
+        "noContact": "Bez telefona i emaila u tekstu — koristite polja za kontakt u zadnjem koraku.",
+        "photos": "Ako pomažu da se posao bolje razumije.",
+        "afterSubmit": "Nakon slanja: kratki admin pregled, zatim ponude ako odobre. Vi birate da li i koga angažujete."
       },
       "urgencyShort": {
         "HITNO_DANAS": "Danas",
@@ -263,17 +263,17 @@
       },
       "urgencyHint": {
         "HITNO_DANAS": "Objava odmah ide na prioritetnu distribuciju.",
-        "U_NAREDNA_2_DANA": "Dovoljno brzo za ve?inu hitnih popravki.",
+        "U_NAREDNA_2_DANA": "Dovoljno brzo za većinu hitnih popravki.",
         "NIJE_HITNO": "Za planirane radove i fleksibilne termine."
       }
     },
     "guestLink": {
-      "title": "Imate sa?uvan privatni link za pra?enje zahtjeva",
-      "savedAt": "Sa?uvano: {date}.",
-      "savedOnDevice": "Sa?uvano na ovom ure?aju.",
-      "continueHint": "Mo?ete odmah nastaviti gde ste stali.",
-      "continueButton": "Nastavi pra?enje zahtjeva",
-      "removeButton": "Ukloni sa?uvani link"
+      "title": "Imate sačuvan privatni link za praćenje zahtjeva",
+      "savedAt": "Sačuvano: {date}.",
+      "savedOnDevice": "Sačuvano na ovom uređaju.",
+      "continueHint": "Možete odmah nastaviti gde ste stali.",
+      "continueButton": "Nastavi praćenje zahtjeva",
+      "removeButton": "Ukloni sačuvani link"
     }
   },
   "seo": {
@@ -489,14 +489,14 @@
     "androidStepsTitle": "Kako instalirati na Android",
     "updateAvailable": "Dostupna je nova verzija aplikacije.",
     "update": "Ažuriraj",
-    "whyNoInstall": "Za?to ne vidim ?Instaliraj??",
-    "notifForHandymanOnly": "Obavje?tenja o novim poslovima dostupna su u dashboardu majstora nakon prijave kao majstor.",
-    "loginForNotifications": "Prijavi se za obavje?tenja",
-    "pushUnavailable": "Push obavje?tenja trenutno nisu dostupna u ovom okru?enju (konfiguracija).",
-    "enableLaterPrefix": "Kasnije mo?ete uklju?iti push u",
+    "whyNoInstall": "Zašto ne vidim „Instaliraj”?",
+    "notifForHandymanOnly": "Obavještenja o novim poslovima dostupna su u dashboardu majstora nakon prijave kao majstor.",
+    "loginForNotifications": "Prijavi se za obavještenja",
+    "pushUnavailable": "Push obavještenja trenutno nisu dostupna u ovom okruženju (konfiguracija).",
+    "enableLaterPrefix": "Kasnije možete uključiti push u",
     "adminArea": "administraciji",
     "orIn": "ili u",
-    "notificationsArea": "obavje?tenjima",
+    "notificationsArea": "obavještenjima",
     "handymanArea": "dijelu za majstore"
   },
   "emailPush": {
