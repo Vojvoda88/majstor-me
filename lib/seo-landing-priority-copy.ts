@@ -1,6 +1,6 @@
 /**
  * Pojačan sadržaj samo za prioritetne kombinovane SEO rute (money pages).
- * Sada pokriva prvih 100 service+city kombinacija (automatski),
+ * Sada pokriva sve service+city kombinacije (automatski),
  * uz ručno napisane override tekstove za najvažnije rute.
  */
 
@@ -9,22 +9,19 @@ import { toLegacyServiceCitySlug } from "@/lib/seo-programmatic-config";
 import { CITY_SLUGS, cityGenitive, cityLocative } from "@/lib/slugs";
 import { HOMEPAGE_CITIES } from "@/lib/homepage-data";
 
-const AUTO_PRIORITY_LIMIT = 100;
-
-function buildPrioritySlugPool(limit: number): string[] {
+function buildPrioritySlugPool(): string[] {
   const out: string[] = [];
   // City-first raspored daje bolju pokrivenost svih usluga u glavnim gradovima.
   for (const city of HOMEPAGE_CITIES) {
     if (!CITY_SLUGS[city.slug]) continue;
     for (const cat of PUBLIC_CATEGORY_LISTING) {
       out.push(toLegacyServiceCitySlug(cat.slug, city.slug));
-      if (out.length >= limit) return out;
     }
   }
   return out;
 }
 
-export const PRIORITY_SEO_LANDING_SLUGS = buildPrioritySlugPool(AUTO_PRIORITY_LIMIT);
+export const PRIORITY_SEO_LANDING_SLUGS = buildPrioritySlugPool();
 
 export type PrioritySeoLandingSlug = string;
 
