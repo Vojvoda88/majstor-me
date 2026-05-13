@@ -120,6 +120,11 @@ export async function RequestDetailView({
               requestId={req.id}
               variant={req.status === "IN_PROGRESS" ? "in_progress" : "open_resolved_elsewhere"}
               guestAccessToken={!req.userId ? guestAccessTokenPlain ?? undefined : undefined}
+              offers={req.offers.map((o) => ({
+                id: o.id,
+                status: o.status,
+                handymanName: o.handyman.name ?? "Majstor",
+              }))}
             />
           </div>
         )}
