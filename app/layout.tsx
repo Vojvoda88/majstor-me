@@ -3,9 +3,7 @@ import { Inter, DM_Sans, Outfit } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { headers } from "next/headers";
 import { Providers } from "@/app/providers";
-import { InstallCTA } from "@/components/pwa/install-cta";
-import { ServiceWorkerRegister } from "@/components/pwa/service-worker-register";
-import { LanguageSwitcher } from "@/components/layout/google-translate";
+import { DeferredGlobalUi } from "@/components/layout/deferred-global-ui";
 import {
   SEO_DEFAULT_DESCRIPTION,
   SEO_KEYWORDS,
@@ -29,6 +27,7 @@ const dmSans = DM_Sans({
   variable: "--font-dm-sans",
   weight: ["400", "500", "600", "700"],
   display: "swap",
+  preload: false,
 });
 
 const outfit = Outfit({
@@ -121,9 +120,7 @@ export default async function RootLayout({
         <Providers>
           {children}
           <Analytics />
-          <ServiceWorkerRegister />
-          <InstallCTA />
-          <LanguageSwitcher />
+          <DeferredGlobalUi />
         </Providers>
       </body>
     </html>
