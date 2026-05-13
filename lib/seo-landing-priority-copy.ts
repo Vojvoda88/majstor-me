@@ -1,21 +1,32 @@
 /**
  * Pojačan sadržaj samo za prioritetne kombinovane SEO rute (money pages).
- * Ne širi se automatski na sve gradove/kategorije.
+ * Sada pokriva prvih 100 service+city kombinacija (automatski),
+ * uz ručno napisane override tekstove za najvažnije rute.
  */
 
-export const PRIORITY_SEO_LANDING_SLUGS = [
-  "vodoinstalater-podgorica",
-  "vodoinstalater-niksic",
-  "vodoinstalater-budva",
-  "elektricar-podgorica",
-  "elektricar-niksic",
-  "elektricar-budva",
-  "klima-servis-podgorica",
-  "klima-servis-budva",
-  "klima-servis-kotor",
-] as const;
+import { getCategoryBySlug, PUBLIC_CATEGORY_LISTING } from "@/lib/categories";
+import { toLegacyServiceCitySlug } from "@/lib/seo-programmatic-config";
+import { CITY_SLUGS, cityGenitive, cityLocative } from "@/lib/slugs";
+import { HOMEPAGE_CITIES } from "@/lib/homepage-data";
 
-export type PrioritySeoLandingSlug = (typeof PRIORITY_SEO_LANDING_SLUGS)[number];
+const AUTO_PRIORITY_LIMIT = 100;
+
+function buildPrioritySlugPool(limit: number): string[] {
+  const out: string[] = [];
+  // City-first raspored daje bolju pokrivenost svih usluga u glavnim gradovima.
+  for (const city of HOMEPAGE_CITIES) {
+    if (!CITY_SLUGS[city.slug]) continue;
+    for (const cat of PUBLIC_CATEGORY_LISTING) {
+      out.push(toLegacyServiceCitySlug(cat.slug, city.slug));
+      if (out.length >= limit) return out;
+    }
+  }
+  return out;
+}
+
+export const PRIORITY_SEO_LANDING_SLUGS = buildPrioritySlugPool(AUTO_PRIORITY_LIMIT);
+
+export type PrioritySeoLandingSlug = string;
 
 export type PrioritySeoLandingContent = {
   /** Glavni uvod ispod H1 (konkretan, ne copy-paste iz drugog grada). */
@@ -29,7 +40,7 @@ export type PrioritySeoLandingContent = {
   faq: { q: string; a: string }[];
 };
 
-const PRIORITY_COPY: Record<PrioritySeoLandingSlug, PrioritySeoLandingContent> = {
+const PRIORITY_COPY: Record<string, PrioritySeoLandingContent> = {
   "vodoinstalater-podgorica": {
     intro:
       "U Podgorici su uobičajeni radovi na instalacijama u stanovima i kućama — curenja,zamena sanitarija, bojlera ili cijelih trasa, ponekad i hitno. Ispod su profili majstora u gradu. Umesto da zovete više ljudi redom, možete besplatno objaviti jedan zahtjev: opišite šta curi ili šta ne radi, navedite da li je hitno, po želji dodajte fotografije — zainteresovani majstori šalju ponude, a vi birate.",
@@ -248,11 +259,98 @@ const PRIORITY_COPY: Record<PrioritySeoLandingSlug, PrioritySeoLandingContent> =
   },
 };
 
+const PRIORITY_SET = new Set([...PRIORITY_SEO_LANDING_SLUGS, ...Object.keys(PRIORITY_COPY)]);
+const CITY_SLUG_KEYS_DESC = Object.keys(CITY_SLUGS).sort((a, b) => b.length - a.length);
+
+type ParsedLegacySlug = {
+  categorySlug: string;
+  citySlug: string;
+  cityName: string;
+  categoryDisplayName: string;
+};
+
+function parseLegacyPrioritySlug(slug: string): ParsedLegacySlug | null {
+  for (const citySlug of CITY_SLUG_KEYS_DESC) {
+    if (!slug.endsWith(`-${citySlug}`)) continue;
+    const categorySlug = slug.slice(0, -1 * (`-${citySlug}`.length));
+    if (!categorySlug) continue;
+    const cat = getCategoryBySlug(categorySlug);
+    if (!cat?.publicListing) continue;
+    const cityName = CITY_SLUGS[citySlug];
+    if (!cityName) continue;
+    return {
+      categorySlug,
+      citySlug,
+      cityName,
+      categoryDisplayName: cat.displayName,
+    };
+  }
+  return null;
+}
+
+function autoFaq(displayName: string, cityLoc: string): { q: string; a: string }[] {
+  return [
+    {
+      q: `Koliko košta ${displayName.toLowerCase()} u ${cityLoc}?`,
+      a: "Cijena zavisi od obima posla, materijala i termina. Nakon zahtjeva možete uporediti više ponuda i izabrati ono što vam odgovara.",
+    },
+    {
+      q: "Kako da napišem dobar zahtjev?",
+      a: "Navedite šta tačno treba uraditi, gdje je lokacija i kada vam odgovara dolazak. Jasniji opis obično donosi preciznije ponude.",
+    },
+    {
+      q: "Da li moram odmah prihvatiti ponudu?",
+      a: "Ne. Zahtjev je besplatan, ponude možete uporediti i tek onda odlučiti da li i s kim želite da nastavite.",
+    },
+  ];
+}
+
+function buildAutoPriorityContent(parsed: ParsedLegacySlug): PrioritySeoLandingContent {
+  const loc = cityLocative(parsed.cityName);
+  const gen = cityGenitive(parsed.cityName);
+  const display = parsed.categoryDisplayName;
+  const d = display.toLowerCase();
+
+  const categoryAngle: Record<string, string> = {
+    vodoinstalater: "curenja, instalacije i hitne intervencije",
+    elektricar: "kvarovi, osigurači i električne instalacije",
+    "klima-servis": "servis, čišćenje i montaža klima uređaja",
+    keramicar: "pločice, kupatila i završni keramičarski radovi",
+    stolar: "namještaj, vrata i stolarski radovi po mjeri",
+    "pvc-stolarija": "prozori, vrata i podešavanje PVC stolarije",
+    bravar: "brave, sigurnost i metalni bravarski radovi",
+    moler: "krečenje, gletovanje i priprema zidova",
+    gipsar: "spušteni plafoni i gipsani sistemi",
+    fasader: "fasada i termoizolacioni radovi",
+    "grubi-gradjevinski-radovi": "zidanje, betoniranje i grubi građevinski radovi",
+    ciscenje: "čišćenje stanova, lokala i poslovnih prostora",
+    selidbe: "selidbe i transport stvari",
+    bastovanstvo: "uređenje i održavanje dvorišta i bašte",
+    "sitni-kucni-poslovi": "sitne popravke i kućne intervencije",
+  };
+
+  const angle = categoryAngle[parsed.categorySlug] ?? `${d} usluge`;
+
+  return {
+    intro: `${display} u ${loc}: ${angle}. Ispod su profili majstora u gradu. Ako želite ponude bez zvanja više brojeva, pošaljite jedan besplatan zahtjev i sačekajte odgovore majstora iz ${gen}.`,
+    metaTitle: `${display} ${parsed.cityName} — profili i besplatan zahtjev`,
+    metaDescription: `${display} u ${loc}: pregled profila i jedan besplatan zahtjev za ponude majstora iz ${gen}. Bez obaveze da odmah izaberete izvođača.`,
+    ctaTitle: `Pošaljite zahtjev za ${d} u ${loc}`,
+    ctaBody:
+      "Objava zahtjeva je besplatna. Napišite šta treba uraditi, lokaciju i željeni termin — majstori kojima posao odgovara mogu poslati ponudu, a vi birate da li i s kim nastavljate.",
+    faq: autoFaq(display, loc),
+  };
+}
+
 export function isPrioritySeoLandingSlug(slug: string): slug is PrioritySeoLandingSlug {
-  return slug in PRIORITY_COPY;
+  return PRIORITY_SET.has(slug);
 }
 
 export function getPrioritySeoLandingContent(slug: string): PrioritySeoLandingContent | null {
+  const manual = PRIORITY_COPY[slug];
+  if (manual) return manual;
   if (!isPrioritySeoLandingSlug(slug)) return null;
-  return PRIORITY_COPY[slug];
+  const parsed = parseLegacyPrioritySlug(slug);
+  if (!parsed) return null;
+  return buildAutoPriorityContent(parsed);
 }
