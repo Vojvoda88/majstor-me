@@ -17,7 +17,8 @@ export function buildAlternates(baseUrl: string, path: string, activeLocale: str
   );
 
   return {
-    canonical: `${cleanBase}${localizedPath(path, activeLocale)}`,
+    // Kanonski URL držimo na default jeziku da smanjimo duplicate-canonical slučajeve u GSC.
+    canonical: `${cleanBase}${localizedPath(path, DEFAULT_LOCALE)}`,
     languages: {
       ...languages,
       "x-default": `${cleanBase}${localizedPath(path, DEFAULT_LOCALE)}`,
