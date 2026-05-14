@@ -104,7 +104,7 @@ export function Hero() {
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_120%_80%_at_50%_-20%,rgba(245,158,11,0.12),transparent_55%)]"
         aria-hidden
       />
-      <div className="pointer-events-auto relative z-10 w-full max-w-4xl text-center">
+      <div className="pointer-events-auto relative z-10 w-full max-w-4xl text-center md:max-w-5xl">
         <h1 className="font-display mb-4 text-[1.72rem] font-extrabold leading-[1.12] tracking-tight text-white sm:text-[2rem] md:mb-5 md:text-5xl lg:text-[3.25rem] lg:leading-[1.08]">
           Treba vam majstor?
         </h1>
@@ -134,12 +134,12 @@ export function Hero() {
           </Link>
         </p>
 
-        <div className="mx-auto mt-4 w-full max-w-3xl text-left sm:mt-5">
+        <div className="mx-auto mt-4 w-full max-w-3xl text-left sm:mt-5 md:max-w-5xl md:rounded-3xl md:border md:border-slate-200/20 md:bg-slate-950/28 md:p-4 md:shadow-[0_14px_38px_rgba(2,6,23,0.32)]">
           <div className="grid grid-cols-3 gap-2.5 sm:gap-3">
             {trustItems.map((item) => (
               <div
                 key={item.title}
-                className="rounded-2xl border border-slate-200/25 bg-slate-900/35 px-3 py-3 shadow-[0_8px_20px_rgba(2,6,23,0.22)] backdrop-blur-sm"
+                className="rounded-2xl border border-slate-200/25 bg-slate-900/35 px-3 py-3 shadow-[0_8px_20px_rgba(2,6,23,0.22)] backdrop-blur-sm md:bg-slate-900/50"
               >
                 <p
                   className={`font-extrabold drop-shadow-[0_0_6px_rgba(148,163,184,0.2)] ${trustTitleClass(item.title)}`}
@@ -153,8 +153,8 @@ export function Hero() {
         </div>
 
         {categorySlides.length > 0 ? (
-          <div className="mx-auto mt-4 w-full max-w-3xl text-left sm:mt-5">
-            <p className="mb-2 text-xs font-bold uppercase tracking-[0.18em] text-slate-200/90">
+          <div className="mx-auto mt-4 w-full max-w-3xl text-left sm:mt-5 md:max-w-5xl md:rounded-3xl md:border md:border-violet-200/25 md:bg-slate-950/30 md:p-4 md:shadow-[0_16px_40px_rgba(15,23,42,0.34)]">
+            <p className="mb-2 text-xs font-bold uppercase tracking-[0.18em] text-slate-200/90 md:mb-3 md:text-[11px]">
               Dostupne usluge na platformi
             </p>
 
@@ -201,7 +201,7 @@ export function Hero() {
                 <Link
                   key={item.slug}
                   href={`/category/${item.slug}`}
-                  className="rounded-2xl border border-violet-200/35 bg-gradient-to-br from-violet-500/16 to-slate-900/20 px-3 py-3 shadow-[0_0_24px_rgba(139,92,246,0.22)] backdrop-blur-sm transition hover:brightness-110"
+                  className="rounded-2xl border border-violet-200/35 bg-gradient-to-br from-violet-500/16 to-slate-900/20 px-3 py-3 shadow-[0_0_24px_rgba(139,92,246,0.22)] backdrop-blur-sm transition hover:brightness-110 md:min-h-[84px]"
                 >
                   <p className="text-sm font-extrabold leading-tight text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.32)]">
                     {item.label}
