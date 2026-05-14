@@ -30,10 +30,10 @@ export function Hero() {
       />
       <div className="pointer-events-auto relative z-10 w-full max-w-4xl text-center">
         <h1 className="font-display mb-4 text-[1.72rem] font-extrabold leading-[1.12] tracking-tight text-white sm:text-[2rem] md:mb-5 md:text-5xl lg:text-[3.25rem] lg:leading-[1.08]">
-          {t(locale, "home.hero.headline", "Treba vam majstor?")}
+          Treba vam majstor?
         </h1>
         <p className="mx-auto mb-6 max-w-2xl text-[15px] font-medium leading-relaxed text-slate-100/95 sm:text-base md:mb-8 md:text-lg md:leading-relaxed">
-          {t(locale, "home.hero.subline", "Nađite uslugu bez zvanja redom.")}
+          Objavite zahtjev — majstor vas pozove.
         </p>
 
         <div className="mx-auto mt-2 grid w-full max-w-xl grid-cols-1 gap-3 sm:grid-cols-2 md:mt-4">
@@ -41,26 +41,29 @@ export function Hero() {
             href="/request/create"
             className="inline-flex h-14 min-h-[52px] w-full items-center justify-center rounded-2xl bg-gradient-to-br from-[#3b82f6] to-[#1d4ed8] px-6 text-base font-bold text-white shadow-lg shadow-blue-600/30 transition hover:brightness-105 active:scale-[0.98] sm:px-8"
           >
-            {t(locale, "home.hero.primaryCta", "Zatraži majstora")}
+            Zatraži majstora
           </Link>
           <Link
             href="/register?type=majstor"
             className="inline-flex h-14 min-h-[52px] w-full items-center justify-center rounded-2xl border-2 border-amber-300/90 bg-gradient-to-br from-amber-500/25 to-amber-600/15 px-6 text-base font-bold text-amber-50 shadow-lg shadow-amber-900/25 ring-1 ring-amber-200/30 backdrop-blur-md transition hover:from-amber-500/35 hover:to-amber-600/25 hover:text-white active:scale-[0.98] sm:px-8"
           >
-            {t(locale, "home.hero.handymanCta", "Majstor? Prijavi se ovdje")}
+            Nudite usluge? Registrujte se
           </Link>
-          <Link
-            href="/categories"
-            className="inline-flex h-14 min-h-[52px] w-full items-center justify-center rounded-2xl border border-white/25 bg-white/10 px-6 text-base font-semibold text-white backdrop-blur-md transition hover:bg-white/15 active:scale-[0.98] sm:px-8"
-          >
-            {t(locale, "home.hero.secondaryCta", "Pogledaj kategorije")}
-          </Link>
-          <Link
-            href="/login"
-            className="inline-flex h-14 min-h-[52px] w-full items-center justify-center rounded-2xl border border-white/25 bg-black/20 px-6 text-base font-semibold text-white backdrop-blur-sm transition hover:bg-black/30 hover:text-white active:scale-[0.98] sm:px-8"
-          >
-            {t(locale, "home.hero.loginCta", "Već imate nalog? Prijavi se")}
-          </Link>
+        </div>
+
+        <div className="mx-auto mt-4 grid w-full max-w-3xl grid-cols-1 gap-2.5 text-left sm:mt-5 sm:grid-cols-3">
+          <div className="rounded-xl border border-white/20 bg-white/10 px-3 py-3 backdrop-blur-sm">
+            <p className="text-xl font-extrabold leading-none text-white">70+</p>
+            <p className="mt-1 text-xs font-semibold text-slate-100">majstora i usluga</p>
+          </div>
+          <div className="rounded-xl border border-white/20 bg-white/10 px-3 py-3 backdrop-blur-sm">
+            <p className="text-sm font-extrabold leading-tight text-white">Zatražite majstora</p>
+            <p className="mt-1 text-xs font-semibold text-slate-100">100% besplatno</p>
+          </div>
+          <div className="rounded-xl border border-white/20 bg-white/10 px-3 py-3 backdrop-blur-sm">
+            <p className="text-sm font-extrabold leading-tight text-white">Objavi zahtjev</p>
+            <p className="mt-1 text-xs font-semibold text-slate-100">za manje od minut</p>
+          </div>
         </div>
       </div>
     </section>
