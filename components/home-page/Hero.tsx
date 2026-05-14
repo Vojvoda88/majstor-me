@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { HERO_IMAGE } from "@/lib/homepage-data";
@@ -8,6 +9,68 @@ import { t } from "@/lib/i18n/messages";
 
 export function Hero() {
   const locale = useUiLanguage();
+  const [activeTrustIndex, setActiveTrustIndex] = useState(0);
+  const [activeCategoryIndex, setActiveCategoryIndex] = useState(0);
+  const [categorySlides, setCategorySlides] = useState<
+    { slug: string; label: string; count: number }[]
+  >([]);
+
+  const trustItems = [
+    { title: "70+", subtitle: "majstora i usluga", glow: "blue" as const },
+    { title: "Zatražite majstora", subtitle: "100% besplatno", glow: "emerald" as const },
+    { title: "Objavi zahtjev", subtitle: "za manje od minut", glow: "amber" as const },
+  ];
+
+  useEffect(() => {
+    const id = window.setInterval(() => {
+      setActiveTrustIndex((prev) => (prev + 1) % trustItems.length);
+    }, 3200);
+    return () => window.clearInterval(id);
+  }, [trustItems.length]);
+
+  useEffect(() => {
+    let cancelled = false;
+    async function loadCategorySlides() {
+      try {
+        const res = await fetch("/api/stats/handymen-by-category");
+        if (!res.ok) return;
+        const data = (await res.json()) as {
+          items?: { slug: string; label: string; count: number }[];
+        };
+        if (cancelled) return;
+        const normalized = (data.items ?? []).filter((item) => Number.isFinite(item.count));
+        setCategorySlides(normalized.slice(0, 10));
+      } catch {
+        // Silent fallback — hero i dalje radi bez ovog bloka.
+      }
+    }
+    loadCategorySlides();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (categorySlides.length <= 1) return;
+    const id = window.setInterval(() => {
+      setActiveCategoryIndex((prev) => (prev + 1) % categorySlides.length);
+    }, 3400);
+    return () => window.clearInterval(id);
+  }, [categorySlides.length]);
+
+  const trustGlowClass = (glow: "blue" | "emerald" | "amber") => {
+    if (glow === "emerald") {
+      return "border-emerald-200/35 from-emerald-500/18 shadow-[0_0_24px_rgba(16,185,129,0.18)]";
+    }
+    if (glow === "amber") {
+      return "border-amber-200/35 from-amber-500/18 shadow-[0_0_24px_rgba(245,158,11,0.18)]";
+    }
+    return "border-blue-200/35 from-blue-500/18 shadow-[0_0_24px_rgba(59,130,246,0.18)]";
+  };
+
+  const trustTitleClass = (title: string) =>
+    title === "70+" ? "text-xl leading-none" : "text-sm leading-tight";
+
   return (
     <section className="relative flex min-h-[min(88dvh,690px)] w-full items-center justify-center overflow-hidden rounded-b-[1.1rem] px-4 pb-12 pt-[max(4.5rem,env(safe-area-inset-top)+3.25rem)] text-white sm:px-5 md:min-h-[760px] md:rounded-b-[1.5rem] md:pb-20 md:pt-28">
       <Image
@@ -58,20 +121,117 @@ export function Hero() {
           </Link>
         </p>
 
-        <div className="mx-auto mt-4 flex w-full max-w-3xl gap-2.5 overflow-x-auto pb-1 text-left sm:mt-5 sm:grid sm:grid-cols-3 sm:gap-3 sm:overflow-visible sm:pb-0">
-          <div className="min-w-[170px] rounded-2xl border border-blue-200/35 bg-gradient-to-br from-blue-500/18 to-slate-900/20 px-3 py-3 shadow-[0_0_24px_rgba(59,130,246,0.18)] backdrop-blur-sm">
-            <p className="text-xl font-extrabold leading-none text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.32)]">70+</p>
-            <p className="mt-1 text-xs font-semibold text-slate-100">majstora i usluga</p>
+        <div className="mx-auto mt-4 w-full max-w-3xl text-left sm:mt-5">
+          <div className="overflow-hidden sm:hidden">
+            <div
+              className="flex transition-transform duration-500 ease-out"
+              style={{ transform: `translateX(-${activeTrustIndex * 100}%)` }}
+            >
+              {trustItems.map((item) => (
+                <div key={item.title} className="w-full shrink-0 px-0.5">
+                  <div
+                    className={`rounded-2xl border bg-gradient-to-br to-slate-900/20 px-4 py-3 backdrop-blur-sm ${trustGlowClass(item.glow)}`}
+                  >
+                    <p
+                      className={`font-extrabold text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.32)] ${trustTitleClass(item.title)}`}
+                    >
+                      {item.title}
+                    </p>
+                    <p className="mt-1 text-xs font-semibold text-slate-100">{item.subtitle}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="mt-2 flex items-center justify-center gap-1.5">
+              {trustItems.map((item, idx) => (
+                <button
+                  key={item.title}
+                  type="button"
+                  onClick={() => setActiveTrustIndex(idx)}
+                  className={`h-1.5 rounded-full transition-all ${
+                    activeTrustIndex === idx ? "w-5 bg-white" : "w-2 bg-white/40"
+                  }`}
+                  aria-label={`Prikaži stavku ${idx + 1}`}
+                />
+              ))}
+            </div>
           </div>
-          <div className="min-w-[170px] rounded-2xl border border-emerald-200/35 bg-gradient-to-br from-emerald-500/18 to-slate-900/20 px-3 py-3 shadow-[0_0_24px_rgba(16,185,129,0.18)] backdrop-blur-sm">
-            <p className="text-sm font-extrabold leading-tight text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.32)]">Zatražite majstora</p>
-            <p className="mt-1 text-xs font-semibold text-slate-100">100% besplatno</p>
-          </div>
-          <div className="min-w-[170px] rounded-2xl border border-amber-200/35 bg-gradient-to-br from-amber-500/18 to-slate-900/20 px-3 py-3 shadow-[0_0_24px_rgba(245,158,11,0.18)] backdrop-blur-sm">
-            <p className="text-sm font-extrabold leading-tight text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.32)]">Objavi zahtjev</p>
-            <p className="mt-1 text-xs font-semibold text-slate-100">za manje od minut</p>
+
+          <div className="hidden gap-3 sm:grid sm:grid-cols-3">
+            {trustItems.map((item) => (
+              <div
+                key={item.title}
+                className={`rounded-2xl border bg-gradient-to-br to-slate-900/20 px-3 py-3 backdrop-blur-sm ${trustGlowClass(item.glow)}`}
+              >
+                <p className={`font-extrabold text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.32)] ${trustTitleClass(item.title)}`}>
+                  {item.title}
+                </p>
+                <p className="mt-1 text-xs font-semibold text-slate-100">{item.subtitle}</p>
+              </div>
+            ))}
           </div>
         </div>
+
+        {categorySlides.length > 0 ? (
+          <div className="mx-auto mt-4 w-full max-w-3xl text-left sm:mt-5">
+            <p className="mb-2 text-xs font-bold uppercase tracking-[0.18em] text-slate-200/90">
+              Trenutno po kategorijama
+            </p>
+
+            <div className="overflow-hidden sm:hidden">
+              <div
+                className="flex transition-transform duration-500 ease-out"
+                style={{ transform: `translateX(-${activeCategoryIndex * 100}%)` }}
+              >
+                {categorySlides.map((item) => (
+                  <div key={item.slug} className="w-full shrink-0 px-0.5">
+                    <Link
+                      href={`/category/${item.slug}`}
+                      className="block rounded-2xl border border-violet-200/35 bg-gradient-to-br from-violet-500/16 to-slate-900/20 px-4 py-3 shadow-[0_0_24px_rgba(139,92,246,0.22)] backdrop-blur-sm transition hover:brightness-110 active:scale-[0.99]"
+                    >
+                      <p className="text-sm font-extrabold leading-tight text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.32)]">
+                        {item.label}
+                      </p>
+                      <p className="mt-1 text-xs font-semibold text-slate-100">
+                        {item.count} majstor{item.count === 1 ? "" : "a"}
+                      </p>
+                    </Link>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-2 flex items-center justify-center gap-1.5">
+                {categorySlides.map((item, idx) => (
+                  <button
+                    key={item.slug}
+                    type="button"
+                    onClick={() => setActiveCategoryIndex(idx)}
+                    className={`h-1.5 rounded-full transition-all ${
+                      activeCategoryIndex === idx ? "w-5 bg-white" : "w-2 bg-white/40"
+                    }`}
+                    aria-label={`Prikaži kategoriju ${idx + 1}`}
+                  />
+                ))}
+              </div>
+            </div>
+
+            <div className="hidden gap-2.5 sm:grid sm:grid-cols-2 lg:grid-cols-4">
+              {categorySlides.slice(0, 8).map((item) => (
+                <Link
+                  key={item.slug}
+                  href={`/category/${item.slug}`}
+                  className="rounded-2xl border border-violet-200/35 bg-gradient-to-br from-violet-500/16 to-slate-900/20 px-3 py-3 shadow-[0_0_24px_rgba(139,92,246,0.22)] backdrop-blur-sm transition hover:brightness-110"
+                >
+                  <p className="text-sm font-extrabold leading-tight text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.32)]">
+                    {item.label}
+                  </p>
+                  <p className="mt-1 text-xs font-semibold text-slate-100">
+                    {item.count} majstor{item.count === 1 ? "" : "a"}
+                  </p>
+                </Link>
+              ))}
+            </div>
+          </div>
+        ) : null}
       </div>
     </section>
   );
