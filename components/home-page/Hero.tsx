@@ -53,7 +53,7 @@ export function Hero() {
   }, [categorySlides.length]);
 
   const trustTitleClass = (title: string) =>
-    title === "70+" ? "text-xl leading-none text-blue-700" : "text-[12px] leading-tight text-slate-800";
+    title === "70+" ? "text-xl leading-none text-white" : "text-[12px] leading-tight text-white";
 
   const handleCategoryTouchStart = (e: TouchEvent<HTMLDivElement>) => {
     setTouchStartX(e.touches[0]?.clientX ?? null);
@@ -126,10 +126,28 @@ export function Hero() {
           </Link>
         </p>
 
+        <div className="mx-auto mt-4 w-full max-w-3xl text-left sm:mt-5">
+          <div className="grid grid-cols-3 gap-2.5 sm:gap-3">
+            {trustItems.map((item) => (
+              <div
+                key={item.title}
+                className="rounded-2xl border border-slate-200/25 bg-slate-900/35 px-3 py-3 shadow-[0_8px_20px_rgba(2,6,23,0.22)] backdrop-blur-sm"
+              >
+                <p
+                  className={`font-extrabold drop-shadow-[0_0_6px_rgba(148,163,184,0.2)] ${trustTitleClass(item.title)}`}
+                >
+                  {item.title}
+                </p>
+                <p className="mt-1 text-[11px] font-semibold leading-tight text-slate-100">{item.subtitle}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
         {categorySlides.length > 0 ? (
           <div className="mx-auto mt-4 w-full max-w-3xl text-left sm:mt-5">
             <p className="mb-2 text-xs font-bold uppercase tracking-[0.18em] text-slate-200/90">
-              Trenutno po kategorijama
+              Dostupne usluge na platformi
             </p>
 
             <div
@@ -150,9 +168,7 @@ export function Hero() {
                       <p className="text-sm font-extrabold leading-tight text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.32)]">
                         {item.label}
                       </p>
-                      <p className="mt-1 text-xs font-semibold text-slate-100">
-                        {item.count} majstor{item.count === 1 ? "" : "a"}
-                      </p>
+                      <p className="mt-1 text-xs font-semibold text-slate-100">{item.count} dostupnih</p>
                     </Link>
                   </div>
                 ))}
@@ -182,32 +198,12 @@ export function Hero() {
                   <p className="text-sm font-extrabold leading-tight text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.32)]">
                     {item.label}
                   </p>
-                  <p className="mt-1 text-xs font-semibold text-slate-100">
-                    {item.count} majstor{item.count === 1 ? "" : "a"}
-                  </p>
+                  <p className="mt-1 text-xs font-semibold text-slate-100">{item.count} dostupnih</p>
                 </Link>
               ))}
             </div>
           </div>
         ) : null}
-
-        <div className="mx-auto mt-4 w-full max-w-3xl text-left sm:mt-5">
-          <div className="grid grid-cols-3 gap-2.5 sm:gap-3">
-            {trustItems.map((item) => (
-              <div
-                key={item.title}
-                className="rounded-2xl border border-white/90 bg-white/90 px-3 py-3 shadow-[0_10px_24px_rgba(15,23,42,0.22)] backdrop-blur-sm"
-              >
-                <p
-                  className={`font-extrabold drop-shadow-[0_0_6px_rgba(37,99,235,0.18)] ${trustTitleClass(item.title)}`}
-                >
-                  {item.title}
-                </p>
-                <p className="mt-1 text-[11px] font-semibold leading-tight text-slate-700">{item.subtitle}</p>
-              </div>
-            ))}
-          </div>
-        </div>
       </div>
     </section>
   );
