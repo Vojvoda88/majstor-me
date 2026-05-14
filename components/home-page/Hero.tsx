@@ -9,8 +9,6 @@ import { t } from "@/lib/i18n/messages";
 
 export function Hero() {
   const locale = useUiLanguage();
-  const [activeTrustIndex, setActiveTrustIndex] = useState(0);
-  const [activeCategoryIndex, setActiveCategoryIndex] = useState(0);
   const [categorySlides, setCategorySlides] = useState<
     { slug: string; label: string; count: number }[]
   >([]);
@@ -20,13 +18,6 @@ export function Hero() {
     { title: "Zatražite majstora", subtitle: "100% besplatno", glow: "emerald" as const },
     { title: "Objavi zahtjev", subtitle: "za manje od minut", glow: "amber" as const },
   ];
-
-  useEffect(() => {
-    const id = window.setInterval(() => {
-      setActiveTrustIndex((prev) => (prev + 1) % trustItems.length);
-    }, 3200);
-    return () => window.clearInterval(id);
-  }, [trustItems.length]);
 
   useEffect(() => {
     let cancelled = false;
@@ -49,14 +40,6 @@ export function Hero() {
       cancelled = true;
     };
   }, []);
-
-  useEffect(() => {
-    if (categorySlides.length <= 1) return;
-    const id = window.setInterval(() => {
-      setActiveCategoryIndex((prev) => (prev + 1) % categorySlides.length);
-    }, 3400);
-    return () => window.clearInterval(id);
-  }, [categorySlides.length]);
 
   const trustGlowClass = (glow: "blue" | "emerald" | "amber") => {
     if (glow === "emerald") {
@@ -121,97 +104,27 @@ export function Hero() {
           </Link>
         </p>
 
-        <div className="mx-auto mt-4 w-full max-w-3xl text-left sm:mt-5">
-          <div className="overflow-hidden sm:hidden">
-            <div
-              className="flex transition-transform duration-500 ease-out"
-              style={{ transform: `translateX(-${activeTrustIndex * 100}%)` }}
-            >
-              {trustItems.map((item) => (
-                <div key={item.title} className="w-full shrink-0 px-0.5">
-                  <div
-                    className={`rounded-2xl border bg-gradient-to-br to-slate-900/20 px-4 py-3 backdrop-blur-sm ${trustGlowClass(item.glow)}`}
-                  >
-                    <p
-                      className={`font-extrabold text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.32)] ${trustTitleClass(item.title)}`}
-                    >
-                      {item.title}
-                    </p>
-                    <p className="mt-1 text-xs font-semibold text-slate-100">{item.subtitle}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-            <div className="mt-2 flex items-center justify-center gap-1.5">
-              {trustItems.map((item, idx) => (
-                <button
-                  key={item.title}
-                  type="button"
-                  onClick={() => setActiveTrustIndex(idx)}
-                  className={`h-1.5 rounded-full transition-all ${
-                    activeTrustIndex === idx ? "w-5 bg-white" : "w-2 bg-white/40"
-                  }`}
-                  aria-label={`Prikaži stavku ${idx + 1}`}
-                />
-              ))}
-            </div>
-          </div>
-
-          <div className="hidden gap-3 sm:grid sm:grid-cols-3">
-            {trustItems.map((item) => (
-              <div
-                key={item.title}
-                className={`rounded-2xl border bg-gradient-to-br to-slate-900/20 px-3 py-3 backdrop-blur-sm ${trustGlowClass(item.glow)}`}
-              >
-                <p className={`font-extrabold text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.32)] ${trustTitleClass(item.title)}`}>
-                  {item.title}
-                </p>
-                <p className="mt-1 text-xs font-semibold text-slate-100">{item.subtitle}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-
         {categorySlides.length > 0 ? (
           <div className="mx-auto mt-4 w-full max-w-3xl text-left sm:mt-5">
             <p className="mb-2 text-xs font-bold uppercase tracking-[0.18em] text-slate-200/90">
               Trenutno po kategorijama
             </p>
 
-            <div className="overflow-hidden sm:hidden">
-              <div
-                className="flex transition-transform duration-500 ease-out"
-                style={{ transform: `translateX(-${activeCategoryIndex * 100}%)` }}
-              >
-                {categorySlides.map((item) => (
-                  <div key={item.slug} className="w-full shrink-0 px-0.5">
-                    <Link
-                      href={`/category/${item.slug}`}
-                      className="block rounded-2xl border border-violet-200/35 bg-gradient-to-br from-violet-500/16 to-slate-900/20 px-4 py-3 shadow-[0_0_24px_rgba(139,92,246,0.22)] backdrop-blur-sm transition hover:brightness-110 active:scale-[0.99]"
-                    >
-                      <p className="text-sm font-extrabold leading-tight text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.32)]">
-                        {item.label}
-                      </p>
-                      <p className="mt-1 text-xs font-semibold text-slate-100">
-                        {item.count} majstor{item.count === 1 ? "" : "a"}
-                      </p>
-                    </Link>
-                  </div>
-                ))}
-              </div>
-              <div className="mt-2 flex items-center justify-center gap-1.5">
-                {categorySlides.map((item, idx) => (
-                  <button
-                    key={item.slug}
-                    type="button"
-                    onClick={() => setActiveCategoryIndex(idx)}
-                    className={`h-1.5 rounded-full transition-all ${
-                      activeCategoryIndex === idx ? "w-5 bg-white" : "w-2 bg-white/40"
-                    }`}
-                    aria-label={`Prikaži kategoriju ${idx + 1}`}
-                  />
-                ))}
-              </div>
+            <div className="flex snap-x snap-mandatory gap-2.5 overflow-x-auto pb-1 sm:hidden">
+              {categorySlides.map((item) => (
+                <Link
+                  key={item.slug}
+                  href={`/category/${item.slug}`}
+                  className="block min-w-[84%] snap-start rounded-2xl border border-violet-200/35 bg-gradient-to-br from-violet-500/16 to-slate-900/20 px-4 py-3 shadow-[0_0_24px_rgba(139,92,246,0.22)] backdrop-blur-sm transition hover:brightness-110 active:scale-[0.99]"
+                >
+                  <p className="text-sm font-extrabold leading-tight text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.32)]">
+                    {item.label}
+                  </p>
+                  <p className="mt-1 text-xs font-semibold text-slate-100">
+                    {item.count} majstor{item.count === 1 ? "" : "a"}
+                  </p>
+                </Link>
+              ))}
             </div>
 
             <div className="hidden gap-2.5 sm:grid sm:grid-cols-2 lg:grid-cols-4">
@@ -232,6 +145,24 @@ export function Hero() {
             </div>
           </div>
         ) : null}
+
+        <div className="mx-auto mt-4 w-full max-w-3xl text-left sm:mt-5">
+          <div className="grid grid-cols-3 gap-2.5 sm:gap-3">
+            {trustItems.map((item) => (
+              <div
+                key={item.title}
+                className={`rounded-2xl border bg-gradient-to-br to-slate-900/20 px-3 py-3 backdrop-blur-sm ${trustGlowClass(item.glow)}`}
+              >
+                <p
+                  className={`font-extrabold text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.32)] ${trustTitleClass(item.title)}`}
+                >
+                  {item.title}
+                </p>
+                <p className="mt-1 text-xs font-semibold text-slate-100">{item.subtitle}</p>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </section>
   );
