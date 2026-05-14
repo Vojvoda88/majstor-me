@@ -20,6 +20,7 @@ export function Hero() {
     { title: "Zatražite majstora", subtitle: "100% besplatno" },
     { title: "Objavi zahtjev", subtitle: "za manje od minut" },
   ];
+  const availabilityLabelSlugs = new Set(["selidbe", "ciscenje", "bastovanstvo"]);
 
   useEffect(() => {
     let cancelled = false;
@@ -74,6 +75,13 @@ export function Hero() {
       setActiveCategoryIndex((prev) => (prev - 1 + categorySlides.length) % categorySlides.length);
     }
     setTouchStartX(null);
+  };
+
+  const categoryCountLabel = (item: { slug: string; count: number }) => {
+    if (availabilityLabelSlugs.has(item.slug)) {
+      return `${item.count} dostupnih`;
+    }
+    return item.count === 1 ? "1 majstor" : `${item.count} majstora`;
   };
 
   return (
@@ -168,7 +176,7 @@ export function Hero() {
                       <p className="text-sm font-extrabold leading-tight text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.32)]">
                         {item.label}
                       </p>
-                      <p className="mt-1 text-xs font-semibold text-slate-100">{item.count} dostupnih</p>
+                      <p className="mt-1 text-xs font-semibold text-slate-100">{categoryCountLabel(item)}</p>
                     </Link>
                   </div>
                 ))}
@@ -198,7 +206,7 @@ export function Hero() {
                   <p className="text-sm font-extrabold leading-tight text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.32)]">
                     {item.label}
                   </p>
-                  <p className="mt-1 text-xs font-semibold text-slate-100">{item.count} dostupnih</p>
+                  <p className="mt-1 text-xs font-semibold text-slate-100">{categoryCountLabel(item)}</p>
                 </Link>
               ))}
             </div>
