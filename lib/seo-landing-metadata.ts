@@ -19,6 +19,7 @@ export type SeoLandingJsonLdInput = {
   title: string;
   description: string;
   parsed: SeoCombinedParsed;
+  faqItems?: { q: string; a: string }[];
 };
 
 /** WebPage + Service + BreadcrumbList + Organization/WebSite @id */
@@ -28,6 +29,7 @@ export function buildSeoLandingJsonLd({
   title,
   description,
   parsed,
+  faqItems = [],
 }: SeoLandingJsonLdInput): Record<string, unknown> {
   const root = siteUrl.replace(/\/$/, "");
   const cityGradUrl = `${root}/grad/${parsed.citySlug}`;
@@ -57,6 +59,23 @@ export function buildSeoLandingJsonLd({
           addressCountry: "ME",
         },
       },
+      ...(faqItems.length > 0
+        ? [
+            {
+              "@type": "FAQPage",
+              "@id": `${canonicalUrl}#faq`,
+              isPartOf: { "@id": `${canonicalUrl}#webpage` },
+              mainEntity: faqItems.map((faq) => ({
+                "@type": "Question",
+                name: faq.q,
+                acceptedAnswer: {
+                  "@type": "Answer",
+                  text: faq.a,
+                },
+              })),
+            },
+          ]
+        : []),
       breadcrumbListEntity([
         { name: "Početna", itemUrl: root },
         { name: parsed.cityDisplayName, itemUrl: cityGradUrl },

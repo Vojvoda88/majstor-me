@@ -11,6 +11,7 @@ import { HandymanCard } from "@/components/lists/handyman-card";
 import { PUBLIC_CATEGORY_LISTING } from "@/lib/categories";
 import { DEFAULT_PAGE_SIZE } from "@/lib/constants";
 import { cityLocative, phraseUGradu } from "@/lib/slugs";
+import { getPrioritySeoLinksForCity } from "@/lib/seo-landing-config";
 import type { PublicHandymenListResult } from "@/lib/handymen-listing";
 import type { FaqItem } from "@/lib/json-ld";
 
@@ -50,6 +51,7 @@ export function GradPageContent({
   const skipFirstClientFetch = useRef(!!initialListing);
 
   const cityNameLocative = cityLocative(cityName);
+  const priorityServiceLinks = getPrioritySeoLinksForCity(slug, 10);
 
   useEffect(() => {
     if (skipFirstClientFetch.current && page === 1 && reloadToken === 0) {
@@ -196,6 +198,27 @@ export function GradPageContent({
               </Link>
             ))}
           </div>
+
+          {priorityServiceLinks.length > 0 ? (
+            <section className="mb-10 rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm sm:p-8">
+              <h2 className="mb-3 text-lg font-bold text-slate-900">Popularne pretrage {phraseUGradu(cityName)}</h2>
+              <p className="mb-4 text-sm text-slate-600">
+                Direktni linkovi na najtraženije kombinacije usluga i grada.
+              </p>
+              <ul className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
+                {priorityServiceLinks.map((item) => (
+                  <li key={`${item.slug}-${item.city}`}>
+                    <Link
+                      href={`/${item.slug}/${item.city}`}
+                      className="inline-flex w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-medium text-slate-700 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-800"
+                    >
+                      {item.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ) : null}
 
           <h2 className="mb-4 text-lg font-bold text-slate-900">Majstori u ovom gradu</h2>
 

@@ -32,7 +32,7 @@ export type SeoCombinedParsed = {
 
 export function buildSeoLandingTitle(parsed: SeoCombinedParsed): string {
   const loc = cityLocative(parsed.cityDisplayName);
-  return `${parsed.categoryDisplayName} u ${loc}`;
+  return `${parsed.categoryDisplayName} u ${loc} | Pošaljite zahtjev besplatno`;
 }
 
 export function buildSeoLandingDescription(parsed: SeoCombinedParsed): string {
@@ -93,4 +93,71 @@ export function buildSeoCombinedIntroParagraph(parsed: SeoCombinedParsed): strin
     byCategory[parsed.categorySlug] ??
     `Stranica za ${d} u ${loc}: pregled majstora u gradu i mogućnost jednog zahtjeva u ${loc}.`
   );
+}
+
+export type SeoLandingFaqItem = { q: string; a: string };
+
+export function buildSeoCombinedFaq(parsed: SeoCombinedParsed): SeoLandingFaqItem[] {
+  const loc = cityLocative(parsed.cityDisplayName);
+  const service = parsed.categoryDisplayName.toLowerCase();
+  return [
+    {
+      q: "Kako funkcioniše slanje zahtjeva?",
+      a: `Otvorite formu, opišete posao za ${service} u ${loc} i pošaljete zahtjev. Majstori kojima odgovara grad i vrsta posla mogu da pošalju odgovor preko platforme.`,
+    },
+    {
+      q: "Da li je objava zahtjeva besplatna?",
+      a: "Da. Za korisnika je objava zahtjeva besplatna.",
+    },
+    {
+      q: "Kada se majstori javljaju?",
+      a: "Odgovori zavise od dostupnosti majstora. Najčešće pomaže da u zahtjevu napišete okviran termin i što precizniji opis posla.",
+    },
+    {
+      q: "Da li mogu dodati slike problema?",
+      a: "Da, kada imate fotografije kvara ili prostora, dodajte ih u zahtjev jer to obično pomaže preciznijoj procjeni.",
+    },
+    {
+      q: "Kako biram majstora?",
+      a: "Uporedite odgovore i profile, pa izaberite majstora koji vam najviše odgovara po terminu, pristupu i ponudi.",
+    },
+    {
+      q: "Da li se dogovor obavlja direktno sa majstorom?",
+      a: "Da. Nakon povezivanja preko platforme, dalji dogovor oko detalja posla ide direktno sa majstorom.",
+    },
+  ];
+}
+
+export function buildSeoCombinedBodyParagraphs(parsed: SeoCombinedParsed): string[] {
+  const loc = cityLocative(parsed.cityDisplayName);
+  const gen = cityGenitive(parsed.cityDisplayName);
+  const service = parsed.categoryDisplayName.toLowerCase();
+
+  const specifics: Record<string, string> = {
+    vodoinstalater: "curenja, zamjene sanitarija, ventila i dijelova instalacije",
+    elektricar: "kvarovi na instalacijama, osiguračima, utičnicama i rasvjeti",
+    "klima-servis": "servis, čišćenje, provjera rada, montaža i demontaža klima uređaja",
+    keramicar: "postavljanje pločica, fugovanje, priprema podloge i završni detalji",
+    stolar: "namještaj po mjeri, popravke drvenih elemenata, vrata i okovi",
+    "pvc-stolarija": "podešavanje, zamjena okova, dihtovanje i nova PVC stolarija",
+    bravar: "brave, cilindri, metalne konstrukcije i intervencije na vratima",
+    moler: "krečenje, gletovanje, priprema zidova i završno farbanje",
+    gipsar: "spušteni plafoni, pregradni zidovi i dekorativni gipsani elementi",
+    fasader: "obnova fasade, termoizolacija i završni fasadni slojevi",
+    "grubi-gradjevinski-radovi": "zidanje, betoniranje i grublji konstruktivni zahvati",
+    ciscenje: "generalno čišćenje stanova, kuća, lokala i poslovnih prostora",
+    selidbe: "lokalne i međugradske selidbe, prenos namještaja i logistika utovara",
+    bastovanstvo: "košenje, rezidba, održavanje i uređenje dvorišta i bašte",
+    "sitni-kucni-poslovi": "montaže, sitne popravke i kućne intervencije",
+  };
+
+  const categorySpecific = specifics[parsed.categorySlug] ?? `${service} poslovi`;
+
+  return [
+    `Ako tražite ${service} u ${loc}, najpraktičnije je da posao opišete na jednom mjestu i sačekate odgovore. BrziMajstor.ME nije imenik koji vas tjera da zovete broj po broj. Umjesto toga, jedan zahtjev ide profilima iz ${gen} kojima odgovara i grad i vrsta posla — bilo da su u pitanju majstori ili druge usluge. Tako štedite vrijeme, a i komunikacija ostaje fokusirana na konkretan posao koji želite da završite.`,
+    `Za bolji rezultat, u opisu napišite šta tačno treba uraditi, koliki je obim i kada vam okvirno odgovara termin. Kod ove usluge to najčešće znači: ${categorySpecific}. Kada korisnik pošalje jasniji zahtjev, majstor lakše procijeni da li može da preuzme posao i kako da predloži realan naredni korak.`,
+    `Objava zahtjeva je besplatna za korisnike. To znači da možete prvo prikupiti odgovore, pa tek onda odlučiti da li vam ponuda i način rada odgovaraju. Platforma povezuje majstore, selidbe, čišćenje i druge usluge u gradu bez nerealnih obećanja i bez pritiska da odmah prihvatite prvo rješenje koje se pojavi.`,
+    `Ako imate fotografije, korisno je da ih priložite uz zahtjev. Slika često ubrza razumijevanje problema, posebno kada je teško opisati detalj riječima. Kada majstor vidi kontekst prostora ili kvara, lakše je dati smislen odgovor i dogovoriti dolazak sa manje dodatnih pitanja.`,
+    `Na ovoj stranici možete pregledati i profile majstora za ${service} u ${loc}, a zatim otvoriti gradsku ili kategorijsku stranicu za širu pretragu. Bilo da prvo gledate profile ili odmah šaljete zahtjev, cilj je isti: da brzo dođete do majstora koji zaista radi uslugu koja vam treba u vašem gradu.`,
+  ];
 }

@@ -9,7 +9,12 @@ import { HandymanCard } from "@/components/lists/handyman-card";
 import { DEFAULT_PAGE_SIZE } from "@/lib/constants";
 import { PUBLIC_CATEGORY_LISTING } from "@/lib/categories";
 import { cityLocative, phraseUGradu } from "@/lib/slugs";
-import { buildSeoCombinedIntroParagraph, type SeoCombinedParsed } from "@/lib/seo-landing-copy";
+import {
+  buildSeoCombinedBodyParagraphs,
+  buildSeoCombinedIntroParagraph,
+  type SeoCombinedParsed,
+  type SeoLandingFaqItem,
+} from "@/lib/seo-landing-copy";
 import { getPrioritySeoLandingContent } from "@/lib/seo-landing-priority-copy";
 import type { PublicHandymenListResult } from "@/lib/handymen-listing";
 
@@ -29,6 +34,7 @@ export function SeoLandingContent({
   cityName,
   citySlug,
   categorySlug,
+  faqItems,
   initialListing,
 }: {
   slug: string;
@@ -37,6 +43,7 @@ export function SeoLandingContent({
   cityName: string;
   citySlug: string;
   categorySlug: string;
+  faqItems: SeoLandingFaqItem[];
   initialListing: PublicHandymenListResult | null;
 }) {
   const [handymen, setHandymen] = useState<Handyman[]>(initialListing?.items ?? []);
@@ -58,6 +65,7 @@ export function SeoLandingContent({
   };
   const priority = getPrioritySeoLandingContent(slug);
   const intro = priority?.intro ?? buildSeoCombinedIntroParagraph(parsed);
+  const bodyParagraphs = buildSeoCombinedBodyParagraphs(parsed);
   const relatedServiceLinks = PUBLIC_CATEGORY_LISTING.filter((c) => c.slug !== categorySlug);
 
   const skipFirstClientFetch = useRef(!!initialListing);
@@ -140,6 +148,9 @@ export function SeoLandingContent({
           </h1>
 
           <p className="mb-4 max-w-3xl text-base leading-relaxed text-slate-700 sm:text-[1.05rem]">{intro}</p>
+          <p className="mb-4 max-w-3xl text-sm leading-relaxed text-slate-600 sm:text-base">
+            Na platformi su majstori, selidbe, čišćenje i druge usluge za kuću, stan i svakodnevne potrebe.
+          </p>
 
           <p className="mb-8 flex flex-wrap gap-x-4 gap-y-2 text-sm text-slate-600">
             <Link
@@ -265,8 +276,8 @@ export function SeoLandingContent({
           <section className="mt-12 rounded-2xl border border-blue-100 bg-gradient-to-br from-blue-50 to-white p-6 shadow-sm sm:p-8">
             <h2 className="text-lg font-bold text-slate-900 sm:text-xl">Pošaljite zahtjev</h2>
             <p className="mt-2 max-w-2xl text-slate-600">
-              Objavi zahtjev i dobij ponude za 10 minuta — jedan opis posla, jedan grad; majstori koji mogu da odgovore šalju
-              ponude. Nema obaveze da prihvatite.
+              Objava zahtjeva je besplatna za korisnike. Opišite posao, dodajte grad i po potrebi slike. Majstori kojima
+              odgovara grad i vrsta posla mogu da se jave preko platforme.
             </p>
             <Link
               href={createUrl}
@@ -278,22 +289,36 @@ export function SeoLandingContent({
           </section>
 
           <section className="mt-10 rounded-2xl border border-white bg-white p-6 shadow-sm sm:p-8">
+            <h2 className="mb-4 text-lg font-bold text-slate-900">Kako funkcioniše</h2>
+            <ol className="space-y-3 text-sm leading-relaxed text-slate-700 sm:text-base">
+              <li>
+                <strong>1. Opišite posao</strong> — napišite šta tačno treba uraditi za uslugu{" "}
+                {displayName.toLowerCase()} {phraseUGradu(cityName)}.
+              </li>
+              <li>
+                <strong>2. Pošaljite zahtjev besplatno</strong> — zahtjev vide majstori kojima odgovara grad i kategorija.
+              </li>
+              <li>
+                <strong>3. Izaberite šta vam odgovara</strong> — uporedite odgovore i dogovorite detalje direktno sa majstorom.
+              </li>
+            </ol>
+          </section>
+
+          <section className="mt-10 rounded-2xl border border-white bg-white p-6 shadow-sm sm:p-8">
+            <h2 className="mb-4 text-lg font-bold text-slate-900">
+              {displayName} {phraseUGradu(cityName)} — vodič za korisnike
+            </h2>
+            <div className="space-y-4 text-sm leading-relaxed text-slate-700 sm:text-base">
+              {bodyParagraphs.map((paragraph, idx) => (
+                <p key={idx}>{paragraph}</p>
+              ))}
+            </div>
+          </section>
+
+          <section className="mt-10 rounded-2xl border border-white bg-white p-6 shadow-sm sm:p-8">
             <h2 className="mb-4 text-lg font-bold text-slate-900">Često postavljana pitanja</h2>
             <div className="space-y-5 text-sm leading-relaxed text-slate-600">
-              {(priority?.faq ?? [
-                {
-                  q: `Koliko košta ${displayName.toLowerCase()} u ${cityNameLocative}?`,
-                  a: "Cijena zavisi od vrste posla i materijala. Na BrziMajstor.ME dogovarate direktno s majstorom nakon zahtjeva.",
-                },
-                {
-                  q: "Kada mogu očekivati odgovor?",
-                  a: "Zavisi od dostupnosti majstora. U zahtjevu navedite kada vam odgovara dolazak — majstori odgovaraju kad mogu.",
-                },
-                {
-                  q: "Šta vidim na profilu majstora?",
-                  a: "Ocjene i broj recenzija od ranijih korisnika, kad postoje. Na profilu možete videti i kategorije koje majstor nudi.",
-                },
-              ]).map((item, i) => (
+              {faqItems.map((item, i) => (
                 <div key={i}>
                   <h3 className="font-semibold text-slate-800">{item.q}</h3>
                   <p>{item.a}</p>

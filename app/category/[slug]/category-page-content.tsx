@@ -14,6 +14,7 @@ import { Wrench, MapPin, List, ChevronLeft, ChevronRight, SlidersHorizontal } fr
 import { CITIES, DEFAULT_PAGE_SIZE } from "@/lib/constants";
 import { HOMEPAGE_CITIES } from "@/lib/homepage-data";
 import { cityToSlug, phraseUGradu } from "@/lib/slugs";
+import { getPrioritySeoLinksForCategory } from "@/lib/seo-landing-config";
 import type { PublicHandymenListResult } from "@/lib/handymen-listing";
 import type { FaqItem } from "@/lib/json-ld";
 
@@ -153,6 +154,7 @@ export function CategoryPageContent({
   }, [internalCategory, cityFilter, sortBy, page, reloadToken, initialCity]);
 
   const sortLabel = sortBy === "rating" ? "Po ocjeni" : "Po broju recenzija";
+  const priorityCityLinks = getPrioritySeoLinksForCategory(slug, 12);
 
   return (
     <main className="min-h-screen bg-brand-page pb-28 pt-16 text-brand-navy md:pb-10 md:pt-20">
@@ -454,6 +456,25 @@ export function CategoryPageContent({
           </div>
 
           <section className="mt-10 rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm sm:p-8">
+            {priorityCityLinks.length > 0 ? (
+              <>
+                <h2 className="mb-4 text-lg font-bold text-slate-900">
+                  Popularne pretrage po gradovima za ovu uslugu
+                </h2>
+                <ul className="mb-8 grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
+                  {priorityCityLinks.map((item) => (
+                    <li key={`${item.slug}-${item.city}`}>
+                      <Link
+                        href={`/${item.slug}/${item.city}`}
+                        className="inline-flex w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-medium text-slate-700 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-800"
+                      >
+                        {item.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            ) : null}
             <h2 className="mb-4 text-lg font-bold text-slate-900">Često postavljana pitanja</h2>
             <div className="space-y-4 text-sm leading-relaxed text-slate-600">
               {faqItems.map((item) => (

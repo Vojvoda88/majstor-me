@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { headers } from "next/headers";
 import { getCategoryBySlug } from "@/lib/categories";
-import type { SeoCombinedParsed } from "@/lib/seo-landing-copy";
+import { buildSeoCombinedFaq, type SeoCombinedParsed } from "@/lib/seo-landing-copy";
 import { getPublicHandymenList } from "@/lib/handymen-listing";
 import { getPrioritySeoLandingContent } from "@/lib/seo-landing-priority-copy";
 import {
@@ -96,6 +96,7 @@ export default async function ServiceCityPage({
   const priority = getPrioritySeoLandingContent(legacySlug);
   const title = priority?.metaTitle ?? buildSeoLandingTitle(parsed);
   const description = priority?.metaDescription ?? buildSeoLandingDescription(parsed);
+  const faqItems = buildSeoCombinedFaq(parsed);
 
   const jsonLd = buildSeoLandingJsonLd({
     canonicalUrl,
@@ -103,6 +104,7 @@ export default async function ServiceCityPage({
     title,
     description,
     parsed,
+    faqItems,
   });
 
   const initialListing = await getPublicHandymenList({
@@ -122,6 +124,7 @@ export default async function ServiceCityPage({
         cityName={parsed.cityDisplayName}
         citySlug={parsed.citySlug}
         categorySlug={parsed.categorySlug}
+        faqItems={faqItems}
         initialListing={initialListing}
       />
     </>
