@@ -83,6 +83,7 @@ export function Hero() {
     }
     return item.count === 1 ? "1 majstor" : `${item.count} majstora`;
   };
+  const desktopCategorySlides = categorySlides.slice(0, 8);
 
   return (
     <section className="relative flex min-h-[min(88dvh,690px)] w-full items-center justify-center overflow-hidden rounded-b-[1.1rem] px-4 pb-12 pt-[max(4.5rem,env(safe-area-inset-top)+3.25rem)] text-white sm:px-5 md:min-h-[760px] md:rounded-b-[1.5rem] md:pb-20 md:pt-28">
@@ -196,8 +197,8 @@ export function Hero() {
               </div>
             </div>
 
-            <div className="hidden gap-2.5 sm:grid sm:grid-cols-3 lg:grid-cols-5">
-              {categorySlides.map((item) => (
+            <div className="hidden gap-2.5 sm:grid sm:grid-cols-2 lg:grid-cols-4">
+              {desktopCategorySlides.map((item) => (
                 <Link
                   key={item.slug}
                   href={`/category/${item.slug}`}
@@ -209,6 +210,14 @@ export function Hero() {
                   <p className="mt-1 text-xs font-semibold text-slate-100">{categoryCountLabel(item)}</p>
                 </Link>
               ))}
+            </div>
+            <div className="mt-3 hidden sm:block">
+              <Link
+                href="/categories"
+                className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-100/90 underline underline-offset-4 hover:text-white"
+              >
+                Pogledaj sve kategorije
+              </Link>
             </div>
           </div>
         ) : null}
