@@ -51,17 +51,24 @@ export function Hero() {
           </Link>
         </div>
 
-        <div className="mx-auto mt-4 grid w-full max-w-3xl grid-cols-1 gap-2.5 text-left sm:mt-5 sm:grid-cols-3">
-          <div className="rounded-xl border border-white/20 bg-white/10 px-3 py-3 backdrop-blur-sm">
-            <p className="text-xl font-extrabold leading-none text-white">70+</p>
+        <p className="mx-auto mt-3 text-sm text-slate-100/90">
+          Imate profil?{" "}
+          <Link href="/login" className="font-semibold text-white underline underline-offset-2 hover:text-blue-100">
+            Prijavi se
+          </Link>
+        </p>
+
+        <div className="mx-auto mt-4 flex w-full max-w-3xl gap-2.5 overflow-x-auto pb-1 text-left sm:mt-5 sm:grid sm:grid-cols-3 sm:gap-3 sm:overflow-visible sm:pb-0">
+          <div className="min-w-[170px] rounded-2xl border border-blue-200/35 bg-gradient-to-br from-blue-500/18 to-slate-900/20 px-3 py-3 shadow-[0_0_24px_rgba(59,130,246,0.18)] backdrop-blur-sm">
+            <p className="text-xl font-extrabold leading-none text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.32)]">70+</p>
             <p className="mt-1 text-xs font-semibold text-slate-100">majstora i usluga</p>
           </div>
-          <div className="rounded-xl border border-white/20 bg-white/10 px-3 py-3 backdrop-blur-sm">
-            <p className="text-sm font-extrabold leading-tight text-white">Zatražite majstora</p>
+          <div className="min-w-[170px] rounded-2xl border border-emerald-200/35 bg-gradient-to-br from-emerald-500/18 to-slate-900/20 px-3 py-3 shadow-[0_0_24px_rgba(16,185,129,0.18)] backdrop-blur-sm">
+            <p className="text-sm font-extrabold leading-tight text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.32)]">Zatražite majstora</p>
             <p className="mt-1 text-xs font-semibold text-slate-100">100% besplatno</p>
           </div>
-          <div className="rounded-xl border border-white/20 bg-white/10 px-3 py-3 backdrop-blur-sm">
-            <p className="text-sm font-extrabold leading-tight text-white">Objavi zahtjev</p>
+          <div className="min-w-[170px] rounded-2xl border border-amber-200/35 bg-gradient-to-br from-amber-500/18 to-slate-900/20 px-3 py-3 shadow-[0_0_24px_rgba(245,158,11,0.18)] backdrop-blur-sm">
+            <p className="text-sm font-extrabold leading-tight text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.32)]">Objavi zahtjev</p>
             <p className="mt-1 text-xs font-semibold text-slate-100">za manje od minut</p>
           </div>
         </div>
