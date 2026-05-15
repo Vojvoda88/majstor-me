@@ -1,16 +1,22 @@
-import { MapPin, Sparkles } from "lucide-react";
+import { Clock3, MapPin, Sparkles } from "lucide-react";
 
 const BENEFITS = [
   {
     id: "01",
-    title: "Lokalno, bez zvanja redom",
-    body: "Zahtjev vide majstori kojima odgovara lokacija i vrsta posla; odgovaraju preko platforme.",
+    title: "Tačno za vaš grad i vrstu posla",
+    body: "Zahtjev vide oni kojima odgovara lokacija i usluga koju tražite.",
     icon: MapPin,
   },
   {
     id: "02",
-    title: "Besplatno za vas",
-    body: "Za vas je zahtjev besplatan — bez skrivenih naknada na vašoj strani.",
+    title: "Štedite vrijeme",
+    body: "Prestanite zvati redom — objavite jednom i sačekajte ponude.",
+    icon: Clock3,
+  },
+  {
+    id: "03",
+    title: "Besplatno za korisnike",
+    body: "Objava zahtjeva je besplatna. Vi birate koju ponudu želite.",
     icon: Sparkles,
   },
 ];
@@ -29,21 +35,21 @@ export function WhyMajstorSection() {
             Zašto BrziMajstor.ME?
           </h2>
           <p className="relative mt-4 max-w-lg text-[15px] leading-relaxed text-slate-100/95 sm:mt-6 md:text-base">
-            Od sitnih popravki do većih radova — jedan zahtjev, odgovori majstora iz Crne Gore, bez zvanja liste brojeva.
+            Prestanite zvati redom. Objavite jednom i sačekajte ponude.
           </p>
           <div className="relative mt-8 grid gap-2.5 border-t border-white/10 pt-8 sm:grid-cols-2 sm:gap-3 md:mt-10 md:pt-10">
             <div className="rounded-2xl border border-white/10 bg-white/[0.07] px-4 py-4 backdrop-blur-sm">
-              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-amber-200/90">ZA KLIJENTE</p>
-              <p className="mt-2 text-sm font-semibold leading-snug">Bez provizije na vašu stranu</p>
+              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-amber-200/90">JEDNOSTAVNO</p>
+              <p className="mt-2 text-sm font-semibold leading-snug">Jedan zahtjev umjesto više poziva</p>
             </div>
             <div className="rounded-2xl border border-white/10 bg-white/[0.07] px-4 py-4 backdrop-blur-sm">
-              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-amber-200/90">TRANSPARENTNO</p>
-              <p className="mt-2 text-sm font-semibold leading-snug">Razgovor direktno s majstorom</p>
+              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-amber-200/90">BESPLATNO</p>
+              <p className="mt-2 text-sm font-semibold leading-snug">Objava zahtjeva je besplatna</p>
             </div>
           </div>
         </div>
 
-        <ul className="flex flex-col gap-3.5 md:gap-6">
+        <ul className="grid gap-3.5 md:grid-cols-2 md:gap-5 lg:grid-cols-1 xl:grid-cols-2">
           {BENEFITS.map(({ id, title, body, icon: Icon }) => (
             <li
               key={id}
