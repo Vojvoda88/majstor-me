@@ -1,4 +1,5 @@
 import { auth } from "@/lib/auth";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { HandymanProfileForm } from "./handyman-profile-form";
 import { calcProfileCompletion } from "@/lib/handyman-onboarding";
@@ -40,6 +41,17 @@ export default async function HandymanProfilePage() {
       <p className="page-description">
         {t(locale, "profile.intro", "Popunite profil onim redom kako bi ga klijent najlakše razumio: osnovni podaci, detalji usluge, galerija i opis.")}
       </p>
+      <div className="mb-6 mt-4 rounded-2xl border border-blue-100 bg-blue-50/70 p-4">
+        <p className="text-sm font-semibold text-slate-900">Brzi vodič za majstore</p>
+        <div className="mt-2 flex flex-wrap gap-3 text-sm">
+          <Link href="/kako-radi-majstori" className="font-semibold text-blue-700 underline underline-offset-2">
+            Kako radi za majstore
+          </Link>
+          <Link href="/kako-radi-majstori#krediti" className="font-semibold text-blue-700 underline underline-offset-2">
+            Kako rade krediti
+          </Link>
+        </div>
+      </div>
       {onboarding.percent < 100 && (
         <OnboardingBanner percent={onboarding.percent} steps={onboarding.steps} className="mb-6" />
       )}

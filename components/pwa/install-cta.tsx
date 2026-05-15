@@ -11,7 +11,6 @@ import { t } from "@/lib/i18n/messages";
 const DISMISS_KEY = "pwa-entry-modal-dismissed";
 /** Koliko dugo ne prikazuj ponovo nakon „Kasnije“ */
 const DISMISS_MS = 7 * 24 * 60 * 60 * 1000;
-const SHOW_DELAY_MS = 1600;
 
 function isStandalone(): boolean {
   if (typeof window === "undefined") return true;
@@ -81,6 +80,7 @@ export function InstallCTA() {
     if (typeof window === "undefined") return;
     if (isStandalone()) return;
     if (isDismissed()) return;
+    if (status !== "authenticated") return;
 
     const onBip = (e: Event) => {
       e.preventDefault();
@@ -89,10 +89,6 @@ export function InstallCTA() {
       setVisible(true);
     };
     window.addEventListener("beforeinstallprompt", onBip);
-
-    const t = window.setTimeout(() => {
-      setVisible(true);
-    }, SHOW_DELAY_MS);
 
     const onInstalled = () => {
       deferredPrompt.current = null;
@@ -104,9 +100,8 @@ export function InstallCTA() {
     return () => {
       window.removeEventListener("beforeinstallprompt", onBip);
       window.removeEventListener("appinstalled", onInstalled);
-      window.clearTimeout(t);
     };
-  }, []);
+  }, [status]);
 
   const handleInstall = async () => {
     const prompt = deferredPrompt.current;
@@ -120,6 +115,8 @@ export function InstallCTA() {
     } catch {
       /* cancelled */
     } finally {
+      setDismissed();
+      setVisible(false);
       setInstalling(false);
     }
   };
@@ -235,14 +232,6 @@ export function InstallCTA() {
                 <p className="rounded-lg bg-slate-50 px-3 py-2 text-center text-xs text-slate-600">
                   {t(locale, "pwa.notifForHandymanOnly", "Obavještenja o novim poslovima dostupna su u dashboardu majstora nakon prijave kao majstor.")}
                 </p>
-              ) : !loggedIn ? (
-                <Link
-                  href="/login?callbackUrl=/"
-                  className="flex min-h-[48px] w-full touch-manipulation items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-3 text-[15px] font-semibold text-slate-800 transition hover:bg-slate-50"
-                >
-                  <Bell className="h-5 w-5 shrink-0 text-amber-600" aria-hidden />
-                  {t(locale, "pwa.loginForNotifications", "Prijavi se za obavještenja")}
-                </Link>
               ) : (
                 <p className="rounded-lg bg-slate-50 px-3 py-2 text-center text-xs text-slate-500">
                   {t(locale, "pwa.pushUnavailable", "Push obavještenja trenutno nisu dostupna u ovom okruženju (konfiguracija).")}

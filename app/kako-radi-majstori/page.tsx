@@ -5,18 +5,9 @@ import { PublicHeader } from "@/components/layout/PublicHeader";
 import { PublicFooter } from "@/components/layout/PublicFooter";
 import { getSiteUrl } from "@/lib/site-url";
 import { buildAlternates, getLocaleFromHeaderValue, LOCALE_HEADER, localizedPath } from "@/lib/i18n/seo";
-import {
-  CREDIT_PACKAGES,
-  HANDYMAN_START_BONUS_CREDITS,
-  STANDARD_LEAD_CREDITS,
-} from "@/lib/credit-packages";
+import { HANDYMAN_START_BONUS_CREDITS } from "@/lib/credit-packages";
 
 const baseUrl = getSiteUrl();
-const CREDITS_STARTER_PACK = CREDIT_PACKAGES.find((p) => p.id === "credits_1000")!;
-const STARTER_PRICE_LABEL = `${CREDITS_STARTER_PACK.priceEur.toLocaleString("sr-Latn-ME", {
-  minimumFractionDigits: 2,
-  maximumFractionDigits: 2,
-})} €`;
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = getLocaleFromHeaderValue(headers().get(LOCALE_HEADER));
@@ -24,12 +15,12 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: "Kako radi za majstore",
     description:
-      "Detaljno i jasno za majstore: onboarding, odobreni poslovi, krediti i kada se troše na BrziMajstor.ME.",
+      "Osnovno i detaljno objašnjenje za majstore: kako napraviti profil, kako stižu poslovi i kako rade krediti na BrziMajstor.ME.",
     alternates: buildAlternates(baseUrl, "/kako-radi-majstori", locale),
     openGraph: {
       title: "Kako radi za majstore | BrziMajstor.ME",
       description:
-        "Registracija je besplatna, poslovi su relevantni i odobreni, a krediti se troše samo kada vi odlučite da otključate kontakt.",
+        "Napravite profil, dobijajte obavještenja za svoje usluge i birajte kada želite da otključate kontakt klijenta.",
       url: localizedUrl,
       siteName: "BrziMajstor.ME",
       type: "website",
@@ -38,7 +29,7 @@ export async function generateMetadata(): Promise<Metadata> {
       card: "summary",
       title: "Kako radi za majstore | BrziMajstor.ME",
       description:
-        "Bez pretplate. Birate poslove i kredite trošite samo kad vam posao odgovara.",
+        "Bez pretplate. Vi birate koje poslove želite i kada otključavate kontakt klijenta.",
     },
   };
 }
@@ -46,33 +37,18 @@ export async function generateMetadata(): Promise<Metadata> {
 const steps = [
   {
     n: "01",
-    title: "Registrujete se besplatno",
-    body: `Registracija ne košta i nema pretplate. Nakon odobrenja profila dobijate ${HANDYMAN_START_BONUS_CREDITS.toLocaleString("sr-Latn-ME")} start kredita — da odmah možete probati platformu.`,
+    title: "Napravite profil",
+    body: "Unesite podatke, usluge koje nudite i gradove u kojima radite.",
   },
   {
     n: "02",
-    title: "Profil ide na admin pregled",
-    body: "Prije pune aktivacije profil ide na kratak pregled, da sistem ostane kvalitetan i fer za sve.",
+    title: "Stižu vam obavještenja za vaše usluge",
+    body: "Kada neko u gradu koji ste izabrali zatraži uslugu koju radite, dobijate obavještenje.",
   },
   {
     n: "03",
-    title: "Dobijate relevantne i odobrene poslove",
-    body: "Kada ste aktivni, čim se pojavi posao koji odgovara vašoj branši i zoni, stiže vam obavještenje. Vidite poslove koji su odobreni i relevantni za vas — ako ste slobodni, možete odmah da reagujete.",
-  },
-  {
-    n: "04",
-    title: "Pregled posla je besplatan",
-    body: "Prvo pročitate opis i procijenite da li se posao isplati za vas.",
-  },
-  {
-    n: "05",
-    title: "Kontakt otključavate samo kad želite",
-    body: `Ako vam posao odgovara, tada kreditima otključavate kontakt klijenta. Standardan posao kad nije hitno = ${STANDARD_LEAD_CREDITS} kredita (oko 1,99 € iz paketa ${CREDITS_STARTER_PACK.credits.toLocaleString("sr-Latn-ME")} kredita za ${STARTER_PRICE_LABEL}). Plaćate samo kad sami želite taj kontakt — nema pretplate.`,
-  },
-  {
-    n: "06",
-    title: "Vi birate gde se uključujete",
-    body: "Ne morate otključati svaki posao. Birate samo one koji vam imaju smisla.",
+    title: "Javljate se samo kad želite",
+    body: "Ako vam posao odgovara, otključate kontakt i direktno se dogovarate sa klijentom.",
   },
 ];
 
@@ -83,7 +59,7 @@ const faq = [
   },
   {
     q: "Kada trošim kredite?",
-    a: `Samo kad sami odlučite da otključate kontakt klijenta za posao koji želite. Npr. standardan posao kad nije hitno = ${STANDARD_LEAD_CREDITS} kredita (oko 1,99 €, ispod 2 €, iz početnog paketa).`,
+    a: "Samo kad sami odlučite da otključate kontakt klijenta za posao koji želite. Tačan broj kredita vidite prije potvrde.",
   },
   {
     q: "Da li moram otključati svaki posao?",
@@ -95,7 +71,7 @@ const faq = [
   },
   {
     q: "Kako kupujem kredite?",
-    a: `Kredite kupujete kroz pakete u aplikaciji kad vam zatrebaju, bez pretplate. Npr. ${CREDITS_STARTER_PACK.credits.toLocaleString("sr-Latn-ME")} kredita košta ${STARTER_PRICE_LABEL}.`,
+    a: "Kredite kupujete kroz pakete u aplikaciji kad vam zatrebaju, bez pretplate i bez mjesečnog nameta.",
   },
   {
     q: "Da li mogu prvo pogledati posao pa odlučiti?",
@@ -111,28 +87,31 @@ export default function KakoRadiMajstoriPage() {
         <section className="rounded-3xl border border-slate-200/80 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-6 text-white shadow-[0_28px_64px_-36px_rgba(15,23,42,0.7)] sm:p-8 md:p-10">
           <p className="text-xs font-bold uppercase tracking-[0.2em] text-amber-200/90">Kako radi za majstore</p>
           <h1 className="mt-2 font-display text-3xl font-bold tracking-tight sm:text-4xl">
-            Jasno, bez pretplate i bez skrivenih troškova
+            Osnovno, jasno i bez komplikacija
           </h1>
           <p className="mt-4 max-w-3xl text-[15px] leading-relaxed text-slate-100/95 sm:text-base">
-            Registracija je besplatna i traje manje od 1 minuta. Na startu dobijate{" "}
-            {HANDYMAN_START_BONUS_CREDITS.toLocaleString("sr-Latn-ME")} kredita gratis. Kad se pojavi posao koji odgovara
-            vašoj branši i zoni, obavještenje stiže direktno na telefon. Ako ste slobodni, pošaljete ponudu odmah. Nema
-            pretplate i nema fiksnih mjesečnih troškova - kontakt klijenta otključavate samo kada vi želite. Ponude šaljete
-            već od {STANDARD_LEAD_CREDITS} kredita (oko 1,99 €), tako da su vam prvih 5 ponuda praktično besplatne iz start
-            kredita.
+            Registracija je besplatna, profil popunjavate jednom, a zatim dobijate obavještenja za poslove koji odgovaraju
+            vašim uslugama i gradovima. Ako vam posao odgovara, otključavate kontakt i dogovarate se direktno sa klijentom.
+            Nakon odobrenja profila dobijate {HANDYMAN_START_BONUS_CREDITS.toLocaleString("sr-Latn-ME")} start kredita.
           </p>
-          <div className="mt-6">
+          <div className="mt-6 flex flex-wrap gap-3">
             <Link
               href="/register?type=majstor"
               className="inline-flex min-h-[50px] items-center justify-center rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 px-7 text-sm font-bold text-brand-navy shadow-[0_12px_28px_-12px_rgba(245,158,11,0.55)] transition hover:brightness-105"
             >
               Registruj se kao majstor
             </Link>
+            <Link
+              href="#detaljno"
+              className="inline-flex min-h-[50px] items-center justify-center rounded-2xl border border-white/35 px-7 text-sm font-semibold text-white transition hover:bg-white/10"
+            >
+              Detaljnije kako radi
+            </Link>
           </div>
         </section>
 
         <section className="mt-8 rounded-3xl border border-slate-200/80 bg-white p-6 sm:p-8">
-          <h2 className="font-display text-2xl font-bold text-slate-900">Korak po korak</h2>
+          <h2 className="font-display text-2xl font-bold text-slate-900">Osnovno: kako radi za majstore</h2>
           <div className="mt-5 grid gap-4 md:grid-cols-2">
             {steps.map((step) => (
               <article key={step.n} className="rounded-2xl border border-slate-200/80 bg-slate-50/70 p-4 sm:p-5">
@@ -141,6 +120,46 @@ export default function KakoRadiMajstoriPage() {
                 <p className="mt-1.5 text-sm leading-relaxed text-slate-600">{step.body}</p>
               </article>
             ))}
+          </div>
+          <div className="mt-5">
+            <Link href="#detaljno" className="text-sm font-semibold text-blue-600 hover:underline">
+              Otvori detaljno objašnjenje →
+            </Link>
+          </div>
+        </section>
+
+        <section
+          id="detaljno"
+          className="scroll-mt-28 mt-8 rounded-3xl border border-slate-200/80 bg-white p-6 sm:p-8"
+        >
+          <h2 className="font-display text-2xl font-bold text-slate-900">Detaljno kako radi</h2>
+          <div className="mt-5 grid gap-4 md:grid-cols-2">
+            <article className="rounded-2xl border border-slate-200/80 bg-slate-50/70 p-4 sm:p-5">
+              <h3 className="font-semibold text-slate-900">1) Profil i odobrenje</h3>
+              <p className="mt-1.5 text-sm leading-relaxed text-slate-600">
+                Registracija je besplatna. Popunite profil, kategorije i gradove. Nakon kratkog admin pregleda profil ide
+                u aktivan status i pojavljujete se korisnicima.
+              </p>
+            </article>
+            <article className="rounded-2xl border border-slate-200/80 bg-slate-50/70 p-4 sm:p-5">
+              <h3 className="font-semibold text-slate-900">2) Relevantni zahtjevi</h3>
+              <p className="mt-1.5 text-sm leading-relaxed text-slate-600">
+                Dobijate obavještenja za zahtjeve koji odgovaraju vašoj usluzi i gradu. Vi birate da li želite da se
+                uključite u konkretan posao.
+              </p>
+            </article>
+            <article className="rounded-2xl border border-slate-200/80 bg-slate-50/70 p-4 sm:p-5">
+              <h3 className="font-semibold text-slate-900">3) Otključavanje kontakta</h3>
+              <p className="mt-1.5 text-sm leading-relaxed text-slate-600">
+                Pregled posla je besplatan. Krediti se troše tek kada potvrdite da želite otključati kontakt klijenta.
+              </p>
+            </article>
+            <article className="rounded-2xl border border-slate-200/80 bg-slate-50/70 p-4 sm:p-5">
+              <h3 className="font-semibold text-slate-900">4) Direktan dogovor</h3>
+              <p className="mt-1.5 text-sm leading-relaxed text-slate-600">
+                Nakon otključavanja kontakta dogovarate se direktno sa klijentom oko termina, cijene i detalja posla.
+              </p>
+            </article>
           </div>
         </section>
 
@@ -168,15 +187,13 @@ export default function KakoRadiMajstoriPage() {
             <li className="flex gap-2">
               <span className="font-bold text-slate-900">•</span>
               <span>
-                Paket od {CREDITS_STARTER_PACK.credits.toLocaleString("sr-Latn-ME")} kredita košta {STARTER_PRICE_LABEL}{" "}
-                (kupujete kad vam treba).
+                Pakete kredita kupujete kada vam trebaju (nema pretplate i nema obavezne mjesečne naplate).
               </span>
             </li>
             <li className="flex gap-2">
               <span className="font-bold text-slate-900">•</span>
               <span>
-                Standardan posao kad nije hitno košta {STANDARD_LEAD_CREDITS} kredita — to je oko 1,99 € iz tog početnog
-                paketa (ispod 2 €).
+                Tačan broj kredita za konkretan posao uvijek je prikazan prije nego što potvrdite otključavanje.
               </span>
             </li>
             <li className="flex gap-2">
