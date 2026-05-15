@@ -54,7 +54,7 @@ function setUiMode(mode: UiMode): void {
 
 const TITLE = "Ne propusti nove zahtjeve";
 const BODY =
-  "Uključite obavještenja na ovom uređaju: čim stigne posao koji odgovara vašoj usluci i gradu, dobijate push i možete odmah otvoriti zahtjev.";
+  "Uključite obavještenja na ovom uređaju: čim stigne posao koji odgovara kategorijama koje ste označili i gradu u kojem radite, dobijate obavještenje na telefon i možete odmah otvoriti zahtjev.";
 
 /**
  * Majstor: eksplicitno uključivanje push obavještenja. Nakon „Kasnije“ ostaje vidljiv kompaktan blok (nije „jedna šansa“).
@@ -154,21 +154,21 @@ export function HandymanPushNotificationsCard() {
       if (!deviceTest.ok) {
         const repaired = await withTimeout(forceResubscribe(vapidKey));
         if (!repaired.ok && repaired.reason !== "permission_denied") {
-          setError(repaired.message ?? "Automatska popravka push pretplate nije uspjela.");
+          setError(repaired.message ?? "Automatska popravka obavještenja nije uspjela.");
         }
         await refresh();
         try {
           const afterRepair = await runDeviceTest();
           if (afterRepair.ok) {
-            setTestMessage("Push je aktiviran na ovom telefonu.");
+            setTestMessage("Obavještenja su aktivirana na ovom telefonu.");
           } else if (!error) {
-            setError(afterRepair.error ?? "Push nije aktiviran za ovaj uređaj. Probajte ponovo.");
+            setError(afterRepair.error ?? "Obavještenja nijesu aktivirana za ovaj uređaj. Probajte ponovo.");
           }
         } catch {
-          if (!error) setError("Push nije aktiviran za ovaj uređaj. Probajte ponovo.");
+          if (!error) setError("Obavještenja nijesu aktivirana za ovaj uređaj. Probajte ponovo.");
         }
       } else {
-        setTestMessage("Push je aktiviran na ovom telefonu.");
+        setTestMessage("Obavještenja su aktivirana na ovom telefonu.");
       }
     } catch (e) {
       console.warn("[handyman-push] enable flow failed", e);
@@ -221,7 +221,7 @@ export function HandymanPushNotificationsCard() {
       const repaired = await forceResubscribe(status.vapidPublicKey);
       if (cancelled) return;
       if (!repaired.ok && repaired.reason !== "permission_denied") {
-        setError(repaired.message ?? "Automatska popravka push pretplate nije uspjela.");
+        setError(repaired.message ?? "Automatska popravka obavještenja nije uspjela.");
       }
       await refresh();
     })();
@@ -257,7 +257,7 @@ export function HandymanPushNotificationsCard() {
         <div className="flex flex-wrap items-center gap-2">
           <span className="inline-flex h-2.5 w-2.5 shrink-0 rounded-full bg-emerald-500" aria-hidden />
           <p className="text-sm font-semibold text-emerald-900">
-            Obavještenja su uključena — push stiže kad zahtjev koji vam odgovara uđe u sistem.
+            Obavještenja su uključena — čim uđe zahtjev koji odgovara vašim kategorijama i gradu, dobijate obavještenje na telefon.
           </p>
         </div>
         <div className="mt-3 flex flex-wrap items-center gap-2">
@@ -298,7 +298,7 @@ export function HandymanPushNotificationsCard() {
     return (
       <div className="rounded-2xl border-2 border-amber-200 bg-amber-50/90 p-4 md:p-5">
         <p className="text-sm text-amber-950">
-          Push obavještenja nisu podešena na serveru (VAPID ključevi). Kontaktirajte podršku da se uključi za
+          Obavještenja na telefonu trenutno nijesu tehnički podešena na serveru. Kontaktirajte podršku da se uključe za
           produkciju.
         </p>
       </div>
