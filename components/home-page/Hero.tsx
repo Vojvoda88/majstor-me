@@ -26,7 +26,7 @@ export function Hero() {
     let cancelled = false;
     async function loadCategorySlides() {
       try {
-        const res = await fetch("/api/stats/handymen-by-category");
+        const res = await fetch("/api/stats/handymen-by-category", { cache: "no-store" });
         if (!res.ok) return;
         const data = (await res.json()) as {
           items?: { slug: string; label: string; count: number }[];

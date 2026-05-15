@@ -3,6 +3,7 @@ import { PUBLIC_CATEGORY_LISTING, workerCategoryMatchesRequest } from "@/lib/cat
 import { prismaWhereUserActiveHandymanForPublicCatalog } from "@/lib/handyman-truth";
 
 export const revalidate = 60;
+export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
