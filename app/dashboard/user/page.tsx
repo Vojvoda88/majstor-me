@@ -89,6 +89,24 @@ export default async function UserDashboardPage() {
         </Link>
       </div>
 
+      <div className="mt-6 rounded-2xl border border-sky-100 bg-white p-4 shadow-sm">
+        <h2 className="text-sm font-bold uppercase tracking-[0.12em] text-sky-700">Kako radi za korisnike</h2>
+        <div className="mt-3 grid gap-2.5 text-sm text-slate-700 sm:grid-cols-3">
+          <p className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2">
+            <strong>1.</strong> Objavite zahtjev besplatno.
+          </p>
+          <p className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2">
+            <strong>2.</strong> Majstori šalju ponude.
+          </p>
+          <p className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2">
+            <strong>3.</strong> Vi birate kome ćete odgovoriti.
+          </p>
+        </div>
+        <Link href="/kako-radi-korisnici" className="mt-3 inline-block text-sm font-semibold text-blue-600 hover:underline">
+          Detaljno kako radi →
+        </Link>
+      </div>
+
       <div className="mt-6">
         <UserPushNotificationsCard />
       </div>

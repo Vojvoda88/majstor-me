@@ -325,6 +325,29 @@ export default async function HandymanDashboardPage({
         </div>
       )}
 
+      <div className="mt-6 rounded-xl border border-blue-100 bg-white p-5 shadow-sm">
+        <h2 className="text-sm font-bold uppercase tracking-[0.12em] text-blue-700">Kako radi za majstore</h2>
+        <div className="mt-3 grid gap-2.5 text-sm text-slate-700 md:grid-cols-3">
+          <p className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2">
+            <strong>1.</strong> Popunite profil i kategorije.
+          </p>
+          <p className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2">
+            <strong>2.</strong> Stižu vam obavještenja za relevantne poslove.
+          </p>
+          <p className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2">
+            <strong>3.</strong> Otključate kontakt samo kad želite.
+          </p>
+        </div>
+        <div className="mt-3 flex flex-wrap gap-3 text-sm">
+          <Link href="/kako-radi-majstori" className="font-semibold text-blue-600 hover:underline">
+            Kako radi za majstore →
+          </Link>
+          <Link href="/kako-radi-majstori#krediti" className="font-semibold text-blue-600 hover:underline">
+            Kako rade krediti →
+          </Link>
+        </div>
+      </div>
+
       <div className="mt-6 rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
         <h2 className="text-lg font-semibold text-[#0F172A]">{t(locale, "handymanDashboard.systemTitle", "Kako radi sistem")}</h2>
         <p className="mt-2 text-sm leading-relaxed text-slate-700">

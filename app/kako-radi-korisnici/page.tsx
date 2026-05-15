@@ -41,23 +41,13 @@ const steps = [
   },
   {
     n: "02",
-    title: "Admin kratko pregleda zahtjev",
-    body: "Zahtjev ide na kratak pregled da sistem ostane čist i da majstori dobijaju smislenije upite.",
+    title: "Zahtjev ide odgovarajućim majstorima",
+    body: "Nakon kratkog pregleda, zahtjev vide majstori kojima odgovara grad i vrsta posla.",
   },
   {
     n: "03",
-    title: "Zahtjev ide odgovarajućim majstorima",
-    body: "Kada je odobren, zahtjev vide majstori kojima je taj posao relevantan po branši i lokaciji.",
-  },
-  {
-    n: "04",
-    title: "Majstori šalju ponude",
-    body: "Majstori koji žele posao šalju ponude. Vi ne zovete redom više brojeva.",
-  },
-  {
-    n: "05",
     title: "Pregledate i birate",
-    body: "Uporedite ponude i odlučite kome ćete odgovoriti. Nema obaveze da prihvatite bilo koga.",
+    body: "Majstori šalju ponude, a vi u miru birate kome ćete odgovoriti.",
   },
 ];
 
@@ -95,7 +85,7 @@ export default function KakoRadiKorisniciPage() {
             Kako radi za korisnike
           </h1>
           <p className="mt-4 max-w-2xl text-[15px] leading-relaxed text-slate-600 sm:text-base">
-            Prosto rečeno: objavite posao, sačekate kratak pregled i dobijate ponude. Vi birate kad i kome ćete odgovoriti.
+            Prosto rečeno: objavite posao, zahtjev vide odgovarajući majstori i vi birate ponudu koja vam najviše odgovara.
           </p>
           <div className="mt-6">
             <Link

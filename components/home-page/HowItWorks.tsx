@@ -15,16 +15,8 @@ import { cn } from "@/lib/utils";
 import { useUiLanguage } from "@/lib/i18n/ui-language";
 import { t } from "@/lib/i18n/messages";
 import {
-  CREDIT_PACKAGES,
   HANDYMAN_START_BONUS_CREDITS,
-  STANDARD_LEAD_CREDITS,
 } from "@/lib/credit-packages";
-
-const CREDITS_STARTER_PACK = CREDIT_PACKAGES.find((p) => p.id === "credits_1000")!;
-const STARTER_PRICE_LABEL = `${CREDITS_STARTER_PACK.priceEur.toLocaleString("sr-Latn-ME", {
-  minimumFractionDigits: 2,
-  maximumFractionDigits: 2,
-})} €`;
 
 /** Tri koraka — korisniku samo brzina, jednostavnost, besplatna objava. */
 const USER_STEPS = [
@@ -52,23 +44,23 @@ const USER_STEPS = [
 const HANDYMAN_STEPS = [
   {
     n: 1,
-    icon: Smartphone,
-    title: "Poslovi dolaze do vas",
-    desc: "Dobijate obavještenje kada oglas odgovara vašoj branši i gradu.",
-    featured: false as const,
+    icon: UserPlus,
+    title: "Napravite profil",
+    desc: "Unesite usluge koje nudite i gradove u kojima radite.",
+    featured: true as const,
   },
   {
     n: 2,
-    icon: UserPlus,
-    title: `Registracija besplatna + ${HANDYMAN_START_BONUS_CREDITS.toLocaleString("sr-Latn-ME")} start kredita`,
-    desc: `Registracija je besplatna. Dobijate ${HANDYMAN_START_BONUS_CREDITS.toLocaleString("sr-Latn-ME")} start kredita i krećete bez pretplate.`,
-    featured: true as const,
+    icon: Smartphone,
+    title: "Stižu vam obavještenja",
+    desc: "Kada korisnik objavi posao za vašu uslugu i grad, dobijate obavještenje.",
+    featured: false as const,
   },
   {
     n: 3,
     icon: Unlock,
-    title: "Plaćate samo kada želite kontakt",
-    desc: `Standardan kontakt: ${STANDARD_LEAD_CREDITS} kredita (oko 1,99 €). Nema pretplate.`,
+    title: "Javljate se samo kada želite",
+    desc: "Ako vam posao odgovara, otključate kontakt i direktno se dogovarate sa klijentom.",
     featured: false as const,
   },
 ] as const;
@@ -275,17 +267,13 @@ export function HowItWorksForHandymen() {
                 {t(locale, "home.howHandymen.title", "Za majstore")}
               </h2>
               <p className="mt-2.5 text-[15px] font-medium leading-relaxed text-slate-600 sm:text-base md:text-lg">
-                {t(locale, "home.howHandymen.subtitle", "Bez pretplate. Dobijate start kredite i plaćate samo kada otključate kontakt klijenta.")}
+                {t(locale, "home.howHandymen.subtitle", "Tri jednostavna koraka: napravite profil, dobijate obavještenja i birate kada želite da se javite.")}
               </p>
             </div>
             <div className="inline-flex max-w-[min(100%,20rem)] flex-col gap-1.5 sm:max-w-none sm:flex-row sm:items-center sm:gap-2">
               <div className="inline-flex items-center gap-2 rounded-full border border-slate-200/90 bg-white/90 px-3.5 py-1.5 text-xs font-semibold text-slate-700 shadow-[0_8px_20px_-16px_rgba(15,23,42,0.45)]">
                 <ShieldTruth />
-                {t(locale, "home.howHandymen.badgeNoSubscription", "Nema pretplate • Obavještenja odmah")}
-              </div>
-              <div className="inline-flex items-center gap-2 rounded-full border border-slate-200/90 bg-white/90 px-3.5 py-1.5 text-xs font-semibold text-slate-700 shadow-[0_8px_20px_-16px_rgba(15,23,42,0.45)]">
-                <ShieldTruth />
-                {t(locale, "home.howHandymen.badgeStandardContact", "Standardan kontakt oko 1,99 €")}
+                {t(locale, "home.howHandymen.badgeNoSubscription", "Bez pretplate")}
               </div>
             </div>
           </div>
@@ -300,7 +288,7 @@ export function HowItWorksForHandymen() {
 
           <div className="mt-5 rounded-2xl border border-slate-200/80 bg-slate-50/70 px-4 py-4 text-center sm:px-6">
             <p className="text-sm font-medium leading-relaxed text-slate-700 sm:text-[15px]">
-              {t(locale, "home.howHandymen.creditNote", "Krediti nijesu pretplata.")}
+              {t(locale, "home.howHandymen.creditNote", `Nakon odobrenja profila dobijate ${HANDYMAN_START_BONUS_CREDITS.toLocaleString("sr-Latn-ME")} start kredita.`)}
             </p>
           </div>
 
