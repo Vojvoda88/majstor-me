@@ -43,7 +43,7 @@ export function CategoryHandymanCard({
     completedJobsCount != null && completedJobsCount > 0 && { label: `${completedJobsCount} poslova`, style: "bg-[#FFF7ED] text-[#C2410C] border-[#FED7AA]" },
   ].filter(Boolean) as { label: string; style: string }[];
 
-  const shortDescription = `Pregled profila na BrziMajstor.ME — ${primaryCategory}. Pošaljite zahtjev za besplatnu procjenu.`;
+  const shortDescription = `Pregled profila na BrziMajstor.ME — ${primaryCategory}. Objava zahtjeva je besplatna, a majstori se javljaju kroz platformu.`;
 
   return (
     <Link

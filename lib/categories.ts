@@ -290,6 +290,10 @@ const SITNI_GROUP = [
   "Sitni kućni poslovi",
   "Sitne kućne popravke",
   "Moler / sitne kućne popravke",
+  // Legacy kategorije koje danas najviše pripadaju "Sitni kućni poslovi".
+  "Montaža nameštaja",
+  "Montaža namještaja",
+  "Ugradnja kuhinja",
 ] as const;
 
 function isSitniGroup(name: string): boolean {

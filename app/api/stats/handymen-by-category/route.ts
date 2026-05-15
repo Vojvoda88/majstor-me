@@ -2,8 +2,13 @@ import { NextResponse } from "next/server";
 import { PUBLIC_CATEGORY_LISTING, workerCategoryMatchesRequest } from "@/lib/categories";
 import { prismaWhereUserActiveHandymanForPublicCatalog } from "@/lib/handyman-truth";
 
-export const revalidate = 60;
+export const revalidate = 0;
 export const dynamic = "force-dynamic";
+const NO_STORE_HEADERS = {
+  "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0",
+  Pragma: "no-cache",
+  Expires: "0",
+};
 
 export async function GET() {
   try {
@@ -51,9 +56,9 @@ export async function GET() {
       count: counts.get(category.slug) ?? 0,
     })).sort((a, b) => b.count - a.count || a.label.localeCompare(b.label, "sr-Latn"));
 
-    return NextResponse.json({ items });
+    return NextResponse.json({ items }, { headers: NO_STORE_HEADERS });
   } catch {
-    return NextResponse.json({ items: [] });
+    return NextResponse.json({ items: [] }, { headers: NO_STORE_HEADERS });
   }
 }
 

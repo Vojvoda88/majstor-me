@@ -34,14 +34,35 @@ export function Hero() {
         if (cancelled) return;
         const normalized = (data.items ?? []).filter((item) => Number.isFinite(item.count));
         setCategorySlides(normalized);
-        setActiveCategoryIndex(0);
+        setActiveCategoryIndex((prev) => {
+          if (normalized.length === 0) return 0;
+          return Math.min(prev, normalized.length - 1);
+        });
       } catch {
         // Silent fallback — hero i dalje radi bez ovog bloka.
       }
     }
-    loadCategorySlides();
+
+    void loadCategorySlides();
+    const refreshId = window.setInterval(() => {
+      void loadCategorySlides();
+    }, 30000);
+    const onFocus = () => {
+      void loadCategorySlides();
+    };
+    const onVisibility = () => {
+      if (document.visibilityState === "visible") {
+        void loadCategorySlides();
+      }
+    };
+    window.addEventListener("focus", onFocus);
+    document.addEventListener("visibilitychange", onVisibility);
+
     return () => {
       cancelled = true;
+      window.clearInterval(refreshId);
+      window.removeEventListener("focus", onFocus);
+      document.removeEventListener("visibilitychange", onVisibility);
     };
   }, []);
 
