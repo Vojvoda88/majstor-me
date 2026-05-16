@@ -344,12 +344,31 @@ export default async function HandymanProfilePage({
             </div>
           )}
           {!session && (
-            <p className="mb-8 text-sm text-[#475569]">
-              <Link href={`/login?callbackUrl=/handyman/${user.id}`} className="font-medium text-[#2563EB] hover:underline">
-                Prijavite se
-              </Link>{" "}
-              da pošaljete zahtjev ovom majstoru.
-            </p>
+            <div className="mb-8 rounded-2xl border border-blue-100 bg-blue-50/70 p-4 md:mb-10 md:p-5">
+              <p className="text-sm font-semibold text-slate-900">Šta možete dalje?</p>
+              <p className="mt-1 text-sm text-slate-700">
+                Pošaljite zahtjev odmah ili pogledajte još majstora po kategorijama.
+              </p>
+              <div className="mt-3 flex flex-col gap-2.5 sm:flex-row">
+                <Link href={`/request/create?${createParams}`} className="sm:flex-1">
+                  <span className="flex h-12 w-full items-center justify-center rounded-xl bg-gradient-to-br from-[#2563eb] to-[#1d4ed8] px-4 text-sm font-bold text-white shadow-btn-cta transition hover:brightness-105">
+                    Zatraži majstora
+                  </span>
+                </Link>
+                <Link href="/categories" className="sm:flex-1">
+                  <span className="flex h-12 w-full items-center justify-center rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-800 transition hover:bg-slate-50">
+                    Pogledaj još majstora
+                  </span>
+                </Link>
+              </div>
+              <p className="mt-3 text-xs text-slate-600">
+                Ako želite, možete i{" "}
+                <Link href={`/login?callbackUrl=/handyman/${user.id}`} className="font-semibold text-[#2563EB] hover:underline">
+                  prijaviti se
+                </Link>{" "}
+                za lakše praćenje zahtjeva.
+              </p>
+            </div>
           )}
 
           <div className="space-y-8">
@@ -446,14 +465,24 @@ export default async function HandymanProfilePage({
         </div>
       </div>
 
-      {session?.user?.role === "USER" && (
+      {(session?.user?.role === "USER" || !session) && (
         <div className="fixed inset-x-0 bottom-0 z-[60] border-t border-slate-200/90 bg-white/95 px-4 pt-3 pb-[calc(env(safe-area-inset-bottom,0px)+12px)] shadow-[0_-12px_40px_rgba(10,22,40,0.12)] backdrop-blur-lg md:hidden">
-          <Link
-            href={`/request/create?${createParams}`}
-            className="flex h-[52px] w-full items-center justify-center rounded-2xl bg-gradient-to-br from-[#2563eb] to-[#1d4ed8] text-lg font-bold text-white shadow-btn-cta transition hover:brightness-105"
-          >
-            Pošalji zahtjev
-          </Link>
+          <div className="flex gap-2">
+            <Link
+              href={`/request/create?${createParams}`}
+              className="flex h-[52px] flex-1 items-center justify-center rounded-2xl bg-gradient-to-br from-[#2563eb] to-[#1d4ed8] text-base font-bold text-white shadow-btn-cta transition hover:brightness-105"
+            >
+              Zatraži majstora
+            </Link>
+            {!session && (
+              <Link
+                href="/categories"
+                className="flex h-[52px] flex-1 items-center justify-center rounded-2xl border border-slate-200 bg-white text-sm font-semibold text-slate-800 transition hover:bg-slate-50"
+              >
+                Još majstora
+              </Link>
+            )}
+          </div>
         </div>
       )}
       <PublicFooter />

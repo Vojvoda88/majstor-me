@@ -104,11 +104,12 @@ export function NotificationsDropdown({
     const vh = window.innerHeight;
     const gutter = 12;
     const isMobile = vw < 640;
-    const width = isMobile ? Math.min(vw - gutter * 2, 420) : 320;
+    const width = isMobile ? Math.min(vw - gutter * 2, 420) : 360;
     const top = Math.min(rect.bottom + 10, vh - 220);
     const idealLeft = rect.right - width;
     const left = Math.max(gutter, Math.min(idealLeft, vw - width - gutter));
-    const maxHeight = Math.max(220, vh - top - gutter);
+    const rawMaxHeight = Math.max(220, vh - top - gutter);
+    const maxHeight = isMobile ? rawMaxHeight : Math.min(rawMaxHeight, 560);
 
     setPanelStyle({ top, left, width, maxHeight });
   }, []);
@@ -181,7 +182,7 @@ export function NotificationsDropdown({
             id={panelId}
             role="dialog"
             aria-modal="true"
-            className="fixed z-50 overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-[0_20px_48px_rgba(15,23,42,0.2)]"
+            className="fixed z-50 max-w-[calc(100vw-24px)] overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-[0_20px_48px_rgba(15,23,42,0.2)]"
             style={{
               top: panelStyle?.top ?? 68,
               left: panelStyle?.left ?? 12,
@@ -243,7 +244,7 @@ export function NotificationsDropdown({
                       !n.read ? "bg-blue-50/70" : ""
                     }`}
                   >
-                    <p className="font-medium text-slate-900">{n.title}</p>
+                    <p className="line-clamp-2 font-medium text-slate-900">{n.title}</p>
                     {n.body && (
                       <p className="mt-0.5 line-clamp-2 text-sm text-slate-600">
                         {n.body}
