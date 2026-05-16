@@ -8,9 +8,6 @@ import { fetchPublicVapidServerKey, requestPermissionAndSubscribe } from "@/lib/
 import { useUiLanguage } from "@/lib/i18n/ui-language";
 import { t } from "@/lib/i18n/messages";
 
-const DISMISS_KEY = "pwa-entry-modal-dismissed";
-/** Koliko dugo ne prikazuj ponovo nakon „Kasnije“ */
-const DISMISS_MS = 7 * 24 * 60 * 60 * 1000;
 const SHOW_DELAY_MS = 1600;
 
 function isStandalone(): boolean {
@@ -21,27 +18,6 @@ function isStandalone(): boolean {
     window.matchMedia("(display-mode: minimal-ui)").matches ||
     (window.navigator as { standalone?: boolean }).standalone === true
   );
-}
-
-function isDismissed(): boolean {
-  if (typeof window === "undefined") return true;
-  try {
-    const raw = localStorage.getItem(DISMISS_KEY);
-    if (!raw) return false;
-    const ts = parseInt(raw, 10);
-    if (isNaN(ts)) return false;
-    return Date.now() - ts < DISMISS_MS;
-  } catch {
-    return false;
-  }
-}
-
-function setDismissed(): void {
-  try {
-    localStorage.setItem(DISMISS_KEY, String(Date.now()));
-  } catch {
-    /* ignore */
-  }
 }
 
 interface BeforeInstallPromptEvent extends Event {
@@ -61,6 +37,7 @@ export function InstallCTA() {
   const [notifBusy, setNotifBusy] = useState(false);
   const [notifDone, setNotifDone] = useState(false);
   const [installReady, setInstallReady] = useState(false);
+  const [hasInstalledRelatedApp, setHasInstalledRelatedApp] = useState(false);
   const deferredPrompt = useRef<BeforeInstallPromptEvent | null>(null);
 
   const [vapidPublicKey, setVapidPublicKey] = useState<string | undefined>(() =>
@@ -79,8 +56,28 @@ export function InstallCTA() {
 
   useEffect(() => {
     if (typeof window === "undefined") return;
+    let cancelled = false;
+    const nav = navigator as Navigator & {
+      getInstalledRelatedApps?: () => Promise<Array<unknown>>;
+    };
+    if (typeof nav.getInstalledRelatedApps !== "function") return;
+    void nav
+      .getInstalledRelatedApps()
+      .then((apps) => {
+        if (!cancelled && Array.isArray(apps) && apps.length > 0) {
+          setHasInstalledRelatedApp(true);
+        }
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
     if (isStandalone()) return;
-    if (isDismissed()) return;
+    if (hasInstalledRelatedApp) return;
 
     const onBip = (e: Event) => {
       e.preventDefault();
@@ -119,7 +116,6 @@ export function InstallCTA() {
     } catch {
       /* cancelled */
     } finally {
-      setDismissed();
       setVisible(false);
       setInstalling(false);
     }
@@ -143,12 +139,12 @@ export function InstallCTA() {
   }, [session?.user, vapidPublicKey]);
 
   const close = () => {
-    setDismissed();
     setVisible(false);
   };
 
   if (!visible) return null;
   if (isStandalone()) return null;
+  if (hasInstalledRelatedApp) return null;
 
   const showNotifRow = status === "authenticated";
   const loggedIn = !!(session?.user as { id?: string } | undefined)?.id;
@@ -206,7 +202,6 @@ export function InstallCTA() {
           ) : (
             <Link
               href="/instaliraj"
-              onClick={() => setDismissed()}
               className="flex min-h-[44px] w-full touch-manipulation items-center justify-center gap-2 rounded-lg border-2 border-slate-200 bg-slate-50 px-3 py-2.5 text-[13px] font-bold text-brand-navy transition hover:bg-slate-100"
             >
               <Download className="h-4 w-4 shrink-0" aria-hidden />
