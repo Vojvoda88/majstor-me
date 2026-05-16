@@ -11,6 +11,7 @@ import { t } from "@/lib/i18n/messages";
 const DISMISS_KEY = "pwa-entry-modal-dismissed";
 /** Koliko dugo ne prikazuj ponovo nakon „Kasnije“ */
 const DISMISS_MS = 7 * 24 * 60 * 60 * 1000;
+const SHOW_DELAY_MS = 1600;
 
 function isStandalone(): boolean {
   if (typeof window === "undefined") return true;
@@ -80,7 +81,6 @@ export function InstallCTA() {
     if (typeof window === "undefined") return;
     if (isStandalone()) return;
     if (isDismissed()) return;
-    if (status !== "authenticated") return;
 
     const onBip = (e: Event) => {
       e.preventDefault();
@@ -89,6 +89,9 @@ export function InstallCTA() {
       setVisible(true);
     };
     window.addEventListener("beforeinstallprompt", onBip);
+    const timer = window.setTimeout(() => {
+      setVisible(true);
+    }, SHOW_DELAY_MS);
 
     const onInstalled = () => {
       deferredPrompt.current = null;
@@ -100,8 +103,9 @@ export function InstallCTA() {
     return () => {
       window.removeEventListener("beforeinstallprompt", onBip);
       window.removeEventListener("appinstalled", onInstalled);
+      window.clearTimeout(timer);
     };
-  }, [status]);
+  }, []);
 
   const handleInstall = async () => {
     const prompt = deferredPrompt.current;
@@ -146,7 +150,7 @@ export function InstallCTA() {
   if (!visible) return null;
   if (isStandalone()) return null;
 
-  const showNotifRow = status !== "loading";
+  const showNotifRow = status === "authenticated";
   const loggedIn = !!(session?.user as { id?: string } | undefined)?.id;
   const isHandyman = session?.user?.role === "HANDYMAN";
   const isAdmin = session?.user?.role === "ADMIN";
@@ -160,21 +164,21 @@ export function InstallCTA() {
         da ništa ne radi dok ne zatvori modal. Zatvaranje: X ili „Kasnije”.
       */}
       <div
-        className="pointer-events-none fixed inset-0 z-[90] bg-black/35 backdrop-blur-[2px] md:bg-black/25"
+        className="pointer-events-none fixed inset-0 z-[90] bg-black/20 backdrop-blur-[1px] md:bg-black/10"
         aria-hidden
       />
       <div
-        className="pointer-events-auto fixed bottom-[max(0.75rem,env(safe-area-inset-bottom))] left-3 right-3 z-[95] mx-auto max-w-md rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xl sm:left-1/2 sm:right-auto sm:w-full sm:-translate-x-1/2 sm:p-5"
+        className="pointer-events-auto fixed bottom-[max(0.6rem,env(safe-area-inset-bottom))] left-1/2 z-[95] w-[min(90vw,20rem)] -translate-x-1/2 rounded-xl border border-slate-200/90 bg-white p-3 shadow-xl sm:w-[min(90vw,21rem)] sm:p-3.5"
         role="dialog"
         aria-modal="true"
         aria-labelledby="pwa-entry-title"
       >
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <h2 id="pwa-entry-title" className="font-display text-base font-bold tracking-tight text-brand-navy sm:text-lg">
+            <h2 id="pwa-entry-title" className="font-display text-[15px] font-bold tracking-tight text-brand-navy sm:text-base">
               {t(locale, "pwa.installTitle", "Preuzmi aplikaciju")}
             </h2>
-            <p className="mt-1.5 text-[13px] leading-snug text-slate-600 sm:text-sm">
+            <p className="mt-1 text-[12px] leading-snug text-slate-600 sm:text-[13px]">
               {t(locale, "pwa.installBody", "Ikonica na početnom ekranu i obavještenja o ponudama i zahtjevima.")}
             </p>
           </div>
@@ -188,24 +192,24 @@ export function InstallCTA() {
           </button>
         </div>
 
-        <div className="mt-4 flex flex-col gap-2.5">
+        <div className="mt-3 flex flex-col gap-2">
           {installReady ? (
             <button
               type="button"
               onClick={handleInstall}
               disabled={installing}
-              className="flex min-h-[48px] w-full touch-manipulation items-center justify-center gap-2 rounded-xl bg-[#2563EB] px-4 py-3 text-[15px] font-bold text-white shadow-md transition hover:bg-[#1D4ED8] disabled:opacity-70"
+              className="flex min-h-[44px] w-full touch-manipulation items-center justify-center gap-2 rounded-lg bg-[#2563EB] px-3 py-2.5 text-[14px] font-bold text-white shadow-md transition hover:bg-[#1D4ED8] disabled:opacity-70"
             >
-              <Download className="h-5 w-5 shrink-0" aria-hidden />
+              <Download className="h-4 w-4 shrink-0" aria-hidden />
               {installing ? t(locale, "common.loading", "Čekaj…") : t(locale, "pwa.install", "Instaliraj aplikaciju")}
             </button>
           ) : (
             <Link
               href="/instaliraj"
               onClick={() => setDismissed()}
-              className="flex min-h-[48px] w-full touch-manipulation items-center justify-center gap-2 rounded-xl border-2 border-slate-200 bg-slate-50 px-4 py-3 text-[15px] font-bold text-brand-navy transition hover:bg-slate-100"
+              className="flex min-h-[44px] w-full touch-manipulation items-center justify-center gap-2 rounded-lg border-2 border-slate-200 bg-slate-50 px-3 py-2.5 text-[13px] font-bold text-brand-navy transition hover:bg-slate-100"
             >
-              <Download className="h-5 w-5 shrink-0" aria-hidden />
+              <Download className="h-4 w-4 shrink-0" aria-hidden />
               {t(locale, "pwa.iosStepsTitle", "Kako instalirati na iPhone")} / {t(locale, "pwa.androidStepsTitle", "Kako instalirati na Android")}
             </Link>
           )}
@@ -217,9 +221,9 @@ export function InstallCTA() {
                   type="button"
                   onClick={handleNotifications}
                   disabled={notifBusy || notifDone}
-                  className="flex min-h-[48px] w-full touch-manipulation items-center justify-center gap-2 rounded-xl border border-amber-200/80 bg-amber-50 px-4 py-3 text-[15px] font-semibold text-amber-950 transition hover:bg-amber-100 disabled:opacity-80"
+                  className="flex min-h-[44px] w-full touch-manipulation items-center justify-center gap-2 rounded-lg border border-amber-200/80 bg-amber-50 px-3 py-2.5 text-[14px] font-semibold text-amber-950 transition hover:bg-amber-100 disabled:opacity-80"
                 >
-                  <Bell className="h-5 w-5 shrink-0" aria-hidden />
+                  <Bell className="h-4 w-4 shrink-0" aria-hidden />
                   {notifDone
                     ? t(locale, "push.enabled", "Obavještenja su uključena")
                     : notifBusy
@@ -229,11 +233,11 @@ export function InstallCTA() {
                         : t(locale, "push.enable", "Primaj obavještenja za nove poslove")}
                 </button>
               ) : loggedIn && !isHandyman && !isAdmin ? (
-                <p className="rounded-lg bg-slate-50 px-3 py-2 text-center text-xs text-slate-600">
+                <p className="rounded-lg bg-slate-50 px-3 py-2 text-center text-[11px] text-slate-600">
                   {t(locale, "pwa.notifForHandymanOnly", "Obavještenja o novim poslovima dostupna su u dashboardu majstora nakon prijave kao majstor.")}
                 </p>
               ) : (
-                <p className="rounded-lg bg-slate-50 px-3 py-2 text-center text-xs text-slate-500">
+                <p className="rounded-lg bg-slate-50 px-3 py-2 text-center text-[11px] text-slate-500">
                   {t(locale, "pwa.pushUnavailable", "Push obavještenja trenutno nisu dostupna u ovom okruženju (konfiguracija).")}
                 </p>
               )}
@@ -242,7 +246,7 @@ export function InstallCTA() {
         </div>
 
         {loggedIn && (isHandyman || isAdmin) && (
-          <p className="mt-3 text-center text-xs leading-snug text-slate-500">
+          <p className="mt-2.5 text-center text-[11px] leading-snug text-slate-500">
             {t(locale, "pwa.enableLaterPrefix", "Kasnije možete uključiti push u")}{" "}
             {isAdmin ? (
               <>
@@ -272,7 +276,7 @@ export function InstallCTA() {
         <button
           type="button"
           onClick={close}
-          className="mt-3 w-full py-2 text-center text-sm font-medium text-slate-500 transition hover:text-slate-800"
+          className="mt-2 w-full py-1.5 text-center text-[13px] font-medium text-slate-500 transition hover:text-slate-800"
         >
           {t(locale, "pwa.later", "Kasnije")}
         </button>
