@@ -7,6 +7,20 @@ import { HERO_IMAGE } from "@/lib/homepage-data";
 import { useUiLanguage } from "@/lib/i18n/ui-language";
 import { t } from "@/lib/i18n/messages";
 
+function sameSlides(
+  a: { slug: string; label: string; count: number }[],
+  b: { slug: string; label: string; count: number }[]
+): boolean {
+  if (a === b) return true;
+  if (a.length !== b.length) return false;
+  for (let i = 0; i < a.length; i += 1) {
+    if (a[i].slug !== b[i].slug || a[i].label !== b[i].label || a[i].count !== b[i].count) {
+      return false;
+    }
+  }
+  return true;
+}
+
 export function Hero() {
   const locale = useUiLanguage();
   const [activeCategoryIndex, setActiveCategoryIndex] = useState(0);
@@ -33,7 +47,7 @@ export function Hero() {
         };
         if (cancelled) return;
         const normalized = (data.items ?? []).filter((item) => Number.isFinite(item.count));
-        setCategorySlides(normalized);
+        setCategorySlides((prev) => (sameSlides(prev, normalized) ? prev : normalized));
         setActiveCategoryIndex((prev) => {
           if (normalized.length === 0) return 0;
           return Math.min(prev, normalized.length - 1);

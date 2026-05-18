@@ -13,6 +13,26 @@ type Message = {
   isMe: boolean;
 };
 
+function sameMessages(a: Message[], b: Message[]): boolean {
+  if (a === b) return true;
+  if (a.length !== b.length) return false;
+  for (let i = 0; i < a.length; i += 1) {
+    const x = a[i];
+    const y = b[i];
+    if (
+      x.id !== y.id ||
+      x.content !== y.content ||
+      x.createdAt !== y.createdAt ||
+      x.senderId !== y.senderId ||
+      x.senderName !== y.senderName ||
+      x.isMe !== y.isMe
+    ) {
+      return false;
+    }
+  }
+  return true;
+}
+
 export function RequestChatPanel({ requestId }: { requestId: string }) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
@@ -24,7 +44,8 @@ export function RequestChatPanel({ requestId }: { requestId: string }) {
     const res = await fetch(`/api/conversations/${requestId}`);
     const json = await res.json();
     if (json.success && json.data?.messages) {
-      setMessages(json.data.messages);
+      const incoming = json.data.messages as Message[];
+      setMessages((prev) => (sameMessages(prev, incoming) ? prev : incoming));
     }
     setLoading(false);
   };
@@ -38,7 +59,7 @@ export function RequestChatPanel({ requestId }: { requestId: string }) {
   }, [requestId]);
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    bottomRef.current?.scrollIntoView({ behavior: "auto" });
   }, [messages]);
 
   const sendMessage = async (e: React.FormEvent) => {

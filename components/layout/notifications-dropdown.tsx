@@ -17,6 +17,26 @@ type Notification = {
   createdAt: string;
 };
 
+function sameNotifications(a: Notification[], b: Notification[]): boolean {
+  if (a === b) return true;
+  if (a.length !== b.length) return false;
+  for (let i = 0; i < a.length; i += 1) {
+    const x = a[i];
+    const y = b[i];
+    if (
+      x.id !== y.id ||
+      x.read !== y.read ||
+      x.title !== y.title ||
+      x.body !== y.body ||
+      x.link !== y.link ||
+      x.createdAt !== y.createdAt
+    ) {
+      return false;
+    }
+  }
+  return true;
+}
+
 export function NotificationsDropdown({
   buttonClassName = "",
   iconClassName = "",
@@ -50,8 +70,9 @@ export function NotificationsDropdown({
       if (json.success && json.data) {
         setFetchError(false);
         const incoming = (json.data.notifications ?? []) as Notification[];
-        setNotifications(incoming);
-        setUnreadCount(json.data.unreadCount ?? 0);
+        setNotifications((prev) => (sameNotifications(prev, incoming) ? prev : incoming));
+        const nextUnread = json.data.unreadCount ?? 0;
+        setUnreadCount((prev) => (prev === nextUnread ? prev : nextUnread));
 
         const latest = incoming[0];
         if (latest?.id) {
@@ -86,7 +107,7 @@ export function NotificationsDropdown({
         void fetchNotifications({ silent: true });
       }
     };
-    const id = window.setInterval(tick, 15000);
+    const id = window.setInterval(tick, 45000);
     const onVisibility = () => tick();
     document.addEventListener("visibilitychange", onVisibility);
     return () => {
