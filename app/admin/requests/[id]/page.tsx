@@ -19,10 +19,7 @@ import {
   canDistributeRequestToHandymen,
   getDistributionBlockMessageSr,
 } from "@/lib/request-approval-gates";
-
-function isRemoteImage(src?: string | null): boolean {
-  return !!src && /^https?:\/\//i.test(src);
-}
+import { shouldUnoptimizeNextImage } from "@/lib/next-image-unoptimized";
 
 export const dynamic = "force-dynamic";
 
@@ -211,7 +208,7 @@ export default async function AdminRequestDetailPage({ params }: { params: Promi
                       width={96}
                       height={96}
                       className="rounded object-cover"
-                      unoptimized={isRemoteImage(url)}
+                      unoptimized={shouldUnoptimizeNextImage(url)}
                     />
                   </a>
                 ))}

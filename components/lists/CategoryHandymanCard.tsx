@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Star, CheckCircle2 } from "lucide-react";
 import { AVATAR_IMAGE_FALLBACK } from "@/lib/homepage-data";
+import { shouldUnoptimizeNextImage } from "@/lib/next-image-unoptimized";
 
 type Props = {
   id: string;
@@ -17,10 +18,6 @@ type Props = {
   completedJobsCount?: number;
   averageResponseMinutes?: number | null;
 };
-
-function isRemoteImage(src?: string | null): boolean {
-  return !!src && /^https?:\/\//i.test(src);
-}
 
 export function CategoryHandymanCard({
   id,
@@ -64,7 +61,7 @@ export function CategoryHandymanCard({
             fill
             className="object-cover"
             sizes="320px"
-            unoptimized={isRemoteImage(imgSrc)}
+            unoptimized={shouldUnoptimizeNextImage(imgSrc)}
           />
         </div>
 
@@ -126,7 +123,7 @@ export function CategoryHandymanCard({
             fill
             className="object-cover"
             sizes="(max-width: 1024px) 100vw, 430px"
-            unoptimized={isRemoteImage(imgSrc)}
+            unoptimized={shouldUnoptimizeNextImage(imgSrc)}
           />
         </div>
         <div className="p-5">

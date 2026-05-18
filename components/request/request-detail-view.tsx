@@ -29,10 +29,7 @@ import { shouldShowOwnerFollowUp } from "@/lib/request-follow-up";
 import { headers } from "next/headers";
 import { LOCALE_HEADER, normalizeLocale } from "@/lib/i18n/config";
 import { t } from "@/lib/i18n/messages";
-
-function isRemoteImage(src?: string | null): boolean {
-  return !!src && /^https?:\/\//i.test(src);
-}
+import { shouldUnoptimizeNextImage } from "@/lib/next-image-unoptimized";
 
 function getFirstName(fullName: string | null | undefined): string {
   if (!fullName?.trim()) return "-";
@@ -198,7 +195,7 @@ export async function RequestDetailView({
                       width={96}
                       height={96}
                       className="rounded-lg object-cover"
-                      unoptimized={isRemoteImage(url)}
+                      unoptimized={shouldUnoptimizeNextImage(url)}
                     />
                   </a>
                 ))}

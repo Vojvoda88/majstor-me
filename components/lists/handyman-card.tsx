@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Star, Wrench, CheckCircle2, Clock, Briefcase, Award } from "lucide-react";
 import { AVATAR_IMAGE_FALLBACK } from "@/lib/homepage-data";
+import { shouldUnoptimizeNextImage } from "@/lib/next-image-unoptimized";
 
 export type HandymanCardData = {
   id: string;
@@ -30,10 +31,6 @@ const AVAILABILITY_LABELS: Record<string, string> = {
   BUSY: "Zauzet",
   EMERGENCY_ONLY: "Samo hitne",
 };
-
-function isRemoteImage(src?: string | null): boolean {
-  return !!src && /^https?:\/\//i.test(src);
-}
 
 function HandymanCardComponent({
   id,
@@ -104,7 +101,7 @@ function HandymanCardComponent({
               className="h-full w-full object-cover"
               loading="lazy"
               sizes="80px"
-              unoptimized={isRemoteImage(avatarUrl)}
+              unoptimized={shouldUnoptimizeNextImage(avatarUrl)}
             />
           ) : (
             variant === "compact" ? (
@@ -149,7 +146,7 @@ function HandymanCardComponent({
             fill
             className="object-cover"
             sizes="(max-width: 768px) 100vw, 430px"
-            unoptimized={isRemoteImage(imgSrc)}
+            unoptimized={shouldUnoptimizeNextImage(imgSrc)}
           />
         </div>
         <div className="p-4">
@@ -190,7 +187,7 @@ function HandymanCardComponent({
                 className="object-cover"
                 loading="lazy"
                 sizes="64px"
-                unoptimized={isRemoteImage(avatarUrl)}
+                unoptimized={shouldUnoptimizeNextImage(avatarUrl)}
               />
             ) : (
               <span className="text-lg font-bold text-blue-600 sm:text-xl">{initials}</span>

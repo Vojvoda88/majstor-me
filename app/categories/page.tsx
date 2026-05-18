@@ -16,10 +16,7 @@ import { buildPublicListingPageJsonLd } from "@/lib/json-ld";
 import { getSiteUrl } from "@/lib/site-url";
 import { SEO_CATEGORIES_DESCRIPTION } from "@/lib/seo-brand";
 import { buildAlternates, getLocaleFromHeaderValue, LOCALE_HEADER, localizedPath } from "@/lib/i18n/seo";
-
-function isRemoteImage(src?: string | null): boolean {
-  return !!src && /^https?:\/\//i.test(src);
-}
+import { shouldUnoptimizeNextImage } from "@/lib/next-image-unoptimized";
 
 const baseUrl = getSiteUrl();
 
@@ -134,7 +131,7 @@ export default function CategoriesPage() {
                       className="object-cover object-center transition duration-500 ease-out group-hover:scale-[1.03]"
                       sizes="128px"
                       quality={72}
-                      unoptimized={isRemoteImage(imgSrc)}
+                      unoptimized={shouldUnoptimizeNextImage(imgSrc)}
                     />
                     <div className="absolute inset-0 bg-gradient-to-r from-black/20 to-transparent md:hidden" />
                   </div>

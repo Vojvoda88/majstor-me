@@ -77,6 +77,11 @@ const nextConfig = {
         hostname: 'images.pexels.com',
         pathname: '/photos/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'lh3.googleusercontent.com',
+        pathname: '/**',
+      },
     ],
   },
 };

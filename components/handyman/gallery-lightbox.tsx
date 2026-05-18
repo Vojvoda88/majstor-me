@@ -3,14 +3,11 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
+import { shouldUnoptimizeNextImage } from "@/lib/next-image-unoptimized";
 
 type GalleryLightboxProps = {
   images: string[];
 };
-
-function isRemoteImage(src?: string | null): boolean {
-  return !!src && /^https?:\/\//i.test(src);
-}
 
 export function GalleryLightbox({ images }: GalleryLightboxProps) {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
@@ -48,8 +45,8 @@ export function GalleryLightbox({ images }: GalleryLightboxProps) {
               alt={`Rad ${idx + 1}`}
               fill
               className="object-cover"
-              sizes="200px"
-              unoptimized={isRemoteImage(url)}
+              sizes="(max-width: 640px) 50vw, 33vw"
+              unoptimized={shouldUnoptimizeNextImage(url)}
             />
           </button>
         ))}
@@ -81,9 +78,9 @@ export function GalleryLightbox({ images }: GalleryLightboxProps) {
               alt={`Galerija ${activeIndex + 1}`}
               fill
               className="object-contain"
-              sizes="100vw"
+              sizes="(max-width: 1024px) 100vw, 896px"
               priority
-              unoptimized={isRemoteImage(images[activeIndex])}
+              unoptimized={shouldUnoptimizeNextImage(images[activeIndex])}
             />
           </div>
 
