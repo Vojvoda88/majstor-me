@@ -30,6 +30,10 @@ import { headers } from "next/headers";
 import { LOCALE_HEADER, normalizeLocale } from "@/lib/i18n/config";
 import { t } from "@/lib/i18n/messages";
 
+function isRemoteImage(src?: string | null): boolean {
+  return !!src && /^https?:\/\//i.test(src);
+}
+
 function getFirstName(fullName: string | null | undefined): string {
   if (!fullName?.trim()) return "-";
   return fullName.trim().split(/\s+/)[0] ?? fullName;
@@ -188,7 +192,14 @@ export async function RequestDetailView({
               <div className="mt-2 flex flex-wrap gap-2">
                 {req.photos.map((url) => (
                   <a key={url} href={url} target="_blank" rel="noreferrer" className="relative block h-24 w-24">
-                    <Image src={url} alt="" width={96} height={96} className="rounded-lg object-cover" />
+                    <Image
+                      src={url}
+                      alt=""
+                      width={96}
+                      height={96}
+                      className="rounded-lg object-cover"
+                      unoptimized={isRemoteImage(url)}
+                    />
                   </a>
                 ))}
               </div>

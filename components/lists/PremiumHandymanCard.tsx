@@ -19,6 +19,10 @@ type Props = {
   isPromoted?: boolean;
 };
 
+function isRemoteImage(src?: string | null): boolean {
+  return !!src && /^https?:\/\//i.test(src);
+}
+
 export function PremiumHandymanCard({
   id,
   name,
@@ -40,7 +44,14 @@ export function PremiumHandymanCard({
       className="mb-4 block overflow-hidden rounded-[22px] border border-[#E7EDF5] bg-white shadow-[0_10px_30px_rgba(15,23,42,0.06)] transition active:scale-[0.99]"
     >
       <div className="relative h-[160px] w-full">
-        <Image src={imgSrc} alt="" fill className="object-cover" sizes="430px" />
+        <Image
+          src={imgSrc}
+          alt=""
+          fill
+          className="object-cover"
+          sizes="(max-width: 768px) 100vw, 430px"
+          unoptimized={isRemoteImage(imgSrc)}
+        />
       </div>
       <div className="p-4">
         <div className="flex items-start justify-between gap-2">

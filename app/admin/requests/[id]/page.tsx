@@ -20,6 +20,10 @@ import {
   getDistributionBlockMessageSr,
 } from "@/lib/request-approval-gates";
 
+function isRemoteImage(src?: string | null): boolean {
+  return !!src && /^https?:\/\//i.test(src);
+}
+
 export const dynamic = "force-dynamic";
 
 const ADMIN_STATUS_LABELS: Record<string, string> = {
@@ -201,7 +205,14 @@ export default async function AdminRequestDetailPage({ params }: { params: Promi
               <div className="flex flex-wrap gap-2">
                 {req.photos.map((url) => (
                   <a key={url} href={url} target="_blank" rel="noreferrer" className="relative block h-24 w-24">
-                    <Image src={url} alt="" width={96} height={96} className="rounded object-cover" />
+                    <Image
+                      src={url}
+                      alt=""
+                      width={96}
+                      height={96}
+                      className="rounded object-cover"
+                      unoptimized={isRemoteImage(url)}
+                    />
                   </a>
                 ))}
               </div>

@@ -8,6 +8,10 @@ type GalleryLightboxProps = {
   images: string[];
 };
 
+function isRemoteImage(src?: string | null): boolean {
+  return !!src && /^https?:\/\//i.test(src);
+}
+
 export function GalleryLightbox({ images }: GalleryLightboxProps) {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
@@ -39,7 +43,14 @@ export function GalleryLightbox({ images }: GalleryLightboxProps) {
             className="relative aspect-square overflow-hidden rounded-lg bg-[#F3F4F6] text-left"
             aria-label={`Otvori sliku ${idx + 1}`}
           >
-            <Image src={url} alt={`Rad ${idx + 1}`} fill className="object-cover" sizes="200px" />
+            <Image
+              src={url}
+              alt={`Rad ${idx + 1}`}
+              fill
+              className="object-cover"
+              sizes="200px"
+              unoptimized={isRemoteImage(url)}
+            />
           </button>
         ))}
       </div>
@@ -72,6 +83,7 @@ export function GalleryLightbox({ images }: GalleryLightboxProps) {
               className="object-contain"
               sizes="100vw"
               priority
+              unoptimized={isRemoteImage(images[activeIndex])}
             />
           </div>
 

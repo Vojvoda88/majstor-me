@@ -9,8 +9,7 @@ export const HERO_IMAGE = "/images/hero/hero-majstor-living-room.png";
 /** Stari Unsplash samo ako treba rezervni URL (nije u upotrebi u Hero) */
 export const HERO_IMAGE_FALLBACK = HERO_IMAGE;
 /** Neutralan placeholder za avatare — ne koristiti hero sliku */
-export const AVATAR_IMAGE_FALLBACK =
-  "https://images.unsplash.com/photo-1504148455328-c376907d081c?w=400&q=80";
+export const AVATAR_IMAGE_FALLBACK = "/brand/worker-icon-brand.png";
 
 /** displayName -> URL slike (lokalno u /public/images/categories ili Unsplash) */
 export const CATEGORY_IMAGES: Record<string, string> = Object.fromEntries(

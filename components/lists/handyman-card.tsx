@@ -31,6 +31,10 @@ const AVAILABILITY_LABELS: Record<string, string> = {
   EMERGENCY_ONLY: "Samo hitne",
 };
 
+function isRemoteImage(src?: string | null): boolean {
+  return !!src && /^https?:\/\//i.test(src);
+}
+
 function HandymanCardComponent({
   id,
   name,
@@ -92,7 +96,16 @@ function HandymanCardComponent({
       <div className="flex flex-col items-start gap-4 sm:flex-row sm:gap-4">
         <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-full bg-blue-100 sm:h-20 sm:w-20">
           {avatarUrl ? (
-            <Image src={avatarUrl} alt={name ?? "Majstor"} width={80} height={80} className="h-full w-full object-cover" loading="lazy" sizes="80px" />
+            <Image
+              src={avatarUrl}
+              alt={name ?? "Majstor"}
+              width={80}
+              height={80}
+              className="h-full w-full object-cover"
+              loading="lazy"
+              sizes="80px"
+              unoptimized={isRemoteImage(avatarUrl)}
+            />
           ) : (
             variant === "compact" ? (
               <span className="text-xl font-bold text-blue-600 sm:text-2xl">{initials}</span>
@@ -130,7 +143,14 @@ function HandymanCardComponent({
         className="mb-4 block overflow-hidden rounded-[22px] border border-[#E7EDF5] bg-white shadow-[0_10px_30px_rgba(15,23,42,0.06)] transition active:scale-[0.99]"
       >
         <div className="relative h-[150px] w-full">
-          <Image src={imgSrc} alt="" fill className="object-cover" sizes="430px" />
+          <Image
+            src={imgSrc}
+            alt=""
+            fill
+            className="object-cover"
+            sizes="(max-width: 768px) 100vw, 430px"
+            unoptimized={isRemoteImage(imgSrc)}
+          />
         </div>
         <div className="p-4">
           <div className="flex items-start justify-between gap-2">
@@ -162,7 +182,16 @@ function HandymanCardComponent({
         <div className="flex w-full gap-4 sm:flex-1">
           <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full bg-blue-100 sm:h-16 sm:w-16">
             {avatarUrl ? (
-              <Image src={avatarUrl} alt={name ?? "Majstor"} width={64} height={64} className="object-cover" loading="lazy" sizes="64px" />
+              <Image
+                src={avatarUrl}
+                alt={name ?? "Majstor"}
+                width={64}
+                height={64}
+                className="object-cover"
+                loading="lazy"
+                sizes="64px"
+                unoptimized={isRemoteImage(avatarUrl)}
+              />
             ) : (
               <span className="text-lg font-bold text-blue-600 sm:text-xl">{initials}</span>
             )}

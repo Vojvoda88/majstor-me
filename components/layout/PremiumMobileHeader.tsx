@@ -8,6 +8,10 @@ import { useSession, signOut } from "next-auth/react";
 import { NotificationsDropdown } from "@/components/layout/notifications-dropdown";
 import { HandymanCreditsPill } from "@/components/layout/handyman-credits-pill";
 
+function isRemoteImage(src?: string | null): boolean {
+  return !!src && /^https?:\/\//i.test(src);
+}
+
 export function PremiumMobileHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
   const { data: session } = useSession();
@@ -98,7 +102,14 @@ export function PremiumMobileHeader() {
                 className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-xl bg-slate-100 transition hover:bg-slate-200"
               >
                 {session.user?.image && (session.user.image.startsWith("http") || session.user.image.startsWith("/")) ? (
-                  <Image src={session.user.image} alt="" width={40} height={40} className="object-cover" />
+                  <Image
+                    src={session.user.image}
+                    alt=""
+                    width={40}
+                    height={40}
+                    className="object-cover"
+                    unoptimized={isRemoteImage(session.user.image)}
+                  />
                 ) : (
                   <span className="text-sm font-semibold text-slate-600">
                     {session.user?.name?.charAt(0) ?? "?"}

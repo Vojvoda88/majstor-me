@@ -6,6 +6,10 @@ import { Menu, X, Shield } from "lucide-react";
 import { useState } from "react";
 import { useSession } from "next-auth/react";
 
+function isRemoteImage(src?: string | null): boolean {
+  return !!src && /^https?:\/\//i.test(src);
+}
+
 export function HomeHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
   const { data: session, status } = useSession();
@@ -60,7 +64,14 @@ export function HomeHeader() {
             href={session.user.role === "HANDYMAN" ? "/dashboard/handyman" : session.user.role === "ADMIN" ? "/admin" : "/dashboard/user"}
             className="flex min-h-[40px] min-w-[40px] items-center justify-center md:hidden"
           >
-            <Image src={session.user.image} alt="" width={36} height={36} className="rounded-full object-cover" />
+            <Image
+              src={session.user.image}
+              alt=""
+              width={36}
+              height={36}
+              className="rounded-full object-cover"
+              unoptimized={isRemoteImage(session.user.image)}
+            />
           </Link>
         ) : session?.user ? (
           <Link

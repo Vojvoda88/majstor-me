@@ -1,47 +1,35 @@
 /**
- * Slike kategorija — lokalne PNG (majstorske fotografije) + Unsplash za ostale dok ne stignu vlastite.
+ * Slike kategorija — lokalni asset-i iz /public/images/categories.
+ * Cilj: izbjegavanje dodatnih remote image transformacija.
  */
 
 import { CATEGORY_CONFIG_FULL } from "@/lib/categories";
 
-/** Lokalne slike u /public/images/categories/{slug}.png — jedna po usluzi, bez duple upotrebe iste fotke. */
-export const LOCAL_CATEGORY_SLUGS = [
-  "vodoinstalater",
-  "elektricar",
-  "keramicar",
-  "gipsar",
-  "stolar",
-  "bravar",
-  "fasader",
-  "parketar",
-  "bastovanstvo",
-  "ciscenje",
-  "pvc-stolarija",
-  "selidbe",
-  "grubi-gradjevinski-radovi",
-  "klima-servis",
-] as const;
-
-const UNSPLASH = {
-  bojler: "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=800&auto=format&fit=crop&q=80",
-  krov: "https://images.unsplash.com/photo-1632778149955-e80f8ceca2e8?w=800&auto=format&fit=crop&q=80",
-  default: "https://images.unsplash.com/photo-1504148455328-c376907d081c?w=800&auto=format&fit=crop&q=80",
-} as const;
-
-/** Kategorije bez lokalne slike — privremeno Unsplash (zameni kasnije vlastitim fajlovima). */
-const SLUG_IMAGE_REMOTE: Record<string, string> = {
-  "servis-bojlera": UNSPLASH.bojler,
-  krovopokrivac: UNSPLASH.krov,
-  "sitni-kucni-poslovi": UNSPLASH.default,
-  "moler-gipsar": UNSPLASH.default,
-  moler: UNSPLASH.default,
+const SLUG_IMAGE_LOCAL: Record<string, string> = {
+  vodoinstalater: "/images/categories/vodoinstalater.png",
+  elektricar: "/images/categories/elektricar.png",
+  keramicar: "/images/categories/keramicar.png",
+  gipsar: "/images/categories/gipsar.png",
+  stolar: "/images/categories/stolar.png",
+  bravar: "/images/categories/bravar.png",
+  fasader: "/images/categories/fasader.png",
+  parketar: "/images/categories/parketar.png",
+  bastovanstvo: "/images/categories/bastovanstvo.png",
+  ciscenje: "/images/categories/ciscenje.png",
+  "pvc-stolarija": "/images/categories/pvc-stolarija.png",
+  selidbe: "/images/categories/selidbe.png",
+  "grubi-gradjevinski-radovi": "/images/categories/grubi-gradjevinski-radovi.png",
+  "klima-servis": "/images/categories/klima-servis.png",
+  // Legacy/sekundarne kategorije mapirane na najbliže lokalne vizuale.
+  "servis-bojlera": "/images/categories/vodoinstalater.png",
+  krovopokrivac: "/images/categories/fasader.png",
+  "sitni-kucni-poslovi": "/images/categories/stolar.png",
+  "moler-gipsar": "/images/categories/gipsar.png",
+  moler: "/images/categories/fasader.png",
 };
 
 export function getCategoryImageUrl(slug: string): string {
-  if ((LOCAL_CATEGORY_SLUGS as readonly string[]).includes(slug)) {
-    return `/images/categories/${slug}.png`;
-  }
-  return SLUG_IMAGE_REMOTE[slug] ?? UNSPLASH.default;
+  return SLUG_IMAGE_LOCAL[slug] ?? "/images/categories/stolar.png";
 }
 
 const DEFAULT_HERO_SLUG = "sitni-kucni-poslovi";

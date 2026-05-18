@@ -16,6 +16,10 @@ import { Badge } from "@/components/ui/badge";
 
 export const dynamic = "force-dynamic";
 
+function isRemoteImage(src?: string | null): boolean {
+  return !!src && /^https?:\/\//i.test(src);
+}
+
 export default async function AdminHandymanDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { adminRole } = await requireAdminPermission("workers");
   const { id } = await params;
@@ -368,7 +372,14 @@ export default async function AdminHandymanDetailPage({ params }: { params: Prom
                   <div>
                     <p className="mb-2 text-sm font-medium text-slate-700">Profilna fotografija</p>
                     <div className="relative h-28 w-28 overflow-hidden rounded-2xl border bg-slate-100">
-                      <Image src={hp.avatarUrl} alt={user.name} fill className="object-cover" sizes="112px" />
+                      <Image
+                        src={hp.avatarUrl}
+                        alt={user.name}
+                        fill
+                        className="object-cover"
+                        sizes="112px"
+                        unoptimized={isRemoteImage(hp.avatarUrl)}
+                      />
                     </div>
                   </div>
                 )}
@@ -384,7 +395,14 @@ export default async function AdminHandymanDetailPage({ params }: { params: Prom
                           rel="noopener noreferrer"
                           className="relative aspect-square overflow-hidden rounded-xl border bg-slate-100"
                         >
-                          <Image src={url} alt={`Rad ${idx + 1}`} fill className="object-cover" sizes="240px" />
+                          <Image
+                            src={url}
+                            alt={`Rad ${idx + 1}`}
+                            fill
+                            className="object-cover"
+                            sizes="240px"
+                            unoptimized={isRemoteImage(url)}
+                          />
                         </a>
                       ))}
                     </div>

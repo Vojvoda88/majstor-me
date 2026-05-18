@@ -31,6 +31,10 @@ import { buildAlternates, getLocaleFromHeaderValue, LOCALE_HEADER, localizedPath
 
 export const dynamic = "force-dynamic";
 
+function isRemoteImage(src?: string | null): boolean {
+  return !!src && /^https?:\/\//i.test(src);
+}
+
 const getPublicHandymanProfileById = cache(async (id: string) => {
   const { prisma } = await import("@/lib/db");
   return withPerfLog("handyman.profile.base", () =>
@@ -221,6 +225,7 @@ export default async function HandymanProfilePage({
             className="object-cover"
             priority
             sizes="100vw"
+            unoptimized={isRemoteImage(heroImage)}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
           <div className="absolute bottom-0 left-0 right-0 p-4 md:p-6 lg:p-8">
@@ -228,7 +233,14 @@ export default async function HandymanProfilePage({
               <div className="flex items-end gap-4">
                 <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-full border-4 border-white bg-[#E5E7EB] shadow-lg md:h-28 md:w-28">
                   {avatarUrl ? (
-                    <Image src={avatarUrl} alt="" fill className="object-cover" sizes="112px" />
+                    <Image
+                      src={avatarUrl}
+                      alt=""
+                      fill
+                      className="object-cover"
+                      sizes="112px"
+                      unoptimized={isRemoteImage(avatarUrl)}
+                    />
                   ) : (
                     <span className="flex h-full w-full items-center justify-center text-2xl font-bold text-[#475569] md:text-3xl">
                       {user.name?.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2) ?? "?"}

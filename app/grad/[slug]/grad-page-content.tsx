@@ -24,6 +24,10 @@ type Handyman = {
   reviewCount: number;
 };
 
+function isRemoteImage(src?: string | null): boolean {
+  return !!src && /^https?:\/\//i.test(src);
+}
+
 export function GradPageContent({
   cityName,
   slug,
@@ -151,6 +155,7 @@ export function GradPageContent({
                 className="object-cover"
                 sizes="1440px"
                 priority
+                unoptimized={isRemoteImage(cityImage)}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 to-transparent" />
               <h1 className="absolute bottom-4 left-4 text-3xl font-black text-white">

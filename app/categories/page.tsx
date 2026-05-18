@@ -17,6 +17,10 @@ import { getSiteUrl } from "@/lib/site-url";
 import { SEO_CATEGORIES_DESCRIPTION } from "@/lib/seo-brand";
 import { buildAlternates, getLocaleFromHeaderValue, LOCALE_HEADER, localizedPath } from "@/lib/i18n/seo";
 
+function isRemoteImage(src?: string | null): boolean {
+  return !!src && /^https?:\/\//i.test(src);
+}
+
 const baseUrl = getSiteUrl();
 
 const categoriesDescription = SEO_CATEGORIES_DESCRIPTION;
@@ -130,6 +134,7 @@ export default function CategoriesPage() {
                       className="object-cover object-center transition duration-500 ease-out group-hover:scale-[1.03]"
                       sizes="128px"
                       quality={72}
+                      unoptimized={isRemoteImage(imgSrc)}
                     />
                     <div className="absolute inset-0 bg-gradient-to-r from-black/20 to-transparent md:hidden" />
                   </div>

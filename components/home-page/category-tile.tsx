@@ -5,8 +5,11 @@ import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight, type LucideIcon, ImageIcon } from "lucide-react";
 
-const FALLBACK_IMG =
-  "https://images.unsplash.com/photo-1504148455328-c376907d081c?w=800&auto=format&fit=crop&q=80";
+const FALLBACK_IMG = "/images/categories/stolar.png";
+
+function isRemoteImage(src?: string | null): boolean {
+  return !!src && /^https?:\/\//i.test(src);
+}
 
 type Props = {
   href: string;
@@ -38,6 +41,7 @@ export function CategoryTile({ href, title, subtitle, imageSrc, FallbackIcon = I
           className="object-cover object-center transition duration-500 ease-out group-hover:scale-[1.025]"
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
           quality={72}
+          unoptimized={isRemoteImage(src)}
           onError={handleError}
         />
       ) : (

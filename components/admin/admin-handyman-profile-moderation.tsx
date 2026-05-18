@@ -10,6 +10,10 @@ import { Textarea } from "@/components/ui/textarea";
 
 type Reason = "PHONE_NUMBER" | "INAPPROPRIATE_CONTENT";
 
+function isRemoteImage(src?: string | null): boolean {
+  return !!src && /^https?:\/\//i.test(src);
+}
+
 export function AdminHandymanProfileModeration({
   handymanId,
   initialBio,
@@ -136,7 +140,14 @@ export function AdminHandymanProfileModeration({
                     <p className="mb-2 text-xs font-medium text-slate-600">Profilna</p>
                     <div className="relative h-28 w-28 overflow-hidden rounded-2xl border bg-slate-100 opacity-100">
                       {avatarEffective ? (
-                        <Image src={avatarEffective} alt="" fill className="object-cover" sizes="112px" />
+                        <Image
+                          src={avatarEffective}
+                          alt=""
+                          fill
+                          className="object-cover"
+                          sizes="112px"
+                          unoptimized={isRemoteImage(avatarEffective)}
+                        />
                       ) : (
                         <div className="flex h-full items-center justify-center text-xs text-slate-500">Uklonjeno</div>
                       )}
@@ -171,7 +182,14 @@ export function AdminHandymanProfileModeration({
                             rel="noopener noreferrer"
                             className="relative block aspect-square"
                           >
-                            <Image src={url} alt="" fill className="object-cover" sizes="240px" />
+                            <Image
+                              src={url}
+                              alt=""
+                              fill
+                              className="object-cover"
+                              sizes="240px"
+                              unoptimized={isRemoteImage(url)}
+                            />
                           </a>
                           <div className="border-t border-slate-200 bg-white/95 p-2">
                             <Button

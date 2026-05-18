@@ -18,6 +18,10 @@ type Props = {
   averageResponseMinutes?: number | null;
 };
 
+function isRemoteImage(src?: string | null): boolean {
+  return !!src && /^https?:\/\//i.test(src);
+}
+
 export function CategoryHandymanCard({
   id,
   name,
@@ -60,6 +64,7 @@ export function CategoryHandymanCard({
             fill
             className="object-cover"
             sizes="320px"
+            unoptimized={isRemoteImage(imgSrc)}
           />
         </div>
 
@@ -120,7 +125,8 @@ export function CategoryHandymanCard({
             alt=""
             fill
             className="object-cover"
-            sizes="430px"
+            sizes="(max-width: 1024px) 100vw, 430px"
+            unoptimized={isRemoteImage(imgSrc)}
           />
         </div>
         <div className="p-5">
