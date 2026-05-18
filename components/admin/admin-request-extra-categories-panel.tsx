@@ -78,11 +78,22 @@ export function AdminRequestExtraCategoriesPanel({
         maxHeight: Math.max(120, Math.min(cap, spaceBelow)),
       });
     };
+    let rafId: number | null = null;
+    const onScroll = () => {
+      if (rafId != null) return;
+      rafId = window.requestAnimationFrame(() => {
+        rafId = null;
+        update();
+      });
+    };
     update();
-    window.addEventListener("scroll", update, true);
+    window.addEventListener("scroll", onScroll, { capture: true, passive: true });
     window.addEventListener("resize", update);
     return () => {
-      window.removeEventListener("scroll", update, true);
+      if (rafId != null) {
+        window.cancelAnimationFrame(rafId);
+      }
+      window.removeEventListener("scroll", onScroll, true);
       window.removeEventListener("resize", update);
     };
   }, [menuOpen, canPick]);

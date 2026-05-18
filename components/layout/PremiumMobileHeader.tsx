@@ -48,7 +48,7 @@ export function PremiumMobileHeader() {
 
   return (
     <>
-    <header className="fixed left-0 right-0 top-0 z-[100] border-b border-slate-200/80 bg-white/95 pt-[env(safe-area-inset-top)] shadow-sm backdrop-blur-md">
+    <header className="fixed left-0 right-0 top-0 z-[100] border-b border-slate-200/80 bg-white/95 pt-[env(safe-area-inset-top)] shadow-sm backdrop-blur-md transform-gpu will-change-transform">
       <div className="mx-auto flex h-[3.75rem] max-w-6xl items-center gap-1.5 px-1.5 max-[380px]:gap-1 max-[380px]:px-1 sm:h-16 sm:gap-4 sm:px-6">
         <Link
           href="/"
@@ -158,9 +158,9 @@ export function PremiumMobileHeader() {
             type="button"
             aria-label="Zatvori meni"
             onClick={() => setMenuOpen(false)}
-            className="fixed inset-0 z-[200] bg-slate-950/50 backdrop-blur-[2px]"
+            className="fixed inset-0 z-[200] bg-slate-950/50 backdrop-blur-[2px] transform-gpu will-change-transform"
           />
-          <aside className="fixed inset-y-0 right-0 z-[210] flex w-[min(92vw,23.5rem)] flex-col border-l border-slate-200/80 bg-white shadow-[0_22px_55px_-15px_rgba(15,23,42,0.45)] pt-[env(safe-area-inset-top)]">
+          <aside className="fixed inset-y-0 right-0 z-[210] flex w-[min(92vw,23.5rem)] flex-col border-l border-slate-200/80 bg-white shadow-[0_22px_55px_-15px_rgba(15,23,42,0.45)] pt-[env(safe-area-inset-top)] transform-gpu will-change-transform">
             <div className="flex items-center justify-between border-b border-slate-200/80 px-4 py-3.5">
               <div>
                 <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-slate-500">Navigacija</p>

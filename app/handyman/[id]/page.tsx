@@ -478,7 +478,7 @@ export default async function HandymanProfilePage({
       </div>
 
       {(session?.user?.role === "USER" || !session) && (
-        <div className="fixed inset-x-0 bottom-0 z-[60] border-t border-slate-200/90 bg-white/95 px-4 pt-3 pb-[calc(env(safe-area-inset-bottom,0px)+12px)] shadow-[0_-12px_40px_rgba(10,22,40,0.12)] backdrop-blur-lg md:hidden">
+        <div className="fixed inset-x-0 bottom-0 z-[60] border-t border-slate-200/90 bg-white/95 px-4 pt-3 pb-[calc(env(safe-area-inset-bottom,0px)+12px)] shadow-[0_-12px_40px_rgba(10,22,40,0.12)] backdrop-blur-lg transform-gpu will-change-transform md:hidden">
           <div className="flex gap-2">
             <Link
               href={`/request/create?${createParams}`}

@@ -138,14 +138,24 @@ export function NotificationsDropdown({
   useEffect(() => {
     if (!open) return;
     computePanelStyle();
-    const onChange = () => computePanelStyle();
+    let rafId: number | null = null;
+    const onChange = () => {
+      if (rafId != null) return;
+      rafId = window.requestAnimationFrame(() => {
+        rafId = null;
+        computePanelStyle();
+      });
+    };
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") setOpen(false);
     };
     window.addEventListener("resize", onChange);
-    window.addEventListener("scroll", onChange, true);
+    window.addEventListener("scroll", onChange, { capture: true, passive: true });
     window.addEventListener("keydown", onKeyDown);
     return () => {
+      if (rafId != null) {
+        window.cancelAnimationFrame(rafId);
+      }
       window.removeEventListener("resize", onChange);
       window.removeEventListener("scroll", onChange, true);
       window.removeEventListener("keydown", onKeyDown);

@@ -50,7 +50,7 @@ export function MobileBottomNav() {
 
   return (
     <nav
-      className="fixed inset-x-0 bottom-0 z-[55] border-t border-slate-200/90 bg-white/95 px-1 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-1 shadow-[0_-8px_32px_rgba(15,23,42,0.08)] backdrop-blur-md md:hidden"
+      className="fixed inset-x-0 bottom-0 z-[55] border-t border-slate-200/90 bg-white/95 px-1 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-1 shadow-[0_-8px_32px_rgba(15,23,42,0.08)] backdrop-blur-md transform-gpu will-change-transform md:hidden"
       aria-label="Brza navigacija"
     >
       <div className="mx-auto flex max-w-lg items-stretch justify-around gap-0.5">

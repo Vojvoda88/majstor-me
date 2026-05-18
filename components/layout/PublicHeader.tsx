@@ -395,7 +395,7 @@ export function PublicHeader() {
     <>
       <header
         className={cn(
-          "fixed left-0 right-0 top-0 z-[100] w-full border-b shadow-sm transition-[background-color,border-color,box-shadow] duration-300 ease-out",
+          "fixed left-0 right-0 top-0 z-[100] w-full border-b shadow-sm transition-[background-color,border-color,box-shadow] duration-300 ease-out transform-gpu will-change-transform",
           "pt-[env(safe-area-inset-top)] backdrop-blur-[14px] backdrop-saturate-[180%]",
           homeTheme
             ? "border-white/[0.12] bg-gradient-to-r from-slate-950/75 via-slate-900/65 to-slate-950/75 shadow-[0_10px_30px_-18px_rgba(0,0,0,0.7)]"
