@@ -121,3 +121,40 @@ export async function notifyAdminsHandymanReturnedToReview(params: {
     console.warn("[admin-signals] notifyAdminsHandymanReturnedToReview failed", e);
   }
 }
+
+/** Majstor je otključao kontakt korisnika na zahtjevu. */
+export async function notifyAdminsContactUnlocked(params: {
+  requestId: string;
+  handymanUserId: string;
+  handymanName?: string | null;
+  category: string;
+  city: string;
+  requestTitle?: string | null;
+}): Promise<void> {
+  const link = `/admin/requests/${params.requestId}`;
+  const handymanLabel = params.handymanName?.trim() || "Majstor";
+  const title = "Majstor otključao kontakt";
+  const bodyParts = [handymanLabel, params.category, params.city];
+  if (params.requestTitle?.trim()) bodyParts.push(params.requestTitle.trim());
+  const body = bodyParts.join(" · ");
+  const idempotencyKey = `admin-contact-unlock:${params.requestId}:${params.handymanUserId}`;
+
+  try {
+    const adminIds = await getAdminUserIds();
+    for (const uid of adminIds) {
+      await createNotification(uid, "ADMIN_CONTACT_UNLOCKED", title, {
+        body,
+        link,
+        idempotencyKey,
+      });
+      await sendPushToUser(prisma, uid, {
+        title,
+        body: body || "Otvori zahtjev u admin panelu.",
+        link,
+        tag: `admin-unlock-${params.requestId}-${params.handymanUserId}`,
+      });
+    }
+  } catch (e) {
+    console.warn("[admin-signals] notifyAdminsContactUnlocked failed", e);
+  }
+}

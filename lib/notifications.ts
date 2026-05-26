@@ -10,6 +10,7 @@ export type NotificationType =
   | "WELCOME_HANDYMAN"
   | "ADMIN_PENDING_REQUEST"
   | "ADMIN_PENDING_HANDYMAN"
+  | "ADMIN_CONTACT_UNLOCKED"
   | "PROFILE_MODERATED";
 
 export async function createNotification(

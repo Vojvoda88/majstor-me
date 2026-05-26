@@ -8,6 +8,7 @@ import {
 } from "@/lib/credits";
 import { trackFunnelEvent } from "@/lib/funnel-events";
 import { isApprovedForHandymen } from "@/lib/request-approval-gates";
+import { notifyAdminsContactUnlocked } from "@/lib/admin-signals";
 
 export const dynamic = "force-dynamic";
 
@@ -156,6 +157,17 @@ export async function POST(
       { requestId, creditsSpent: creditsRequired },
       session.user.id
     );
+
+    if (!unlockResult.alreadyUnlocked) {
+      void notifyAdminsContactUnlocked({
+        requestId,
+        handymanUserId: session.user.id,
+        handymanName: session.user.name,
+        category: req.category,
+        city: req.city,
+        requestTitle: req.title,
+      });
+    }
 
     return NextResponse.json({
       success: true,
