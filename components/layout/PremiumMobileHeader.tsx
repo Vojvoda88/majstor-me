@@ -52,14 +52,14 @@ export function PremiumMobileHeader() {
       <div className="mx-auto flex h-[3.75rem] max-w-6xl items-center gap-1.5 px-1.5 max-[380px]:gap-1 max-[380px]:px-1 sm:h-16 sm:gap-4 sm:px-6">
         <Link
           href="/"
-          className="inline-flex min-w-0 flex-1 items-center gap-1.5 font-display text-sm font-bold tracking-tight max-[380px]:gap-1 max-[380px]:text-[0.8125rem] sm:gap-2 sm:text-xl md:text-2xl"
+          className="inline-flex min-w-0 flex-1 items-center gap-0.5 font-display text-sm font-bold tracking-tight max-[380px]:text-[0.8125rem] sm:gap-1 sm:text-xl md:text-2xl"
         >
           <Image
             src="/brand/worker-cutout-transparent.png"
             alt=""
             width={64}
             height={64}
-            className="h-[2.2em] w-[2.2em] min-h-[34px] min-w-[34px] shrink-0 object-contain brightness-0 saturate-0 sm:min-h-[48px] sm:min-w-[48px] md:min-h-[56px] md:min-w-[56px]"
+            className="-mr-1 h-[2.2em] w-[2.2em] min-h-[34px] min-w-[34px] shrink-0 object-contain brightness-0 saturate-0 sm:min-h-[48px] sm:min-w-[48px] md:min-h-[56px] md:min-w-[56px]"
             aria-hidden
           />
           <span className="min-w-0 truncate">

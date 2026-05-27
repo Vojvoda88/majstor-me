@@ -411,7 +411,7 @@ export function PublicHeader() {
           href="/"
           className={cn(
             "inline-flex shrink-0 items-center font-display font-bold tracking-tight",
-            homeTheme ? "gap-2 text-xl sm:text-2xl" : "gap-2 text-lg lg:text-xl"
+            homeTheme ? "gap-0.5 text-xl sm:text-2xl" : "gap-1 text-lg lg:text-xl"
           )}
           data-testid="header-home"
           {...linkProps}
@@ -424,8 +424,8 @@ export function PublicHeader() {
             className={cn(
               "shrink-0 object-contain",
               homeTheme
-                ? "h-[2.35em] w-[2.35em] min-h-[48px] min-w-[48px] sm:min-h-[56px] sm:min-w-[56px]"
-                : "h-[2.1em] w-[2.1em] min-h-[42px] min-w-[42px] brightness-0 saturate-0"
+                ? "-mr-1.5 h-[2.35em] w-[2.35em] min-h-[48px] min-w-[48px] sm:min-h-[56px] sm:min-w-[56px]"
+                : "-mr-1 h-[2.1em] w-[2.1em] min-h-[42px] min-w-[42px] brightness-0 saturate-0"
             )}
             aria-hidden
           />

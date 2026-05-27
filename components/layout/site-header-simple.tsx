@@ -7,13 +7,13 @@ export function SiteHeaderSimple() {
   return (
     <header className="sticky top-0 z-50 border-b border-[#E2E8F0] bg-white/95 backdrop-blur">
       <div className="container mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
-        <Link href="/" className="inline-flex items-center gap-2 text-xl font-bold tracking-tight text-[#0F172A]">
+        <Link href="/" className="inline-flex items-center gap-1 text-xl font-bold tracking-tight text-[#0F172A]">
           <Image
             src="/brand/worker-cutout-transparent.png"
             alt=""
             width={64}
             height={64}
-            className="h-[2.1em] w-[2.1em] min-h-[42px] min-w-[42px] shrink-0 object-contain brightness-0 saturate-0"
+            className="-mr-1 h-[2.1em] w-[2.1em] min-h-[42px] min-w-[42px] shrink-0 object-contain brightness-0 saturate-0"
             aria-hidden
           />
           <span>BrziMajstor.ME</span>
