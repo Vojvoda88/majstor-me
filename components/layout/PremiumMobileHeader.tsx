@@ -59,7 +59,7 @@ export function PremiumMobileHeader() {
             alt=""
             width={64}
             height={64}
-            className="h-[1.55em] w-[1.55em] shrink-0 object-contain brightness-0 saturate-0"
+            className="h-[2.2em] w-[2.2em] min-h-[34px] min-w-[34px] shrink-0 object-contain brightness-0 saturate-0 sm:min-h-[48px] sm:min-w-[48px] md:min-h-[56px] md:min-w-[56px]"
             aria-hidden
           />
           <span className="min-w-0 truncate">

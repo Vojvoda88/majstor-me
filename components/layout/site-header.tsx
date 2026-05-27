@@ -19,7 +19,7 @@ export function SiteHeader() {
             alt=""
             width={64}
             height={64}
-            className="h-[1.55em] w-[1.55em] shrink-0 object-contain brightness-0 saturate-0"
+            className="h-[2.1em] w-[2.1em] min-h-[42px] min-w-[42px] shrink-0 object-contain brightness-0 saturate-0"
             aria-hidden
           />
           <span>BrziMajstor.ME</span>

@@ -422,8 +422,10 @@ export function PublicHeader() {
             width={64}
             height={64}
             className={cn(
-              "h-[1.55em] w-[1.55em] shrink-0 object-contain",
-              homeTheme ? "" : "brightness-0 saturate-0"
+              "shrink-0 object-contain",
+              homeTheme
+                ? "h-[2.35em] w-[2.35em] min-h-[48px] min-w-[48px] sm:min-h-[56px] sm:min-w-[56px]"
+                : "h-[2.1em] w-[2.1em] min-h-[42px] min-w-[42px] brightness-0 saturate-0"
             )}
             aria-hidden
           />
