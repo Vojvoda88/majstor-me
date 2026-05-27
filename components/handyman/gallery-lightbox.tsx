@@ -3,12 +3,14 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
-import { shouldUnoptimizeNextImage } from "@/lib/next-image-unoptimized";
-import { getDisplayImageSrc } from "@/lib/display-image-src";
 
 type GalleryLightboxProps = {
   images: string[];
 };
+
+function isRemoteImage(src?: string | null): boolean {
+  return !!src && /^https?:\/\//i.test(src);
+}
 
 export function GalleryLightbox({ images }: GalleryLightboxProps) {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
@@ -42,12 +44,12 @@ export function GalleryLightbox({ images }: GalleryLightboxProps) {
             aria-label={`Otvori sliku ${idx + 1}`}
           >
             <Image
-              src={getDisplayImageSrc(url, { width: 240 })}
+              src={url}
               alt={`Rad ${idx + 1}`}
               fill
               className="object-cover"
-              sizes="(max-width: 640px) 50vw, 33vw"
-              unoptimized={shouldUnoptimizeNextImage(url)}
+              sizes="200px"
+              unoptimized={isRemoteImage(url)}
             />
           </button>
         ))}
@@ -75,13 +77,13 @@ export function GalleryLightbox({ images }: GalleryLightboxProps) {
 
           <div className="relative h-[78vh] w-full max-w-4xl">
             <Image
-              src={getDisplayImageSrc(images[activeIndex], { width: 1200 })}
+              src={images[activeIndex]}
               alt={`Galerija ${activeIndex + 1}`}
               fill
               className="object-contain"
-              sizes="(max-width: 1024px) 100vw, 896px"
+              sizes="100vw"
               priority
-              unoptimized={shouldUnoptimizeNextImage(images[activeIndex])}
+              unoptimized={isRemoteImage(images[activeIndex])}
             />
           </div>
 

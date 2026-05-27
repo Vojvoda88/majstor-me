@@ -5,7 +5,10 @@ import Image from "next/image";
 import { Menu, X, Shield } from "lucide-react";
 import { useState } from "react";
 import { useSession } from "next-auth/react";
-import { shouldUnoptimizeNextImage } from "@/lib/next-image-unoptimized";
+
+function isRemoteImage(src?: string | null): boolean {
+  return !!src && /^https?:\/\//i.test(src);
+}
 
 export function HomeHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -67,7 +70,7 @@ export function HomeHeader() {
               width={36}
               height={36}
               className="rounded-full object-cover"
-              unoptimized={shouldUnoptimizeNextImage(session.user.image)}
+              unoptimized={isRemoteImage(session.user.image)}
             />
           </Link>
         ) : session?.user ? (

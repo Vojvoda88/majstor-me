@@ -14,7 +14,6 @@ import { cityLocative, phraseUGradu } from "@/lib/slugs";
 import { getPrioritySeoLinksForCity } from "@/lib/seo-landing-config";
 import type { PublicHandymenListResult } from "@/lib/handymen-listing";
 import type { FaqItem } from "@/lib/json-ld";
-import { shouldUnoptimizeNextImage } from "@/lib/next-image-unoptimized";
 
 type Handyman = {
   id: string;
@@ -24,6 +23,10 @@ type Handyman = {
   ratingAvg: number;
   reviewCount: number;
 };
+
+function isRemoteImage(src?: string | null): boolean {
+  return !!src && /^https?:\/\//i.test(src);
+}
 
 export function GradPageContent({
   cityName,
@@ -152,7 +155,7 @@ export function GradPageContent({
                 className="object-cover"
                 sizes="1440px"
                 priority
-                unoptimized={shouldUnoptimizeNextImage(cityImage)}
+                unoptimized={isRemoteImage(cityImage)}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 to-transparent" />
               <h1 className="absolute bottom-4 left-4 text-3xl font-black text-white">

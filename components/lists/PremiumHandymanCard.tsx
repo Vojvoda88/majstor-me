@@ -4,8 +4,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { Star, CheckCircle2 } from "lucide-react";
 import { AVATAR_IMAGE_FALLBACK } from "@/lib/homepage-data";
-import { getDisplayImageSrc } from "@/lib/display-image-src";
-import { shouldUnoptimizeNextImage } from "@/lib/next-image-unoptimized";
 
 type Props = {
   id: string;
@@ -21,6 +19,10 @@ type Props = {
   isPromoted?: boolean;
 };
 
+function isRemoteImage(src?: string | null): boolean {
+  return !!src && /^https?:\/\//i.test(src);
+}
+
 export function PremiumHandymanCard({
   id,
   name,
@@ -34,7 +36,7 @@ export function PremiumHandymanCard({
   averageResponseMinutes,
 }: Props) {
   const isVerified = verifiedStatus === "VERIFIED";
-  const imgSrc = getDisplayImageSrc(avatarUrl ?? AVATAR_IMAGE_FALLBACK, { width: 430 });
+  const imgSrc = avatarUrl ?? AVATAR_IMAGE_FALLBACK;
 
   return (
     <Link
@@ -48,7 +50,7 @@ export function PremiumHandymanCard({
           fill
           className="object-cover"
           sizes="(max-width: 768px) 100vw, 430px"
-          unoptimized={shouldUnoptimizeNextImage(imgSrc)}
+          unoptimized={isRemoteImage(imgSrc)}
         />
       </div>
       <div className="p-4">

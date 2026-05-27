@@ -13,9 +13,12 @@ import { hasPermission } from "@/lib/admin/permissions";
 import { prismaErrorCode } from "@/lib/admin/admin-ssr-params";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
-import { shouldUnoptimizeNextImage } from "@/lib/next-image-unoptimized";
 
 export const dynamic = "force-dynamic";
+
+function isRemoteImage(src?: string | null): boolean {
+  return !!src && /^https?:\/\//i.test(src);
+}
 
 export default async function AdminHandymanDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { adminRole } = await requireAdminPermission("workers");
@@ -375,7 +378,7 @@ export default async function AdminHandymanDetailPage({ params }: { params: Prom
                         fill
                         className="object-cover"
                         sizes="112px"
-                        unoptimized={shouldUnoptimizeNextImage(hp.avatarUrl)}
+                        unoptimized={isRemoteImage(hp.avatarUrl)}
                       />
                     </div>
                   </div>
@@ -398,7 +401,7 @@ export default async function AdminHandymanDetailPage({ params }: { params: Prom
                             fill
                             className="object-cover"
                             sizes="240px"
-                            unoptimized={shouldUnoptimizeNextImage(url)}
+                            unoptimized={isRemoteImage(url)}
                           />
                         </a>
                       ))}

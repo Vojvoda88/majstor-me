@@ -14,12 +14,14 @@ import { displayLabelForRequestCategory } from "@/lib/categories";
 import { getCategoryHeroImageForWorkerCategories } from "@/lib/category-images";
 import { AVATAR_IMAGE_FALLBACK } from "@/lib/homepage-data";
 import type { PublicHandymanListItem } from "@/lib/handymen-listing";
-import { shouldUnoptimizeNextImage } from "@/lib/next-image-unoptimized";
-import { getDisplayImageSrc } from "@/lib/display-image-src";
 
 type Props = { item: PublicHandymanListItem };
 
 type ImgLayer = "gallery" | "avatar" | "category" | "generic" | "placeholder";
+
+function isRemoteImage(src?: string | null): boolean {
+  return !!src && /^https?:\/\//i.test(src);
+}
 
 export function FeaturedHandymanTile({ item }: Props) {
   const displayName = item.name?.trim() || "Majstor";
@@ -106,13 +108,13 @@ export function FeaturedHandymanTile({ item }: Props) {
           </div>
         ) : (
           <Image
-            src={getDisplayImageSrc(src, { width: 640 })}
+            src={src}
             alt={displayName}
             fill
             className="object-cover object-center transition duration-700 ease-out group-hover:scale-[1.03]"
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             quality={72}
-            unoptimized={shouldUnoptimizeNextImage(src)}
+            unoptimized={isRemoteImage(src)}
             onError={handleError}
           />
         )}

@@ -7,7 +7,10 @@ import { useEffect, useState } from "react";
 import { useSession, signOut } from "next-auth/react";
 import { NotificationsDropdown } from "@/components/layout/notifications-dropdown";
 import { HandymanCreditsPill } from "@/components/layout/handyman-credits-pill";
-import { shouldUnoptimizeNextImage } from "@/lib/next-image-unoptimized";
+
+function isRemoteImage(src?: string | null): boolean {
+  return !!src && /^https?:\/\//i.test(src);
+}
 
 export function PremiumMobileHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -105,7 +108,7 @@ export function PremiumMobileHeader() {
                     width={40}
                     height={40}
                     className="object-cover"
-                    unoptimized={shouldUnoptimizeNextImage(session.user.image)}
+                    unoptimized={isRemoteImage(session.user.image)}
                   />
                 ) : (
                   <span className="text-sm font-semibold text-slate-600">

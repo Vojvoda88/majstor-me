@@ -28,10 +28,12 @@ import { GalleryLightbox } from "@/components/handyman/gallery-lightbox";
 import { cache } from "react";
 import { withPerfLog } from "@/lib/perf";
 import { buildAlternates, getLocaleFromHeaderValue, LOCALE_HEADER, localizedPath } from "@/lib/i18n/seo";
-import { shouldUnoptimizeNextImage } from "@/lib/next-image-unoptimized";
-import { getDisplayImageSrc } from "@/lib/display-image-src";
 
 export const dynamic = "force-dynamic";
+
+function isRemoteImage(src?: string | null): boolean {
+  return !!src && /^https?:\/\//i.test(src);
+}
 
 const getPublicHandymanProfileById = cache(async (id: string) => {
   const { prisma } = await import("@/lib/db");
@@ -217,13 +219,13 @@ export default async function HandymanProfilePage({
         {/* Hero image */}
         <div className="relative h-[280px] w-full md:h-[380px]">
           <Image
-            src={getDisplayImageSrc(heroImage, { width: 1280 })}
+            src={heroImage}
             alt={user.name ?? "Majstor"}
             fill
             className="object-cover"
             priority
             sizes="100vw"
-            unoptimized={shouldUnoptimizeNextImage(heroImage)}
+            unoptimized={isRemoteImage(heroImage)}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
           <div className="absolute bottom-0 left-0 right-0 p-4 md:p-6 lg:p-8">
@@ -232,12 +234,12 @@ export default async function HandymanProfilePage({
                 <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-full border-4 border-white bg-[#E5E7EB] shadow-lg md:h-28 md:w-28">
                   {avatarUrl ? (
                     <Image
-                      src={getDisplayImageSrc(avatarUrl, { width: 160 })}
+                      src={avatarUrl}
                       alt=""
                       fill
                       className="object-cover"
                       sizes="112px"
-                      unoptimized={shouldUnoptimizeNextImage(avatarUrl)}
+                      unoptimized={isRemoteImage(avatarUrl)}
                     />
                   ) : (
                     <span className="flex h-full w-full items-center justify-center text-2xl font-bold text-[#475569] md:text-3xl">

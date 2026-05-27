@@ -7,9 +7,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { shouldUnoptimizeNextImage } from "@/lib/next-image-unoptimized";
 
 type Reason = "PHONE_NUMBER" | "INAPPROPRIATE_CONTENT";
+
+function isRemoteImage(src?: string | null): boolean {
+  return !!src && /^https?:\/\//i.test(src);
+}
 
 export function AdminHandymanProfileModeration({
   handymanId,
@@ -143,7 +146,7 @@ export function AdminHandymanProfileModeration({
                           fill
                           className="object-cover"
                           sizes="112px"
-                          unoptimized={shouldUnoptimizeNextImage(avatarEffective)}
+                          unoptimized={isRemoteImage(avatarEffective)}
                         />
                       ) : (
                         <div className="flex h-full items-center justify-center text-xs text-slate-500">Uklonjeno</div>
@@ -185,7 +188,7 @@ export function AdminHandymanProfileModeration({
                               fill
                               className="object-cover"
                               sizes="240px"
-                              unoptimized={shouldUnoptimizeNextImage(url)}
+                              unoptimized={isRemoteImage(url)}
                             />
                           </a>
                           <div className="border-t border-slate-200 bg-white/95 p-2">

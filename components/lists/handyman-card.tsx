@@ -5,8 +5,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { Star, Wrench, CheckCircle2, Clock, Briefcase, Award } from "lucide-react";
 import { AVATAR_IMAGE_FALLBACK } from "@/lib/homepage-data";
-import { getDisplayImageSrc } from "@/lib/display-image-src";
-import { shouldUnoptimizeNextImage } from "@/lib/next-image-unoptimized";
 
 export type HandymanCardData = {
   id: string;
@@ -32,6 +30,10 @@ const AVAILABILITY_LABELS: Record<string, string> = {
   BUSY: "Zauzet",
   EMERGENCY_ONLY: "Samo hitne",
 };
+
+function isRemoteImage(src?: string | null): boolean {
+  return !!src && /^https?:\/\//i.test(src);
+}
 
 function HandymanCardComponent({
   id,
@@ -95,14 +97,14 @@ function HandymanCardComponent({
         <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-full bg-blue-100 sm:h-20 sm:w-20">
           {avatarUrl ? (
             <Image
-              src={getDisplayImageSrc(avatarUrl, { width: 96 })}
+              src={avatarUrl}
               alt={name ?? "Majstor"}
               width={80}
               height={80}
               className="h-full w-full object-cover"
               loading="lazy"
               sizes="80px"
-              unoptimized={shouldUnoptimizeNextImage(avatarUrl)}
+              unoptimized={isRemoteImage(avatarUrl)}
             />
           ) : (
             variant === "compact" ? (
@@ -134,7 +136,7 @@ function HandymanCardComponent({
   );
 
   if (variant === "list") {
-    const imgSrc = getDisplayImageSrc(avatarUrl ?? AVATAR_IMAGE_FALLBACK, { width: 430 });
+    const imgSrc = avatarUrl ?? AVATAR_IMAGE_FALLBACK;
     return (
       <Link
         href={`/handyman/${id}`}
@@ -147,7 +149,7 @@ function HandymanCardComponent({
             fill
             className="object-cover"
             sizes="(max-width: 768px) 100vw, 430px"
-            unoptimized={shouldUnoptimizeNextImage(imgSrc)}
+            unoptimized={isRemoteImage(imgSrc)}
           />
         </div>
         <div className="p-4">
@@ -181,14 +183,14 @@ function HandymanCardComponent({
           <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full bg-blue-100 sm:h-16 sm:w-16">
             {avatarUrl ? (
               <Image
-                src={getDisplayImageSrc(avatarUrl, { width: 96 })}
+                src={avatarUrl}
                 alt={name ?? "Majstor"}
                 width={64}
                 height={64}
                 className="object-cover"
                 loading="lazy"
                 sizes="64px"
-                unoptimized={shouldUnoptimizeNextImage(avatarUrl)}
+                unoptimized={isRemoteImage(avatarUrl)}
               />
             ) : (
               <span className="text-lg font-bold text-blue-600 sm:text-xl">{initials}</span>
