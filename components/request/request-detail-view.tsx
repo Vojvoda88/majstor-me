@@ -30,6 +30,7 @@ import { headers } from "next/headers";
 import { LOCALE_HEADER, normalizeLocale } from "@/lib/i18n/config";
 import { t } from "@/lib/i18n/messages";
 import { shouldUnoptimizeNextImage } from "@/lib/next-image-unoptimized";
+import { getDisplayImageSrc } from "@/lib/display-image-src";
 
 function getFirstName(fullName: string | null | undefined): string {
   if (!fullName?.trim()) return "-";
@@ -190,7 +191,7 @@ export async function RequestDetailView({
                 {req.photos.map((url) => (
                   <a key={url} href={url} target="_blank" rel="noreferrer" className="relative block h-24 w-24">
                     <Image
-                      src={url}
+                      src={getDisplayImageSrc(url, { width: 640 })}
                       alt=""
                       width={96}
                       height={96}

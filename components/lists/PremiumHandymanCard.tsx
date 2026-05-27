@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Star, CheckCircle2 } from "lucide-react";
 import { AVATAR_IMAGE_FALLBACK } from "@/lib/homepage-data";
+import { getDisplayImageSrc } from "@/lib/display-image-src";
 import { shouldUnoptimizeNextImage } from "@/lib/next-image-unoptimized";
 
 type Props = {
@@ -33,7 +34,7 @@ export function PremiumHandymanCard({
   averageResponseMinutes,
 }: Props) {
   const isVerified = verifiedStatus === "VERIFIED";
-  const imgSrc = avatarUrl ?? AVATAR_IMAGE_FALLBACK;
+  const imgSrc = getDisplayImageSrc(avatarUrl ?? AVATAR_IMAGE_FALLBACK, { width: 430 });
 
   return (
     <Link

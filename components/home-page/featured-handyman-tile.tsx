@@ -15,6 +15,7 @@ import { getCategoryHeroImageForWorkerCategories } from "@/lib/category-images";
 import { AVATAR_IMAGE_FALLBACK } from "@/lib/homepage-data";
 import type { PublicHandymanListItem } from "@/lib/handymen-listing";
 import { shouldUnoptimizeNextImage } from "@/lib/next-image-unoptimized";
+import { getDisplayImageSrc } from "@/lib/display-image-src";
 
 type Props = { item: PublicHandymanListItem };
 
@@ -105,7 +106,7 @@ export function FeaturedHandymanTile({ item }: Props) {
           </div>
         ) : (
           <Image
-            src={src}
+            src={getDisplayImageSrc(src, { width: 640 })}
             alt={displayName}
             fill
             className="object-cover object-center transition duration-700 ease-out group-hover:scale-[1.03]"

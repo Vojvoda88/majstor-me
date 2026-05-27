@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Star, Wrench, CheckCircle2, Clock, Briefcase, Award } from "lucide-react";
 import { AVATAR_IMAGE_FALLBACK } from "@/lib/homepage-data";
+import { getDisplayImageSrc } from "@/lib/display-image-src";
 import { shouldUnoptimizeNextImage } from "@/lib/next-image-unoptimized";
 
 export type HandymanCardData = {
@@ -94,7 +95,7 @@ function HandymanCardComponent({
         <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-full bg-blue-100 sm:h-20 sm:w-20">
           {avatarUrl ? (
             <Image
-              src={avatarUrl}
+              src={getDisplayImageSrc(avatarUrl, { width: 96 })}
               alt={name ?? "Majstor"}
               width={80}
               height={80}
@@ -133,7 +134,7 @@ function HandymanCardComponent({
   );
 
   if (variant === "list") {
-    const imgSrc = avatarUrl ?? AVATAR_IMAGE_FALLBACK;
+    const imgSrc = getDisplayImageSrc(avatarUrl ?? AVATAR_IMAGE_FALLBACK, { width: 430 });
     return (
       <Link
         href={`/handyman/${id}`}
@@ -180,7 +181,7 @@ function HandymanCardComponent({
           <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full bg-blue-100 sm:h-16 sm:w-16">
             {avatarUrl ? (
               <Image
-                src={avatarUrl}
+                src={getDisplayImageSrc(avatarUrl, { width: 96 })}
                 alt={name ?? "Majstor"}
                 width={64}
                 height={64}
