@@ -57,6 +57,8 @@ const nextConfig = {
     ];
   },
   images: {
+    // Vercel Image Optimization unavailable (402/400). Serve all images directly.
+    unoptimized: true,
     formats: ["image/webp"],
     deviceSizes: [320, 420, 640, 768, 1024, 1280, 1536],
     imageSizes: [16, 24, 32, 40, 48, 64, 80, 96, 112, 128, 160, 200, 240, 320, 430],
