@@ -4,6 +4,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { Star, CheckCircle2 } from "lucide-react";
 import { AVATAR_IMAGE_FALLBACK } from "@/lib/homepage-data";
+import { getDisplayImageSrc } from "@/lib/display-image-src";
+import { fillCoverClass } from "@/lib/image-fill-class";
 
 type Props = {
   id: string;
@@ -35,7 +37,7 @@ export function CategoryHandymanCard({
   averageResponseMinutes,
 }: Props) {
   const isVerified = verifiedStatus === "VERIFIED";
-  const imgSrc = avatarUrl ?? AVATAR_IMAGE_FALLBACK;
+  const imgSrc = getDisplayImageSrc(avatarUrl ?? AVATAR_IMAGE_FALLBACK, { width: 430 });
   const primaryCategory = categories[0] || "Majstor";
   const hasReviews = reviewCount > 0;
 
@@ -62,7 +64,7 @@ export function CategoryHandymanCard({
             src={imgSrc}
             alt=""
             fill
-            className="object-cover"
+            className={fillCoverClass()}
             sizes="320px"
             unoptimized={isRemoteImage(imgSrc)}
           />
@@ -124,7 +126,7 @@ export function CategoryHandymanCard({
             src={imgSrc}
             alt=""
             fill
-            className="object-cover"
+            className={fillCoverClass()}
             sizes="(max-width: 1024px) 100vw, 430px"
             unoptimized={isRemoteImage(imgSrc)}
           />

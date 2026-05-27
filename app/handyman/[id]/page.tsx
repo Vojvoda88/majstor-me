@@ -22,6 +22,8 @@ import { cityToSlug } from "@/lib/slugs";
 import { getSiteUrl } from "@/lib/site-url";
 import { localBusinessJsonLd } from "@/lib/json-ld";
 import { AVATAR_IMAGE_FALLBACK } from "@/lib/homepage-data";
+import { getDisplayImageSrc } from "@/lib/display-image-src";
+import { fillCoverClass } from "@/lib/image-fill-class";
 import { prismaWhereUserActiveHandymanForPublicCatalog } from "@/lib/handyman-truth";
 import { SaveHandymanButton } from "@/components/handyman/save-handyman-button";
 import { GalleryLightbox } from "@/components/handyman/gallery-lightbox";
@@ -153,7 +155,9 @@ export default async function HandymanProfilePage({
   };
   const avatarUrl = profileExt.avatarUrl;
   const galleryImages = profileExt.galleryImages ?? [];
-  const heroImage = galleryImages[0] ?? avatarUrl ?? AVATAR_IMAGE_FALLBACK;
+  const heroImageRaw = galleryImages[0] ?? avatarUrl ?? AVATAR_IMAGE_FALLBACK;
+  const heroImage = getDisplayImageSrc(heroImageRaw, { width: 1200 }) || heroImageRaw;
+  const avatarDisplay = avatarUrl ? getDisplayImageSrc(avatarUrl, { width: 224 }) : null;
   const yearsOfExperience = profileExt.yearsOfExperience ?? null;
   const completedJobsCount = profileExt.completedJobsCount ?? 0;
   const isVerified = profile.verifiedStatus === "VERIFIED";
@@ -222,7 +226,7 @@ export default async function HandymanProfilePage({
             src={heroImage}
             alt={user.name ?? "Majstor"}
             fill
-            className="object-cover"
+            className={fillCoverClass()}
             priority
             sizes="100vw"
             unoptimized={isRemoteImage(heroImage)}
@@ -232,14 +236,14 @@ export default async function HandymanProfilePage({
             <div className="mx-auto max-w-4xl">
               <div className="flex items-end gap-4">
                 <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-full border-4 border-white bg-[#E5E7EB] shadow-lg md:h-28 md:w-28">
-                  {avatarUrl ? (
+                  {avatarDisplay ? (
                     <Image
-                      src={avatarUrl}
+                      src={avatarDisplay}
                       alt=""
                       fill
-                      className="object-cover"
+                      className={fillCoverClass()}
                       sizes="112px"
-                      unoptimized={isRemoteImage(avatarUrl)}
+                      unoptimized={isRemoteImage(avatarDisplay)}
                     />
                   ) : (
                     <span className="flex h-full w-full items-center justify-center text-2xl font-bold text-[#475569] md:text-3xl">

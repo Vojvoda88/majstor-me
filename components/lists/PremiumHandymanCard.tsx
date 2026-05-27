@@ -4,6 +4,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { Star, CheckCircle2 } from "lucide-react";
 import { AVATAR_IMAGE_FALLBACK } from "@/lib/homepage-data";
+import { getDisplayImageSrc } from "@/lib/display-image-src";
+import { fillCoverClass } from "@/lib/image-fill-class";
 
 type Props = {
   id: string;
@@ -36,7 +38,7 @@ export function PremiumHandymanCard({
   averageResponseMinutes,
 }: Props) {
   const isVerified = verifiedStatus === "VERIFIED";
-  const imgSrc = avatarUrl ?? AVATAR_IMAGE_FALLBACK;
+  const imgSrc = getDisplayImageSrc(avatarUrl ?? AVATAR_IMAGE_FALLBACK, { width: 430 });
 
   return (
     <Link
@@ -48,7 +50,7 @@ export function PremiumHandymanCard({
           src={imgSrc}
           alt=""
           fill
-          className="object-cover"
+          className={fillCoverClass()}
           sizes="(max-width: 768px) 100vw, 430px"
           unoptimized={isRemoteImage(imgSrc)}
         />

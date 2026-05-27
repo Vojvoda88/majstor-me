@@ -13,6 +13,8 @@ import {
 import { displayLabelForRequestCategory } from "@/lib/categories";
 import { getCategoryHeroImageForWorkerCategories } from "@/lib/category-images";
 import { AVATAR_IMAGE_FALLBACK } from "@/lib/homepage-data";
+import { getDisplayImageSrc } from "@/lib/display-image-src";
+import { fillCoverClass } from "@/lib/image-fill-class";
 import type { PublicHandymanListItem } from "@/lib/handymen-listing";
 
 type Props = { item: PublicHandymanListItem };
@@ -42,7 +44,7 @@ export function FeaturedHandymanTile({ item }: Props) {
 
   const [layer, setLayer] = useState<ImgLayer>(initialLayer);
 
-  const src =
+  const rawSrc =
     layer === "gallery" && gallery
       ? gallery
       : layer === "avatar" && avatar
@@ -52,6 +54,7 @@ export function FeaturedHandymanTile({ item }: Props) {
           : layer === "generic"
             ? AVATAR_IMAGE_FALLBACK
             : "";
+  const src = rawSrc ? getDisplayImageSrc(rawSrc, { width: 640 }) : "";
 
   const categoryLabels = item.categories.map(displayLabelForRequestCategory).filter(Boolean);
   const categoryLine =
@@ -111,7 +114,7 @@ export function FeaturedHandymanTile({ item }: Props) {
             src={src}
             alt={displayName}
             fill
-            className="object-cover object-center transition duration-700 ease-out group-hover:scale-[1.03]"
+            className={fillCoverClass("object-center transition duration-700 ease-out group-hover:scale-[1.03]")}
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             quality={72}
             unoptimized={isRemoteImage(src)}

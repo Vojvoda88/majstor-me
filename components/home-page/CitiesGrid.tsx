@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { HOMEPAGE_CITIES } from "@/lib/homepage-data";
+import { fillCoverClass } from "@/lib/image-fill-class";
 
 export function CitiesGrid() {
   return (
@@ -23,7 +24,7 @@ export function CitiesGrid() {
                 src={city.image}
                 alt={city.name}
                 fill
-                className="object-cover transition duration-500 group-hover:scale-105"
+                className={fillCoverClass("transition duration-500 group-hover:scale-105")}
                 sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
                 loading="lazy"
               />

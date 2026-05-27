@@ -5,6 +5,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight, type LucideIcon, ImageIcon } from "lucide-react";
 
+import { fillCoverClass } from "@/lib/image-fill-class";
+
 const FALLBACK_IMG = "/images/categories/stolar.png";
 
 function isRemoteImage(src?: string | null): boolean {
@@ -38,7 +40,7 @@ export function CategoryTile({ href, title, subtitle, imageSrc, FallbackIcon = I
           src={src}
           alt={title}
           fill
-          className="object-cover object-center transition duration-500 ease-out group-hover:scale-[1.025]"
+          className={fillCoverClass("object-center transition duration-500 ease-out group-hover:scale-[1.025]")}
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
           quality={72}
           unoptimized={isRemoteImage(src)}

@@ -2,6 +2,7 @@ import { Prisma } from "@prisma/client";
 import { requireAdminPermission } from "@/lib/admin/auth";
 import { notFound } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { fillCoverClass } from "@/lib/image-fill-class";
 import Link from "next/link";
 import { AdminHandymanActions } from "./admin-handyman-actions";
 import { DeleteUserButton } from "./delete-user-button";
@@ -376,7 +377,7 @@ export default async function AdminHandymanDetailPage({ params }: { params: Prom
                         src={hp.avatarUrl}
                         alt={user.name}
                         fill
-                        className="object-cover"
+                        className={fillCoverClass()}
                         sizes="112px"
                         unoptimized={isRemoteImage(hp.avatarUrl)}
                       />
@@ -399,7 +400,7 @@ export default async function AdminHandymanDetailPage({ params }: { params: Prom
                             src={url}
                             alt={`Rad ${idx + 1}`}
                             fill
-                            className="object-cover"
+                            className={fillCoverClass()}
                             sizes="240px"
                             unoptimized={isRemoteImage(url)}
                           />

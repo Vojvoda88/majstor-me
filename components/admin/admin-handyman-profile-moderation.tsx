@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { fillCoverClass } from "@/lib/image-fill-class";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -144,7 +145,7 @@ export function AdminHandymanProfileModeration({
                           src={avatarEffective}
                           alt=""
                           fill
-                          className="object-cover"
+                          className={fillCoverClass()}
                           sizes="112px"
                           unoptimized={isRemoteImage(avatarEffective)}
                         />
@@ -186,7 +187,7 @@ export function AdminHandymanProfileModeration({
                               src={url}
                               alt=""
                               fill
-                              className="object-cover"
+                              className={fillCoverClass()}
                               sizes="240px"
                               unoptimized={isRemoteImage(url)}
                             />

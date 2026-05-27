@@ -12,6 +12,7 @@ import { PUBLIC_CATEGORY_LISTING } from "@/lib/categories";
 import { DEFAULT_PAGE_SIZE } from "@/lib/constants";
 import { cityLocative, phraseUGradu } from "@/lib/slugs";
 import { getPrioritySeoLinksForCity } from "@/lib/seo-landing-config";
+import { fillCoverClass } from "@/lib/image-fill-class";
 import type { PublicHandymenListResult } from "@/lib/handymen-listing";
 import type { FaqItem } from "@/lib/json-ld";
 
@@ -152,7 +153,7 @@ export function GradPageContent({
                 src={cityImage}
                 alt={cityName}
                 fill
-                className="object-cover"
+                className={fillCoverClass()}
                 sizes="1440px"
                 priority
                 unoptimized={isRemoteImage(cityImage)}

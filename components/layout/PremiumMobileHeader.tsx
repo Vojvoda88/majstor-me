@@ -52,17 +52,17 @@ export function PremiumMobileHeader() {
       <div className="mx-auto flex h-[3.75rem] max-w-6xl items-center gap-1.5 px-1.5 max-[380px]:gap-1 max-[380px]:px-1 sm:h-16 sm:gap-4 sm:px-6">
         <Link
           href="/"
-          className="inline-flex min-w-0 flex-1 items-center gap-1.5 max-[380px]:gap-1 sm:gap-2"
+          className="inline-flex min-w-0 flex-1 items-center gap-1.5 font-display text-sm font-bold tracking-tight max-[380px]:gap-1 max-[380px]:text-[0.8125rem] sm:gap-2 sm:text-xl md:text-2xl"
         >
           <Image
             src="/brand/worker-cutout-transparent.png"
             alt=""
-            width={31}
-            height={31}
-            className="h-[24px] w-[24px] shrink-0 object-contain brightness-0 saturate-0 sm:h-[28px] sm:w-[28px]"
+            width={64}
+            height={64}
+            className="h-[1.55em] w-[1.55em] shrink-0 object-contain brightness-0 saturate-0"
             aria-hidden
           />
-          <span className="font-display min-w-0 truncate text-sm font-bold tracking-tight max-[380px]:text-[0.8125rem] sm:text-xl md:text-2xl">
+          <span className="min-w-0 truncate">
             <span className="text-[#1d4ed8]">BrziMajstor</span>
             <span className="text-slate-800">.ME</span>
           </span>

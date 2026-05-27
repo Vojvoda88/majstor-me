@@ -11,6 +11,7 @@ import {
   REQUEST_CATEGORY_FALLBACK_DISPLAY,
 } from "@/lib/categories";
 import { getCategoryImageUrl } from "@/lib/category-images";
+import { fillCoverClass } from "@/lib/image-fill-class";
 import { ArrowRight } from "lucide-react";
 import { buildPublicListingPageJsonLd } from "@/lib/json-ld";
 import { getSiteUrl } from "@/lib/site-url";
@@ -131,7 +132,7 @@ export default function CategoriesPage() {
                       src={imgSrc}
                       alt={cat.displayName}
                       fill
-                      className="object-cover object-center transition duration-500 ease-out group-hover:scale-[1.03]"
+                      className={fillCoverClass("object-center transition duration-500 ease-out group-hover:scale-[1.03]")}
                       sizes="128px"
                       quality={72}
                       unoptimized={isRemoteImage(imgSrc)}

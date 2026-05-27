@@ -17,9 +17,9 @@ export function SiteHeader() {
           <Image
             src="/brand/worker-cutout-transparent.png"
             alt=""
-            width={29}
-            height={29}
-            className="h-[29px] w-[29px] shrink-0 object-contain brightness-0 saturate-0"
+            width={64}
+            height={64}
+            className="h-[1.55em] w-[1.55em] shrink-0 object-contain brightness-0 saturate-0"
             aria-hidden
           />
           <span>BrziMajstor.ME</span>

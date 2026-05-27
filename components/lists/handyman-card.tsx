@@ -5,6 +5,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { Star, Wrench, CheckCircle2, Clock, Briefcase, Award } from "lucide-react";
 import { AVATAR_IMAGE_FALLBACK } from "@/lib/homepage-data";
+import { getDisplayImageSrc } from "@/lib/display-image-src";
+import { fillCoverClass } from "@/lib/image-fill-class";
 
 export type HandymanCardData = {
   id: string;
@@ -136,7 +138,7 @@ function HandymanCardComponent({
   );
 
   if (variant === "list") {
-    const imgSrc = avatarUrl ?? AVATAR_IMAGE_FALLBACK;
+    const imgSrc = getDisplayImageSrc(avatarUrl ?? AVATAR_IMAGE_FALLBACK, { width: 430 });
     return (
       <Link
         href={`/handyman/${id}`}
@@ -147,7 +149,7 @@ function HandymanCardComponent({
             src={imgSrc}
             alt=""
             fill
-            className="object-cover"
+            className={fillCoverClass()}
             sizes="(max-width: 768px) 100vw, 430px"
             unoptimized={isRemoteImage(imgSrc)}
           />

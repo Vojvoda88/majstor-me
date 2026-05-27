@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
+import { getDisplayImageSrc } from "@/lib/display-image-src";
+import { fillCoverClass, fillContainClass } from "@/lib/image-fill-class";
 
 type GalleryLightboxProps = {
   images: string[];
@@ -44,10 +46,10 @@ export function GalleryLightbox({ images }: GalleryLightboxProps) {
             aria-label={`Otvori sliku ${idx + 1}`}
           >
             <Image
-              src={url}
+              src={getDisplayImageSrc(url, { width: 400 })}
               alt={`Rad ${idx + 1}`}
               fill
-              className="object-cover"
+              className={fillCoverClass()}
               sizes="200px"
               unoptimized={isRemoteImage(url)}
             />
@@ -77,10 +79,10 @@ export function GalleryLightbox({ images }: GalleryLightboxProps) {
 
           <div className="relative h-[78vh] w-full max-w-4xl">
             <Image
-              src={images[activeIndex]}
+              src={getDisplayImageSrc(images[activeIndex], { width: 1200 })}
               alt={`Galerija ${activeIndex + 1}`}
               fill
-              className="object-contain"
+              className={fillContainClass()}
               sizes="100vw"
               priority
               unoptimized={isRemoteImage(images[activeIndex])}
