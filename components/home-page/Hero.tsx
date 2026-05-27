@@ -126,7 +126,7 @@ export function Hero() {
         src={HERO_IMAGE}
         alt={t(locale, "home.hero.imageAlt", "Majstor na poslu")}
         fill
-        className="pointer-events-none object-cover object-[center_35%] md:object-[center_25%]"
+        className="pointer-events-none absolute inset-0 h-full w-full object-cover object-[center_35%] md:object-[center_25%]"
         priority
         sizes="100vw"
       />

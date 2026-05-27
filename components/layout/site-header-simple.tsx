@@ -13,7 +13,7 @@ export function SiteHeaderSimple() {
             alt=""
             width={29}
             height={29}
-            className="h-auto w-auto brightness-0 saturate-0"
+            className="h-[29px] w-[29px] shrink-0 object-contain brightness-0 saturate-0"
             aria-hidden
           />
           <span>BrziMajstor.ME</span>

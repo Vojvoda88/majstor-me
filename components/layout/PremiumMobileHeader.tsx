@@ -59,7 +59,7 @@ export function PremiumMobileHeader() {
             alt=""
             width={31}
             height={31}
-            className="h-auto w-[24px] shrink-0 brightness-0 saturate-0 sm:w-[28px] md:w-auto"
+            className="h-[24px] w-[24px] shrink-0 object-contain brightness-0 saturate-0 sm:h-[28px] sm:w-[28px]"
             aria-hidden
           />
           <span className="font-display min-w-0 truncate text-sm font-bold tracking-tight max-[380px]:text-[0.8125rem] sm:text-xl md:text-2xl">
