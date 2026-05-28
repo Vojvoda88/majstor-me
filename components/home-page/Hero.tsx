@@ -25,12 +25,19 @@ export function Hero() {
   const locale = useUiLanguage();
   const [activeCategoryIndex, setActiveCategoryIndex] = useState(0);
   const [touchStartX, setTouchStartX] = useState<number | null>(null);
+  const [handymanBadge, setHandymanBadge] = useState("80+");
   const [categorySlides, setCategorySlides] = useState<
     { slug: string; label: string; count: number }[]
   >([]);
 
+  const formatHandymanBadge = (count: number | null | undefined): string => {
+    if (!Number.isFinite(count) || (count ?? 0) <= 0) return "80+";
+    const roundedDownToTen = Math.floor((count as number) / 10) * 10;
+    return `${Math.max(10, roundedDownToTen)}+`;
+  };
+
   const trustItems = [
-    { title: "80+", subtitle: "majstora i usluga" },
+    { title: handymanBadge, subtitle: "majstora i usluga" },
     { title: "Zatražite majstora", subtitle: "100% besplatno" },
     { title: "Objavi zahtjev", subtitle: "za manje od minut" },
   ];
@@ -81,6 +88,32 @@ export function Hero() {
   }, []);
 
   useEffect(() => {
+    let cancelled = false;
+
+    async function loadHandymanCount() {
+      try {
+        const res = await fetch("/api/stats/platform", { cache: "no-store" });
+        if (!res.ok) return;
+        const data = (await res.json()) as { handymanCount?: number | null };
+        if (cancelled) return;
+        setHandymanBadge(formatHandymanBadge(data.handymanCount));
+      } catch {
+        // Silent fallback na posljednju poznatu vrijednost.
+      }
+    }
+
+    void loadHandymanCount();
+    const refreshId = window.setInterval(() => {
+      void loadHandymanCount();
+    }, 30000);
+
+    return () => {
+      cancelled = true;
+      window.clearInterval(refreshId);
+    };
+  }, []);
+
+  useEffect(() => {
     if (categorySlides.length <= 1) return;
     const id = window.setInterval(() => {
       setActiveCategoryIndex((prev) => (prev + 1) % categorySlides.length);
@@ -89,7 +122,7 @@ export function Hero() {
   }, [categorySlides.length]);
 
   const trustTitleClass = (title: string) =>
-    title === "80+" ? "text-xl leading-none text-white" : "text-[12px] leading-tight text-white";
+    /^\d+\+$/.test(title) ? "text-xl leading-none text-white" : "text-[12px] leading-tight text-white";
 
   const handleCategoryTouchStart = (e: TouchEvent<HTMLDivElement>) => {
     setTouchStartX(e.touches[0]?.clientX ?? null);
