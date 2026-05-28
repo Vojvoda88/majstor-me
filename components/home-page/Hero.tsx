@@ -30,7 +30,7 @@ export function Hero() {
   >([]);
 
   const trustItems = [
-    { title: "70+", subtitle: "majstora i usluga" },
+    { title: "80+", subtitle: "majstora i usluga" },
     { title: "Zatražite majstora", subtitle: "100% besplatno" },
     { title: "Objavi zahtjev", subtitle: "za manje od minut" },
   ];
@@ -89,7 +89,7 @@ export function Hero() {
   }, [categorySlides.length]);
 
   const trustTitleClass = (title: string) =>
-    title === "70+" ? "text-xl leading-none text-white" : "text-[12px] leading-tight text-white";
+    title === "80+" ? "text-xl leading-none text-white" : "text-[12px] leading-tight text-white";
 
   const handleCategoryTouchStart = (e: TouchEvent<HTMLDivElement>) => {
     setTouchStartX(e.touches[0]?.clientX ?? null);
