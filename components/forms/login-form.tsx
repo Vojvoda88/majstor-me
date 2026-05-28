@@ -24,6 +24,7 @@ type LoginCopy = {
   passwordRequired: string;
   accountCreated: string;
   emailVerified: string;
+  passwordResetDone: string;
   clientError: string;
   wrongCredentials: string;
   accessDenied: string;
@@ -31,6 +32,7 @@ type LoginCopy = {
   emailLabel: string;
   emailPlaceholder: string;
   passwordLabel: string;
+  forgotPassword: string;
   submit: string;
   submitting: string;
   or: string;
@@ -49,6 +51,7 @@ const FORM_COPY: Record<"sr" | "en" | "ru" | "tr", LoginCopy> = {
     passwordRequired: "Unesite lozinku",
     accountCreated: "Nalog je kreiran. Možete se odmah prijaviti.",
     emailVerified: "Email adresa je potvrđena. Sada se možete prijaviti.",
+    passwordResetDone: "Lozinka je promijenjena. Sada se možete prijaviti.",
     clientError:
       "Greška pri prijavi (klijent). Osvježite stranicu i pokušajte ponovo; ako se ponavlja, javite podršci.",
     wrongCredentials: "Pogrešan email ili lozinka",
@@ -57,6 +60,7 @@ const FORM_COPY: Record<"sr" | "en" | "ru" | "tr", LoginCopy> = {
     emailLabel: "Email",
     emailPlaceholder: "ime@primjer.me",
     passwordLabel: "Lozinka",
+    forgotPassword: "Zaboravljena lozinka?",
     submit: "Prijavi se",
     submitting: "Prijava...",
     or: "ili",
@@ -74,6 +78,7 @@ const FORM_COPY: Record<"sr" | "en" | "ru" | "tr", LoginCopy> = {
     passwordRequired: "Enter your password",
     accountCreated: "Account created. You can log in now.",
     emailVerified: "Email verified. You can log in now.",
+    passwordResetDone: "Password changed. You can log in now.",
     clientError:
       "Login error (client side). Refresh the page and try again; if it repeats, contact support.",
     wrongCredentials: "Incorrect email or password",
@@ -82,6 +87,7 @@ const FORM_COPY: Record<"sr" | "en" | "ru" | "tr", LoginCopy> = {
     emailLabel: "Email",
     emailPlaceholder: "name@example.com",
     passwordLabel: "Password",
+    forgotPassword: "Forgot password?",
     submit: "Log in",
     submitting: "Logging in...",
     or: "or",
@@ -99,6 +105,7 @@ const FORM_COPY: Record<"sr" | "en" | "ru" | "tr", LoginCopy> = {
     passwordRequired: "Введите пароль",
     accountCreated: "Аккаунт создан. Теперь вы можете войти.",
     emailVerified: "Email подтвержден. Теперь вы можете войти.",
+    passwordResetDone: "Пароль изменен. Теперь вы можете войти.",
     clientError:
       "Ошибка входа (клиент). Обновите страницу и попробуйте снова; если повторится, обратитесь в поддержку.",
     wrongCredentials: "Неверный email или пароль",
@@ -107,6 +114,7 @@ const FORM_COPY: Record<"sr" | "en" | "ru" | "tr", LoginCopy> = {
     emailLabel: "Email",
     emailPlaceholder: "name@example.com",
     passwordLabel: "Пароль",
+    forgotPassword: "Забыли пароль?",
     submit: "Войти",
     submitting: "Вход...",
     or: "или",
@@ -124,6 +132,7 @@ const FORM_COPY: Record<"sr" | "en" | "ru" | "tr", LoginCopy> = {
     passwordRequired: "Sifre girin",
     accountCreated: "Hesap olusturuldu. Simdi giris yapabilirsiniz.",
     emailVerified: "E-posta dogrulandi. Simdi giris yapabilirsiniz.",
+    passwordResetDone: "Sifre degistirildi. Simdi giris yapabilirsiniz.",
     clientError:
       "Giris hatasi (istemci). Sayfayi yenileyip tekrar deneyin; devam ederse destek ile iletisime gecin.",
     wrongCredentials: "E-posta veya sifre hatali",
@@ -132,6 +141,7 @@ const FORM_COPY: Record<"sr" | "en" | "ru" | "tr", LoginCopy> = {
     emailLabel: "E-posta",
     emailPlaceholder: "name@example.com",
     passwordLabel: "Sifre",
+    forgotPassword: "Sifremi unuttum?",
     submit: "Giris yap",
     submitting: "Giris yapiliyor...",
     or: "veya",
@@ -197,6 +207,8 @@ function LoginFormInner() {
       setInfo(copy.accountCreated);
     } else if (searchParams.get("verified") === "1") {
       setInfo(copy.emailVerified);
+    } else if (searchParams.get("reset") === "1") {
+      setInfo(copy.passwordResetDone);
     } else {
       setInfo(null);
     }
@@ -313,6 +325,11 @@ function LoginFormInner() {
             {errors.password && (
               <p className="text-sm text-destructive">{errors.password.message}</p>
             )}
+            <p className="text-right">
+              <Link href="/forgot-password" className="text-sm font-medium text-[#2563EB] underline-offset-4 hover:underline">
+                {copy.forgotPassword}
+              </Link>
+            </p>
           </div>
           <Button type="submit" className="mt-2 w-full" size="lg" disabled={isSubmitting} data-testid="login-submit">
             {isSubmitting ? copy.submitting : copy.submit}
