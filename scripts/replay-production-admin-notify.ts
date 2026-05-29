@@ -53,3 +53,13 @@ export async function replayAdminRequestNotifyOnProduction(requestId: string): P
 export async function replayAdminHandymanNotifyOnProduction(handymanUserId: string): Promise<ReplayResult> {
   return postCron("/api/cron/replay-admin-handyman-notify", { handymanUserId });
 }
+
+export async function repushHandymanRequestNotifyOnProduction(opts: {
+  requestId: string;
+  onlyWithPush?: boolean;
+  pushOnly?: boolean;
+  cityFilter?: string;
+  reminderSuffix?: string;
+}): Promise<ReplayResult> {
+  return postCron("/api/cron/repush-handyman-request-notify", opts);
+}
