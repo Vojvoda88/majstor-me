@@ -3,8 +3,9 @@
 import { ChevronDown } from "lucide-react";
 import { useState } from "react";
 import { FAQ_ITEMS } from "@/lib/faq-data";
+import type { FaqItem } from "@/lib/json-ld";
 
-export function FAQ() {
+export function FAQ({ items = FAQ_ITEMS }: { items?: FaqItem[] }) {
   const [open, setOpen] = useState<number | null>(0);
 
   return (
@@ -20,7 +21,7 @@ export function FAQ() {
       </div>
 
       <div className="space-y-3 md:space-y-4">
-        {FAQ_ITEMS.map((faq, i) => {
+        {items.map((faq, i) => {
           const isOpen = open === i;
           const buttonId = `faq-question-${i}`;
           const panelId = `faq-answer-${i}`;
