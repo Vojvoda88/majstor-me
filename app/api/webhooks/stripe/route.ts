@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import type Stripe from "stripe";
 import { applyCreditsFromCheckoutSession, sendCreditPurchaseSignals } from "@/lib/stripe-webhook-credits";
+import { notifyAdminsCreditPurchase } from "@/lib/admin-signals";
 import { getStripe } from "@/lib/stripe-server";
 
 export const dynamic = "force-dynamic";
@@ -50,10 +51,21 @@ export async function POST(req: Request) {
         const credits = parseInt(md.credits ?? "", 10);
         const packageLabel = md.packageId ? md.packageId.replace(/^credits_/, "") + " kredita" : "paket kredita";
         if (handymanId && Number.isFinite(credits) && credits > 0) {
+          const handyman = await prisma.user.findUnique({
+            where: { id: handymanId },
+            select: { name: true },
+          });
           await sendCreditPurchaseSignals(prisma, {
             handymanId,
             credits,
             packageLabel,
+          });
+          await notifyAdminsCreditPurchase({
+            handymanUserId: handymanId,
+            handymanName: handyman?.name,
+            credits,
+            packageLabel,
+            stripeSessionId: session.id,
           });
         }
       }

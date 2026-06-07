@@ -158,3 +158,39 @@ export async function notifyAdminsContactUnlocked(params: {
     console.warn("[admin-signals] notifyAdminsContactUnlocked failed", e);
   }
 }
+
+/** Nova online kupovina kredita od strane majstora. */
+export async function notifyAdminsCreditPurchase(params: {
+  handymanUserId: string;
+  handymanName?: string | null;
+  credits: number;
+  packageLabel: string;
+  stripeSessionId?: string | null;
+}): Promise<void> {
+  const link = `/admin/handymen/${params.handymanUserId}`;
+  const handymanLabel = params.handymanName?.trim() || "Majstor";
+  const title = "Nova uplata kredita";
+  const bodyParts = [handymanLabel, `+${params.credits} kredita`, params.packageLabel];
+  if (params.stripeSessionId?.trim()) bodyParts.push(params.stripeSessionId.trim().slice(0, 18));
+  const body = bodyParts.join(" · ");
+  const idempotencyKey = `admin-credit-purchase:${params.handymanUserId}:${params.stripeSessionId ?? params.packageLabel}:${params.credits}`;
+
+  try {
+    const adminIds = await getAdminUserIds();
+    for (const uid of adminIds) {
+      await createNotification(uid, "ADMIN_CREDIT_PURCHASE", title, {
+        body,
+        link,
+        idempotencyKey,
+      });
+      await sendPushToUser(prisma, uid, {
+        title,
+        body: body || "Otvori majstora u admin panelu.",
+        link,
+        tag: `admin-credit-purchase-${params.handymanUserId}`,
+      });
+    }
+  } catch (e) {
+    console.warn("[admin-signals] notifyAdminsCreditPurchase failed", e);
+  }
+}

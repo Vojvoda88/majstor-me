@@ -11,6 +11,7 @@ export type NotificationType =
   | "ADMIN_PENDING_REQUEST"
   | "ADMIN_PENDING_HANDYMAN"
   | "ADMIN_CONTACT_UNLOCKED"
+  | "ADMIN_CREDIT_PURCHASE"
   | "PROFILE_MODERATED";
 
 export async function createNotification(
