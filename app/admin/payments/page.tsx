@@ -1,13 +1,23 @@
 import { requireAdminPermission } from "@/lib/admin/auth";
+import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { CREDIT_PACKAGES } from "@/lib/credit-packages";
+import { CREDIT_PACKAGES, getPackageById } from "@/lib/credit-packages";
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 
+const PAYMENT_METHOD_LABELS: Record<string, string> = {
+  stripe: "Kartica / Stripe",
+  kes: "Keš",
+  posta: "Pošta Crne Gore",
+};
+
+function packageForPurchaseCredits(credits: number) {
+  return CREDIT_PACKAGES.find((p) => p.credits === credits) ?? null;
+}
+
 function priceEurForPurchaseCredits(credits: number): number | null {
-  const pkg = CREDIT_PACKAGES.find((p) => p.credits === credits);
-  return pkg ? pkg.priceEur : null;
+  return packageForPurchaseCredits(credits)?.priceEur ?? null;
 }
 
 export default async function AdminPaymentsPage() {
@@ -23,6 +33,14 @@ export default async function AdminPaymentsPage() {
     },
   });
 
+  const manualRequests = await prisma.creditCashActivationRequest.findMany({
+    orderBy: { createdAt: "desc" },
+    take: 100,
+    include: {
+      user: { select: { id: true, name: true, email: true } },
+    },
+  });
+
   let sumEur = 0;
   let countedEurRows = 0;
   for (const p of purchases) {
@@ -33,32 +51,71 @@ export default async function AdminPaymentsPage() {
     }
   }
 
+  let manualSumEur = 0;
+  for (const row of manualRequests) {
+    const pkg = getPackageById(row.packageId);
+    if (pkg) manualSumEur += pkg.priceEur;
+  }
+
+  const purchaseSummaryByHandyman = Array.from(
+    purchases.reduce(
+      (acc, tx) => {
+        const existing = acc.get(tx.handymanId) ?? {
+          handymanId: tx.handymanId,
+          name: tx.handyman.name,
+          email: tx.handyman.email,
+          totalCredits: 0,
+          totalEur: 0,
+          purchasesCount: 0,
+          lastPurchaseAt: tx.createdAt,
+        };
+        existing.totalCredits += tx.amount;
+        existing.totalEur += priceEurForPurchaseCredits(tx.amount) ?? 0;
+        existing.purchasesCount += 1;
+        if (tx.createdAt > existing.lastPurchaseAt) existing.lastPurchaseAt = tx.createdAt;
+        acc.set(tx.handymanId, existing);
+        return acc;
+      },
+      new Map<
+        string,
+        {
+          handymanId: string;
+          name: string;
+          email: string;
+          totalCredits: number;
+          totalEur: number;
+          purchasesCount: number;
+          lastPurchaseAt: Date;
+        }
+      >()
+    ).values()
+  ).sort((a, b) => b.totalEur - a.totalEur || b.totalCredits - a.totalCredits);
+
+  const uniqueOnlinePayers = new Set(purchases.map((p) => p.handymanId)).size;
+  const uniqueManualPayers = new Set(manualRequests.map((r) => r.userId)).size;
+
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-[#0F172A]">Plaćanja</h1>
         <p className="mt-1 text-sm text-[#64748B]">
-          Online uplate karticom (Stripe Checkout). Ručne uplate (keš / Pošta) su na stranici{" "}
-          <Link href="/admin/credits" className="text-blue-700 hover:underline">
-            Krediti
-          </Link>
-          .
+          Pregled uplata po majstoru, metodi plaćanja i pojedinačnim transakcijama.
         </p>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <Card>
           <CardHeader>
             <CardTitle className="text-base">Online transakcije</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold">{purchases.length}</p>
-            <p className="mt-1 text-xs text-[#64748B]">Tip „PURCHASE“ u bazi</p>
+            <p className="mt-1 text-xs text-[#64748B]">Stripe / kartica ({uniqueOnlinePayers} majstora)</p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Procijenjen promet (EUR)</CardTitle>
+            <CardTitle className="text-base">Online promet (EUR)</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold">
@@ -73,15 +130,76 @@ export default async function AdminPaymentsPage() {
             </p>
           </CardContent>
         </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Ručni zahtjevi za uplatu</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-2xl font-bold">{manualRequests.length}</p>
+            <p className="mt-1 text-xs text-[#64748B]">Keš / Pošta ({uniqueManualPayers} majstora)</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Vrijednost ručnih zahtjeva</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-2xl font-bold">{manualSumEur.toFixed(2)} €</p>
+            <p className="mt-1 text-xs text-[#64748B]">Po odabranim paketima u zahtjevima</p>
+          </CardContent>
+        </Card>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Stripe uplate</CardTitle>
+          <CardTitle>Ko je koliko uplatio</CardTitle>
           <CardDescription>
-            Svaka redovna online kupovina kredita kreira red ispod;{" "}
-            <span className="font-mono text-xs">reference_id</span> je Stripe Checkout sesija (
-            <span className="font-mono text-xs">cs_…</span>).
+            Zbir online uplata po majstoru. Ovo je najbrži pregled ko je platio najviše i koliko puta.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b text-left">
+                  <th className="pb-3 pr-3">Majstor</th>
+                  <th className="pb-3 pr-3">Broj uplata</th>
+                  <th className="pb-3 pr-3">Ukupno kredita</th>
+                  <th className="pb-3 pr-3">Ukupno (€)</th>
+                  <th className="pb-3 pr-3">Zadnja uplata</th>
+                </tr>
+              </thead>
+              <tbody>
+                {purchaseSummaryByHandyman.map((row) => (
+                  <tr key={row.handymanId} className="border-b last:border-0 align-top">
+                    <td className="py-3 pr-3">
+                      <Link href={`/admin/handymen/${row.handymanId}`} className="font-medium hover:underline">
+                        {row.name}
+                      </Link>
+                      <div className="text-xs text-[#64748B]">{row.email}</div>
+                    </td>
+                    <td className="py-3 pr-3">{row.purchasesCount}</td>
+                    <td className="py-3 pr-3 font-medium text-green-700">{row.totalCredits}</td>
+                    <td className="py-3 pr-3 font-medium">{row.totalEur.toFixed(2)} €</td>
+                    <td className="py-3 pr-3 whitespace-nowrap text-[#64748B]">
+                      {new Date(row.lastPurchaseAt).toLocaleString("sr")}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          {purchaseSummaryByHandyman.length === 0 && (
+            <p className="py-8 text-center text-[#64748B]">Još nema online uplata za prikaz po majstoru.</p>
+          )}
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Pojedinačne online uplate</CardTitle>
+          <CardDescription>
+            Svaka redovna online kupovina kredita kreira jedan red. Ovdje vidiš ko je uplatio, koliko i preko čega.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -91,6 +209,8 @@ export default async function AdminPaymentsPage() {
                 <tr className="border-b text-left">
                   <th className="pb-3 pr-3">Datum</th>
                   <th className="pb-3 pr-3">Majstor</th>
+                  <th className="pb-3 pr-3">Način</th>
+                  <th className="pb-3 pr-3">Paket</th>
                   <th className="pb-3 pr-3">Kredita</th>
                   <th className="pb-3 pr-3">Iznos (€)</th>
                   <th className="pb-3 pr-3">Stanje nakon</th>
@@ -100,7 +220,8 @@ export default async function AdminPaymentsPage() {
               </thead>
               <tbody>
                 {purchases.map((t) => {
-                  const eur = priceEurForPurchaseCredits(t.amount);
+                  const pkg = packageForPurchaseCredits(t.amount);
+                  const eur = pkg?.priceEur ?? null;
                   const sessionId = t.referenceId ?? "";
                   const stripeSearch =
                     sessionId.length > 0
@@ -117,6 +238,10 @@ export default async function AdminPaymentsPage() {
                         </Link>
                         <div className="text-xs text-[#64748B]">{t.handyman.email}</div>
                       </td>
+                      <td className="py-3 pr-3">
+                        <Badge variant="outline">{PAYMENT_METHOD_LABELS.stripe}</Badge>
+                      </td>
+                      <td className="py-3 pr-3">{pkg?.label ?? "—"}</td>
                       <td className="py-3 pr-3 font-medium text-green-700">+{t.amount}</td>
                       <td className="py-3 pr-3">{eur != null ? `${eur.toFixed(2)} €` : "—"}</td>
                       <td className="py-3 pr-3">{t.balanceAfter}</td>
@@ -145,6 +270,74 @@ export default async function AdminPaymentsPage() {
             <p className="py-8 text-center text-[#64748B]">
               Još nema online uplata. Kad majstor plati paket preko Stripea, pojaviće se ovdje.
             </p>
+          )}
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Ručni zahtjevi za uplatu</CardTitle>
+          <CardDescription>
+            Keš / Pošta zahtjevi. Ovo nisu Stripe transakcije nego prijave majstora za ručnu aktivaciju kredita.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b text-left">
+                  <th className="pb-3 pr-3">Datum</th>
+                  <th className="pb-3 pr-3">Majstor</th>
+                  <th className="pb-3 pr-3">Način</th>
+                  <th className="pb-3 pr-3">Paket</th>
+                  <th className="pb-3 pr-3">Vrijednost (€)</th>
+                  <th className="pb-3 pr-3">Status</th>
+                  <th className="pb-3 pr-3">Telefon</th>
+                </tr>
+              </thead>
+              <tbody>
+                {manualRequests.map((row) => {
+                  const pkg = getPackageById(row.packageId);
+                  return (
+                    <tr key={row.id} className="border-b last:border-0 align-top">
+                      <td className="py-3 pr-3 whitespace-nowrap text-[#64748B]">
+                        {new Date(row.createdAt).toLocaleString("sr")}
+                      </td>
+                      <td className="py-3 pr-3">
+                        <Link href={`/admin/handymen/${row.userId}`} className="font-medium hover:underline">
+                          {row.user.name}
+                        </Link>
+                        <div className="text-xs text-[#64748B]">{row.user.email}</div>
+                      </td>
+                      <td className="py-3 pr-3">
+                        <Badge variant="outline">
+                          {row.paymentMethod ? PAYMENT_METHOD_LABELS[row.paymentMethod] ?? row.paymentMethod : "—"}
+                        </Badge>
+                      </td>
+                      <td className="py-3 pr-3">{pkg?.label ?? row.packageId}</td>
+                      <td className="py-3 pr-3">{pkg ? `${pkg.priceEur.toFixed(2)} €` : "—"}</td>
+                      <td className="py-3 pr-3">
+                        <Badge
+                          variant={
+                            row.status === "COMPLETED"
+                              ? "success"
+                              : row.status === "REJECTED"
+                                ? "destructive"
+                                : "warning"
+                          }
+                        >
+                          {row.status}
+                        </Badge>
+                      </td>
+                      <td className="py-3 pr-3 whitespace-nowrap font-mono text-xs">{row.phone}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+          {manualRequests.length === 0 && (
+            <p className="py-8 text-center text-[#64748B]">Još nema ručnih zahtjeva za uplatu.</p>
           )}
         </CardContent>
       </Card>
