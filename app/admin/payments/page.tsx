@@ -41,6 +41,38 @@ export default async function AdminPaymentsPage() {
     },
   });
 
+  const unlockTransactions = await prisma.creditTransaction.findMany({
+    where: { type: "CONTACT_UNLOCK" },
+    orderBy: { createdAt: "desc" },
+    take: 200,
+    include: {
+      handyman: { select: { id: true, name: true, email: true } },
+    },
+  });
+
+  const unlockedRequestIds = Array.from(
+    new Set(
+      unlockTransactions
+        .map((tx) => tx.referenceId)
+        .filter((id): id is string => typeof id === "string" && id.length > 0)
+    )
+  );
+
+  const unlockedRequests = unlockedRequestIds.length
+    ? await prisma.request.findMany({
+        where: { id: { in: unlockedRequestIds } },
+        select: {
+          id: true,
+          title: true,
+          category: true,
+          city: true,
+          status: true,
+        },
+      })
+    : [];
+
+  const unlockedRequestById = new Map(unlockedRequests.map((req) => [req.id, req]));
+
   let sumEur = 0;
   let countedEurRows = 0;
   for (const p of purchases) {
@@ -56,6 +88,9 @@ export default async function AdminPaymentsPage() {
     const pkg = getPackageById(row.packageId);
     if (pkg) manualSumEur += pkg.priceEur;
   }
+
+  const totalUnlockCreditsSpent = unlockTransactions.reduce((sum, tx) => sum + Math.max(0, -tx.amount), 0);
+  const uniqueUnlockers = new Set(unlockTransactions.map((tx) => tx.handymanId)).size;
 
   const purchaseSummaryByHandyman = Array.from(
     purchases.reduce(
@@ -146,6 +181,36 @@ export default async function AdminPaymentsPage() {
           <CardContent>
             <p className="text-2xl font-bold">{manualSumEur.toFixed(2)} €</p>
             <p className="mt-1 text-xs text-[#64748B]">Po odabranim paketima u zahtjevima</p>
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Otključani zahtjevi</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-2xl font-bold">{unlockTransactions.length}</p>
+            <p className="mt-1 text-xs text-[#64748B]">1 red = 1 skidanje kredita</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Skinuto kredita</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-2xl font-bold">{totalUnlockCreditsSpent}</p>
+            <p className="mt-1 text-xs text-[#64748B]">Ukupan trošak otključavanja kontakata</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Majstora koji troše</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-2xl font-bold">{uniqueUnlockers}</p>
+            <p className="mt-1 text-xs text-[#64748B]">Broj različitih majstora sa otključavanjem</p>
           </CardContent>
         </Card>
       </div>
@@ -338,6 +403,74 @@ export default async function AdminPaymentsPage() {
           </div>
           {manualRequests.length === 0 && (
             <p className="py-8 text-center text-[#64748B]">Još nema ručnih zahtjeva za uplatu.</p>
+          )}
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Troškovi otključavanja 1/1</CardTitle>
+          <CardDescription>
+            Svaki red je jedno otključavanje kontakta: vidiš ko je otključao, koji zahtjev i koliko je kredita skinuto.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b text-left">
+                  <th className="pb-3 pr-3">Datum</th>
+                  <th className="pb-3 pr-3">Majstor</th>
+                  <th className="pb-3 pr-3">Zahtjev</th>
+                  <th className="pb-3 pr-3">Grad</th>
+                  <th className="pb-3 pr-3">Status zahtjeva</th>
+                  <th className="pb-3 pr-3">Skinuto kredita</th>
+                  <th className="pb-3 pr-3">Stanje nakon</th>
+                  <th className="pb-3 pr-3">Referenca</th>
+                </tr>
+              </thead>
+              <tbody>
+                {unlockTransactions.map((tx) => {
+                  const req = tx.referenceId ? unlockedRequestById.get(tx.referenceId) : null;
+                  const spentCredits = Math.max(0, -tx.amount);
+                  return (
+                    <tr key={tx.id} className="border-b last:border-0 align-top">
+                      <td className="py-3 pr-3 whitespace-nowrap text-[#64748B]">
+                        {new Date(tx.createdAt).toLocaleString("sr")}
+                      </td>
+                      <td className="py-3 pr-3">
+                        <Link href={`/admin/handymen/${tx.handymanId}`} className="font-medium hover:underline">
+                          {tx.handyman.name}
+                        </Link>
+                        <div className="text-xs text-[#64748B]">{tx.handyman.email}</div>
+                      </td>
+                      <td className="py-3 pr-3">
+                        {req ? (
+                          <Link href={`/admin/requests/${req.id}`} className="font-medium hover:underline">
+                            {req.title?.trim() || req.category}
+                          </Link>
+                        ) : (
+                          <span className="text-[#64748B]">Obrisan ili nedostupan zahtjev</span>
+                        )}
+                        {req && <div className="text-xs text-[#64748B]">{req.category}</div>}
+                      </td>
+                      <td className="py-3 pr-3">{req?.city ?? "—"}</td>
+                      <td className="py-3 pr-3">
+                        <Badge variant={req?.status === "COMPLETED" ? "success" : req?.status === "CANCELLED" ? "secondary" : "outline"}>
+                          {req?.status ?? "—"}
+                        </Badge>
+                      </td>
+                      <td className="py-3 pr-3 font-medium text-red-600">-{spentCredits}</td>
+                      <td className="py-3 pr-3">{tx.balanceAfter}</td>
+                      <td className="py-3 pr-3 font-mono text-xs">{tx.referenceId?.slice(0, 8) ?? "—"}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+          {unlockTransactions.length === 0 && (
+            <p className="py-8 text-center text-[#64748B]">Još nema troškova otključavanja za prikaz.</p>
           )}
         </CardContent>
       </Card>
