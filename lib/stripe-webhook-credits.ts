@@ -109,3 +109,36 @@ export async function applyCreditsFromCheckoutSession(
     return { applied: true };
   });
 }
+
+/**
+ * Poslije uspješne online kupovine kredita: in-app notifikacija + push majstoru.
+ * Namjerno odvojeno od transaction-a: ne smije oboriti knjiženje ako push / notification fail-uje.
+ */
+export async function sendCreditPurchaseSignals(
+  prisma: Pick<PrismaClient, "pushSubscription">,
+  params: {
+    handymanId: string;
+    credits: number;
+    packageLabel: string;
+  }
+): Promise<void> {
+  const { createNotification } = await import("@/lib/notifications");
+  const { sendPushToUser } = await import("@/lib/push");
+
+  const title = "Krediti su dodati";
+  const body = `Uspješna uplata: dodato je ${params.credits} kredita (${params.packageLabel}).`;
+  const link = "/dashboard/handyman/credits";
+
+  await createNotification(params.handymanId, "NEW_MESSAGE", title, {
+    body,
+    link,
+    idempotencyKey: `credit-purchase:${params.handymanId}:${params.packageLabel}:${params.credits}`,
+  });
+
+  await sendPushToUser(prisma, params.handymanId, {
+    title,
+    body,
+    link,
+    tag: `credit-purchase-${params.handymanId}`,
+  });
+}

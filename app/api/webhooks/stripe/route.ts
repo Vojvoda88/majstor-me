@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import type Stripe from "stripe";
-import { applyCreditsFromCheckoutSession } from "@/lib/stripe-webhook-credits";
+import { applyCreditsFromCheckoutSession, sendCreditPurchaseSignals } from "@/lib/stripe-webhook-credits";
 import { getStripe } from "@/lib/stripe-server";
 
 export const dynamic = "force-dynamic";
@@ -43,6 +43,19 @@ export async function POST(req: Request) {
       const result = await applyCreditsFromCheckoutSession(prisma, session, event.id);
       if (!result.applied && result.reason && result.reason !== "duplicate_event" && result.reason !== "duplicate_session") {
         console.warn("[Stripe webhook] Nije knjiženo", result.reason, { sessionId: session.id });
+      }
+      if (result.applied) {
+        const md = session.metadata ?? {};
+        const handymanId = md.handymanId ?? md.userId;
+        const credits = parseInt(md.credits ?? "", 10);
+        const packageLabel = md.packageId ? md.packageId.replace(/^credits_/, "") + " kredita" : "paket kredita";
+        if (handymanId && Number.isFinite(credits) && credits > 0) {
+          await sendCreditPurchaseSignals(prisma, {
+            handymanId,
+            credits,
+            packageLabel,
+          });
+        }
       }
     } catch (e) {
       console.error("[Stripe webhook] Obrada sesije", e);
