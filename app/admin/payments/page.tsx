@@ -41,8 +41,10 @@ export default async function AdminPaymentsPage() {
     },
   });
 
+  const unlockSpendTypes = ["CONTACT_UNLOCK", "UNLOCK_CONTACT"] as const;
+
   const unlockTransactions = await prisma.creditTransaction.findMany({
-    where: { type: "CONTACT_UNLOCK" },
+    where: { type: { in: [...unlockSpendTypes] } },
     orderBy: { createdAt: "desc" },
     take: 200,
     include: {
@@ -126,6 +128,79 @@ export default async function AdminPaymentsPage() {
     ).values()
   ).sort((a, b) => b.totalEur - a.totalEur || b.totalCredits - a.totalCredits);
 
+  const spendSummaryByHandyman = Array.from(
+    unlockTransactions.reduce(
+      (acc, tx) => {
+        const spentCredits = Math.max(0, -tx.amount);
+        const existing = acc.get(tx.handymanId) ?? {
+          handymanId: tx.handymanId,
+          name: tx.handyman.name,
+          email: tx.handyman.email,
+          totalSpentCredits: 0,
+          unlocksCount: 0,
+          lastUnlockAt: tx.createdAt,
+        };
+        existing.totalSpentCredits += spentCredits;
+        existing.unlocksCount += 1;
+        if (tx.createdAt > existing.lastUnlockAt) existing.lastUnlockAt = tx.createdAt;
+        acc.set(tx.handymanId, existing);
+        return acc;
+      },
+      new Map<
+        string,
+        {
+          handymanId: string;
+          name: string;
+          email: string;
+          totalSpentCredits: number;
+          unlocksCount: number;
+          lastUnlockAt: Date;
+        }
+      >()
+    ).values()
+  ).sort((a, b) => b.totalSpentCredits - a.totalSpentCredits || b.unlocksCount - a.unlocksCount);
+
+  const summaryHandymanIds = Array.from(
+    new Set([
+      ...purchaseSummaryByHandyman.map((row) => row.handymanId),
+      ...spendSummaryByHandyman.map((row) => row.handymanId),
+    ])
+  );
+
+  const handymanBalances = summaryHandymanIds.length
+    ? await prisma.handymanProfile.findMany({
+        where: { userId: { in: summaryHandymanIds } },
+        select: { userId: true, creditsBalance: true },
+      })
+    : [];
+
+  const balanceByHandymanId = new Map(handymanBalances.map((row) => [row.userId, row.creditsBalance]));
+
+  const purchaseByHandymanId = new Map(purchaseSummaryByHandyman.map((row) => [row.handymanId, row]));
+  const spendByHandymanId = new Map(spendSummaryByHandyman.map((row) => [row.handymanId, row]));
+
+  const netSummaryByHandyman = summaryHandymanIds
+    .map((handymanId) => {
+      const purchase = purchaseByHandymanId.get(handymanId);
+      const spend = spendByHandymanId.get(handymanId);
+      return {
+        handymanId,
+        name: purchase?.name ?? spend?.name ?? "—",
+        email: purchase?.email ?? spend?.email ?? "",
+        purchasedCredits: purchase?.totalCredits ?? 0,
+        purchasedEur: purchase?.totalEur ?? 0,
+        spentCredits: spend?.totalSpentCredits ?? 0,
+        unlocksCount: spend?.unlocksCount ?? 0,
+        currentBalance: balanceByHandymanId.get(handymanId) ?? 0,
+      };
+    })
+    .sort(
+      (a, b) =>
+        b.purchasedEur - a.purchasedEur ||
+        b.spentCredits - a.spentCredits ||
+        b.purchasedCredits - a.purchasedCredits
+    );
+
   const uniqueOnlinePayers = new Set(purchases.map((p) => p.handymanId)).size;
   const uniqueManualPayers = new Set(manualRequests.map((r) => r.userId)).size;
 
@@ -134,7 +209,7 @@ export default async function AdminPaymentsPage() {
       <div>
         <h1 className="text-2xl font-bold text-[#0F172A]">Plaćanja</h1>
         <p className="mt-1 text-sm text-[#64748B]">
-          Pregled uplata po majstoru, metodi plaćanja i pojedinačnim transakcijama.
+          Pregled uplata, potrošnje i neto stanja po majstoru — plus pojedinačne transakcije.
         </p>
       </div>
 
@@ -256,6 +331,99 @@ export default async function AdminPaymentsPage() {
           </div>
           {purchaseSummaryByHandyman.length === 0 && (
             <p className="py-8 text-center text-[#64748B]">Još nema online uplata za prikaz po majstoru.</p>
+          )}
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Ko je koliko potrošio</CardTitle>
+          <CardDescription>
+            Zbir otključavanja kontakata (1/1) po majstoru. Ovo je potrošnja kredita na zahtjeve.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b text-left">
+                  <th className="pb-3 pr-3">Majstor</th>
+                  <th className="pb-3 pr-3">Broj otključavanja</th>
+                  <th className="pb-3 pr-3">Ukupno potrošeno</th>
+                  <th className="pb-3 pr-3">Zadnje otključavanje</th>
+                </tr>
+              </thead>
+              <tbody>
+                {spendSummaryByHandyman.map((row) => (
+                  <tr key={row.handymanId} className="border-b last:border-0 align-top">
+                    <td className="py-3 pr-3">
+                      <Link href={`/admin/handymen/${row.handymanId}`} className="font-medium hover:underline">
+                        {row.name}
+                      </Link>
+                      <div className="text-xs text-[#64748B]">{row.email}</div>
+                    </td>
+                    <td className="py-3 pr-3">{row.unlocksCount}</td>
+                    <td className="py-3 pr-3 font-medium text-red-600">-{row.totalSpentCredits}</td>
+                    <td className="py-3 pr-3 whitespace-nowrap text-[#64748B]">
+                      {new Date(row.lastUnlockAt).toLocaleString("sr")}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          {spendSummaryByHandyman.length === 0 && (
+            <p className="py-8 text-center text-[#64748B]">Još nema potrošnje kredita za prikaz po majstoru.</p>
+          )}
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Neto po majstoru</CardTitle>
+          <CardDescription>
+            Uplatio (online Stripe), potrošio (1/1 otključavanja) i trenutno stanje na nalogu. Ručni keš/Pošta i
+            admin dodaci nisu u koloni „Uplatio” — vide se u ostalim sekcijama.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b text-left">
+                  <th className="pb-3 pr-3">Majstor</th>
+                  <th className="pb-3 pr-3">Uplatio (kredita)</th>
+                  <th className="pb-3 pr-3">Uplatio (€)</th>
+                  <th className="pb-3 pr-3">Potrošio</th>
+                  <th className="pb-3 pr-3">Otključavanja</th>
+                  <th className="pb-3 pr-3">Trenutno stanje</th>
+                </tr>
+              </thead>
+              <tbody>
+                {netSummaryByHandyman.map((row) => (
+                  <tr key={row.handymanId} className="border-b last:border-0 align-top">
+                    <td className="py-3 pr-3">
+                      <Link href={`/admin/handymen/${row.handymanId}`} className="font-medium hover:underline">
+                        {row.name}
+                      </Link>
+                      <div className="text-xs text-[#64748B]">{row.email}</div>
+                    </td>
+                    <td className="py-3 pr-3 font-medium text-green-700">
+                      {row.purchasedCredits > 0 ? `+${row.purchasedCredits}` : "0"}
+                    </td>
+                    <td className="py-3 pr-3">{row.purchasedEur > 0 ? `${row.purchasedEur.toFixed(2)} €` : "—"}</td>
+                    <td className="py-3 pr-3 font-medium text-red-600">
+                      {row.spentCredits > 0 ? `-${row.spentCredits}` : "0"}
+                    </td>
+                    <td className="py-3 pr-3">{row.unlocksCount}</td>
+                    <td className="py-3 pr-3 font-semibold">{row.currentBalance}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          {netSummaryByHandyman.length === 0 && (
+            <p className="py-8 text-center text-[#64748B]">Još nema podataka za neto pregled po majstoru.</p>
           )}
         </CardContent>
       </Card>
