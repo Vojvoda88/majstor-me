@@ -1,23 +1,21 @@
 "use client";
 
 import Link from "next/link";
-import { FileText } from "lucide-react";
 
 type Props = {
   href: string;
   label: string;
 };
 
-/** Minimalan mobilni CTA — diskretan, bez „jeftinog“ plavog gradienta */
+/** Mobilni sticky CTA — isti premium plavi gradient kao hero. */
 export function StickyBottomCTA({ href, label }: Props) {
   return (
-    <div className="fixed inset-x-0 bottom-0 z-[90] border-t border-slate-200/80 bg-white/90 px-4 py-2.5 pb-[max(0.625rem,env(safe-area-inset-bottom))] shadow-[0_-4px_24px_rgba(10,22,40,0.08)] backdrop-blur-md md:hidden">
+    <div className="fixed inset-x-0 bottom-0 z-[90] border-t border-slate-200/70 bg-white/95 px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] shadow-[0_-8px_32px_rgba(15,23,42,0.1)] backdrop-blur-xl md:hidden">
       <Link
         href={href}
-        className="flex h-11 w-full items-center justify-center gap-2 rounded-xl border border-slate-200/90 bg-brand-navy text-[15px] font-semibold text-white shadow-sm transition hover:bg-brand-navy/95 active:scale-[0.99]"
+        className="flex h-[52px] w-full items-center justify-center rounded-2xl bg-gradient-to-br from-[#3b82f6] to-[#1d4ed8] px-6 text-[15px] font-bold text-white shadow-lg shadow-blue-600/30 ring-1 ring-white/20 transition hover:brightness-105 active:scale-[0.98]"
         data-testid="sticky-cta"
       >
-        <FileText className="h-4 w-4 opacity-90" aria-hidden />
         {label}
       </Link>
     </div>
