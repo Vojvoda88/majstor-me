@@ -26,6 +26,7 @@ test.describe("Smoke – main clicks", () => {
     await page.goto("/");
     await assertNoServerComponentError(page);
     const cta = page.getByTestId("sticky-cta");
+    await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
     await expect(cta).toBeVisible();
     await cta.click();
     await expect(page).toHaveURL(/\/request\/create/);

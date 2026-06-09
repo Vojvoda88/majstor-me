@@ -14,6 +14,10 @@ const LanguageSwitcher = dynamic(
   () => import("@/components/layout/google-translate").then((m) => m.LanguageSwitcher),
   { ssr: false }
 );
+const GlobalRequestStickyCta = dynamic(
+  () => import("@/components/layout/GlobalRequestStickyCta").then((m) => m.GlobalRequestStickyCta),
+  { ssr: false }
+);
 
 /**
  * Nije kritično za prvi paint: odlažemo mount globalnih client widgeta dok browser ne uhvati predah.
@@ -47,12 +51,16 @@ export function DeferredGlobalUi() {
     };
   }, []);
 
-  if (!ready) return null;
   return (
     <>
-      <ServiceWorkerRegister />
-      <InstallCTA />
-      <LanguageSwitcher />
+      <GlobalRequestStickyCta />
+      {ready ? (
+        <>
+          <ServiceWorkerRegister />
+          <InstallCTA />
+          <LanguageSwitcher />
+        </>
+      ) : null}
     </>
   );
 }

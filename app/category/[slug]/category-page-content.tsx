@@ -6,7 +6,6 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { PublicHeader } from "@/components/layout/PublicHeader";
 import { PublicFooter } from "@/components/layout/PublicFooter";
-import { StickyBottomCTA } from "@/components/layout/StickyBottomCTA";
 import { MobileFilterSheet } from "@/components/category/MobileFilterSheet";
 import { CategoryHandymanCard } from "@/components/lists/CategoryHandymanCard";
 import { LandingValueBlock } from "@/components/landing/landing-value-block";
@@ -489,7 +488,6 @@ export function CategoryPageContent({
       </div>
 
       <PublicFooter />
-      <StickyBottomCTA href="/request/create" label="Zatraži majstora" />
       <MobileFilterSheet
         open={filterSheetOpen}
         onClose={() => setFilterSheetOpen(false)}

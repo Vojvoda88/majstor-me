@@ -154,7 +154,10 @@ export function Hero() {
   const desktopCategorySlides = categorySlides.slice(0, 8);
 
   return (
-    <section className="relative flex min-h-[min(88dvh,690px)] w-full items-center justify-center overflow-hidden rounded-b-[1.1rem] px-4 pb-12 pt-[max(4.5rem,env(safe-area-inset-top)+3.25rem)] text-white sm:px-5 md:min-h-[760px] md:rounded-b-[1.5rem] md:pb-20 md:pt-28">
+    <section
+      id="home-hero"
+      className="relative flex min-h-[min(88dvh,690px)] w-full items-center justify-center overflow-hidden rounded-b-[1.1rem] px-4 pb-12 pt-[max(4.5rem,env(safe-area-inset-top)+3.25rem)] text-white sm:px-5 md:min-h-[760px] md:rounded-b-[1.5rem] md:pb-20 md:pt-28"
+    >
       <Image
         src={HERO_IMAGE}
         alt={t(locale, "home.hero.imageAlt", "Majstor na poslu")}
