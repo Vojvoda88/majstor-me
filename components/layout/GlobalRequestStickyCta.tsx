@@ -2,11 +2,9 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { usePathname } from "next/navigation";
-import { useSession } from "next-auth/react";
 import { stripLocalePrefix } from "@/lib/i18n/config";
 import { buildRequestCreateHref, isStickyRequestCtaPath } from "@/lib/build-request-create-href";
-import { useUiLanguage } from "@/lib/i18n/ui-language";
-import { t } from "@/lib/i18n/messages";
+import { usePublicCta } from "@/hooks/use-public-cta";
 import { StickyBottomCTA } from "@/components/layout/StickyBottomCTA";
 
 const HOME_HERO_ID = "home-hero";
@@ -25,22 +23,11 @@ function isHeroInView(hero: HTMLElement): boolean {
 export function GlobalRequestStickyCta() {
   const pathname = usePathname() || "/";
   const currentPath = stripLocalePrefix(pathname);
-  const locale = useUiLanguage();
-  const { data: session, status } = useSession();
   const isHome = currentPath === "/";
   const enabled = isStickyRequestCtaPath(currentPath);
-  const { href, label } = useMemo(() => {
-    if (status === "authenticated" && session?.user?.role === "HANDYMAN") {
-      return {
-        href: "/dashboard/handyman",
-        label: t(locale, "home.hero.availableJobsCta", "Dostupni poslovi"),
-      };
-    }
-    return {
-      href: buildRequestCreateHref(currentPath),
-      label: t(locale, "navigation.requestHandyman", "Zatraži majstora"),
-    };
-  }, [currentPath, locale, session?.user?.role, status]);
+  const requestHref = useMemo(() => buildRequestCreateHref(currentPath), [currentPath]);
+  const { primaryCta } = usePublicCta(requestHref);
+  const { href, label } = primaryCta;
 
   const [visible, setVisible] = useState(false);
 

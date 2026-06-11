@@ -16,6 +16,7 @@ import { cityToSlug, phraseUGradu } from "@/lib/slugs";
 import { getPrioritySeoLinksForCategory } from "@/lib/seo-landing-config";
 import type { PublicHandymenListResult } from "@/lib/handymen-listing";
 import type { FaqItem } from "@/lib/json-ld";
+import { usePublicCta } from "@/hooks/use-public-cta";
 
 type Handyman = {
   id: string;
@@ -59,6 +60,10 @@ export function CategoryPageContent({
   const pathname = usePathname();
   const [handymen, setHandymen] = useState<Handyman[]>(initialListing?.items ?? []);
   const [cityFilter, setCityFilter] = useState<string>(initialCity);
+  const emptyStateRequestHref = `/request/create?category=${encodeURIComponent(internalCategory)}${cityFilter ? `&city=${encodeURIComponent(cityFilter)}` : ""}`;
+  const { primaryCta } = usePublicCta(emptyStateRequestHref);
+  const headerRequestHref = `/request/create?category=${encodeURIComponent(internalCategory)}`;
+  const { primaryCta: headerCta, isHandyman } = usePublicCta(headerRequestHref);
   const [sortBy, setSortBy] = useState<"rating" | "reviews">("rating");
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(initialListing?.totalPages ?? 1);
@@ -201,10 +206,10 @@ export function CategoryPageContent({
             </p>
             <p className="mt-4 text-sm text-slate-600">
               <Link
-                href={`/request/create?category=${encodeURIComponent(internalCategory)}`}
+                href={headerCta.href}
                 className="font-semibold text-blue-700 underline-offset-2 hover:underline"
               >
-                Zahtjev za ovu vrstu posla
+                {isHandyman ? headerCta.label : "Zahtjev za ovu vrstu posla"}
               </Link>
               <span className="mx-2 text-slate-300" aria-hidden>
                 ·
@@ -297,10 +302,10 @@ export function CategoryPageContent({
                   </p>
                   <div className="mt-8 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center">
                     <Link
-                      href={`/request/create?category=${encodeURIComponent(internalCategory)}${cityFilter ? `&city=${encodeURIComponent(cityFilter)}` : ""}`}
+                      href={primaryCta.href}
                       className="inline-flex h-14 min-h-[52px] items-center justify-center rounded-2xl bg-gradient-to-br from-[#2563eb] to-[#1d4ed8] px-10 text-base font-bold text-white shadow-btn-cta transition hover:brightness-105"
                     >
-                      Zatraži majstora
+                      {primaryCta.label}
                     </Link>
                     {cityFilter ? (
                       <Link

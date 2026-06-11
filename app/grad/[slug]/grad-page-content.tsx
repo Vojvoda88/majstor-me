@@ -15,6 +15,7 @@ import { getPrioritySeoLinksForCity } from "@/lib/seo-landing-config";
 import { fillCoverClass } from "@/lib/image-fill-class";
 import type { PublicHandymenListResult } from "@/lib/handymen-listing";
 import type { FaqItem } from "@/lib/json-ld";
+import { usePublicCta } from "@/hooks/use-public-cta";
 
 type Handyman = {
   id: string;
@@ -57,6 +58,8 @@ export function GradPageContent({
 
   const cityNameLocative = cityLocative(cityName);
   const priorityServiceLinks = getPrioritySeoLinksForCity(slug, 10);
+  const cityRequestHref = `/request/create?city=${encodeURIComponent(cityName)}`;
+  const { primaryCta, isHandyman } = usePublicCta(cityRequestHref);
 
   useEffect(() => {
     if (skipFirstClientFetch.current && page === 1 && reloadToken === 0) {
@@ -140,10 +143,10 @@ export function GradPageContent({
               |
             </span>
             <Link
-              href={`/request/create?city=${encodeURIComponent(cityName)}`}
+              href={primaryCta.href}
               className="font-medium text-blue-700 hover:underline"
             >
-              Zatraži majstora {phraseUGradu(cityName)}
+              {isHandyman ? primaryCta.label : `Zatraži majstora ${phraseUGradu(cityName)}`}
             </Link>
           </div>
 
@@ -186,7 +189,7 @@ export function GradPageContent({
 
           <LandingValueBlock
             heading={`Tražite majstora u ${cityNameLocative}?`}
-            href={`/request/create?city=${encodeURIComponent(cityName)}`}
+            href={cityRequestHref}
           />
 
           <h2 className="mb-3 text-lg font-bold text-slate-900">Usluge po kategorijama {phraseUGradu(cityName)}</h2>
@@ -256,10 +259,10 @@ export function GradPageContent({
                 Zatražite majstora besplatno — javljaju se majstori iz ovog i okolnih gradova kojima posao odgovara, bez obaveze.
               </p>
               <Link
-                href={`/request/create?city=${encodeURIComponent(cityName)}`}
+                href={primaryCta.href}
                 className="mt-8 inline-flex h-14 items-center justify-center rounded-2xl bg-gradient-to-br from-[#2563eb] to-[#1d4ed8] px-8 text-base font-bold text-white shadow-btn-cta transition hover:brightness-105"
               >
-                Zatraži majstora za {cityName}
+                {isHandyman ? primaryCta.label : `Zatraži majstora za ${cityName}`}
               </Link>
             </div>
           ) : (

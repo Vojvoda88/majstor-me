@@ -6,6 +6,7 @@ import { ArrowRight, ChevronDown } from "lucide-react";
 import { FeaturedHandymanTile } from "./featured-handyman-tile";
 import { ACTIVE_PUBLIC_CATEGORY_COUNT } from "@/lib/categories";
 import type { PublicHandymanListItem } from "@/lib/handymen-listing";
+import { usePublicCta } from "@/hooks/use-public-cta";
 
 type Props = {
   initialItems: PublicHandymanListItem[];
@@ -14,6 +15,7 @@ type Props = {
 };
 
 export function FeaturedHandymenSection({ initialItems, total, pageSize = 6 }: Props) {
+  const { primaryCta } = usePublicCta();
   const [items, setItems] = useState(initialItems);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -89,10 +91,10 @@ export function FeaturedHandymenSection({ initialItems, total, pageSize = 6 }: P
               <ArrowRight className="h-4 w-4" />
             </Link>
             <Link
-              href="/request/create"
+              href={primaryCta.href}
               className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-bold text-brand-navy shadow-sm transition hover:border-blue-200 hover:bg-blue-50/80"
             >
-              Zatraži majstora
+              {primaryCta.label}
             </Link>
           </div>
         </div>
@@ -136,10 +138,10 @@ export function FeaturedHandymenSection({ initialItems, total, pageSize = 6 }: P
               Pošaljite kratak opis posla — odgovoriće majstori koji mogu da preuzmu rad.
             </p>
             <Link
-              href="/request/create"
+              href={primaryCta.href}
               className="mt-5 inline-flex items-center gap-2 rounded-2xl bg-brand-navy px-6 py-3.5 text-sm font-bold text-white shadow-md transition hover:bg-brand-navy/90 md:text-[15px]"
             >
-              Potraži majstora
+              {primaryCta.label}
               <ArrowRight className="h-4 w-4 shrink-0" />
             </Link>
           </div>

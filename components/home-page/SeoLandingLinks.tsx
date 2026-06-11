@@ -1,13 +1,18 @@
+"use client";
+
 import Link from "next/link";
 import { MapPin } from "lucide-react";
 import { SEO_LANDING_HOMEPAGE_LINKS } from "@/lib/seo-landing-config";
 import { HOMEPAGE_CITIES } from "@/lib/homepage-data";
+import { usePublicCta } from "@/hooks/use-public-cta";
 
 /** Puna mreža gradovskih hub-ova za crawl */
 const HOMEPAGE_GRAD_LINKS = HOMEPAGE_CITIES;
 
 /** Interni linkovi ka SEO landing stranicama (usluga + grad) i gradovskim hub-ovima */
 export function SeoLandingLinks() {
+  const { primaryCta } = usePublicCta();
+
   return (
     <section className="rounded-2xl border border-slate-200/80 bg-white/90 p-5 shadow-marketplace-sm md:rounded-3xl md:p-8">
       <div className="mb-3 flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-500 md:mb-4 md:text-sm">
@@ -61,10 +66,10 @@ export function SeoLandingLinks() {
             ·
           </span>
           <Link
-            href="/request/create"
+            href={primaryCta.href}
             className="font-semibold text-blue-700 underline-offset-2 hover:text-blue-900 hover:underline"
           >
-            Zatraži majstora
+            {primaryCta.label}
           </Link>
         </p>
       </div>

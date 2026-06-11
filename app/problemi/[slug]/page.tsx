@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { headers } from "next/headers";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ProblemiRequestCta } from "@/components/public/ProblemiRequestCta";
 import { PublicHeader } from "@/components/layout/PublicHeader";
 import { PublicFooter } from "@/components/layout/PublicFooter";
 import { getCategoryBySlug } from "@/lib/categories";
@@ -116,13 +116,7 @@ export default async function ProblemSeoPage({ params }: { params: Promise<{ slu
             Jedan opis problema {phraseUGradu(cityName)} — majstori kojima posao odgovara javljaju se s ponudama. Besplatno za
             korisnike.
           </p>
-          <Link
-            href={createUrl}
-            className="mt-5 inline-flex items-center gap-2 rounded-2xl bg-gradient-to-br from-[#2563eb] to-[#1d4ed8] px-6 py-3.5 text-base font-bold text-white shadow-btn-cta transition hover:brightness-105"
-          >
-            Zatraži majstora
-            <ArrowRight className="h-5 w-5" />
-          </Link>
+          <ProblemiRequestCta createUrl={createUrl} />
         </div>
 
         <section className="mt-10 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">

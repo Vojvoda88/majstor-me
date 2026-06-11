@@ -14,6 +14,7 @@ import type { LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useUiLanguage } from "@/lib/i18n/ui-language";
 import { t } from "@/lib/i18n/messages";
+import { usePublicCta } from "@/hooks/use-public-cta";
 import {
   HANDYMAN_START_BONUS_CREDITS,
 } from "@/lib/credit-packages";
@@ -202,6 +203,7 @@ function HandymanStepGrid({ steps }: { steps: readonly HandymanStep[] }) {
 
 export function HowItWorksForUsers() {
   const locale = useUiLanguage();
+  const { primaryCta } = usePublicCta();
   return (
     <section id="kako-radi" className="scroll-mt-24 py-8 md:py-14">
       <div className="mx-auto max-w-3xl text-center md:max-w-none">
@@ -223,10 +225,10 @@ export function HowItWorksForUsers() {
         </div>
         <div className="mx-auto mt-8 flex max-w-2xl flex-col items-center text-center md:mt-10">
           <Link
-            href="/request/create"
+            href={primaryCta.href}
             className="inline-flex min-h-[52px] w-full max-w-md items-center justify-center rounded-2xl bg-gradient-to-br from-[#3b82f6] to-[#1d4ed8] px-8 text-base font-bold text-white shadow-[0_14px_32px_-12px_rgba(37,99,235,0.45)] transition hover:brightness-105 active:scale-[0.99] sm:w-auto sm:min-w-[280px]"
           >
-            {t(locale, "home.howUsers.primaryCta", "Zatraži majstora")}
+            {primaryCta.label}
           </Link>
           <p className="mt-4 text-sm text-slate-500 md:text-[15px]">
             {t(locale, "home.howUsers.note", "Jedan zahtjev umjesto niza pojedinačnih poziva.")}
@@ -245,6 +247,7 @@ export function HowItWorksForUsers() {
 
 export function HowItWorksForHandymen() {
   const locale = useUiLanguage();
+  const { registerCta, secondaryCta } = usePublicCta();
   return (
     <section
       id="kako-radi-majstore"
@@ -293,13 +296,23 @@ export function HowItWorksForHandymen() {
           </div>
 
           <div className="mt-5 flex flex-col items-stretch gap-3 sm:items-center">
-            <Link
-              href="/register?type=majstor"
-              className="inline-flex min-h-[52px] items-center justify-center gap-2 rounded-2xl bg-gradient-to-br from-amber-300 via-amber-400 to-amber-500 px-8 text-base font-bold text-brand-navy shadow-[0_16px_40px_-14px_rgba(245,158,11,0.55)] ring-1 ring-white/45 transition hover:brightness-105 active:scale-[0.99]"
-            >
-              {t(locale, "home.howHandymen.registerCta", "Registruj se kao majstor")}
-              <ArrowRight className="h-4 w-4" />
-            </Link>
+            {registerCta ? (
+              <Link
+                href={registerCta.href}
+                className="inline-flex min-h-[52px] items-center justify-center gap-2 rounded-2xl bg-gradient-to-br from-amber-300 via-amber-400 to-amber-500 px-8 text-base font-bold text-brand-navy shadow-[0_16px_40px_-14px_rgba(245,158,11,0.55)] ring-1 ring-white/45 transition hover:brightness-105 active:scale-[0.99]"
+              >
+                {registerCta.label}
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            ) : null}
+            {secondaryCta ? (
+              <Link
+                href={secondaryCta.href}
+                className="inline-flex min-h-[52px] items-center justify-center gap-2 rounded-2xl border-2 border-slate-200 bg-white px-8 text-base font-semibold text-brand-navy transition hover:border-slate-300 hover:bg-slate-50 active:scale-[0.99]"
+              >
+                {secondaryCta.label}
+              </Link>
+            ) : null}
           </div>
           <p className="mt-3 text-center">
             <Link

@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { headers } from "next/headers";
 import Link from "next/link";
+import { PublicHandymanRegisterCtaLink } from "@/components/public/PublicHandymanRegisterCtaLink";
+import { PublicSecondaryCtaLink } from "@/components/public/PublicSecondaryCtaLink";
 import { PublicHeader } from "@/components/layout/PublicHeader";
 import { PublicFooter } from "@/components/layout/PublicFooter";
 import { getSiteUrl } from "@/lib/site-url";
@@ -95,12 +97,8 @@ export default function KakoRadiMajstoriPage() {
             Nakon odobrenja profila dobijate {HANDYMAN_START_BONUS_CREDITS.toLocaleString("sr-Latn-ME")} start kredita.
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
-            <Link
-              href="/register?type=majstor"
-              className="inline-flex min-h-[50px] items-center justify-center rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 px-7 text-sm font-bold text-brand-navy shadow-[0_12px_28px_-12px_rgba(245,158,11,0.55)] transition hover:brightness-105"
-            >
-              Registruj se kao majstor
-            </Link>
+            <PublicHandymanRegisterCtaLink className="inline-flex min-h-[50px] items-center justify-center rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 px-7 text-sm font-bold text-brand-navy shadow-[0_12px_28px_-12px_rgba(245,158,11,0.55)] transition hover:brightness-105" />
+            <PublicSecondaryCtaLink className="inline-flex min-h-[50px] items-center justify-center rounded-2xl border border-white/35 px-7 text-sm font-semibold text-white transition hover:bg-white/10" />
             <Link
               href="#detaljno"
               className="inline-flex min-h-[50px] items-center justify-center rounded-2xl border border-white/35 px-7 text-sm font-semibold text-white transition hover:bg-white/10"
@@ -236,12 +234,8 @@ export default function KakoRadiMajstoriPage() {
         </section>
 
         <section className="mt-8 flex flex-col gap-3 text-center sm:flex-row sm:justify-center">
-          <Link
-            href="/register?type=majstor"
-            className="inline-flex min-h-[52px] items-center justify-center rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 px-8 text-base font-bold text-brand-navy shadow-[0_14px_30px_-12px_rgba(245,158,11,0.5)] transition hover:brightness-105"
-          >
-            Registruj se kao majstor
-          </Link>
+          <PublicHandymanRegisterCtaLink className="inline-flex min-h-[52px] items-center justify-center rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 px-8 text-base font-bold text-brand-navy shadow-[0_14px_30px_-12px_rgba(245,158,11,0.5)] transition hover:brightness-105" />
+          <PublicSecondaryCtaLink className="inline-flex min-h-[52px] items-center justify-center rounded-2xl border border-slate-200 bg-white px-8 text-base font-semibold text-slate-700 transition hover:bg-slate-50" />
           <Link
             href="/categories"
             className="inline-flex min-h-[52px] items-center justify-center rounded-2xl border border-slate-200 bg-white px-8 text-base font-semibold text-slate-700 transition hover:bg-slate-50"

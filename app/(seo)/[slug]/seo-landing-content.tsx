@@ -17,6 +17,7 @@ import {
 } from "@/lib/seo-landing-copy";
 import { getPrioritySeoLandingContent } from "@/lib/seo-landing-priority-copy";
 import type { PublicHandymenListResult } from "@/lib/handymen-listing";
+import { usePublicCta } from "@/hooks/use-public-cta";
 
 type Handyman = {
   id: string;
@@ -123,6 +124,7 @@ export function SeoLandingContent({
   }, [internalCategory, cityName, sortBy, page, reloadToken]);
 
   const createUrl = `/request/create?category=${encodeURIComponent(internalCategory)}&city=${encodeURIComponent(cityName)}`;
+  const { primaryCta } = usePublicCta(createUrl);
 
   return (
     <main className="min-h-screen bg-slate-100 text-slate-900">
@@ -222,10 +224,10 @@ export function SeoLandingContent({
               </p>
               <div className="mt-5 flex flex-col items-stretch justify-center gap-3 sm:flex-row">
                 <Link
-                  href={createUrl}
+                  href={primaryCta.href}
                   className="inline-flex h-11 items-center justify-center rounded-xl bg-[#2563eb] px-5 text-sm font-semibold text-white transition hover:bg-[#1d4ed8]"
                 >
-                  Zatraži majstora
+                  {primaryCta.label}
                 </Link>
                 <Link
                   href={`/grad/${citySlug}`}
@@ -280,10 +282,10 @@ export function SeoLandingContent({
               odgovara grad i vrsta posla mogu da se jave preko platforme.
             </p>
             <Link
-              href={createUrl}
+              href={primaryCta.href}
               className="mt-5 inline-flex items-center gap-2 rounded-2xl bg-gradient-to-br from-[#2563eb] to-[#1d4ed8] px-6 py-3.5 text-base font-bold text-white shadow-btn-cta transition hover:brightness-105"
             >
-              Zatraži majstora
+              {primaryCta.label}
               <ArrowRight className="h-5 w-5" />
             </Link>
           </section>

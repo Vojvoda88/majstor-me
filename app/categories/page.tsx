@@ -13,6 +13,7 @@ import {
 import { getCategoryImageUrl } from "@/lib/category-images";
 import { fillCoverClass } from "@/lib/image-fill-class";
 import { ArrowRight } from "lucide-react";
+import { CategoriesFallbackRequestLink } from "@/components/public/CategoriesFallbackRequestLink";
 import { buildPublicListingPageJsonLd } from "@/lib/json-ld";
 import { getSiteUrl } from "@/lib/site-url";
 import { SEO_CATEGORIES_DESCRIPTION } from "@/lib/seo-brand";
@@ -107,12 +108,7 @@ export default function CategoriesPage() {
             pregledajte profile.
           </p>
           <p className="mt-3 max-w-2xl text-sm text-slate-600">
-            <Link
-              href={`/request/create?category=${encodeURIComponent(REQUEST_CATEGORY_FALLBACK)}`}
-              className="font-semibold text-blue-700 underline-offset-2 hover:underline"
-            >
-              Ne vidiš svoju uslugu?
-            </Link>{" "}
+            <CategoriesFallbackRequestLink />{" "}
             U formi za zahtjev birate „{REQUEST_CATEGORY_FALLBACK_DISPLAY}“ — to nije posebna kartica u listi ispod; opišite
             posao u opisu.
           </p>

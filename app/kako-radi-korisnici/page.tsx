@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { headers } from "next/headers";
 import Link from "next/link";
+import { PublicPrimaryCtaLink } from "@/components/public/PublicPrimaryCtaLink";
 import { PublicHeader } from "@/components/layout/PublicHeader";
 import { PublicFooter } from "@/components/layout/PublicFooter";
 import { getSiteUrl } from "@/lib/site-url";
@@ -88,12 +89,7 @@ export default function KakoRadiKorisniciPage() {
             Prosto rečeno: objavite posao, zahtjev vide odgovarajući majstori i vi birate ponudu koja vam najviše odgovara.
           </p>
           <div className="mt-6">
-            <Link
-              href="/request/create"
-              className="inline-flex min-h-[50px] items-center justify-center rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 px-7 text-sm font-bold text-brand-navy shadow-[0_12px_30px_-14px_rgba(245,158,11,0.5)] transition hover:brightness-105"
-            >
-              Zatraži majstora
-            </Link>
+            <PublicPrimaryCtaLink className="inline-flex min-h-[50px] items-center justify-center rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 px-7 text-sm font-bold text-brand-navy shadow-[0_12px_30px_-14px_rgba(245,158,11,0.5)] transition hover:brightness-105" />
           </div>
         </section>
 
@@ -131,12 +127,7 @@ export default function KakoRadiKorisniciPage() {
         </section>
 
         <section className="mt-8 text-center">
-          <Link
-            href="/request/create"
-            className="inline-flex min-h-[52px] items-center justify-center rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 px-8 text-base font-bold text-brand-navy shadow-[0_14px_32px_-14px_rgba(245,158,11,0.5)] transition hover:brightness-105"
-          >
-            Zatraži majstora
-          </Link>
+          <PublicPrimaryCtaLink className="inline-flex min-h-[52px] items-center justify-center rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 px-8 text-base font-bold text-brand-navy shadow-[0_14px_32px_-14px_rgba(245,158,11,0.5)] transition hover:brightness-105" />
         </section>
       </div>
       <PublicFooter />

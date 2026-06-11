@@ -3,17 +3,8 @@
 import Link from "next/link";
 import { useUiLanguage } from "@/lib/i18n/ui-language";
 import { t } from "@/lib/i18n/messages";
-
-const FOOTER_NAV = [
-  { href: "/", label: "Početna" },
-  { href: "/categories", label: "Kategorije" },
-  { href: "/request/create", label: "Zatraži majstora" },
-  { href: "/#kako-radi", label: "Kako funkcioniše" },
-  { href: "/register?type=majstor", label: "Za majstore" },
-  { href: "/#faq", label: "Česta pitanja" },
-  { href: "/instaliraj", label: "Instaliraj aplikaciju" },
-  { href: "/kontakt", label: "Kontakt i podrška" },
-] as const;
+import { getFooterNavItems } from "@/lib/handyman-public-cta";
+import { usePublicCta } from "@/hooks/use-public-cta";
 
 const FOOTER_LEGAL = [
   { href: "/politika-privatnosti", label: "Politika privatnosti" },
@@ -25,6 +16,8 @@ const FOOTER_LEGAL = [
  */
 export function PublicFooter() {
   const locale = useUiLanguage();
+  const { isHandyman } = usePublicCta();
+  const footerNav = getFooterNavItems(isHandyman ? "HANDYMAN" : undefined, isHandyman);
 
   return (
     <footer className="border-t border-slate-200/90 bg-gradient-to-b from-[#FAFBFC] to-slate-100/40">
@@ -45,13 +38,13 @@ export function PublicFooter() {
             <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-400">
               {t(locale, "footer.platform", "Platforma")}
             </p>
-            {FOOTER_NAV.map((item) => (
+            {footerNav.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
                 className="text-sm text-slate-600 underline-offset-4 transition hover:text-brand-navy hover:underline"
               >
-                {t(locale, `navigation.${item.href === "/" ? "home" : item.href === "/categories" ? "categories" : item.href === "/request/create" ? "requestHandyman" : item.href === "/#kako-radi" ? "howItWorks" : item.href === "/register?type=majstor" ? "forHandymen" : item.href === "/#faq" ? "faq" : item.href === "/instaliraj" ? "installApp" : "support"}`, item.label)}
+                {t(locale, item.labelKey, item.fallback)}
               </Link>
             ))}
           </nav>
