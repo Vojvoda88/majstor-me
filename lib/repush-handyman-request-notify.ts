@@ -13,7 +13,7 @@ export function handymanWorksInCity(
   cities: string[] | null | undefined,
   cityNeedle: string
 ): boolean {
-  const norm = (s: string) => s.toLowerCase().normalize("NFD").replace(/\p{Diacritic}/gu, "");
+  const norm = (s: string) => s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
   const needle = norm(cityNeedle);
   const all = [city, ...(cities ?? [])].filter(Boolean) as string[];
   return all.some((c) => norm(c).includes(needle));

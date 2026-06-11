@@ -14,7 +14,7 @@ const REQUEST_ID = process.argv[2] ?? "cmppo2usp000m97y2t2n4ceau";
 const REMINDER_SUFFIX = "reminder-20260529";
 
 function worksPodgorica(city: string | null, cities: string[] | null | undefined): boolean {
-  const norm = (s: string) => s.toLowerCase().normalize("NFD").replace(/\p{Diacritic}/gu, "");
+  const norm = (s: string) => s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
   const all = [city, ...(cities ?? [])].filter(Boolean) as string[];
   return all.some((c) => norm(c).includes("podgorica"));
 }

@@ -52,7 +52,12 @@
       "primaryCta": "Usta talep et",
       "secondaryCta": "Kategorileri gor",
       "handymanCta": "Usta misiniz? Buradan kayit olun",
-      "loginCta": "Zaten hesabin var mi? Giris yap",
+      "handymanHeadline": "Yeni is mi ariyorsunuz?",
+      "handymanSubline": "Kategorilerinizdeki acik taleplere goz atin ve teklif gonderin.",
+      "availableJobsCta": "Mevcut isler",
+      "myOffersCta": "Tekliflerim",
+      "myRequestsCta": "Taleplerim",
+      "loginCta": "Hesabiniz var mi?",
       "trustFree": "100% ucretsiz",
       "trustNoCalling": "Birden fazla yeri aramaya gerek yok",
       "trustFast": "Hizli ve kolay"
