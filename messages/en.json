@@ -52,7 +52,12 @@
       "primaryCta": "Request a handyman",
       "secondaryCta": "View categories",
       "handymanCta": "Handyman? Sign up here",
-      "loginCta": "Already have an account? Log in",
+      "handymanHeadline": "Looking for new jobs?",
+      "handymanSubline": "Browse open requests in your categories and send an offer.",
+      "availableJobsCta": "Available jobs",
+      "myOffersCta": "My offers",
+      "myRequestsCta": "My requests",
+      "loginCta": "Have an account?",
       "trustFree": "100% free",
       "trustNoCalling": "No calling multiple places",
       "trustFast": "Fast and simple"

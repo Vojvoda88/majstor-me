@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { usePathname } from "next/navigation";
+import { useSession } from "next-auth/react";
 import { stripLocalePrefix } from "@/lib/i18n/config";
 import { buildRequestCreateHref, isStickyRequestCtaPath } from "@/lib/build-request-create-href";
 import { useUiLanguage } from "@/lib/i18n/ui-language";
@@ -25,10 +26,21 @@ export function GlobalRequestStickyCta() {
   const pathname = usePathname() || "/";
   const currentPath = stripLocalePrefix(pathname);
   const locale = useUiLanguage();
+  const { data: session, status } = useSession();
   const isHome = currentPath === "/";
   const enabled = isStickyRequestCtaPath(currentPath);
-  const href = useMemo(() => buildRequestCreateHref(currentPath), [currentPath]);
-  const label = t(locale, "navigation.requestHandyman", "Zatraži majstora");
+  const { href, label } = useMemo(() => {
+    if (status === "authenticated" && session?.user?.role === "HANDYMAN") {
+      return {
+        href: "/dashboard/handyman",
+        label: t(locale, "home.hero.availableJobsCta", "Dostupni poslovi"),
+      };
+    }
+    return {
+      href: buildRequestCreateHref(currentPath),
+      label: t(locale, "navigation.requestHandyman", "Zatraži majstora"),
+    };
+  }, [currentPath, locale, session?.user?.role, status]);
 
   const [visible, setVisible] = useState(false);
 
@@ -68,7 +80,7 @@ export function GlobalRequestStickyCta() {
       window.addEventListener("resize", syncFromHero, { passive: true });
     };
 
-    let waitTimer: ReturnType<typeof window.setInterval> | null = null;
+    let waitTimer: number | null = null;
 
     const existing = document.getElementById(HOME_HERO_ID);
     if (existing) {

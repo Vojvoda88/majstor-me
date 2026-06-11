@@ -52,7 +52,12 @@
       "primaryCta": "Zatraži majstora",
       "secondaryCta": "Pogledaj kategorije",
       "handymanCta": "Majstor? Prijavi se ovdje",
-      "loginCta": "Već imate nalog? Prijavi se",
+      "handymanHeadline": "Tražite novi posao?",
+      "handymanSubline": "Pregledajte otvorene zahtjeve u vašim kategorijama i pošaljite ponudu.",
+      "availableJobsCta": "Dostupni poslovi",
+      "myOffersCta": "Moje ponude",
+      "myRequestsCta": "Moji zahtjevi",
+      "loginCta": "Imate profil?",
       "trustFree": "100% besplatno",
       "trustNoCalling": "Bez zvanja na više mjesta",
       "trustFast": "Brzo i jednostavno"

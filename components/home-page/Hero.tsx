@@ -3,6 +3,7 @@
 import { useEffect, useState, type TouchEvent } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
 import { HERO_IMAGE } from "@/lib/homepage-data";
 import { useUiLanguage } from "@/lib/i18n/ui-language";
 import { t } from "@/lib/i18n/messages";
@@ -23,6 +24,10 @@ function sameSlides(
 
 export function Hero() {
   const locale = useUiLanguage();
+  const { data: session, status } = useSession();
+  const role = session?.user?.role;
+  const isHandyman = status === "authenticated" && role === "HANDYMAN";
+  const isUser = status === "authenticated" && role === "USER";
   const [activeCategoryIndex, setActiveCategoryIndex] = useState(0);
   const [touchStartX, setTouchStartX] = useState<number | null>(null);
   const [handymanBadge, setHandymanBadge] = useState("80+");
@@ -178,33 +183,71 @@ export function Hero() {
       />
       <div className="pointer-events-auto relative z-10 w-full max-w-4xl text-center md:max-w-5xl">
         <h1 className="font-display mb-4 text-[1.72rem] font-extrabold leading-[1.12] tracking-tight text-white sm:text-[2rem] md:mb-5 md:text-5xl lg:text-[3.25rem] lg:leading-[1.08]">
-          Treba vam majstor?
+          {isHandyman
+            ? t(locale, "home.hero.handymanHeadline", "Tražite novi posao?")
+            : t(locale, "home.hero.headline", "Treba vam majstor?")}
         </h1>
         <p className="mx-auto mb-6 max-w-2xl text-[15px] font-medium leading-relaxed text-slate-100/95 sm:text-base md:mb-8 md:text-lg md:leading-relaxed">
-          Objavite zahtjev — majstor vas pozove.
+          {isHandyman
+            ? t(
+                locale,
+                "home.hero.handymanSubline",
+                "Pregledajte otvorene zahtjeve u vašim kategorijama i pošaljite ponudu."
+              )
+            : t(locale, "home.hero.subline", "Objavite zahtjev — majstor vas pozove.")}
         </p>
 
         <div className="mx-auto mt-2 grid w-full max-w-xl grid-cols-1 gap-3 sm:grid-cols-2 md:mt-4">
-          <Link
-            href="/request/create"
-            className="inline-flex h-14 min-h-[52px] w-full items-center justify-center rounded-2xl bg-gradient-to-br from-[#3b82f6] to-[#1d4ed8] px-6 text-base font-bold text-white shadow-lg shadow-blue-600/30 transition hover:brightness-105 active:scale-[0.98] sm:px-8"
-          >
-            Zatraži majstora
-          </Link>
-          <Link
-            href="/register?type=majstor"
-            className="inline-flex h-14 min-h-[52px] w-full items-center justify-center rounded-2xl border-2 border-amber-300/90 bg-gradient-to-br from-amber-500/25 to-amber-600/15 px-6 text-base font-bold text-amber-50 shadow-lg shadow-amber-900/25 ring-1 ring-amber-200/30 backdrop-blur-md transition hover:from-amber-500/35 hover:to-amber-600/25 hover:text-white active:scale-[0.98] sm:px-8"
-          >
-            Nudite usluge? Registrujte se
-          </Link>
+          {isHandyman ? (
+            <>
+              <Link
+                href="/dashboard/handyman"
+                className="inline-flex h-14 min-h-[52px] w-full items-center justify-center rounded-2xl bg-gradient-to-br from-[#3b82f6] to-[#1d4ed8] px-6 text-base font-bold text-white shadow-lg shadow-blue-600/30 transition hover:brightness-105 active:scale-[0.98] sm:px-8"
+              >
+                {t(locale, "home.hero.availableJobsCta", "Dostupni poslovi")}
+              </Link>
+              <Link
+                href="/dashboard/handyman/offers"
+                className="inline-flex h-14 min-h-[52px] w-full items-center justify-center rounded-2xl border-2 border-amber-300/90 bg-gradient-to-br from-amber-500/25 to-amber-600/15 px-6 text-base font-bold text-amber-50 shadow-lg shadow-amber-900/25 ring-1 ring-amber-200/30 backdrop-blur-md transition hover:from-amber-500/35 hover:to-amber-600/25 hover:text-white active:scale-[0.98] sm:px-8"
+              >
+                {t(locale, "home.hero.myOffersCta", "Moje ponude")}
+              </Link>
+            </>
+          ) : (
+            <>
+              <Link
+                href="/request/create"
+                className="inline-flex h-14 min-h-[52px] w-full items-center justify-center rounded-2xl bg-gradient-to-br from-[#3b82f6] to-[#1d4ed8] px-6 text-base font-bold text-white shadow-lg shadow-blue-600/30 transition hover:brightness-105 active:scale-[0.98] sm:px-8"
+              >
+                {t(locale, "home.hero.primaryCta", "Zatraži majstora")}
+              </Link>
+              {isUser ? (
+                <Link
+                  href="/dashboard/user"
+                  className="inline-flex h-14 min-h-[52px] w-full items-center justify-center rounded-2xl border-2 border-amber-300/90 bg-gradient-to-br from-amber-500/25 to-amber-600/15 px-6 text-base font-bold text-amber-50 shadow-lg shadow-amber-900/25 ring-1 ring-amber-200/30 backdrop-blur-md transition hover:from-amber-500/35 hover:to-amber-600/25 hover:text-white active:scale-[0.98] sm:px-8"
+                >
+                  {t(locale, "home.hero.myRequestsCta", "Moji zahtjevi")}
+                </Link>
+              ) : (
+                <Link
+                  href="/register?type=majstor"
+                  className="inline-flex h-14 min-h-[52px] w-full items-center justify-center rounded-2xl border-2 border-amber-300/90 bg-gradient-to-br from-amber-500/25 to-amber-600/15 px-6 text-base font-bold text-amber-50 shadow-lg shadow-amber-900/25 ring-1 ring-amber-200/30 backdrop-blur-md transition hover:from-amber-500/35 hover:to-amber-600/25 hover:text-white active:scale-[0.98] sm:px-8"
+                >
+                  {t(locale, "home.hero.handymanCta", "Nudite usluge? Registrujte se")}
+                </Link>
+              )}
+            </>
+          )}
         </div>
 
-        <p className="mx-auto mt-3 text-sm text-slate-100/90">
-          Imate profil?{" "}
-          <Link href="/login" className="font-semibold text-white underline underline-offset-2 hover:text-blue-100">
-            Prijavi se
-          </Link>
-        </p>
+        {status !== "authenticated" ? (
+          <p className="mx-auto mt-3 text-sm text-slate-100/90">
+            {t(locale, "home.hero.loginCta", "Imate profil?")}{" "}
+            <Link href="/login" className="font-semibold text-white underline underline-offset-2 hover:text-blue-100">
+              Prijavi se
+            </Link>
+          </p>
+        ) : null}
 
         <div className="mx-auto mt-4 w-full max-w-3xl text-left sm:mt-5 md:max-w-5xl md:rounded-3xl md:border md:border-slate-200/20 md:bg-slate-950/28 md:p-4 md:shadow-[0_14px_38px_rgba(2,6,23,0.32)]">
           <div className="grid grid-cols-3 gap-2.5 sm:gap-3">
