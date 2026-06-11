@@ -197,7 +197,11 @@ export function Hero() {
             : t(locale, "home.hero.subline", "Objavite zahtjev — majstor vas pozove.")}
         </p>
 
-        <div className="mx-auto mt-2 grid w-full max-w-xl grid-cols-1 gap-3 sm:grid-cols-2 md:mt-4">
+        <div
+          className={`mx-auto mt-2 grid w-full max-w-xl gap-3 md:mt-4 ${
+            isHandyman ? "grid-cols-1" : "grid-cols-1 sm:grid-cols-2"
+          }`}
+        >
           {isHandyman ? (
             <>
               <Link
