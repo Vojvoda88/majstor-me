@@ -37,6 +37,7 @@ export type Permission =
   | "trust_safety"
   | "trust_safety_write"
   | "content"
+  | "content_write"
   | "settings"
   | "audit_log"
   | "workers_write"
